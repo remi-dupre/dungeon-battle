@@ -37,3 +37,4 @@ all: release doc
 clean:
 	rm -rf build/
 	rm -rf dungeon-battle
+	rm -rf doc/
