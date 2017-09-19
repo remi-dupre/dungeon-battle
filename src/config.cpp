@@ -1,11 +1,7 @@
 #include <fstream>
-#include <sstream>
 #include <string>
 
 #include "config.hpp"
-
-
-#include <iostream>
 
 
 // Default configuration
@@ -18,6 +14,7 @@ Configuration::Configuration() :
 
 void Configuration::read(const std::string& filename)
 {
+
     std::ifstream config_file(filename);
     std::string line;
 
@@ -59,9 +56,14 @@ void Configuration::write(const std::string& filename)
 {
     std::ofstream config_file(filename);
 
+    if (!config_file.is_open())
+	return;
+
     config_file << "[Video]" << std::endl;
     config_file << "width=" << width << std::endl;
     config_file << "height=" << height << std::endl;
     config_file << "fullscreen=" << fullscreen << std::endl;
     config_file << "vsync=" << vsync << std::endl;
+
+    return;
 }
