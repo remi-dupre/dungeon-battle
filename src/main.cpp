@@ -1,3 +1,8 @@
+/**
+ * \file main.cpp
+ * \brief Main file for releases.
+ */
+
 #include <SFML/Graphics.hpp>
 
 /**
