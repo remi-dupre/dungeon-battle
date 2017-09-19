@@ -3,7 +3,7 @@
 /**
  * \brief Main function
  */
-int main(int argc, char *argv[])
+int main([[maybe_unused]] int argc, [[maybe_unused]] char *argv[])
 {
     sf::RenderWindow window({800, 600}, "Dungeon Battle", sf::Style::Close);
     window.setVerticalSyncEnabled(true);
