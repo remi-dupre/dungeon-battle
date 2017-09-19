@@ -212,7 +212,7 @@ Macros, Constantes
 
 Préferer
 ```cpp
-constexpr int HAUTEUR = 800;
+inline constexpr int HAUTEUR = 800;
 ```
 à
 ```cpp
