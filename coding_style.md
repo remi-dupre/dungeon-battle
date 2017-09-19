@@ -179,7 +179,7 @@ Déclarations de structures/classes/etc...
 ```cpp
 struct StructureUtile
 {
-    float x;
+    float x; // On évite les déclaration non précédée d'un private / public
 private:
     int n;
 
@@ -247,7 +247,7 @@ Appels de fonction
 ```cpp
 int n = f(a, b, c);
 ```
-/// Casts
+Casts
 ```cpp
 float x = static_cast<float>(n);
 ```
