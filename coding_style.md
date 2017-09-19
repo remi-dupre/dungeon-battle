@@ -225,7 +225,7 @@ Utiliser des templates plutôt que des macros :
 Préferer
 ```cpp
 template <typename T>
-inline T max (T a, T b)
+inline constexpr T max (T a, T b)
 {
    return a > b ? a : b;
 }
