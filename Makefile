@@ -32,6 +32,8 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
 doc:
 	doxygen .doxygen.conf
 
+all: release doc
+
 clean:
 	rm -rf build/
 	rm -rf dungeon-battle
