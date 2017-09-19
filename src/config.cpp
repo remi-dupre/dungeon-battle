@@ -19,21 +19,24 @@ void Configuration::parse(const std::string& filename)
 
     while (std::getline(config_file, line))
     {
+        if (line[0] == '#' || line[0] == '[')
+            continue;
+
         std::string::size_type eq_pos = line.find('=');
 
         if (eq_pos == std::string::npos)
             continue;
 
-	std::string option_name = line.substr(0, eq_pos);
+        std::string option_name = line.substr(0, eq_pos);
 
-	if(option_name == "height")
-	    height = std::stoi(line.substr(eq_pos+1, line.size()));
-	else if (option_name == "width")
-	    width = std::stoi(line.substr(eq_pos+1, line.size()));
-	else if (option_name ==  "fullscreen")
-	    fullscreen = std::stoi(line.substr(eq_pos+1, line.size()));
-	else if (option_name ==  "vsync")
-	    vsync = std::stoi(line.substr(eq_pos+1, line.size()));
+        if(option_name == "height")
+            height = std::stoi(line.substr(eq_pos+1, line.size()));
+        else if (option_name == "width")
+            width = std::stoi(line.substr(eq_pos+1, line.size()));
+        else if (option_name ==  "fullscreen")
+            fullscreen = std::stoi(line.substr(eq_pos+1, line.size()));
+        else if (option_name ==  "vsync")
+            vsync = std::stoi(line.substr(eq_pos+1, line.size()));
     }
 
     return;
