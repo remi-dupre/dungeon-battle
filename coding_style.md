@@ -23,11 +23,8 @@ Une ligne entre les includes des différentes bibliothèque ? eg
 #include "game.hpp"
 ```
 2 sauts de ligne après les #include
-
 Ne jamais faire de using namespace ...;
-
 L'indentation se fait avec 4 espaces.
-
 Saut de ligne à la fin du fichier.
 
 Conventions de nommage (proposition)
