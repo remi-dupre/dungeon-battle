@@ -12,16 +12,18 @@ int main()
     config.parse("config.ini");
 
     assert(config.width == 800);
-    std::cout << "config.width: Ok" << std::endl;
-
     assert(config.height == 600);
-    std::cout << "config.height: Ok" << std::endl;
-
     assert(config.fullscreen == false);
-    std::cout << "config.fullscreen: Ok" << std::endl;
-
     assert(config.vsync == true);
-    std::cout << "config.vsync: Ok" << std::endl;
 
+    config.parse("config2.ini");
+
+    assert(config.width == 685);
+    assert(config.height == 534);
+    assert(config.fullscreen == true);
+    assert(config.vsync == true);
+    
+    std::cout << "Configuration module OK" << std::endl;
+    
     return 0;
 }
