@@ -1,4 +1,4 @@
-#include <cstdlib>
+#include <cstring>
 #include <iostream>
 
 #include <SFML/Graphics.hpp>
@@ -11,12 +11,12 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char *argv[])
     Configuration config;
     std::string config_filename = "config.ini";
     
-    for (std:size_t n = 1; n < argc; n++)
+    for (std::size_t n = 1; n < argc; n++)
     {   
         switch (strlen(argv[n]))
         {
             case 2:
-                if (argv[0] == '-')
+                if (argv[n][0] == '-')
                 {
                     switch (argv[n][2])
                     {
@@ -32,7 +32,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char *argv[])
         }
     }
 
-    config::parse(config_filename);
+    config.parse(config_filename);
 
     sf::RenderWindow window({config.width, config.height}, "Dungeon Battle", sf::Style::Close);
     window.setVerticalSyncEnabled(config.vsync);
