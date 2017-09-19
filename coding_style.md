@@ -108,7 +108,7 @@ int* m = &n;
 ```
 Objets
 ```cpp
-std::tuple<int, int> vec{3, 2}; // déclarations avec {} (il faudrait utiliser std::make_tuple ici)
+std::tuple<int, int> vec(3, 2}); // (il faudrait utiliser std::make_tuple ici)
 ```
 Utiliser `auto` seulement lorsque le type est inconnu ou trop long (illisible), pour les itérateurs pas exemple.
 
@@ -155,18 +155,18 @@ do
 
 switch (n)
 {
-case something:
-{
-    //...
-}   break; // éviter les fallthrough.
-case something_else:
-{
-    //...
-}   [[fallthrough]] // Utiliser [[fallthrough]] pour les volontaires:
-default:
-{ // toujours mettre un default.
-    //...
-}
+    case something:
+    {
+        //...
+    } break; // éviter les fallthrough.
+    case something_else:
+    {
+         //...
+    }   [[fallthrough]] // Utiliser [[fallthrough]] pour les volontaires:
+    default:
+    { // toujours mettre un default.
+         //...
+    }
 } // dans les 2 cas le compilateur vous enverra des warnings.
 ```
 
