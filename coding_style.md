@@ -52,21 +52,19 @@ Description générale du ce que que fait le programme sous la forme d'une doc.
 
 Documentation de classe, fonction :
 ```cpp
-////////////////////////////////////////////////////////////
-/// \brief Courte description de la classe
-///
-////////////////////////////////////////////////////////////
+/**
+ * \brief Courte description de la classe
+ */
 class Class
 {
     // ...
 };
 
-////////////////////////////////////////////////////////////
-/// \class Class
-///
-///
-/// Description détaillée
-////////////////////////////////////////////////////////////
+/**
+ * \class Class
+ *
+ * Description détaillée
+ */
 ```
 
 Documentation de variable, d'enum :
