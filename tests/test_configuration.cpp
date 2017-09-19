@@ -1,13 +1,15 @@
 #include <cassert>
+#include <iostream>
 
 #include "../src/config.hpp"
+#include "../src/config.cpp"
 
 
 int main()
 {
     Configuration config;
 
-    parse_configuration(config, "config.ini");
+    config.parse("config.ini");
 
     assert(config.width == 800);
     std::cout << "config.width: Ok" << std::endl;

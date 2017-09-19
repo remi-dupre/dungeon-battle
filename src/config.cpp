@@ -5,7 +5,7 @@
 #include "config.hpp"
 
 
-Configuration::Configuration () :
+Configuration::Configuration() :
     width(800),
     height(600),
     fullscreen(false),
@@ -21,26 +21,19 @@ void Configuration::parse(const std::string& filename)
     {
         std::string::size_type eq_pos = line.find('=');
 
-        if (eq_pos == string::npos)
+        if (eq_pos == std::string::npos)
             continue;
 
-        switch (line.substr(0, eq_pos))
-        {
-            case "height":
-                height = std::stoi(line.substr(eq_pos+1, line.size()));
-                break;
-            case "width":
-                width = std::stoi(line.substr(eq_pos+1, line.size()));
-                break;
-            case "fullscreen":
-                fullscreen = std::stoi(line.substr(eq_pos+1, line.size()));
-                break;
-            case "vsync":
-                vsync = std::stoi(line.substr(eq_pos+1, line.size()));
-                break;
-            default:
-                continue;
-        }
+	std::string option_name = line.substr(0, eq_pos);
+
+	if(option_name == "height")
+	    height = std::stoi(line.substr(eq_pos+1, line.size()));
+	else if (option_name == "width")
+	    width = std::stoi(line.substr(eq_pos+1, line.size()));
+	else if (option_name ==  "fullscreen")
+	    fullscreen = std::stoi(line.substr(eq_pos+1, line.size()));
+	else if (option_name ==  "vsync")
+	    vsync = std::stoi(line.substr(eq_pos+1, line.size()));
     }
 
     return;

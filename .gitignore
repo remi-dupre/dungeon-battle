@@ -11,3 +11,6 @@ dungeon-battle
 
 # Documentation
 doc/
+
+tests/*
+!tests/*.cpp
