@@ -36,9 +36,6 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@mkdir -p $(BUILD_DIR)
 	g++ -o $@ -c $< $(CFLAGS) $(DFLAGS) $(WFLAGS)
 
-doc:
-	doxygen .doxygen.conf
-
 tests: debug
 tests: $(EXEC_TEST)
 
@@ -49,10 +46,14 @@ $(BUILD_DIR_TEST)/%.o: $(SRC_DIR_TEST)/%.cpp
 $(SRC_DIR_TEST)/%: $(BUILD_DIR_TEST)/%.o
 	g++ -o $@ $< $(DFLAGS) $(LFLAGS)
 
-all: release doc
+doc:
+	doxygen .doxygen.conf
+
+all: release tests doc
 
 clean:
 	rm -rf $(BUILD_DIR)
 	rm -rf $(BUILD_DIR_TEST)
 	rm -rf dungeon-battle
 	rm -rf doc/
+	rm -rf *~
