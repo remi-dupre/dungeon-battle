@@ -1,49 +1,45 @@
 Compilation
 ===========
 
-Compiler avec `-std=c++1y -Wall -Wextra`. (Il faut au moins gcc 5)
+Compiler avec `-std=c++1y -Wall -Wextra`.
 
-Fichier
+Fichiers
 =======
 
-Extensions .cpp, .hpp et .inl
+Extensions .cpp, .hpp
 
+Une ligne entre les includes des différentes bibliothèque
 ```cpp
-#include <...> // Bibliothèques (standard / externe)
-#include "..." // Reste du code
-```
-Une ligne entre les includes des différentes bibliothèque ? eg
-```cpp
-#include <iostream>
+#include <algorithm> // Bibliothèques (standard / externe)
 #include <cmath>
-#include <algorithm>
+#include <iostream>
 
 #include <SFML/Graphics.hpp>
 
-#include "game.hpp"
+#include "game.hpp" // Reste du code
 ```
 2 sauts de ligne après les #include
 
-Ne jamais faire de using namespace ...;
+Ne jamais faire de using namespace
 
 L'indentation se fait avec 4 espaces.
 
 Saut de ligne à la fin du fichier.
 
-Conventions de nommage (proposition)
-====================================
+Conventions de nommage
+======================
 
-| Type                                       | Convention                     |
-|--------------------------------------------|--------------------------------|
-| Fichier                                    | snake_case.cpp, snake_case.hpp |
-| Local, static and global variable          | snake_case                     |
-| Variable membre                            | snake_case                     |
-| Fonction, méthode static                   | snake_case                     |
-| Méthode                                    | camlCase                       |
-| Type (struct, class, union, enum, typedef) | PascalCase                     |
-| Template parameter                         | PascalCase                     |
-| Namespace                                  | snake_case                     |
-| Macro (si jamais)                          | UPPER_CASE                     |
+| Type                                       | Convention                |
+|--------------------------------------------|---------------------------|
+| Fichier                                    | snake_case (.hpp / .cpp)  |
+| Local, static and global variable          | snake_case                |
+| Variable membre                            | snake_case                |
+| Fonction, méthode static                   | snake_case                |
+| Méthode                                    | camlCase                  |
+| Type (struct, class, union, enum, typedef) | PascalCase                |
+| Template parameter                         | PascalCase                |
+| Namespace                                  | snake_case                |
+| Macro (si jamais)                          | UPPER_CASE                |
 
 Documentation
 =============
@@ -54,25 +50,23 @@ Documentation de classe, fonction :
 ```cpp
 /**
  * \brief Courte description de la classe
+ * \param p Description du paramètre p
+ * \return Decription de la valeur de retour
+ *
+ * Description détaillée
  */
 class Class
 {
     // ...
 };
-
-/**
- * \class Class
- *
- * Description détaillée
- */
 ```
 
 Documentation de variable, d'enum :
 ```cpp
 enum class Enum
 {
-    One, ///< Documentation of One
-    Two, ///< Documentation of Two
+    Un, ///< Documentation de Un
+    Deux, ///< Documentation de Deux
 };
 ```
 
@@ -155,13 +149,13 @@ switch (n)
 {
     case something:
         //...
-        break; // éviter les fallthrough.
+        break; // éviter les fallthrough (le compilateur vous enverra des warnings)
     case something_else:
          //...
         [[fallthrough]] // Utiliser [[fallthrough]] pour les volontaires:
     default:
          //...
-} // dans les 2 cas le compilateur vous enverra des warnings.
+}
 ```
 
 Ne pas utiliser les exceptions sauf éventuellement pour rattraper les celles qui viennent des bibliothèques.
@@ -172,13 +166,13 @@ Déclarations de structures/classes/etc...
 ```cpp
 struct StructureUtile
 {
-    float x; // On évite les déclaration non précédée d'un private / public
+    float x; // On évite les déclaration non précédée d'un private / public sauf dans une struct où tout est public
 private:
     int n;
 
 public:
     StructureUtile (int n) : n(n) {}
-    StructureUtile () : n(0)
+    StructureUtile () : StructureUtile(0) {}
 
     bool operator==(StructureUtile s)
     {
