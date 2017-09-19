@@ -106,7 +106,7 @@ int* m = &n;
 ```
 Objets
 ```cpp
-std::tuple<int, int> vec(3, 2}); // (il faudrait utiliser std::make_tuple ici)
+std::tuple<int, int> vec(3, 2); // (il faudrait utiliser std::make_tuple ici)
 ```
 Utiliser `auto` seulement lorsque le type est inconnu ou trop long (illisible), pour les itérateurs pas exemple.
 
