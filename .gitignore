@@ -3,3 +3,6 @@
 
 # Fichiers objet générés
 *.o
+
+# Binaire
+*.out
