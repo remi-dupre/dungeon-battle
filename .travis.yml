@@ -1,6 +1,15 @@
 language: cpp
-script: make debug
+script: make doc && make debug
 
 before_install:
  - sudo apt-get -qq update
  - sudo apt-get install -y libsfml-dev
+
+deploy:
+  name: Travis Documentation Generation
+  provider: pages
+  local_dir: doc/html
+  skip_cleanup: true
+  github_token: $GITHUB_TOKEN
+  on:
+    branch: master

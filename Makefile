@@ -29,6 +29,9 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@mkdir -p build
 	g++ -o $@ -c $< $(CFLAGS) $(DFLAGS) $(WFLAGS)
 
+doc:
+	doxygen .doxygen.conf
+
 clean:
 	rm -rf build/
 	rm -rf dungeon-battle
