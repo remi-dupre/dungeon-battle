@@ -154,17 +154,13 @@ do
 switch (n)
 {
     case something:
-    {
         //...
-    } break; // éviter les fallthrough.
+        break; // éviter les fallthrough.
     case something_else:
-    {
          //...
-    }   [[fallthrough]] // Utiliser [[fallthrough]] pour les volontaires:
+        [[fallthrough]] // Utiliser [[fallthrough]] pour les volontaires:
     default:
-    { // toujours mettre un default.
          //...
-    }
 } // dans les 2 cas le compilateur vous enverra des warnings.
 ```
 
