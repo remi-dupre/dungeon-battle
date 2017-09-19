@@ -71,7 +71,7 @@ class Class
 
 Documentation de variable, d'enum :
 ```cpp
-enum
+enum class Enum
 {
     One, ///< Documentation of One
     Two, ///< Documentation of Two
