@@ -6,7 +6,7 @@
 #include "config.hpp"
 
 
-int main(int argc, char *argv[])
+int main([[maybe_unused]] int argc, [[maybe_unused]] char *argv[])
 {
     Configuration config;
     std::string config_filename = "config.ini";

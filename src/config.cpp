@@ -4,6 +4,10 @@
 
 #include "config.hpp"
 
+
+#include <iostream>
+
+
 // Default configuration
 Configuration::Configuration() :
     width(800),
@@ -22,15 +26,17 @@ void Configuration::read(const std::string& filename)
 
     while (std::getline(config_file, line))
     {
+	line = line.substr(0, line.find('#')); // Remove comment
+	if (line.length() == 0)
+	    continue;
 	if (line[0] == '[')
 	    continue;
-	line = line.substr(0, line.find('#')); // Remove commentary at the end of line
 
 	std::string::size_type eq_pos = line.find('=');
 
 	if (eq_pos == std::string::npos)
 	    continue;
-	if (eq_pos + 1 >= line.size())
+	if (eq_pos + 1 > line.size())
 	    continue;
 
 	std::string option_name = line.substr(0, eq_pos);

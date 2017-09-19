@@ -57,3 +57,4 @@ clean:
 	rm -rf dungeon-battle
 	rm -rf doc/
 	rm -rf *~
+	rm -rf $(EXEC_TEST)
