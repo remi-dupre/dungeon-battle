@@ -1,5 +1,7 @@
 # Fichiers temporaires d'emacs
 *~
+*#
+.#*
 
 # Fichiers objet générés
 *.o
