@@ -4,6 +4,7 @@ script: make doc && make debug
 before_install:
  - sudo apt-get -qq update
  - sudo apt-get install -y libsfml-dev
+ - sudo apt-get install -y doxygen
 
 deploy:
   name: Travis Documentation Generation
