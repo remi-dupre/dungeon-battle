@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
     Configuration config;
     std::string config_filename = "config.ini";
 
-    config.parse(config_filename);
+    config.read(config_filename);
 
     sf::RenderWindow window({config.width, config.height}, "Dungeon Battle", sf::Style::Close);
     window.setVerticalSyncEnabled(config.vsync);

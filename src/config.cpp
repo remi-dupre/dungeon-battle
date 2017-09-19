@@ -4,7 +4,7 @@
 
 #include "config.hpp"
 
-
+// Default configuration
 Configuration::Configuration() :
     width(800),
     height(600),
@@ -12,31 +12,38 @@ Configuration::Configuration() :
     vsync(true)
 {}
 
-void Configuration::parse(const std::string& filename)
+void Configuration::read(const std::string& filename)
 {
     std::ifstream config_file(filename);
     std::string line;
 
+    if (!config_file.is_open())
+	return;
+
     while (std::getline(config_file, line))
     {
-        if (line[0] == '#' || line[0] == '[')
+        if (line[0] == '[')
             continue;
+	line = line.substr(0, line.find('#')); // Remove commentary at the end of line
 
         std::string::size_type eq_pos = line.find('=');
 
         if (eq_pos == std::string::npos)
             continue;
+	if (eq_pos + 1 >= line.size())
+	    continue;
 
         std::string option_name = line.substr(0, eq_pos);
+	std::string value = line.substr(eq_pos+1, line.size());
 
         if (option_name == "height")
-            height = std::stoi(line.substr(eq_pos+1, line.size()));
+            height = std::stoi(value);
         else if (option_name == "width")
-            width = std::stoi(line.substr(eq_pos+1, line.size()));
+            width = std::stoi(value);
         else if (option_name ==  "fullscreen")
-            fullscreen = std::stoi(line.substr(eq_pos+1, line.size()));
+            fullscreen = std::stoi(value);
         else if (option_name ==  "vsync")
-            vsync = std::stoi(line.substr(eq_pos+1, line.size()));
+            vsync = std::stoi(value);
     }
 
     return;
@@ -45,7 +52,7 @@ void Configuration::parse(const std::string& filename)
 void Configuration::write(const std::string& filename)
 {
     std::ofstream config_file(filename);
-    
+
     config_file << "[Video]" << std::endl;
     config_file << "width=" << width << std::endl;
     config_file << "height=" << height << std::endl;
