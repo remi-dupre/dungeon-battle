@@ -1,13 +1,6 @@
-/**
- * \file main.cpp
- * \brief Main file for releases.
- */
-
 #include <SFML/Graphics.hpp>
 
-/**
- * \brief Main function
- */
+
 int main([[maybe_unused]] int argc, [[maybe_unused]] char *argv[])
 {
     sf::RenderWindow window({800, 600}, "Dungeon Battle", sf::Style::Close);
@@ -19,32 +12,32 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char *argv[])
 
     while (window.isOpen())
     {
-	sf::Event event;
-	while (window.pollEvent(event))
-	{
-	    if (event.type == sf::Event::Closed)
-		window.close();
-	}
+        sf::Event event;
+        while (window.pollEvent(event))
+        {
+            if (event.type == sf::Event::Closed)
+                window.close();
+        }
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-	{
-	    rect.setPosition(rect.getPosition() + sf::Vector2f(0.f, -10.f));
-	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-	{
-	    rect.setPosition(rect.getPosition() + sf::Vector2f(0.f, 10.f));
-	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-	{
-	    rect.setPosition(rect.getPosition() + sf::Vector2f(-10.f, 0.f));
-	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-	{
-	    rect.setPosition(rect.getPosition() + sf::Vector2f(10.f, 0.f));
-	}
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+        {
+            rect.setPosition(rect.getPosition() + sf::Vector2f(0.f, -10.f));
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+        {
+            rect.setPosition(rect.getPosition() + sf::Vector2f(0.f, 10.f));
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+        {
+            rect.setPosition(rect.getPosition() + sf::Vector2f(-10.f, 0.f));
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+        {
+            rect.setPosition(rect.getPosition() + sf::Vector2f(10.f, 0.f));
+        }
 
-	window.clear();
-	window.draw(rect);
-	window.display();
+        window.clear();
+        window.draw(rect);
+        window.display();
     }
 }
