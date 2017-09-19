@@ -1,9 +1,11 @@
 language: cpp
 script:
- - make doc 
+ - make doc
  - make debug
  - make tests
- - ./tests/test_configuration
+ - cd tests
+ - ./test_configuration
+ - cd ..
 
 before_install:
  - sudo apt-get -qq update
