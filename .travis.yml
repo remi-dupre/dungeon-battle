@@ -1,5 +1,5 @@
 language: cpp
-script: cd src && make debug
+script: make debug
 
 before_install:
  - sudo apt-get -qq update
