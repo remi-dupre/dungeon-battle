@@ -1,7 +1,7 @@
 Compilation
 ===========
 
-Compiler avec -std=c++1z -Wall -Wextra. (Il faut au moins gcc 7)
+Compiler avec `-std=c++1z -Wall -Wextra`. (Il faut au moins gcc 7)
 
 Fichier
 =======
@@ -155,20 +155,15 @@ do
 
 switch (n)
 {
- case something:
- {
-     //...
- } break; // éviter les fallthrough.
- // Utiliser [[fallthrough]] pour les volontaires:
- case something_else:
- {
-     //...
- } [[fallthrough]]
- default: // toujours mettre un default.
- {
-     //...
- }
-} // dans les 2 cas le compilateur vous enverra des warnings.
+case something: {
+    //...
+}   break; // éviter les fallthrough.
+case something_else: {
+    //...
+}   [[fallthrough]] // Utiliser [[fallthrough]] pour les volontaires:
+default: { // toujours mettre un default.
+    //...
+}} // dans les 2 cas le compilateur vous enverra des warnings.
 ```
 
 Ne pas utiliser les exceptions sauf éventuellement pour rattraper les celles qui viennent des bibliothèques.
