@@ -1,0 +1,7 @@
+language: cpp
+script: cd src && make debug
+
+before_install:
+ - sudo apt-get update
+ - sudo apt-get upgrade
+ - sudo apt-get install libsfml-dev
