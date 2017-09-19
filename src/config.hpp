@@ -23,9 +23,9 @@ struct Configuration
 
     /**
      * \brief Parses a configuration file
-     * \param filename The file to load the configuration from
+     * \param filename Path of the option file to load
      *
-     * Parses the file filename and update the options of the configuration accordingly
+     * Load the configuration from a file
      */
     void parse(const std::string& filename);
 };
