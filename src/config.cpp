@@ -48,3 +48,14 @@ void Configuration::parse(const std::string& filename)
 
     return;
 }
+
+void Configuration::write(const std::string& filename)
+{
+    std::ofstream config_file(filename);
+
+    config_file << "[Video]" << std::endl;
+    config_file << "width=" << width << std::endl;
+    config_file << "height=" << height << std::endl;
+    config_file << "fullscreen=" << fullscreen << std::endl;
+    config_file << "vsync=" << vsync << std::endl;
+}

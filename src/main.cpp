@@ -6,31 +6,10 @@
 #include "config.hpp"
 
 
-int main([[maybe_unused]] int argc, [[maybe_unused]] char *argv[])
+int main(int argc, char *argv[])
 {
     Configuration config;
     std::string config_filename = "config.ini";
-    
-    for (std::size_t n = 1; n < argc; n++)
-    {   
-        switch (strlen(argv[n]))
-        {
-            case 2:
-                if (argv[n][0] == '-')
-                {
-                    switch (argv[n][2])
-                    {
-                        case 'c':
-                            if (n+1 == argc)
-                            {
-                                std::cout << "missing parameter: config_file after -c" << std::endl;
-                                return 1;
-                            }
-                            config_filename = argv[++n];
-                    }
-                }
-        }
-    }
 
     config.parse(config_filename);
 
