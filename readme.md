@@ -1,4 +1,4 @@
-Dungeon Battle
+Dungeon Battle [![Build Status](https://travis-ci.org/remi-dupre/dungeon-battle.svg?branch=master)](https://travis-ci.org/remi-dupre/dungeon-battle)
 ==============
 
 Contribute
