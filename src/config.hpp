@@ -28,4 +28,12 @@ struct Configuration
      * Load the configuration from a file
      */
     void parse(const std::string& filename);
+
+    /**
+     * \brief Write a configuration file
+     * \param filename Path of the option file to write
+     *
+     * Write the configuration to a file
+     */
+     void write(const std::string& filename);
 };

@@ -29,7 +29,7 @@ void Configuration::parse(const std::string& filename)
 
         std::string option_name = line.substr(0, eq_pos);
 
-        if(option_name == "height")
+        if (option_name == "height")
             height = std::stoi(line.substr(eq_pos+1, line.size()));
         else if (option_name == "width")
             width = std::stoi(line.substr(eq_pos+1, line.size()));
@@ -40,4 +40,15 @@ void Configuration::parse(const std::string& filename)
     }
 
     return;
+}
+
+void Configuration::write(const std::string& filename)
+{
+    std::ofstream config_file(filename);
+    
+    config_file << "[Video]" << std::endl;
+    config_file << "width=" << width << std::endl;
+    config_file << "height=" << height << std::endl;
+    config_file << "fullscreen=" << fullscreen << std::endl;
+    config_file << "vsync=" << vsync << std::endl;
 }
