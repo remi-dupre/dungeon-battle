@@ -1,4 +1,4 @@
-CFLAGS = -std=c++1z                                   # Compiler flags
+CFLAGS = -std=c++1y                                   # Compiler flags
 DFLAGS =                                              # Debugueur flags
 WFLAGS = -Wall -Wextra                                # Warning flags
 LFLAGS = -lsfml-graphics -lsfml-window -lsfml-system  # Linker flags

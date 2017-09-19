@@ -3,6 +3,4 @@ script: make debug
 
 before_install:
  - sudo apt-get -qq update
- - sudo apt-get install g++-7
- - sudo update-alternative --install /usr/bin/g++ g++ /usr/bin/g++-7 1
  - sudo apt-get install -y libsfml-dev
