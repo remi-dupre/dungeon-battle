@@ -18,7 +18,7 @@ void Configuration::read(const std::string& filename)
     std::string line;
 
     if (!config_file.is_open())
-	return;
+        return;
 
     while (std::getline(config_file, line))
     {
