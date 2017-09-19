@@ -25,30 +25,58 @@ Une ligne entre les includes des différentes bibliothèque ? eg
 2 sauts de ligne après les #include
 
 Ne jamais faire de using namespace ...;
+
 L'indentation se fait avec 4 espaces.
-... code
+
 Saut de ligne à la fin du fichier.
 
 Conventions de nommage (proposition)
 ====================================
 
-| Type                                       | Convention                  |
-|--------------------------------------------|-----------------------------|
-| fichier                                    | snake_case.cc, snake_case.h |
-| namespace                                  | snake_case                  |
-| type (struct, class, union, enum, typedef) | PascalCase                  |
-| fonction, méthode static                   | snake_case                  |
-| méthode                                    | camlCase                    |
-| local, static and global variable          | snake_case                  |
-| variable membre                            | snake_case                  |
-| template parameter                         | PascalCase                  |
-
+| Type                                       | Convention                     |
+|--------------------------------------------|--------------------------------|
+| Fichier                                    | snake_case.cpp, snake_case.hpp |
+| Local, static and global variable          | snake_case                     |
+| Variable membre                            | snake_case                     |
+| Fonction, méthode static                   | snake_case                     |
+| Méthode                                    | camlCase                       |
+| Type (struct, class, union, enum, typedef) | PascalCase                     |
+| Template parameter                         | PascalCase                     |
+| Namespace                                  | snake_case                     |
+| Macro (si jamais)                          | UPPER_CASE                     |
 
 Documentation
 =============
 
 Description générale du ce que que fait le programme sous la forme d'une doc.
-//TODO
+
+Documentation de classe, fonction :
+```cpp
+////////////////////////////////////////////////////////////
+/// \brief Courte description de la classe
+///
+////////////////////////////////////////////////////////////
+class Class
+{
+    // ...
+};
+
+////////////////////////////////////////////////////////////
+/// \class Class
+///
+///
+/// Description détaillée
+////////////////////////////////////////////////////////////
+```
+
+Documentation de variable, d'enum :
+```cpp
+enum
+{
+    One, ///< Documentation of One
+    Two, ///< Documentation of Two
+};
+```
 
 Définition de fonction
 ======================
