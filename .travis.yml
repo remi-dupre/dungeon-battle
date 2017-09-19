@@ -1,5 +1,9 @@
 language: cpp
-script: make doc && make debug
+script:
+ - make doc 
+ - make debug
+ - make tests
+ - ./tests/test_configuration
 
 before_install:
  - sudo apt-get -qq update
