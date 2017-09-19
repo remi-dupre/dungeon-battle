@@ -27,7 +27,7 @@ struct Configuration
      *
      * Load the configuration from a file
      */
-    void parse(const std::string& filename);
+    void read(const std::string& filename);
 
     /**
      * \brief Write a configuration file

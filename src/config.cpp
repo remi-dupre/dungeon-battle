@@ -12,7 +12,7 @@ Configuration::Configuration() :
     vsync(true)
 {}
 
-void Configuration::parse(const std::string& filename)
+void Configuration::read(const std::string& filename)
 {
     std::ifstream config_file(filename);
     std::string line;
