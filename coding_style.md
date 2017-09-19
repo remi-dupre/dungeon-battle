@@ -1,7 +1,7 @@
 Compilation
 ===========
 
-Compiler avec `-std=c++1z -Wall -Wextra`. (Il faut au moins gcc 7)
+Compiler avec `-std=c++1y -Wall -Wextra`. (Il faut au moins gcc 5)
 
 Fichier
 =======
