@@ -155,15 +155,19 @@ do
 
 switch (n)
 {
-case something: {
+case something:
+{
     //...
 }   break; // éviter les fallthrough.
-case something_else: {
+case something_else:
+{
     //...
 }   [[fallthrough]] // Utiliser [[fallthrough]] pour les volontaires:
-default: { // toujours mettre un default.
+default:
+{ // toujours mettre un default.
     //...
-}} // dans les 2 cas le compilateur vous enverra des warnings.
+}
+} // dans les 2 cas le compilateur vous enverra des warnings.
 ```
 
 Ne pas utiliser les exceptions sauf éventuellement pour rattraper les celles qui viennent des bibliothèques.
