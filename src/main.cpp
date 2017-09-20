@@ -7,10 +7,13 @@
 #include "config.hpp"
 
 
-int main([[maybe_unused]] int argc, [[maybe_unused]] char *argv[])
+int main(int argc, char *argv[])
 {
     Configuration config;
     std::string config_filename = "config.ini";
+
+    if (argc > 1)
+        config_filename = argv[1];
 
     config.read(config_filename);
 

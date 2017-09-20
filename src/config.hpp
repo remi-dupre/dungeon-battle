@@ -19,7 +19,6 @@ struct Configuration
     bool fullscreen;         ///< Toggles fullscreen mode, default value is off
     bool vsync;              ///< Toggles vertical synchronisation, default value is on
 
-
     /**
      * \brief Default constructor
      *

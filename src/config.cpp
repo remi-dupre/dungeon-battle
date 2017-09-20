@@ -15,7 +15,6 @@ Configuration::Configuration() :
 
 void Configuration::read(const std::string& filename)
 {
-
     std::ifstream config_file(filename);
     std::string line;
 
