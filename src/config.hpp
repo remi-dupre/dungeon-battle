@@ -1,6 +1,6 @@
 /**
  * \file config.hpp
- * \brief Manage configuration.
+ * \brief Manage configuration of the game.
  */
 
 #pragma once
