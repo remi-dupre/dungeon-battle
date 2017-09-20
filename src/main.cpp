@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
     std::string config_filename = "config.ini";
 
     if (argc > 1)
-        config_filename = argv[1];
+	config_filename = argv[1];
 
     config.read(config_filename);
 
@@ -30,33 +30,33 @@ int main(int argc, char *argv[])
 
     while (window.isOpen())
     {
-        sf::Event event;
+	sf::Event event;
 
-        while (window.pollEvent(event))
-        {
-            if (event.type == sf::Event::Closed)
-                window.close();
-        }
+	while (window.pollEvent(event))
+	{
+	    if (event.type == sf::Event::Closed)
+		window.close();
+	}
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-        {
-            rect.setPosition(rect.getPosition() + sf::Vector2f(0.f, -10.f));
-        }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-        {
-            rect.setPosition(rect.getPosition() + sf::Vector2f(0.f, 10.f));
-        }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-        {
-            rect.setPosition(rect.getPosition() + sf::Vector2f(-10.f, 0.f));
-        }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-        {
-            rect.setPosition(rect.getPosition() + sf::Vector2f(10.f, 0.f));
-        }
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+	{
+	    rect.setPosition(rect.getPosition() + sf::Vector2f(0.f, -10.f));
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+	{
+	    rect.setPosition(rect.getPosition() + sf::Vector2f(0.f, 10.f));
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+	{
+	    rect.setPosition(rect.getPosition() + sf::Vector2f(-10.f, 0.f));
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+	{
+	    rect.setPosition(rect.getPosition() + sf::Vector2f(10.f, 0.f));
+	}
 
-        window.clear();
-        window.draw(rect);
-        window.display();
+	window.clear();
+	window.draw(rect);
+	window.display();
     }
 }
