@@ -13,6 +13,7 @@ int main()
 
     assert(config.width == 800);
     assert(config.height == 600);
+    assert(config.scalefactor == 1);
     assert(config.fullscreen == false);
     assert(config.vsync == true);
 
@@ -20,6 +21,7 @@ int main()
 
     assert(config.width == 685);
     assert(config.height == 534);
+    assert(config.scalefactor == 2);
     assert(config.fullscreen == true);
     assert(config.vsync == true);
 
