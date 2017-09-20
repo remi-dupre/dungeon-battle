@@ -2,6 +2,7 @@
 #include <iostream>
 
 #include <SFML/Graphics.hpp>
+#include <Vector2.hpp>
 
 #include "config.hpp"
 
@@ -15,6 +16,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char *argv[])
 
     sf::RenderWindow window({config.width, config.height}, "Dungeon Battle", sf::Style::Close);
     window.setVerticalSyncEnabled(config.vsync);
+    window.setSize(sf::Vector2u(config.scalefactor * config.width, config.scalefactor * config.height));
 
     sf::RectangleShape rect({40.f, 60.f});
     rect.setOrigin(10.f, 10.f);
