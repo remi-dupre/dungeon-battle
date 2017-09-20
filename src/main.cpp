@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
 
     config.read(config_filename);
 
-    sf::Style style = sf::Style::Close;
+    sf::Uint32 style = sf::Style::Close;
     if (config.fullscreen)
         style |= sf::Style::Fullscreen;
 
