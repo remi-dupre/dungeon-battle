@@ -25,6 +25,7 @@ struct Configuration
     sf::Key right_key;       ///< Key pressed to go right, default value is sf::Keyboard::D
     sf::Key up_key;          ///< Key pressed to go up, default value is sf::Keyboard::Z
     sf::Key down_key;        ///< Key pressed to go down, default value is sf::Keyboars::S
+    sf::Key menu_key         ///< Key pressed to display the menu, default value is sf::Keyboard::Escape
 
     /**
      * \brief Default constructor
