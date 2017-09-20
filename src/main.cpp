@@ -2,7 +2,7 @@
 #include <iostream>
 
 #include <SFML/Graphics.hpp>
-#include <Vector2.hpp>
+#include <SFML/Vector2.hpp>
 
 #include "config.hpp"
 
