@@ -46,6 +46,34 @@ namespace math
     };
 
     /**
+     * \Brief Compute the Hadamard product of two 2D vectors
+     * \param a A 2D vector
+     * \param b A 2D vector
+     * \return The Hadamard product of a and b
+     *
+     * This function computes the Hadamard product of two `sf::Vector2`.
+     */
+    template <typename T>
+    inline constexpr sf::Vector2<T> hadamard(sf::Vector2<T> a, sf::Vector2<T> b)
+    {
+        return sf::Vector2<T>(a.x * b.x, a.y * b.y);
+    };
+
+    /**
+     * \Brief Compute the Hadamard product of two 3D vectors
+     * \param a A 3D vector
+     * \param b A 3D vector
+     * \return The Hadamard product of a and b
+     *
+     * This function computes the Hadamard product of two `sf::Vector3`.
+     */
+    template <typename T>
+    inline constexpr sf::Vector3<T> normalize(sf::Vector3<T> a)
+    {
+        return sf::Vector3<T>(a.x * b.x, a.y * b.y, a.z * b.z);
+    };
+
+    /**
      * \Brief Compute the length squared of a vector
      * \param a A 2D vector
      * \return The length squared of a
