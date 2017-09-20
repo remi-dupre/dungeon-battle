@@ -68,7 +68,7 @@ namespace math
      * This function computes the Hadamard product of two `sf::Vector3`.
      */
     template <typename T>
-    inline constexpr sf::Vector3<T> hadamard(sf::Vector3<T> a)
+    inline constexpr sf::Vector3<T> hadamard(sf::Vector3<T> a, sf::Vector2<T> b)
     {
         return sf::Vector3<T>(a.x * b.x, a.y * b.y, a.z * b.z);
     };
