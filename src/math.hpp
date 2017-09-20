@@ -18,7 +18,7 @@ namespace math
     constexpr T two_pi = 2.0 * math::pi<T>; ///< The constant 2 * pi
 
     /**
-     * \Brief Compute the dot product of two 2D vectors
+     * \brief Compute the dot product of two 2D vectors
      * \param a The first 2D vector
      * \param b The second 2D vector
      * \return The dot product of a and b
@@ -32,7 +32,7 @@ namespace math
     };
 
     /**
-     * \Brief Compute the dot product of two 3D vectors
+     * \brief Compute the dot product of two 3D vectors
      * \param a The first 3D vector
      * \param b The second 3D vector
      * \return The dot product of a and b
@@ -46,7 +46,7 @@ namespace math
     };
 
     /**
-     * \Brief Compute the Hadamard product of two 2D vectors
+     * \brief Compute the Hadamard product of two 2D vectors
      * \param a A 2D vector
      * \param b A 2D vector
      * \return The Hadamard product of a and b
@@ -60,7 +60,7 @@ namespace math
     };
 
     /**
-     * \Brief Compute the Hadamard product of two 3D vectors
+     * \brief Compute the Hadamard product of two 3D vectors
      * \param a A 3D vector
      * \param b A 3D vector
      * \return The Hadamard product of a and b
@@ -74,7 +74,7 @@ namespace math
     };
 
     /**
-     * \Brief Compute the length squared of a vector
+     * \brief Compute the length squared of a vector
      * \param a A 2D vector
      * \return The length squared of a
      *
@@ -87,7 +87,7 @@ namespace math
     };
 
     /**
-     * \Brief Compute the length squared of a vector
+     * \brief Compute the length squared of a vector
      * \param a A 3D vector
      * \return The length squared of a
      *
@@ -100,7 +100,7 @@ namespace math
     };
 
     /**
-     * \Brief Compute the length of a vector
+     * \brief Compute the length of a vector
      * \param a A 2D vector
      * \return The length of a
      *
@@ -113,7 +113,7 @@ namespace math
     };
 
     /**
-     * \Brief Compute the length of a vector
+     * \brief Compute the length of a vector
      * \param a A 3D vector
      * \return The length of a
      *
@@ -126,7 +126,7 @@ namespace math
     };
 
     /**
-     * \Brief Normalize a 2D vector
+     * \brief Normalize a 2D vector
      * \param a A 2D vector
      * \return The vector normalized
      *
@@ -142,7 +142,7 @@ namespace math
     };
 
     /**
-     * \Brief Normalize a 3D vector
+     * \brief Normalize a 3D vector
      * \param a A 3D vector
      * \return The vector normalized
      *
