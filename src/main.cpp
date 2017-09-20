@@ -2,7 +2,6 @@
 #include <iostream>
 
 #include <SFML/Graphics.hpp>
-#include <SFML/System.hpp>
 
 #include "config.hpp"
 
@@ -17,7 +16,11 @@ int main(int argc, char *argv[])
 
     config.read(config_filename);
 
-    sf::RenderWindow window({config.width, config.height}, "Dungeon Battle", sf::Style::Close);
+    sf::Style style = sf::Style::Close;
+    if (config.fullscreen)
+	style |= sf::Style::Fullscreen;
+
+    sf::RenderWindow window({config.width, config.height}, "Dungeon Battle", style);
     window.setVerticalSyncEnabled(config.vsync);
     window.setSize(sf::Vector2u(config.scalefactor * config.width, config.scalefactor * config.height));
 
@@ -28,7 +31,7 @@ int main(int argc, char *argv[])
     while (window.isOpen())
     {
         sf::Event event;
-        
+
         while (window.pollEvent(event))
         {
             if (event.type == sf::Event::Closed)
