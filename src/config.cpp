@@ -10,7 +10,11 @@ Configuration::Configuration() :
     height(600),
     scalefactor(1),
     fullscreen(false),
-    vsync(true)
+    vsync(true),
+    left_key(sf::Keyboard::Q),
+    right_key(sf::Keyboard::D),
+    up_key(sf::Keboard::Z),
+    down_key(sf::Keyboard::S)
 {}
 
 void Configuration::read(const std::string& filename)
