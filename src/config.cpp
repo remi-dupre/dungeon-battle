@@ -19,34 +19,35 @@ void Configuration::read(const std::string& filename)
     std::string line;
 
     if (!config_file.is_open())
-	return;
+        return;
 
     while (std::getline(config_file, line))
     {
-	line = line.substr(0, line.find('#')); // Remove comment
-	if (line.length() == 0)
-	    continue;
-	if (line[0] == '[')
-	    continue;
+        line = line.substr(0, line.find('#')); // Remove comment
+        
+        if (line.length() == 0)
+            continue;
+        if (line[0] == '[')
+            continue;
 
-	std::string::size_type eq_pos = line.find('=');
+        std::string::size_type eq_pos = line.find('=');
 
-	if (eq_pos == std::string::npos)
-	    continue;
-	if (eq_pos + 1 > line.size())
-	    continue;
+        if (eq_pos == std::string::npos)
+            continue;
+        if (eq_pos + 1 > line.size())
+            continue;
 
-	std::string option_name = line.substr(0, eq_pos);
-	std::string value = line.substr(eq_pos+1, line.size());
+        std::string option_name = line.substr(0, eq_pos);
+        std::string value = line.substr(eq_pos+1, line.size());
 
-	if (option_name == "height")
-	    height = std::stoi(value);
-	else if (option_name == "width")
-	    width = std::stoi(value);
-	else if (option_name ==  "fullscreen")
-	    fullscreen = std::stoi(value);
-	else if (option_name ==  "vsync")
-	    vsync = std::stoi(value);
+        if (option_name == "height")
+            height = std::stoi(value);
+        else if (option_name == "width")
+            width = std::stoi(value);
+        else if (option_name ==  "fullscreen")
+            fullscreen = std::stoi(value);
+        else if (option_name ==  "vsync")
+            vsync = std::stoi(value);
     }
 
     return;
@@ -57,7 +58,7 @@ void Configuration::write(const std::string& filename)
     std::ofstream config_file(filename);
 
     if (!config_file.is_open())
-	return;
+    return;
 
     config_file << "[Video]" << std::endl;
     config_file << "width=" << width << std::endl;
