@@ -15,6 +15,7 @@ struct Configuration
 {
     unsigned int width;      ///< Width of the window, default value is 800
     unsigned int height;     ///< Height of the window, default value is 600
+    unsigned int scalefactor;///< Scale factor for the window size, default value is 1
     bool fullscreen;         ///< Toggles fullscreen mode, default value is off
     bool vsync;              ///< Toggles vertical synchronisation, default value is on
 

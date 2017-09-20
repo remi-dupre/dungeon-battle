@@ -8,6 +8,7 @@
 Configuration::Configuration() :
     width(800),
     height(600),
+    scalefactor(1),
     fullscreen(false),
     vsync(true)
 {}
@@ -24,7 +25,7 @@ void Configuration::read(const std::string& filename)
     while (std::getline(config_file, line))
     {
         line = line.substr(0, line.find('#')); // Remove comment
-        
+
         if (line.length() == 0)
             continue;
         if (line[0] == '[')
@@ -44,6 +45,8 @@ void Configuration::read(const std::string& filename)
             height = std::stoi(value);
         else if (option_name == "width")
             width = std::stoi(value);
+        else if (option_name == "scalefactor")
+            scalefactor = std::stoi(value);
         else if (option_name ==  "fullscreen")
             fullscreen = std::stoi(value);
         else if (option_name ==  "vsync")
@@ -58,11 +61,12 @@ void Configuration::write(const std::string& filename)
     std::ofstream config_file(filename);
 
     if (!config_file.is_open())
-    return;
+        return;
 
     config_file << "[Video]" << std::endl;
     config_file << "width=" << width << std::endl;
     config_file << "height=" << height << std::endl;
+    config_file << "scalefactor=" << scalefactor << std::endl;
     config_file << "fullscreen=" << fullscreen << std::endl;
     config_file << "vsync=" << vsync << std::endl;
 
