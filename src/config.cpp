@@ -11,11 +11,11 @@ Configuration::Configuration() :
     scalefactor(1),
     fullscreen(false),
     vsync(true),
-    left_key(sf::Keyboard::Q),
-    right_key(sf::Keyboard::D),
-    up_key(sf::Keboard::Z),
-    down_key(sf::Keyboard::S),
-    menu_key(sf::Keboard::Escape)
+    left_key(sf::Keyboard::Key::Q),
+    right_key(sf::Keyboard::Key::D),
+    up_key(sf::Keyboard::Key::Z),
+    down_key(sf::Keyboard::Key::S),
+    menu_key(sf::Keyboard::Key::Escape)
 {}
 
 void Configuration::read(const std::string& filename)
