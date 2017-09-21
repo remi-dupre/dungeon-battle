@@ -19,16 +19,14 @@ namespace math
 
     /**
      * \brief Compute the dot product of two 2D vectors
-     *
-     * This function computes the dot product of two `sf::Vector2`.
-     *
      * \param a The first 2D vector
      * \param b The second 2D vector
-     *
      * \return The dot product of a and b
+     *
+     * This function computes the dot product of two `sf::Vector2`.
      */
     template <typename T>
-    T dot(sf::Vector2<T> a, sf::Vector2<T> b);
+    constexpr T dot(sf::Vector2<T> a, sf::Vector2<T> b);
 
     /**
      * \brief Compute the dot product of two 3D vectors
@@ -39,7 +37,7 @@ namespace math
      * This function computes the dot product of two `sf::Vector3`.
      */
     template <typename T>
-    T dot(sf::Vector3<T> a, sf::Vector3<T> b);
+    constexpr T dot(sf::Vector3<T> a, sf::Vector3<T> b);
 
     /**
      * \brief Compute the Hadamard product of two 2D vectors
@@ -150,17 +148,17 @@ namespace math
     // Implementation
     //----------------
 
-    // template <typename T>
-    // inline constexpr T dot(sf::Vector2<T> a, sf::Vector2<T> b)
-    // {
-    //     return a.x * b.x + a.y * b.y;
-    // }
+    template <typename T>
+    inline constexpr T dot(sf::Vector2<T> a, sf::Vector2<T> b)
+    {
+        return a.x * b.x + a.y * b.y;
+    }
 
-    // template <typename T>
-    // inline constexpr T dot(sf::Vector3<T> a, sf::Vector3<T> b)
-    // {
-    //     return a.x * b.x + a.y * b.y + a.z * b.z;
-    // }
+    template <typename T>
+    inline constexpr T dot(sf::Vector3<T> a, sf::Vector3<T> b)
+    {
+        return a.x * b.x + a.y * b.y + a.z * b.z;
+    }
 
     template <typename T>
     inline constexpr sf::Vector2<T> hadamard(sf::Vector2<T> a, sf::Vector2<T> b)
