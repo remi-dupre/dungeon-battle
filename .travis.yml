@@ -7,7 +7,7 @@ language: cpp
 
 before_install:
  - docker run -d --name artful -v $(pwd):/travis ubuntu:artful tail -f /dev/null
-   docker ps
+ - docker ps
 
 install:
  - docker exec -t artful bash -c "
@@ -17,13 +17,14 @@ install:
    apt-get install -y doxygen;"
 
 script:
- - docker exec -t artful -c "cd /travis;
-   make doc CXX=g++-7 &&
-   make debug CXX=g++-7 &&
-   make tests CXX=g++-7 &&
-   cd tests &&
-   ./test_configuration &&
-   cd .."
+ - docker exec -t artful bash -c "cd /travis;
+   make doc CXX=g++-7";
+ - docker exec -t artful bash -c "cd /travis;
+   make debug CXX=g++-7;"
+ - docker exec -t artful bash -c "cd /travis;
+   make tests CXX=g++-7;"
+ - docker exec -t artful bash -c "cd /travis/test;
+   ./test_configuration;"
 
 deploy:
   name: Travis Documentation Generation
