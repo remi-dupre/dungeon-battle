@@ -3,9 +3,9 @@ dist: trusty
 language: cpp
 script:
  - ./install_clang.sh
- - make doc CXX=$(PWD)/clang/bin/clang++
- - make debug CXX=$(PWD)/clang/bin/clang++
- - make tests CXX=$(PWD)/clang/bin/clang++
+ - make doc CXX=${PWD}/clang/bin/clang++
+ - make debug CXX=${PWD}/clang/bin/clang++
+ - make tests CXX=${PWD}/clang/bin/clang++
  - cd tests
  - ./test_configuration
  - cd ..
