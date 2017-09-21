@@ -1,3 +1,5 @@
+dist: precise
+
 language: cpp
 script:
  - make doc
