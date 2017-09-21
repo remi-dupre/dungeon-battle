@@ -4,9 +4,9 @@ language: cpp
 script:
  - source install_clang.sh
  - source install_sfml.sh
- - make doc CXX="clang++ -ISFML/include -LSFML/lib"
- - make debug CXX="clang++ -ISFML/include -LSFML/lib"
- - make tests CXX="clang++ -ISFML/include -LSFML/lib"
+ - make doc CXX=clang++
+ - make debug CXX=clang++
+ - make tests CXX=clang++
  - cd tests
  - ./test_configuration
  - cd ..
