@@ -23,7 +23,7 @@ namespace math
      * \brief Compute the dot product of two 2D vectors
      * \param a The first 2D vector
      * \param b The second 2D vector
-     * \return The dot product of a and b
+     * \return The dot product of *a* and *b*
      *
      * This function computes the dot product of two `sf::Vector2`.
      */
@@ -34,7 +34,7 @@ namespace math
      * \brief Compute the dot product of two 3D vectors
      * \param a The first 3D vector
      * \param b The second 3D vector
-     * \return The dot product of a and b
+     * \return The dot product of *a* and *b*
      *
      * This function computes the dot product of two `sf::Vector3`.
      */
@@ -45,7 +45,7 @@ namespace math
      * \brief Compute the Hadamard product of two 2D vectors
      * \param a A 2D vector
      * \param b A 2D vector
-     * \return The Hadamard product of a and b
+     * \return The Hadamard product of *a* and *b*
      *
      * This function computes the Hadamard product of two `sf::Vector2`.
      */
@@ -56,7 +56,7 @@ namespace math
      * \brief Compute the Hadamard product of two 3D vectors
      * \param a A 3D vector
      * \param b A 3D vector
-     * \return The Hadamard product of a and b
+     * \return The Hadamard product of *a* and *b*
      *
      * This function computes the Hadamard product of two `sf::Vector3`.
      */
@@ -64,10 +64,32 @@ namespace math
     constexpr sf::Vector3<T> hadamard(sf::Vector3<T> a, sf::Vector2<T> b);
 
     /**
+     * \brief Compute the cross product of two 2D vectors
+     * \param a A 2D vector
+     * \param b A 2D vector
+     * \return The third coordinate of the cross product of *a* and *b*
+     *
+     * This function computes the third coordinate of the cross product of two `sf::Vector2`.
+     */
+    template <typename T>
+    constexpr T cross(sf::Vector2<T> a, sf::Vector2<T> b);
+
+    /**
+     * \brief Compute the cross product of two 3D vectors
+     * \param a A 3D vector
+     * \param b A 3D vector
+     * \return The cross product of *a* and *b*
+     *
+     * This function computes the cross product of two `sf::Vector3`.
+     */
+    template <typename T>
+    constexpr sf::Vector3<T> cross(sf::Vector3<T> a, sf::Vector2<T> b);
+
+    /**
      * \brief Compute the distance between two 2D vectors
      * \param a The first 2D vector
      * \param b The second 2D vector
-     * \return The distance between a and b
+     * \return The distance between *a* and *b*
      *
      * This function computes the distance between two `sf::Vector2`.
      */
@@ -78,7 +100,7 @@ namespace math
      * \brief Compute the distance between two 3D vectors
      * \param a The first 3D vector
      * \param b The second 3D vector
-     * \return The distance between a and b
+     * \return The distance between *a* and *b*
      *
      * This function computes the distance between two `sf::Vector3`.
      */
@@ -88,7 +110,7 @@ namespace math
     /**
      * \brief Compute the length squared of a vector
      * \param a A 2D vector
-     * \return The length squared of a
+     * \return The length squared of *a*
      *
      * This function computes the length squared of a `sf::Vector2`.
      */
@@ -98,7 +120,7 @@ namespace math
     /**
      * \brief Compute the length squared of a vector
      * \param a A 3D vector
-     * \return The length squared of a
+     * \return The length squared of *a*
      *
      * This function computes the length squared of a `sf::Vector3`.
      */
@@ -108,7 +130,7 @@ namespace math
     /**
      * \brief Compute the length of a vector
      * \param a A 2D vector
-     * \return The length of a
+     * \return The length of *a*
      *
      * This function computes the length of a `sf::Vector2`.
      */
@@ -118,7 +140,7 @@ namespace math
     /**
      * \brief Compute the length of a vector
      * \param a A 3D vector
-     * \return The length of a
+     * \return The length of *a*
      *
      * This function computes the length of a `sf::Vector3`.
      */
@@ -128,7 +150,7 @@ namespace math
     /**
      * \brief Normalize a 2D vector
      * \param a A 2D vector
-     * \return The vector normalized
+     * \return The *a* vector normalized
      *
      * This function normalizes a `sf::vector2`.
      */
@@ -138,7 +160,7 @@ namespace math
     /**
      * \brief Normalize a 3D vector
      * \param a A 3D vector
-     * \return The vector normalized
+     * \return The *a* vector normalized
      *
      * This function normalizes a `sf::vector3`.
      */

@@ -23,6 +23,20 @@ inline constexpr sf::Vector3<T> hadamard(sf::Vector3<T> a, sf::Vector2<T> b)
 }
 
 template <typename T>
+inline constexpr T cross(sf::Vector2<T> a, sf::Vector2<T> b);
+{
+    return a.x * b.y - a.y * b.x;
+}
+
+template <typename T>
+inline constexpr sf::Vector3<T> cross(sf::Vector3<T> a, sf::Vector2<T> b);
+{
+    return sf::Vector3<T>(a.y * b.z - a.z * b.y,
+                          a.z * b.x - a.x * b.z,
+                          a.x * b.y - a.y * b.x);
+}
+
+template <typename T>
 inline constexpr T distance(sf::Vector2<T> a, sf::Vector2<T> b)
 {
     return math::length(b - a);
