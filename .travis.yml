@@ -1,19 +1,29 @@
-dist: trusty
+sudo: required
+
+services:
+  - docker
 
 language: cpp
-script:
- - source install_clang.sh
- - make doc CXX=clang/bin/clang++
- - make debug CXX=clang/bin/clang++
- - make tests CXX=clang/bin/clang++
- - cd tests
- - ./test_configuration
- - cd ..
 
 before_install:
- - sudo apt-get -qq update
- - sudo apt-get install -y libsfml-dev
- - sudo apt-get install -y doxygen
+ - docker run -d --name artful -v $(pwd):/travis ubuntu:artful tail -f /dev/null
+   docker ps
+
+install:
+ - docker exec -t artful bash -c "
+   apt-get update;
+   apt-get install -y g++-7;
+   apt-get install -y libsfml-dev;
+   apt-get install -y doxygen;"
+
+script:
+ - docker exec -t artful -c "cd /travis;
+   make doc CXX=g++-7 &&
+   make debug CXX=g++-7 &&
+   make tests CXX=g++-7 &&
+   cd tests &&
+   ./test_configuration &&
+   cd .."
 
 deploy:
   name: Travis Documentation Generation
