@@ -11,7 +11,7 @@ DFLAGS =
 WFLAGS = -Wall -Wextra
 
 # Linker flags
-LFLAGS = -lsfml-graphics -lsfml-window -lsfml-system #-Wl,-rpath="$${ORIGIN}"
+LFLAGS = -lsfml-graphics -lsfml-window -lsfml-system -Wl,-rpath,.
 
 SRC_DIR = src
 SRC = $(SRC_DIR)/main.cpp \
