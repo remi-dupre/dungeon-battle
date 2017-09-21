@@ -26,10 +26,7 @@ namespace math
      * This function computes the dot product of two `sf::Vector2`.
      */
     template <typename T>
-    inline constexpr T dot(sf::Vector2<T> a, sf::Vector2<T> b)
-    {
-        return a.x * b.x + a.y * b.y;
-    };
+    constexpr T dot(sf::Vector2<T> a, sf::Vector2<T> b);
 
     /**
      * \brief Compute the dot product of two 3D vectors
@@ -40,10 +37,7 @@ namespace math
      * This function computes the dot product of two `sf::Vector3`.
      */
     template <typename T>
-    inline constexpr T dot(sf::Vector3<T> a, sf::Vector3<T> b)
-    {
-        return a.x * b.x + a.y * b.y + a.z * b.z;
-    };
+    constexpr T dot(sf::Vector3<T> a, sf::Vector3<T> b);
 
     /**
      * \brief Compute the Hadamard product of two 2D vectors
@@ -54,10 +48,7 @@ namespace math
      * This function computes the Hadamard product of two `sf::Vector2`.
      */
     template <typename T>
-    inline constexpr sf::Vector2<T> hadamard(sf::Vector2<T> a, sf::Vector2<T> b)
-    {
-        return sf::Vector2<T>(a.x * b.x, a.y * b.y);
-    };
+    constexpr sf::Vector2<T> hadamard(sf::Vector2<T> a, sf::Vector2<T> b);
 
     /**
      * \brief Compute the Hadamard product of two 3D vectors
@@ -68,10 +59,29 @@ namespace math
      * This function computes the Hadamard product of two `sf::Vector3`.
      */
     template <typename T>
-    inline constexpr sf::Vector3<T> hadamard(sf::Vector3<T> a, sf::Vector2<T> b)
-    {
-        return sf::Vector3<T>(a.x * b.x, a.y * b.y, a.z * b.z);
-    };
+    constexpr sf::Vector3<T> hadamard(sf::Vector3<T> a, sf::Vector2<T> b);
+
+    /**
+     * \brief Compute the distance between two 2D vectors
+     * \param a The first 2D vector
+     * \param b The second 2D vector
+     * \return The distance between a and b
+     *
+     * This function computes the distance between two `sf::Vector2`.
+     */
+    template <typename T>
+    constexpr T distance(sf::Vector2<T> a, sf::Vector2<T> b);
+
+    /**
+     * \brief Compute the distance between two 3D vectors
+     * \param a The first 3D vector
+     * \param b The second 3D vector
+     * \return The distance between a and b
+     *
+     * This function computes the distance between two `sf::Vector3`.
+     */
+    template <typename T>
+    constexpr T distance(sf::Vector3<T> a, sf::Vector3<T> b);
 
     /**
      * \brief Compute the length squared of a vector
@@ -81,10 +91,7 @@ namespace math
      * This function computes the length squared of a `sf::Vector2`.
      */
     template <typename T>
-    inline constexpr T length_sqr(sf::Vector2<T> a)
-    {
-        return math::dot(a, a);
-    };
+    constexpr T length_sqr(sf::Vector2<T> a);
 
     /**
      * \brief Compute the length squared of a vector
@@ -94,10 +101,7 @@ namespace math
      * This function computes the length squared of a `sf::Vector3`.
      */
     template <typename T>
-    inline constexpr T length_sqr(sf::Vector3<T> a)
-    {
-        return math::dot(a, a);
-    };
+    constexpr T length_sqr(sf::Vector3<T> a);
 
     /**
      * \brief Compute the length of a vector
@@ -107,10 +111,7 @@ namespace math
      * This function computes the length of a `sf::Vector2`.
      */
     template <typename T>
-    inline constexpr T length(sf::Vector2<T> a)
-    {
-        return std::sqrt(math::length_sqr(a));
-    };
+    constexpr T length(sf::Vector2<T> a);
 
     /**
      * \brief Compute the length of a vector
@@ -120,10 +121,7 @@ namespace math
      * This function computes the length of a `sf::Vector3`.
      */
     template <typename T>
-    inline constexpr T length(sf::Vector3<T> a)
-    {
-        return std::sqrt(math::length_sqr(a));
-    };
+    constexpr T length(sf::Vector3<T> a);
 
     /**
      * \brief Normalize a 2D vector
@@ -133,13 +131,7 @@ namespace math
      * This function normalizes a `sf::vector2`.
      */
     template <typename T>
-    inline constexpr sf::Vector2<T> normalize(sf::Vector2<T> a)
-    {
-        T l = math::length(a);
-        if (l == 0.0)
-            return a;
-        return a / l;
-    };
+    constexpr sf::Vector2<T> normalize(sf::Vector2<T> a);
 
     /**
      * \brief Normalize a 3D vector
@@ -149,11 +141,88 @@ namespace math
      * This function normalizes a `sf::vector3`.
      */
     template <typename T>
+    constexpr sf::Vector3<T> normalize(sf::Vector3<T> a);
+
+
+    //----------------
+    // Implementation
+    //----------------
+
+    template <typename T>
+    inline constexpr T dot(sf::Vector2<T> a, sf::Vector2<T> b)
+    {
+        return a.x * b.x + a.y * b.y;
+    }
+
+    template <typename T>
+    inline constexpr T dot(sf::Vector3<T> a, sf::Vector3<T> b)
+    {
+        return a.x * b.x + a.y * b.y + a.z * b.z;
+    }
+
+    template <typename T>
+    inline constexpr sf::Vector2<T> hadamard(sf::Vector2<T> a, sf::Vector2<T> b)
+    {
+        return sf::Vector2<T>(a.x * b.x, a.y * b.y);
+    }
+
+    template <typename T>
+    inline constexpr sf::Vector3<T> hadamard(sf::Vector3<T> a, sf::Vector2<T> b)
+    {
+        return sf::Vector3<T>(a.x * b.x, a.y * b.y, a.z * b.z);
+    }
+
+    template <typename T>
+    inline constexpr T distance(sf::Vector2<T> a, sf::Vector2<T> b)
+    {
+        return math::length(b - a);
+    }
+
+    template <typename T>
+    inline constexpr T distance(sf::Vector3<T> a, sf::Vector3<T> b)
+    {
+        return math::length(b - a);
+    }
+
+    template <typename T>
+    inline constexpr T length_sqr(sf::Vector2<T> a)
+    {
+        return math::dot(a, a);
+    }
+
+    template <typename T>
+    inline constexpr T length_sqr(sf::Vector3<T> a)
+    {
+        return math::dot(a, a);
+    }
+
+    template <typename T>
+    inline constexpr T length(sf::Vector2<T> a)
+    {
+        return std::sqrt(math::length_sqr(a));
+    }
+
+    template <typename T>
+    inline constexpr T length(sf::Vector3<T> a)
+    {
+        return std::sqrt(math::length_sqr(a));
+    }
+
+    template <typename T>
+    inline constexpr sf::Vector2<T> normalize(sf::Vector2<T> a)
+    {
+        T l = math::length(a);
+        if (l == 0.0)
+            return a;
+        return a / l;
+    }
+
+    template <typename T>
     inline constexpr sf::Vector3<T> normalize(sf::Vector3<T> a)
     {
         T l = math::length(a);
         if (l == 0.0)
             return a;
         return a / l;
-    };
+    }
 }
