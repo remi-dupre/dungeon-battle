@@ -2,9 +2,9 @@ dist: trusty
 
 language: cpp
 script:
- - make doc CPPC=g++-7
- - make debug CPPC=g++-7
- - make tests CPPC=g++-7
+ - make doc
+ - make debug
+ - make tests
  - cd tests
  - ./test_configuration
  - cd ..

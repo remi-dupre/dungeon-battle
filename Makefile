@@ -1,8 +1,8 @@
 # C++ compiler name
-CPPC = g++
+CXX = g++
 
 # Compiler flags
-CFLAGS = -std=c++1z
+CFLAGS = -std=c++1y
 
 # Debuguer flags
 DFLAGS =
@@ -37,21 +37,21 @@ debug: DFLAGS += -ggdb
 debug: $(EXEC)
 
 $(EXEC): $(OBJ)
-	$(CPPC) -o $@ $^ $(DFLAGS) $(LFLAGS)
+	$(CXX) -o $@ $^ $(DFLAGS) $(LFLAGS)
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@mkdir -p $(BUILD_DIR)
-	$(CPPC) -o $@ -c $< $(CFLAGS) $(DFLAGS) $(WFLAGS)
+	$(CXX) -o $@ -c $< $(CFLAGS) $(DFLAGS) $(WFLAGS)
 
 tests: debug
 tests: $(EXEC_TEST)
 
 $(BUILD_DIR)/test_%.o: $(SRC_DIR_TEST)/test_%.cpp
 	@mkdir -p $(BUILD_DIR)
-	$(CPPC) -o $@ -c $< $(CFLAGS) $(DFLAGS) $(WFLAGS)
+	$(CXX) -o $@ -c $< $(CFLAGS) $(DFLAGS) $(WFLAGS)
 
 $(SRC_DIR_TEST)/%: $(BUILD_DIR)/%.o
-	$(CPPC) -o $@ $< $(DFLAGS) $(LFLAGS)
+	$(CXX) -o $@ $< $(DFLAGS) $(LFLAGS)
 
 doc:
 	doxygen .doxygen.conf
