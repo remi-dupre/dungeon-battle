@@ -1,19 +1,29 @@
-dist: trusty
+sudo: required
+
+services:
+  - docker
 
 language: cpp
-script:
- - source install_clang.sh
- - source install_sfml.sh
- - make doc CXX=clang/bin/clang++ CFLAGS="-std=c++1z -ISFML/include" LFLAGS=" -lsfml-graphics -lsfml-window -lsfml-system -Wl,-rpath,. -LSFML/lib"
- - make debug CXX=clang/bin/clang++ CFLAGS="-std=c++1z -ISFML/include" LFLAGS=" -lsfml-graphics -lsfml-window -lsfml-system -Wl,-rpath,. -LSFML/lib"
- - make tests CXX=clang/bin/clang++ CFLAGS="-std=c++1z -ISFML/include" LFLAGS=" -lsfml-graphics -lsfml-window -lsfml-system -Wl,-rpath,. -LSFML/lib"
- - cd tests
- - ./test_configuration
- - cd ..
 
 before_install:
- - sudo apt-get -qq update
- - sudo apt-get install -y doxygen
+ - docker run -d --name artful -v $(pwd):/travis ubuntu:artful tail -f /dev/null
+ - docker ps
+
+install:
+ - docker exec -t artful bash -c "apt-get update"
+ - docker exec -t artful bash -c "apt-get install -y --no-install-recommends build-essential"
+ - docker exec -t artful bash -c "apt-get install -y --no-install-recommends libsfml-dev"
+ - docker exec -t artful bash -c "apt-get install -y --no-install-recommends doxygen"
+
+script:
+ - docker exec -t artful bash -c "cd /travis;
+   make doc CXX=g++-7";
+ - docker exec -t artful bash -c "cd /travis;
+   make debug CXX=g++-7;"
+ - docker exec -t artful bash -c "cd /travis;
+   make tests CXX=g++-7;"
+ - docker exec -t artful bash -c "cd /travis/tests;
+   ./test_configuration;"
 
 deploy:
   name: Travis Documentation Generation
