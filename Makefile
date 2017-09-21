@@ -31,6 +31,7 @@ SRC_TEST = $(SRC_DIR_TEST)/test_configuration.cpp
 OBJ_TEST = $(SRC_TEST:$(SRC_DIR_TEST)/%.cpp=$(BUILD_DIR_TEST)/%.o)
 EXEC_TEST = $(SRC_TEST:$(SRC_DIR_TEST)/%.cpp=$(SRC_DIR_TEST)/%)
 
+release: CFLAGS += -O3
 release: $(EXEC)
 
 debug: DFLAGS += -ggdb
