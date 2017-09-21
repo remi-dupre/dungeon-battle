@@ -2,17 +2,17 @@ dist: trusty
 
 language: cpp
 script:
- - ./install_clang.sh
- - make doc CXX=${PWD}/clang/bin/clang++
- - make debug CXX=${PWD}/clang/bin/clang++
- - make tests CXX=${PWD}/clang/bin/clang++
+ - source install_clang.sh
+ - source install_sfml.sh
+ - make doc CXX=clang++
+ - make debug CXX=clang++
+ - make tests CXX=clang++
  - cd tests
  - ./test_configuration
  - cd ..
 
 before_install:
  - sudo apt-get -qq update
- - sudo apt-get install -y libsfml-dev
  - sudo apt-get install -y doxygen
 
 deploy:
