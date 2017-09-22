@@ -11,6 +11,7 @@ Configuration::Configuration() :
     scalefactor(1),
     fullscreen(false),
     vsync(true),
+    maxfps(60),
     left_key(sf::Keyboard::Key::Q),
     right_key(sf::Keyboard::Key::D),
     up_key(sf::Keyboard::Key::Z),
@@ -55,6 +56,8 @@ void Configuration::read(const std::string& filename)
             fullscreen = std::stoi(value);
         else if (option_name ==  "vsync")
             vsync = std::stoi(value);
+        else if (option_name ==  "maxfps")
+            maxfps = std::stoi(value);
     }
 
     return;
@@ -73,6 +76,7 @@ void Configuration::write(const std::string& filename)
     config_file << "scalefactor=" << scalefactor << std::endl;
     config_file << "fullscreen=" << fullscreen << std::endl;
     config_file << "vsync=" << vsync << std::endl;
+    config_file << "maxfps=" << maxfps << std::endl;
 
     return;
 }

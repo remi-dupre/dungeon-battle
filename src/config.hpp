@@ -20,12 +20,13 @@ struct Configuration
     unsigned int scalefactor;///< Scale factor for the window size, default value is 1
     bool fullscreen;         ///< Toggles fullscreen mode, default value is false
     bool vsync;              ///< Toggles vertical synchronisation, default value is true
+    unsigned int maxfps;     ///< Framerate limit of the window
 
     sf::Keyboard::Key left_key;        ///< Key pressed to go left, default value is sf::Keyboard::Q
     sf::Keyboard::Key right_key;       ///< Key pressed to go right, default value is sf::Keyboard::D
     sf::Keyboard::Key up_key;          ///< Key pressed to go up, default value is sf::Keyboard::Z
     sf::Keyboard::Key down_key;        ///< Key pressed to go down, default value is sf::Keyboars::S
-    sf::Keyboard::Key menu_key;         ///< Key pressed to display the menu, default value is sf::Keyboard::Escape
+    sf::Keyboard::Key menu_key;        ///< Key pressed to display the menu, default value is sf::Keyboard::Escape
 
     /**
      * \brief Default constructor
