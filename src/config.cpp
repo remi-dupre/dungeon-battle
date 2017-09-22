@@ -1,4 +1,5 @@
 #include <fstream>
+#include <stdexcept>
 #include <string>
 
 #include "config.hpp"
@@ -46,18 +47,25 @@ void Configuration::read(const std::string& filename)
         std::string option_name = line.substr(0, eq_pos);
         std::string value = line.substr(eq_pos+1, line.size());
 
-        if (option_name == "height")
-            height = std::stoi(value);
-        else if (option_name == "width")
-            width = std::stoi(value);
-        else if (option_name == "scalefactor")
-            scalefactor = std::stoi(value);
-        else if (option_name ==  "fullscreen")
-            fullscreen = std::stoi(value);
-        else if (option_name ==  "vsync")
-            vsync = std::stoi(value);
-        else if (option_name ==  "maxfps")
-            maxfps = std::stoi(value);
+        try
+        {
+            if (option_name == "height")
+                height = std::stoi(value);
+            else if (option_name == "width")
+                width = std::stoi(value);
+            else if (option_name == "scalefactor")
+                scalefactor = std::stoi(value);
+            else if (option_name ==  "fullscreen")
+                fullscreen = std::stoi(value);
+            else if (option_name ==  "vsync")
+                vsync = std::stoi(value);
+            else if (option_name ==  "maxfps")
+                maxfps = std::stoi(value);
+        }
+        catch (const std::invalid_argument& e)
+            continue;
+        catch (const std::out_of_range& e)
+            continue;
     }
 
     return;
