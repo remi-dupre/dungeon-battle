@@ -24,6 +24,8 @@ Ne jamais faire de using namespace
 
 L'indentation se fait avec 4 espaces.
 
+Pas d'indentation dans les lignes vides.
+
 Saut de ligne à la fin du fichier.
 
 Conventions de nommage
