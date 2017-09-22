@@ -16,6 +16,7 @@ int main()
     assert(config.scalefactor == 1);
     assert(config.fullscreen == false);
     assert(config.vsync == true);
+    assert(config.maxfps == 60);
 
     config.read("config2.ini");
 
@@ -24,6 +25,7 @@ int main()
     assert(config.scalefactor == 2);
     assert(config.fullscreen == true);
     assert(config.vsync == true);
+    assert(config.maxfps == 30);
 
     std::cout << "Configuration module OK" << std::endl;
 
