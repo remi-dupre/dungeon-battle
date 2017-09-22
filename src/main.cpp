@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
     sf::Uint32 style = sf::Style::Close;
     if (config.fullscreen)
         style |= sf::Style::Fullscreen;
-    
+
     sf::RenderWindow window({config.width, config.height}, "Dungeon Battle", style);
     window.setVerticalSyncEnabled(config.vsync);
     if (!config.vsync) // Don't activate vertical synchronization and framerate limit at the same time
