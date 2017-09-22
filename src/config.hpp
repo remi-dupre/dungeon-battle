@@ -52,5 +52,5 @@ struct Configuration
      * This function saves the current configuration to a file.
      * All the options are saved, the old file is deleted.
      */
-     void write(const std::string& filename);
+    void write(const std::string& filename);
 };
