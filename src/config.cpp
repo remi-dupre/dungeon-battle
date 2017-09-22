@@ -63,9 +63,13 @@ void Configuration::read(const std::string& filename)
                 maxfps = std::stoi(value);
         }
         catch (const std::invalid_argument& e)
+        {
             continue;
+        }
         catch (const std::out_of_range& e)
+        {
             continue;
+        }
     }
 
     return;
