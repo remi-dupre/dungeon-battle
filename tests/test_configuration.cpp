@@ -25,7 +25,7 @@ int main()
     assert(config.scalefactor == 2);
     assert(config.fullscreen == true);
     assert(config.vsync == true);
-    assert(config.maxfps == 30);
+    assert(config.maxfps == 120);
 
     std::cout << "Configuration module OK" << std::endl;
 
