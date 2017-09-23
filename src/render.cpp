@@ -56,7 +56,7 @@ void Renderer::drawMap(const Map& map)
     }
 }
 
-void Renderer::display(sf::RenderWindow& window)
+void Renderer::display(sf::RenderTarget& target)
 {
-    window.draw(map_vertices.data(), map_vertices.size(), sf::PrimitiveType::Triangles);
+    target.draw(map_vertices.data(), map_vertices.size(), sf::PrimitiveType::Triangles);
 }

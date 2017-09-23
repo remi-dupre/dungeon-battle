@@ -31,13 +31,21 @@ public:
 
     /**
      * \brief Draw the map
+     * \param map The map to draw
+     *
+     * This function set the internal data of the Renderer class
+     * to draw the map on the window later.
      */
     void drawMap(const Map& map);
 
     /**
      * \brief Display on the window the objects drawn before
+     * \param target The RenderTarget to draw on
+     *
+     * This function display the objects drawn before
+     * on the given RenderTarget.
      */
-    void display(sf::RenderWindow& window);
+    void display(sf::RenderTarget& target);
 
 private:
 

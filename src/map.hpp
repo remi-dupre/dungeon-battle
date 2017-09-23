@@ -23,7 +23,7 @@ enum class CellType
  * \brief Represents an entire level.
  *
  * The map is of a fixed shape.
- * It describes its cells but also what entities are putted on it.
+ * It describes its cells but also what entities are on it.
  */
 class Map
 {
