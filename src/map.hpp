@@ -34,9 +34,33 @@ public:
     Map(int width, int height);
 
     /**
-     * \brief Return the cell at coordinates x, y
+     * \brief Return the width of the map
      */
-    CellType& tileAt(int x, int y);
+    int getWidth() const;
+
+    /**
+     * \brief Return the heigth of the map
+     */
+    int getHeight() const;
+
+    /**
+     * \brief Get a read-write access to a tile by its coordinates
+     * \param x X coordinate of the tile
+     * \param y Y coordinate of the tile
+     * \return Reference to the tile
+     * `x` and `y` must be in the ranges `[0, map.width)` and `[0, map.heigth)`
+     */
+    CellType& cellAt(int x, int y);
+
+    /**
+     * \brief Get a read only access to a tile by its coordinates
+     * \param x X coordinate of the tile
+     * \param y Y coordinate of the tile
+     * \return Const reference to the tile
+     * `x` and `y` must be in the ranges `[0, map.width)` and `[0, map.heigth)`
+     */
+    const CellType& cellAt(int x, int y) const;
+
 
 private:
     int width;  ///< The width of the map.

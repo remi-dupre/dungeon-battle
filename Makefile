@@ -15,7 +15,8 @@ LFLAGS = -lsfml-graphics -lsfml-window -lsfml-system -Wl,-rpath,.
 
 SRC_DIR = src
 SRC = $(SRC_DIR)/main.cpp \
-	  $(SRC_DIR)/map.cpp \
+      $(SRC_DIR)/map.cpp \
+      $(SRC_DIR)/render.cpp \
       $(SRC_DIR)/config.cpp
 # List of files to compile
 

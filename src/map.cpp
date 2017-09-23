@@ -8,8 +8,22 @@ Map::Map(int _width, int _height) :
     cells(width * height, CellType::Floor)
 {}
 
+int Map::getWidth() const
+{
+    return width;
+}
 
-CellType& Map::tileAt(int x, int y)
+int Map::getHeight() const
+{
+    return height;
+}
+
+CellType& Map::cellAt(int x, int y)
+{
+    return cells[x + width * y];
+}
+
+const CellType& Map::cellAt(int x, int y) const
 {
     return cells[x + width * y];
 }
