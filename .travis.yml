@@ -22,8 +22,6 @@ script:
    make debug CXX=g++-7;"
  - docker exec -t artful bash -c "cd /travis;
    make tests CXX=g++-7;"
- - docker exec -t artful bash -c "cd /travis/tests;
-   ./test_configuration;"
 
 deploy:
   name: Travis Documentation Generation

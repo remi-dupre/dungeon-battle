@@ -46,8 +46,8 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@mkdir -p $(BUILD_DIR)
 	$(CXX) -o $@ -c $< $(CFLAGS) $(DFLAGS) $(WFLAGS)
 
-tests: debug
-tests: $(EXEC_TEST)
+test: debug
+test: $(EXEC_TEST)
 
 $(BUILD_DIR)/test_%.o: $(SRC_DIR_TEST)/test_%.cpp
 	@mkdir -p $(BUILD_DIR)
@@ -55,6 +55,8 @@ $(BUILD_DIR)/test_%.o: $(SRC_DIR_TEST)/test_%.cpp
 
 $(SRC_DIR_TEST)/%: $(BUILD_DIR)/%.o
 	$(CXX) -o $@ $< $(DFLAGS) $(LFLAGS)
+	@echo "Running the test: " $(@:$(SRC_DIR_TEST)/%=%)
+	@cd $(SRC_DIR_TEST) && ./$(@:$(SRC_DIR_TEST)/%=%)
 
 doc:
 	doxygen .doxygen.conf
