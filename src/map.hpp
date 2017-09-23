@@ -33,6 +33,11 @@ public:
      */
     Map(int width, int height);
 
+    /**
+     * \brief Return the cell at coordinates x, y
+     */
+    CellType& tileAt(int x, int y);
+
 private:
     int width;  ///< The width of the map.
     int height; ///< The height of the map.
@@ -40,5 +45,5 @@ private:
     /**
      * \brief The type of each cell.
      */
-    std::vector<std::vector<CellType>> cells;
+    std::vector<CellType> cells;
 };
