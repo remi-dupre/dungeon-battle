@@ -3,8 +3,7 @@
 
 Renderer::Renderer() :
     tile_size(40.f)
-{
-}
+{}
 
 
 void Renderer::drawMap(const Map& map)
