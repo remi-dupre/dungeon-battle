@@ -39,7 +39,8 @@ void Renderer::drawMap(const Map& map)
                     v3.color = {255, 255, 255};
                     v4.color = {255, 255, 255};
                     break;
-                case CellType::Empty: [[fallthrough]]
+                case CellType::Empty:
+                    [[fallthrough]];
                 default:
                     break;
             }
