@@ -1,3 +1,5 @@
+#include <cassert>
+
 #include "map.hpp"
 
 
@@ -20,10 +22,14 @@ int Map::getHeight() const
 
 CellType& Map::cellAt(int x, int y)
 {
+    assert(x > 0 && x < width);
+    assert(y > 0 && y < height);
     return cells[x + width * y];
 }
 
 const CellType& Map::cellAt(int x, int y) const
 {
+    assert(x > 0 && x < width);
+    assert(y > 0 && y < height);
     return cells[x + width * y];
 }
