@@ -6,7 +6,9 @@
 #include <SFML/Graphics.hpp>
 
 #include "config.hpp"
+#include "map.hpp"
 #include "render.hpp"
+
 
 /**
  * \brief Represent the game
@@ -52,7 +54,9 @@ public:
 
 private:
 
-    sf::RenderWindow window;
-    Configuration config;
-    Renderer renderer;
+    sf::RenderWindow window; ///< The render window of the game
+    Configuration config; ///< The configuration of the game
+    Renderer renderer; ///< The renderer
+
+    std::unique_ptr<Map> map; ///< The map
 };

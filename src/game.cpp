@@ -21,14 +21,17 @@ void Game::init()
 
     if (!config.vsync) // Don't activate vertical synchronization and framerate limit at the same time
         window.setFramerateLimit(config.maxfps);
- }
+
+    map = std::make_unique<Map>(20, 20);
+
+    map->cellAt(2, 3) = CellType::Wall;
+    map->cellAt(3, 3) = CellType::Wall;
+    map->cellAt(4, 3) = CellType::Wall;
+    map->cellAt(7, 8) = CellType::Wall;
+}
 
 void Game::run()
 {
-    sf::RectangleShape rect({40.f, 60.f});
-    rect.setOrigin(10.f, 10.f);
-    rect.setFillColor(sf::Color::Red);
-
     sf::Clock timer;
 
     while (window.isOpen())
@@ -43,23 +46,6 @@ void Game::run()
 
         float time_since_last_frame = timer.restart().asSeconds();
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-        {
-            rect.setPosition(rect.getPosition() + time_since_last_frame * sf::Vector2f(0.f, -100.f));
-        }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-        {
-            rect.setPosition(rect.getPosition() + time_since_last_frame * sf::Vector2f(0.f, 100.f));
-        }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-        {
-            rect.setPosition(rect.getPosition() + time_since_last_frame * sf::Vector2f(-100.f, 0.f));
-        }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-        {
-            rect.setPosition(rect.getPosition() + time_since_last_frame * sf::Vector2f(100.f, 0.f));
-        }
-
         display();
     }
 }
@@ -70,6 +56,9 @@ void Game::update()
 
 void Game::display()
 {
+    if (map)
+        renderer.drawMap(*map);
+
     window.clear();
     renderer.display(window);
     window.display();
