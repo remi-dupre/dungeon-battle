@@ -18,7 +18,7 @@ SRC = $(SRC_DIR)/main.cpp \
       $(SRC_DIR)/map.cpp \
       $(SRC_DIR)/render.cpp \
       $(SRC_DIR)/config.cpp \
-      $(SRC_DIR)/init.cpp
+      $(SRC_DIR)/game.cpp
 # List of files to compile
 
 BUILD_DIR = build

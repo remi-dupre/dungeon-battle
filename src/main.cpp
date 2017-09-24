@@ -1,61 +1,15 @@
 #include <SFML/Graphics.hpp>
 
-#include "config.hpp"
-#include "init.hpp"
+#include "game.hpp"
 
 
 int main(int argc, char *argv[])
 {
-    std::string config_filename = "config.ini";
+    Game game;
 
-    if (argc > 1)
-        config_filename = argv[1];
+    game.init();
 
-    Configuration config = init::configuration(config_filename);
-
-    sf::RenderWindow& window = *init::window(config);
-
-    sf::RectangleShape rect({40.f, 60.f});
-    rect.setOrigin(10.f, 10.f);
-    rect.setFillColor(sf::Color::Red);
-
-    sf::Clock timer;
-
-    while (window.isOpen())
-    {
-        sf::Event event;
-
-        while (window.pollEvent(event))
-        {
-            if (event.type == sf::Event::Closed)
-                window.close();
-        }
-
-        float time_since_last_frame = timer.restart().asSeconds();
-
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-        {
-            rect.setPosition(rect.getPosition() + time_since_last_frame * sf::Vector2f(0.f, -100.f));
-        }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-        {
-            rect.setPosition(rect.getPosition() + time_since_last_frame * sf::Vector2f(0.f, 100.f));
-        }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-        {
-            rect.setPosition(rect.getPosition() + time_since_last_frame * sf::Vector2f(-100.f, 0.f));
-        }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-        {
-            rect.setPosition(rect.getPosition() + time_since_last_frame * sf::Vector2f(100.f, 0.f));
-        }
-
-        window.clear();
-        window.draw(rect);
-        window.display();
-    }
-
-    delete &window;
+    game.run();
 
     return 0;
 }
