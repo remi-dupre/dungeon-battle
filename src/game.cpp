@@ -60,9 +60,18 @@ void Game::run()
             rect.setPosition(rect.getPosition() + time_since_last_frame * sf::Vector2f(100.f, 0.f));
         }
 
-        window.clear();
-        renderer.display(window);
-        window.draw(rect);
-        window.display();
+        display();
     }
+}
+
+void Game::update()
+{
+}
+
+void Game::display()
+{
+    window.clear();
+    renderer.display(window);
+    window.draw(rect);
+    window.display();
 }
