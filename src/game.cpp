@@ -72,6 +72,5 @@ void Game::display()
 {
     window.clear();
     renderer.display(window);
-    window.draw(rect);
     window.display();
 }
