@@ -61,6 +61,7 @@ void Game::run()
         }
 
         window.clear();
+        renderer.display(window);
         window.draw(rect);
         window.display();
     }
