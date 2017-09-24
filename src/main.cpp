@@ -1,28 +1,19 @@
 #include <SFML/Graphics.hpp>
 
 #include "config.hpp"
+#include "init.hpp"
 
 
 int main(int argc, char *argv[])
 {
-    Configuration config;
     std::string config_filename = "config.ini";
 
     if (argc > 1)
         config_filename = argv[1];
 
-    config.read(config_filename);
+    Configuration config = init::configuration(config_filename);
 
-    sf::Uint32 style = sf::Style::Close;
-    if (config.fullscreen)
-        style |= sf::Style::Fullscreen;
-
-    sf::RenderWindow window({config.width, config.height}, "Dungeon Battle", style);
-    window.setVerticalSyncEnabled(config.vsync);
-    if (!config.vsync) // Don't activate vertical synchronization and framerate limit at the same time
-        window.setFramerateLimit(config.maxfps);
-
-    window.setSize({config.scalefactor * config.width, config.scalefactor * config.height});
+    sf::RenderWindow& window = *init::window(config);
 
     sf::RectangleShape rect({40.f, 60.f});
     rect.setOrigin(10.f, 10.f);
@@ -63,4 +54,8 @@ int main(int argc, char *argv[])
         window.draw(rect);
         window.display();
     }
+
+    delete &window;
+
+    return 0;
 }
