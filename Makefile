@@ -21,6 +21,7 @@ SRC = $(SRC_DIR)/main.cpp \
       $(SRC_DIR)/game.cpp \
 	  $(SRC_DIR)/args.cpp
 # List of files to compile
+HEADERS = $(SRC:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%.h)
 
 BUILD_DIR = build
 OBJ = $(SRC:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%.o)
@@ -44,7 +45,7 @@ debug: $(EXEC)
 $(EXEC): $(OBJ)
 	$(CXX) -o $@ $^ $(DFLAGS) $(LFLAGS)
 
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp $(SRC_DIR)/%.hpp
 	@mkdir -p $(BUILD_DIR)
 	$(CXX) -o $@ -c $< $(CFLAGS) $(DFLAGS) $(WFLAGS)
 
