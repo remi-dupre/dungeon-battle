@@ -47,10 +47,12 @@ public:
      */
     void display(sf::RenderTarget& target);
 
+    sf::View view;
+
 private:
 
     const float tile_size; ///< Size of the tiles on screen in pixels
-
+    const float screen_ratio; ///< Base ratio of the screen
     std::vector<sf::Vertex> map_vertices; ///< Vertex array used to render the map
     sf::Texture map_texture; ///< Texture of the tiles
 };

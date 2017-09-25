@@ -2,8 +2,11 @@
 
 
 Renderer::Renderer() :
-    tile_size(40.f)
-{}
+    tile_size(1.f),
+    screen_ratio(600.f / 800.f)
+{
+    view.setCenter({10.f, 10.f});
+}
 
 
 void Renderer::drawMap(const Map& map)
@@ -57,7 +60,35 @@ void Renderer::drawMap(const Map& map)
     }
 }
 
+#include <iostream>
+
 void Renderer::display(sf::RenderTarget& target)
 {
+
+    // Keep aspect ratio
+    float screen_x = static_cast<float>(target.getSize().x);
+    float screen_y = static_cast<float>(target.getSize().y);
+
+    float ratio = screen_y / screen_x;
+
+    float x_offset = 0.f;
+    float y_offset = 0.f;
+
+    if (ratio > screen_ratio)
+    {
+        float y = screen_x * screen_ratio;
+        y_offset = (screen_y - y) / screen_y;
+    }
+    else if (ratio < screen_ratio)
+    {
+        float x =  screen_y / screen_ratio;
+        x_offset = (screen_x - x) / screen_x;
+    }
+
+    view.setSize({20.f, screen_ratio * 20.f});
+    view.setViewport({x_offset/ 2.f, y_offset / 2.f, 1.f - x_offset, 1.f - y_offset});
+
+    target.setView(view);
+
     target.draw(map_vertices.data(), map_vertices.size(), sf::PrimitiveType::Triangles);
 }
