@@ -8,7 +8,9 @@
 #include <map>
 #include <string>
 
-
+/**
+ * \brief Class representing the differents options available
+ */
 enum class Option
 {
     Help, ///< Print help

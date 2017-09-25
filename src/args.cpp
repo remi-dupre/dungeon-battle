@@ -12,10 +12,13 @@ inline constexpr std::size_t array_length(T (&)[N])
     return N;
 }
 
+/**
+ * \brief Helper class to parse the arguments
+ */
 struct NameOption
 {
-    const char *name;
-    Option option;
+    const char *name; ///< Name of the option
+    Option option; ///< Option
 };
 
 inline constexpr NameOption command_line_options[3] =
