@@ -31,7 +31,7 @@ public:
     /**
      * \brief Creates a map full of floor.
      */
-    Map(int width, int height);
+    explicit Map(int width, int height);
 
     /**
      * \brief Return the width of the map

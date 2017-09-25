@@ -25,7 +25,7 @@ public:
     /**
      * \brief Constructor
      */
-    Game();
+    explicit Game();
 
     /**
      * \brief Initialize the game

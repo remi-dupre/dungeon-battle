@@ -22,7 +22,7 @@ public:
     /**
      * \brief Construct a renderer
      */
-    Renderer();
+    explicit Renderer();
 
     /**
      * \brief Delete the copy constructor
