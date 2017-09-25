@@ -21,7 +21,6 @@ SRC = $(SRC_DIR)/main.cpp \
       $(SRC_DIR)/game.cpp \
 	  $(SRC_DIR)/args.cpp
 # List of files to compile
-HEADERS = $(SRC:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%.h)
 
 BUILD_DIR = build
 OBJ = $(SRC:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%.o)
@@ -30,11 +29,18 @@ OBJ = $(SRC:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%.o)
 EXEC = dungeon-battle
 # Executable name
 
+# Documentation directory
+DOC_DIR = doc
 
 SRC_DIR_TEST = tests
 SRC_TEST = $(SRC_DIR_TEST)/test_configuration.cpp
 OBJ_TEST = $(SRC_TEST:$(SRC_DIR_TEST)/%.cpp=$(BUILD_DIR_TEST)/%.o)
 EXEC_TEST = $(SRC_TEST:$(SRC_DIR_TEST)/%.cpp=$(SRC_DIR_TEST)/%)
+
+
+.PHONY: all release debug test doc clean
+
+all: release doc test
 
 release: CFLAGS += -O3 -DNDEBUG
 release: $(EXEC)
@@ -42,36 +48,37 @@ release: $(EXEC)
 debug: DFLAGS += -ggdb
 debug: $(EXEC)
 
-$(EXEC): $(OBJ)
-	$(CXX) -o $@ $^ $(DFLAGS) $(LFLAGS)
+test: debug
+test: $(EXEC_TEST)
 
+# Generate the documentation
+doc:
+	doxygen .doxygen.conf
+
+# Build object file from source file
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp $(SRC_DIR)/%.hpp
 	@mkdir -p $(BUILD_DIR)
 	$(CXX) -o $@ -c $< $(CFLAGS) $(DFLAGS) $(WFLAGS)
 
-test: debug
-test: $(EXEC_TEST)
+# Build executable from object files
+$(EXEC): $(OBJ)
+	$(CXX) -o $@ $^ $(DFLAGS) $(LFLAGS)
 
+# Build test object file from source file
 $(BUILD_DIR)/test_%.o: $(SRC_DIR_TEST)/test_%.cpp
 	@mkdir -p $(BUILD_DIR)
 	$(CXX) -o $@ -c $< $(CFLAGS) $(DFLAGS) $(WFLAGS)
 
+# Build and execute test
 $(SRC_DIR_TEST)/%: $(BUILD_DIR)/%.o
 	$(CXX) -o $@ $< $(DFLAGS) $(LFLAGS)
 	@echo "Running the test: " $(@:$(SRC_DIR_TEST)/%=%)
 	@cd $(SRC_DIR_TEST) && ./$(@:$(SRC_DIR_TEST)/%=%)
 
-doc:
-	doxygen .doxygen.conf
-
-all: tests doc release
-
+# Clean the workspace
 clean:
 	rm -rf $(BUILD_DIR)
-	rm -rf $(BUILD_DIR_TEST)
-	rm -rf dungeon-battle
-	rm -rf doc/
-	rm -rf *~
+	rm -rf $(DOC_DIR)
 	rm -rf $(EXEC_TEST)
-
-.PHONY: release debug tests doc all clean
+	rm -rf dungeon-battle
+	rm -rf *~
