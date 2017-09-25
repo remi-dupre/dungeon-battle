@@ -1,14 +1,16 @@
+#include <map>
+#include <string>
+
+#include "args.hpp"
 #include "game.hpp"
 
 
-Game::Game()
-{
-}
+Game::Game() {}
 
-void Game::init()
+void Game::init(const std::map<Option, std::string>& options)
 {
-    std::string config_filename = "config.ini";
-    config.read(config_filename);
+    Configuration config;
+    config.read(options.at(Option::Config));
 
     sf::Uint32 style = sf::Style::Close;
     if (config.fullscreen)

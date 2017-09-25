@@ -3,6 +3,11 @@
  * \brief Contains a class representing the game
  */
 
+#pragma once
+
+#include <map>
+#include <string>
+
 #include <SFML/Graphics.hpp>
 
 #include "config.hpp"
@@ -24,11 +29,12 @@ public:
 
     /**
      * \brief Initialize the game
+     * \param options A map of options
      *
      * This method initializes the game: it creates a window
      * and loads the configuration
      */
-    void init();
+    void init(const std::map<Option, std::string>& options);
 
     /**
      * \brief Run the game
