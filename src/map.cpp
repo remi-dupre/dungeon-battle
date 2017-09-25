@@ -33,3 +33,27 @@ const CellType& Map::cellAt(int x, int y) const
     assert(y >= 0 && y < height);
     return cells[x + width * y];
 }
+
+const std::vector<Entity>& Map::getEntities() const
+{
+    return entities;
+}
+
+std::vector<Entity> Map::getEntitiesOnCell(int x, int y) const
+{
+    return getEntitiesOnCell({x, y});
+}
+
+std::vector<Entity> Map::getEntitiesOnCell(sf::Vector2i position) const
+{
+    std::vector<Entity> entities_on_cell;
+    // Runs a copy on 'entities' outputed to 'entities_on_cell'
+    std::copy_if(
+        std::begin(entities), std::end(entities),
+        std::back_inserter(entities_on_cell),
+        [position](const Entity& e) -> bool {
+            return e.getPosition() == position;
+        }
+    );
+    return entities_on_cell;
+}
