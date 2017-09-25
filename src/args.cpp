@@ -2,6 +2,7 @@
 #include <iostream>
 #include <map>
 #include <string>
+#include <utility>
 
 #include "args.hpp"
 
@@ -12,16 +13,7 @@ inline constexpr std::size_t array_length(T (&)[N])
     return N;
 }
 
-/**
- * \brief Helper class to parse the arguments
- */
-struct NameOption
-{
-    const char *name; ///< Name of the option
-    Option option; ///< Option
-};
-
-inline constexpr NameOption command_line_options[3] =
+inline constexpr std::pair<const char*, Option> command_line_options[3] =
 {
     { "c", Option::Config },
     { "config", Option::Config },
@@ -53,9 +45,9 @@ int parse_arguments(std::map<Option, std::string>& options, int argc, char *argv
             {
                 for (std::size_t j = 0; j < array_length(command_line_options); j++)
                 {
-                    if (std::strcmp(&argv[n][i], command_line_options[j].name) == 0)
+                    if (std::strcmp(&argv[n][i], command_line_options[j].first) == 0)
                     {
-                        switch (option = command_line_options[j].option)
+                        switch (option = command_line_options[j].second)
                         {
                             case Option::Config:
                                 read_name = true;
