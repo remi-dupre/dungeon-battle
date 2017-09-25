@@ -16,10 +16,16 @@ int main(int argc, char *argv[])
     {
         int error = parse_arguments(options, argc, argv);
 
-        if (error == -1) // Help has been displayed
-            return 0;
-        else if (error) // Error while parsing argv
+        auto help = options.find(Option::Help);
+
+        if (error) // Error while parsing argv
             return error;
+
+        if(help != options.end())
+        {
+            // TODO: Display help message
+            return 0;
+        }
     }
 
     Game game;
