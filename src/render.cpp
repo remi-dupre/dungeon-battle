@@ -11,6 +11,7 @@ void Renderer::drawMap(const Map& map)
     int map_w = map.getWidth();
     int map_h = map.getHeight();
 
+    map_vertices.clear();
     map_vertices.reserve(map_w * map_h * 4);
 
     for (int x = 0; x < map_w; x++)
