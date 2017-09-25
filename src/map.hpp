@@ -7,6 +7,8 @@
 
 #include <vector>
 
+#include "entity.hpp"
+
 
 /**
  * \brief Static information about the behaviour of the cell.
@@ -70,4 +72,9 @@ private:
      * \brief The type of each cell.
      */
     std::vector<CellType> cells;
+
+    /**
+     * \brief A vector containing every entities availables on the map.
+     */
+    std::vector<Entity> entities;
 };
