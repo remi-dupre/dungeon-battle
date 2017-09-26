@@ -99,6 +99,7 @@ void Map::writeToFile(const std::string& filename)
                     std::cout << '.';
                     break;
                 default:
+                    std::cout << ' ';
                     break;
             }
         }
