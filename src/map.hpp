@@ -36,13 +36,16 @@ class Map
 public:
     /**
      * \brief Creates a map full of floor.
+     * \param width The width of the map
+     * \param height The height of the map
      */
-    explicit Map(int width, int height);
+    explicit Map(unsigned int width, unsigned int height);
 
     /**
      * \brief Loads the map from a file
+     * \param filename Path of the file
      */
-    bool loadFromFile(std::string filename);
+    bool loadFromFile(const std::string& filename);
 
     /**
      * \brief Return the width of the map
@@ -61,7 +64,7 @@ public:
      * \return Reference to the tile
      * `x` and `y` must be in the ranges `[0, map.width)` and `[0, map.heigth)`
      */
-    CellType& cellAt(int x, int y);
+    CellType& cellAt(unsigned int x, unsigned int y);
 
     /**
      * \brief Get a read only access to a tile by its coordinates
@@ -70,12 +73,12 @@ public:
      * \return Const reference to the tile
      * `x` and `y` must be in the ranges `[0, map.width)` and `[0, map.heigth)`
      */
-    const CellType& cellAt(int x, int y) const;
+    const CellType& cellAt(unsigned int x, unsigned int y) const;
 
 
 private:
-    int width;  ///< The width of the map.
-    int height; ///< The height of the map.
+    unsigned int width;  ///< The width of the map.
+    unsigned int height; ///< The height of the map.
 
     /**
      * \brief The type of each cell.

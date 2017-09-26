@@ -3,16 +3,19 @@
 #include "map.hpp"
 
 
-Map::Map(int _width, int _height) :
+Map::Map(unsigned int _width, unsigned int _height) :
     // Copy redundant information about the shape
     width(_width), height(_height),
     // Fill the map with floors
     cells(width * height, CellType::Floor)
-{}
+{
+    assert (width > 0);
+    assert (height > 0);
+}
 
 #include <iostream>
 
-bool Map::loadFromFile(std::string filename)
+bool Map::loadFromFile(const std::string& filename)
 {
     std::ifstream file;
     file.open(filename);
@@ -20,10 +23,10 @@ bool Map::loadFromFile(std::string filename)
     if (file.fail())
         return false;
 
-    int width_, height_;
+    unsigned int width_, height_;
     file >> width_ >> height_;
 
-    if (file.fail() || height_ <= 0 || width_ <= 0)
+    if (file.fail() || height_ == 0 || width_ == 0)
     {
         std::cerr << "Bad map dimensions\n";
         return false;
@@ -33,7 +36,7 @@ bool Map::loadFromFile(std::string filename)
     file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
     std::string map_str, line;
-    for (int line_count = 0; line_count < height_; line_count++)
+    for (unsigned int line_count = 0; line_count < height_; line_count++)
     {
         std::getline(file, line);
         map_str.append(line);
@@ -84,16 +87,16 @@ int Map::getHeight() const
     return height;
 }
 
-CellType& Map::cellAt(int x, int y)
+CellType& Map::cellAt(unsigned int x, unsigned int y)
 {
-    assert(x >= 0 && x < width);
-    assert(y >= 0 && y < height);
+    assert(x < width);
+    assert(y < height);
     return cells[x + width * y];
 }
 
-const CellType& Map::cellAt(int x, int y) const
+const CellType& Map::cellAt(unsigned int x, unsigned int y) const
 {
-    assert(x >= 0 && x < width);
-    assert(y >= 0 && y < height);
+    assert(x < width);
+    assert(y < height);
     return cells[x + width * y];
 }
