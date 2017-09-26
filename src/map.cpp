@@ -13,8 +13,6 @@ Map::Map(unsigned int _width, unsigned int _height) :
     assert (height > 0);
 }
 
-#include <iostream>
-
 bool Map::loadFromFile(const std::string& filename)
 {
     std::ifstream file;
@@ -39,6 +37,13 @@ bool Map::loadFromFile(const std::string& filename)
     for (unsigned int line_count = 0; line_count < height_; line_count++)
     {
         std::getline(file, line);
+
+        if (line.size() != width_)
+        {
+            std::cerr << "Bad map data\n";
+            return false;
+        }
+
         map_str.append(line);
     }
 
