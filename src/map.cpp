@@ -25,7 +25,7 @@ bool Map::loadFromFile(std::string filename)
 
     if (file.fail() || height_ <= 0 || width_ <= 0)
     {
-        std::cout << "Bad map dimensions\n";
+        std::cerr << "Bad map dimensions\n";
         return false;
     }
 
