@@ -48,6 +48,12 @@ public:
     bool loadFromFile(const std::string& filename);
 
     /**
+     * \brief Writes the map to a file
+     * \param filename Path of the file
+     */
+    void writeToFile(const std::string& filename);
+
+    /**
      * \brief Return the width of the map
      */
     int getWidth() const;

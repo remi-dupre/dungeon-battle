@@ -77,6 +77,36 @@ bool Map::loadFromFile(const std::string& filename)
     return true;
 }
 
+void Map::writeToFile(const std::string& filename)
+{
+    std::ofstream file(filename);
+    
+    if (!file.is_open())
+        return;
+
+    file << width << ' ' << height << std::endl;
+    
+    for (unsigned int y = 0; y < height; y++)
+    {
+        for (unsigned int x = 0; x < width; x++)
+        {
+            switch (cellAt(x, y))
+            {
+                case CellType::Wall:
+                    std::cout << '#';
+                    break;
+                case CellType::Floor:
+                    std::cout << '.';
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        std::cout << std::endl;
+    }
+}
+
 int Map::getWidth() const
 {
     return width;
