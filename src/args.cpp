@@ -59,7 +59,7 @@ int parse_arguments(std::map<Option, std::string>& options, int argc, char *argv
                     }
                     else
                     {
-                        std::cout << "Unknown option: " << argv[n][i] << ".";
+                        std::cerr << "Unknown option: " << argv[n][i] << ".";
                     }
                 }
             }

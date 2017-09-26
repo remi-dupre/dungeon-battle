@@ -41,7 +41,7 @@ bool Map::loadFromFile(std::string filename)
 
     if (file.fail())
     {
-        std::cout << "Bad map data\n";
+        std::cerr << "Bad map data\n";
         return false;
     }
 
