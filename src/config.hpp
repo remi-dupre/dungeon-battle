@@ -11,7 +11,7 @@
 
 
 /**
- * \brief Represent the configuration of the game
+ * \brief Represents the configuration of the game
  */
 struct Configuration
 {
@@ -31,7 +31,7 @@ struct Configuration
     /**
      * \brief Default constructor
      *
-     * This construct a configuration structure with default values
+     * This constructs a configuration structure with default values
      */
     Configuration();
 
