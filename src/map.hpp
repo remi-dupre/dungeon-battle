@@ -48,10 +48,10 @@ public:
     bool loadFromFile(const std::string& filename);
 
     /**
-     * \brief Write the map to a file
+     * \brief Save the map to a file
      * \param filename Path of the file
      */
-    void writeToFile(const std::string& filename);
+    void saveToFile(const std::string& filename) const;
 
     /**
      * \brief Get the width of the map
@@ -97,4 +97,21 @@ private:
      * \brief A vector containing every entities availables on the map
      */
     std::vector<Entity> entities;
+
+    friend std::ostream &operator<<(std::ostream&, const Map&);
+    friend std::istream &operator>>(std::istream&, Map&);
 };
+
+/**
+ * \brief `operator<<` overload for `Map`
+ *
+ * Overloads `operator<<` to output maps to streams
+ */
+std::ostream &operator<<(std::ostream& stream, const Map& map);
+
+/**
+ * \brief `operator>>` overload for `Map`
+ *
+ * Overloads `operator>>` to read maps from streams
+ */
+std::istream &operator>>(std::istream& stream, Map& map);

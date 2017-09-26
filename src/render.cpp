@@ -46,6 +46,10 @@ void Renderer::drawMap(const Map& map)
                 case CellType::Empty:
                     [[fallthrough]];
                 default:
+                    v1.color = {0, 0, 0};
+                    v2.color = {0, 0, 0};
+                    v3.color = {0, 0, 0};
+                    v4.color = {0, 0, 0};
                     break;
             }
 
