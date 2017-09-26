@@ -1,6 +1,6 @@
 /**
  * \file render.hpp
- * \brief Manage the rendering of the game
+ * \brief Manage the rendering of the game.
  */
 
 #pragma once
@@ -13,7 +13,7 @@
 /**
  * \brief Manage the rendering of the game
  *
- * This class is used the render the game on the window
+ * This class is used the render the game on the window.
  */
 class Renderer
 {

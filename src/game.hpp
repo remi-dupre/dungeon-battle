@@ -1,6 +1,6 @@
 /**
  * \file game.hpp
- * \brief Contains a class representing the game
+ * \brief Contains a class representing the game.
  */
 
 #pragma once
