@@ -26,11 +26,7 @@ void Game::init(const std::map<Option, std::string>& options)
 
     map = std::make_unique<Map>(20, 20);
 
-    map->cellAt(2, 3) = CellType::Wall;
-    map->cellAt(3, 3) = CellType::Wall;
-    map->cellAt(4, 3) = CellType::Wall;
-    map->cellAt(7, 8) = CellType::Wall;
-    map->cellAt(10, 10) = CellType::Wall;
+    map->loadFromFile("map1.map");
 }
 
 void Game::run()

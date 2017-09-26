@@ -5,6 +5,10 @@
 
 #pragma once
 
+#include <algorithm>
+#include <fstream>
+#include <iostream>
+#include <string>
 #include <vector>
 
 #include "entity.hpp"
@@ -34,6 +38,11 @@ public:
      * \brief Creates a map full of floor.
      */
     explicit Map(int width, int height);
+
+    /**
+     * \brief Loads the map from a file
+     */
+    bool loadFromFile(std::string filename);
 
     /**
      * \brief Return the width of the map
