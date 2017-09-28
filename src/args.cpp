@@ -29,8 +29,6 @@ int parse_arguments(std::map<Option, std::string>& options, int argc, char *argv
 
     for (int n = 1; n < argc; n++)
     {
-        std::size_t option_start = 1;
-
         for (std::size_t i = 0; argv[n][i] != '\0'; i++)
         {
             if (i == 0 && argv[n][0] == '-')
@@ -46,26 +44,28 @@ int parse_arguments(std::map<Option, std::string>& options, int argc, char *argv
             }
             else
             {
-                char* eq = strchr(&argv[n][i], '=');
+                char* p = strchr(&argv[n][i], '=');
                 std::size_t j;
 
-                if (eq != nullptr)
+                if (p != nullptr)
                 {
-                    std::size_t eq = static_cast<size_t>(strchr(&argv[n][i], '=') - argv[n]) - option_start;
+                    std::size_t len = static_cast<std::size_t>(p - &argv[n][i]);
 
                     for (j = 0; j < array_length(command_line_options); j++)
                     {
-                        if (strlen(std::get<const char*>(command_line_options[j])) == eq)
+                        if (strlen(std::get<const char*>(command_line_options[j])) == len)
                         {
-                            if (std::memcmp(&argv[n][i], std::get<const char*>(command_line_options[j]), eq) == 0)
+                            if (std::memcmp(&argv[n][i], std::get<const char*>(command_line_options[j]), len) == 0)
                             {
                                 option = std::get<Option>(command_line_options[j]);
-                                read_name = std::get<bool>(command_line_options[j]);
+                                read_name = false;
+                                break;
                             }
                         }
-
-                        options[option] = &argv[n][eq+i+1];
                     }
+
+                    if (j != array_length(command_line_options))
+                        options[option] = &argv[n][len+i+1];
                 }
                 else
                 {
@@ -82,8 +82,10 @@ int parse_arguments(std::map<Option, std::string>& options, int argc, char *argv
 
                 if (j == array_length(command_line_options))
                 {
-                    std::cerr << "Unknown option: " << argv[n] << ".";
+                    std::cerr << "Unknown option: " << argv[n] << "." << std::endl;
                 }
+
+                break;
             }
         }
 
