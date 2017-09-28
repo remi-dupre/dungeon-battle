@@ -21,7 +21,7 @@ int main()
             "config3.ini"
         };
 
-        assert(parse_arguments(options, 3, argv) == 0);
+        assert(parse_arguments(options, array_length(argv), argv) == 0);
 
         assert(options[Option::Config] == "config3.ini");
     }
@@ -35,7 +35,7 @@ int main()
             "--config=config2.ini"
         };
 
-        assert(parse_arguments(options, 2, argv) == 0);
+        assert(parse_arguments(options, array_length(argv), argv) == 0);
 
         assert(options[Option::Config] == "config2.ini");
     }
