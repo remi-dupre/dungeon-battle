@@ -22,7 +22,7 @@ inline constexpr std::tuple<const char*, Option, bool> command_line_options[3] =
 };
 
 
-int parse_arguments(std::map<Option, std::string>& options, int argc, char *argv[])
+int parse_arguments(std::map<Option, std::string>& options, int argc, char **argv)
 {
     bool read_name = false; // Read the next argument as a name passed to the current argument
     Option option; // Current option
@@ -44,7 +44,7 @@ int parse_arguments(std::map<Option, std::string>& options, int argc, char *argv
             }
             else
             {
-                char* p = strchr(&argv[n][i], '=');
+                const char* p = std::strchr(&argv[n][i], '=');
                 std::size_t j;
 
                 if (p != nullptr)
@@ -53,7 +53,7 @@ int parse_arguments(std::map<Option, std::string>& options, int argc, char *argv
 
                     for (j = 0; j < array_length(command_line_options); j++)
                     {
-                        if (strlen(std::get<const char*>(command_line_options[j])) == len)
+                        if (std::strlen(std::get<const char*>(command_line_options[j])) == len)
                         {
                             if (std::memcmp(&argv[n][i], std::get<const char*>(command_line_options[j]), len) == 0)
                             {

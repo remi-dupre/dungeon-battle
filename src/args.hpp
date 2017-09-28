@@ -28,4 +28,4 @@ enum class Option
  * It updates the values in options according to the arguments
  * stored in argv.
  */
-int parse_arguments(std::map<Option, std::string>& options, int argc, char *argv[]);
+int parse_arguments(std::map<Option, std::string>& options, int argc, char **argv);

@@ -7,7 +7,7 @@
 #include "game.hpp"
 
 
-int main(int argc, char *argv[])
+int main(int argc, char **argv)
 {
     std::map<Option, std::string> options;
     options[Option::Config] = "config.ini";
