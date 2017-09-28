@@ -62,7 +62,6 @@ void Game::run()
             renderer.view.move(0.1f, 0.0f);
         }
 
-
         display();
     }
 }

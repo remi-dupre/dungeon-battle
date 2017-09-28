@@ -17,6 +17,7 @@
 class Entity
 {
 protected:
+
     /**
      * \brief Just saves the map and position.
      */
@@ -42,11 +43,13 @@ enum class PortalDirection
 class Portal : public Entity
 {
 public:
+
     /**
      * \brief Creates a portal
      */
     Portal(sf::Vector2i pos, PortalDirection direction);
 
 private:
+
     PortalDirection direction; ///< Specify where the portal ends
 };

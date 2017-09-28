@@ -64,8 +64,6 @@ void Renderer::drawMap(const Map& map)
     }
 }
 
-#include <iostream>
-
 void Renderer::display(sf::RenderTarget& target)
 {
 

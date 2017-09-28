@@ -34,6 +34,7 @@ enum class CellType
 class Map
 {
 public:
+
     /**
      * \brief Create a map full of floor
      * \param width The width of the map
@@ -85,6 +86,7 @@ public:
 
 
 private:
+
     unsigned int width;  ///< The width of the map
     unsigned int height; ///< The height of the map
 
