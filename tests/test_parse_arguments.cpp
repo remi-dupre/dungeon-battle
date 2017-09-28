@@ -6,6 +6,8 @@
 #include "../src/args.hpp"
 #include "../src/args.cpp"
 
+#pragma GCC diagnostic ignored "-Wpragmas"
+#pragma GCC diagnostic ignored "-Wwrite-strings"
 #pragma GCC diagnostic ignored "-Wwritable-strings"
 
 
