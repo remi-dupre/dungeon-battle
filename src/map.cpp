@@ -66,7 +66,7 @@ const CellType& Map::cellAt(unsigned int x, unsigned int y) const
     return cells[x + width * y];
 }
 
-std::ostream &operator<<(std::ostream& stream, const Map& map)
+std::ostream& operator<<(std::ostream& stream, const Map& map)
 {
     stream << map.width << ' ' << map.height << std::endl;
 
@@ -94,7 +94,7 @@ std::ostream &operator<<(std::ostream& stream, const Map& map)
     return stream;
 }
 
-std::istream &operator>>(std::istream& stream, Map& map)
+std::istream& operator>>(std::istream& stream, Map& map)
 {
     unsigned int width_, height_;
     stream >> width_ >> height_;

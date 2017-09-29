@@ -98,8 +98,8 @@ private:
      */
     std::vector<CellType> cells;
 
-    friend std::ostream &operator<<(std::ostream&, const Map&);
-    friend std::istream &operator>>(std::istream&, Map&);
+    friend std::ostream& operator<<(std::ostream&, const Map&);
+    friend std::istream& operator>>(std::istream&, Map&);
 };
 
 /**
@@ -107,11 +107,11 @@ private:
  *
  * Overloads `operator<<` to output maps to streams
  */
-std::ostream &operator<<(std::ostream& stream, const Map& map);
+std::ostream& operator<<(std::ostream& stream, const Map& map);
 
 /**
  * \brief `operator>>` overload for `Map`
  *
  * Overloads `operator>>` to read maps from streams
  */
-std::istream &operator>>(std::istream& stream, Map& map);
+std::istream& operator>>(std::istream& stream, Map& map);
