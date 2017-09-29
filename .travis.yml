@@ -14,6 +14,7 @@ install:
  - docker exec -t artful bash -c "apt-get install -y --no-install-recommends build-essential"
  - docker exec -t artful bash -c "apt-get install -y --no-install-recommends libsfml-dev"
  - docker exec -t artful bash -c "apt-get install -y --no-install-recommends doxygen"
+ - docker exec -t artful bash -c "apt-get install -y --no-install-recommends cxxtest"
 
 script:
  - docker exec -t artful bash -c "cd /travis;
