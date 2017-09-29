@@ -16,14 +16,20 @@
  */
 class Entity
 {
+public:
+    /**
+     * \brief Get position of the entity.
+     */
+    sf::Vector2i getPosition() const;
+
 protected:
 
     /**
      * \brief Just saves the map and position.
      */
-    Entity(sf::Vector2i pos);
+    Entity(sf::Vector2i position);
 
-    sf::Vector2i pos; ///< Position of the cell the entity is on
+    sf::Vector2i position; ///< position of the cell the entity is on
 };
 
 
@@ -47,7 +53,7 @@ public:
     /**
      * \brief Creates a portal
      */
-    Portal(sf::Vector2i pos, PortalDirection direction);
+    Portal(sf::Vector2i position, PortalDirection direction);
 
 private:
 

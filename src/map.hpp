@@ -6,6 +6,7 @@
 #pragma once
 
 #include <algorithm>
+#include <iterator>
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -65,25 +66,44 @@ public:
     int getHeight() const;
 
     /**
-     * \brief Get a read-write access to a tile by its coordinates
-     * \param x X coordinate of the tile
-     * \param y Y coordinate of the tile
-     * \return Reference to the tile
-     *
+     * \brief Get a read-write access to a cell by its coordinates
+     * \param x X coordinate of the cell
+     * \param y Y coordinate of the cell
+     * \return Reference to the cell
      * `x` and `y` must be in the ranges `[0, map.width)` and `[0, map.heigth)`
      */
     CellType& cellAt(unsigned int x, unsigned int y);
 
     /**
-     * \brief Get a read only access to a tile by its coordinates
-     * \param x X coordinate of the tile
-     * \param y Y coordinate of the tile
-     * \return Const reference to the tile
-     *
+     * \brief Get a read only access to a cell by its coordinates
+     * \param x X coordinate of the cell
+     * \param y Y coordinate of the cell
+     * \return Const reference to the cell
      * `x` and `y` must be in the ranges `[0, map.width)` and `[0, map.heigth)`
      */
     const CellType& cellAt(unsigned int x, unsigned int y) const;
 
+    /**
+     * \brief Get the list of every entities on the map.
+     * \return Const reference to a vector containing all entities of the map.
+     * If two entities are on the same cell, the last one is over the first one.
+     */
+    const std::vector<Entity>& getEntities() const;
+
+    /**
+     * \brief Get all entities putted on a specific cell
+     * \param position Position vector of the cell
+     * \return A vector of copies of the entities putted on the cell.
+     */
+    std::vector<Entity> getEntitiesOnCell(sf::Vector2i position) const;
+
+    /**
+     * \brief Get all entities putted on a specific cell
+     * \param x X coordinate of the cell
+     * \param y Y coordinate of the cell
+     * \return A vector of copies of the entities putted on the cell.
+     */
+    std::vector<Entity> getEntitiesOnCell(int x, int y) const;
 
 private:
 
