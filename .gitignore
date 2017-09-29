@@ -13,4 +13,5 @@ dungeon-battle
 doc/
 
 tests/*
-!tests/*.cpp
+!tests/*.hpp
+!tests/*.ini
