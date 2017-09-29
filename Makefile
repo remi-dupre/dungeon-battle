@@ -34,7 +34,8 @@ EXEC = dungeon-battle
 DOC_DIR = doc
 
 SRC_DIR_TEST = tests
-SRC_TEST = $(SRC_DIR_TEST)/test_configuration.cpp
+SRC_TEST = $(SRC_DIR_TEST)/test_configuration.cpp \
+           $(SRC_DIR_TEST)/test_parse_arguments.cpp
 OBJ_TEST = $(SRC_TEST:$(SRC_DIR_TEST)/%.cpp=$(BUILD_DIR_TEST)/%.o)
 EXEC_TEST = $(SRC_TEST:$(SRC_DIR_TEST)/%.cpp=$(SRC_DIR_TEST)/%)
 
@@ -58,6 +59,10 @@ doc:
 
 # Build object file from source file
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp $(SRC_DIR)/%.hpp
+	@mkdir -p $(BUILD_DIR)
+	$(CXX) -o $@ -c $< $(CFLAGS) $(DFLAGS) $(WFLAGS)
+
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@mkdir -p $(BUILD_DIR)
 	$(CXX) -o $@ -c $< $(CFLAGS) $(DFLAGS) $(WFLAGS)
 

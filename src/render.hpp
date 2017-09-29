@@ -1,6 +1,6 @@
 /**
  * \file render.hpp
- * \brief Manage the rendering of the game
+ * \brief Manage the rendering of the game.
  */
 
 #pragma once
@@ -13,7 +13,7 @@
 /**
  * \brief Manage the rendering of the game
  *
- * This class is used the render the game on the window
+ * This class is used the render the game on the window.
  */
 class Renderer
 {
@@ -47,10 +47,12 @@ public:
      */
     void display(sf::RenderTarget& target);
 
+    sf::View view;
+
 private:
 
     const float tile_size; ///< Size of the tiles on screen in pixels
-
+    const float screen_ratio; ///< Base ratio of the screen
     std::vector<sf::Vertex> map_vertices; ///< Vertex array used to render the map
     sf::Texture map_texture; ///< Texture of the tiles
 };

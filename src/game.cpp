@@ -12,7 +12,7 @@ void Game::init(const std::map<Option, std::string>& options)
     Configuration config;
     config.read(options.at(Option::Config));
 
-    sf::Uint32 style = sf::Style::Close;
+    sf::Uint32 style = sf::Style::Close | sf::Style::Resize;
     if (config.fullscreen)
         style |= sf::Style::Fullscreen;
 
@@ -26,10 +26,7 @@ void Game::init(const std::map<Option, std::string>& options)
 
     map = std::make_unique<Map>(20, 20);
 
-    map->cellAt(2, 3) = CellType::Wall;
-    map->cellAt(3, 3) = CellType::Wall;
-    map->cellAt(4, 3) = CellType::Wall;
-    map->cellAt(7, 8) = CellType::Wall;
+    map->loadFromFile("map1.map");
 }
 
 void Game::run()
@@ -47,6 +44,23 @@ void Game::run()
         }
 
         float time_since_last_frame = timer.restart().asSeconds();
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z))
+        {
+            renderer.view.move(0.0f, -0.1f);
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+        {
+            renderer.view.move(0.0f, 0.1f);
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
+        {
+            renderer.view.move(-0.1f, 0.0f);
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+        {
+            renderer.view.move(0.1f, 0.0f);
+        }
 
         display();
     }

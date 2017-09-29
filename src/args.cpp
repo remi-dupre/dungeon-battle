@@ -2,7 +2,7 @@
 #include <iostream>
 #include <map>
 #include <string>
-#include <utility>
+#include <tuple>
 
 #include "args.hpp"
 
@@ -13,15 +13,16 @@ inline constexpr std::size_t array_length(T (&)[N])
     return N;
 }
 
-inline constexpr std::pair<const char*, Option> command_line_options[3] =
+// (option string, option action, reads a name)
+inline constexpr std::tuple<const char*, Option, bool> command_line_options[3] =
 {
-    { "c", Option::Config },
-    { "config", Option::Config },
-    { "help", Option::Help }
+    { "c", Option::Config, true },
+    { "config", Option::Config, true },
+    { "help", Option::Help, false }
 };
 
 
-int parse_arguments(std::map<Option, std::string>& options, int argc, char *argv[])
+int parse_arguments(std::map<Option, std::string>& options, int argc, char **argv)
 {
     bool read_name = false; // Read the next argument as a name passed to the current argument
     Option option; // Current option
@@ -43,25 +44,48 @@ int parse_arguments(std::map<Option, std::string>& options, int argc, char *argv
             }
             else
             {
-                for (std::size_t j = 0; j < array_length(command_line_options); j++)
+                const char* p = std::strchr(&argv[n][i], '=');
+                std::size_t j;
+
+                if (p != nullptr)
                 {
-                    if (std::strcmp(&argv[n][i], command_line_options[j].first) == 0)
+                    std::size_t len = static_cast<std::size_t>(p - &argv[n][i]);
+
+                    for (j = 0; j < array_length(command_line_options); j++)
                     {
-                        switch (option = command_line_options[j].second)
+                        if (std::strlen(std::get<const char*>(command_line_options[j])) == len)
                         {
-                            case Option::Config:
-                                read_name = true;
+                            if (std::memcmp(&argv[n][i], std::get<const char*>(command_line_options[j]), len) == 0)
+                            {
+                                option = std::get<Option>(command_line_options[j]);
+                                read_name = false;
                                 break;
-                            default:
-                                return 1;
-                                break;
+                            }
                         }
                     }
-                    else
+
+                    if (j != array_length(command_line_options))
+                        options[option] = &argv[n][len+i+1];
+                }
+                else
+                {
+                    for (j = 0; j < array_length(command_line_options); j++)
                     {
-                        std::cout << "Unknown option: " << argv[n][i] << ".";
+                        if (std::strcmp(&argv[n][i], std::get<const char*>(command_line_options[j])) == 0)
+                        {
+                            option = std::get<Option>(command_line_options[j]);
+                            read_name = std::get<bool>(command_line_options[j]);
+                            break;
+                        }
                     }
                 }
+
+                if (j == array_length(command_line_options))
+                {
+                    std::cerr << "Unknown option: " << argv[n] << "." << std::endl;
+                }
+
+                break;
             }
         }
 
