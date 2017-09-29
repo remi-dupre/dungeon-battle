@@ -30,12 +30,17 @@ struct Action
     Action();
 
     /**
-     * \brief 
-     * 
-     *
+     * \brief Create an action with no direction
+     * \param type The type of the action
      */
-    Action(ActionType _type);
-    Action(ActionType _type, Direction _direction);
+    Action(ActionType type);
+
+    /**
+     * \brief Create an action
+     * \param type The type of the action
+     * \param direction The direction of the action
+     */
+    Action(ActionType type, Direction direction);
 };
 
 namespace control
