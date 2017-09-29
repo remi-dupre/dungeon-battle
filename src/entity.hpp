@@ -7,55 +7,58 @@
 
 #include <SFML/System/Vector2.hpp>
 
+#include "utility.hpp"
+
 
 /**
- * \brief An element that can be put on the floor
- *
- * An entity should contain any information about its state.
- * Behavior of an entity should rather be described outside to prevent cyclic dependancies.
+ * \brief Static information about the type of the entity
+ */
+enum class EntityType
+{
+    Hero, ///< A hero
+    Monster, ///< A monster
+    Stairs ///< A staircase
+};
+
+/**
+ * \brief Represents anything that is interactive
  */
 class Entity
 {
 public:
+
     /**
-     * \brief Get position of the entity.
+     * \brief Create an entity
+     * \param position The position of the entity
+     * \param orientation The orientation of the entity
+     */
+    Entity(sf::Vector2i position, Direction orientation);
+
+    /**
+     * \brief Return the position of the entity
      */
     sf::Vector2i getPosition() const;
 
+    /**
+     * \brief Set the position of the entity
+     * \param position The position to set
+     */
+    void setPosition(sf::Vector2i position);
+
+    /**
+     * \brief Return the orientation of the entity
+     */
+    Direction getOrientation() const;
+
+    /**
+     * \brief Set the orientation of the entity
+     * \param position The orientation to set
+     */
+    void setOrientation(Direction orientation);
+
 protected:
 
-    /**
-     * \brief Just saves the map and position.
-     */
-    Entity(sf::Vector2i position);
-
-    sf::Vector2i position; ///< position of the cell the entity is on
-};
-
-
-/**
- * \brief Defines whether a portal corresponds to an entrance or an exit.
- */
-enum class PortalDirection
-{
-    NextLvl,
-    PrevLvl
-};
-
-
-/**
- * \brief A warp to next level or from previous level
- */
-class Portal : public Entity
-{
-public:
-
-    /**
-     * \brief Creates a portal
-     */
-    Portal(sf::Vector2i position, PortalDirection direction);
-
-private:
-
-    PortalDirection direction; ///< Specify where the portal ends
+    sf::Vector2i position; ///< The position of the entity
+    Direction orientation; ///< The orientation of the entity
+    EntityType type; ///< The type of the entity
 };

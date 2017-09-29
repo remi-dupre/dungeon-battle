@@ -1,7 +1,10 @@
 #include "entity.hpp"
+#include "utility.hpp"
 
-Entity::Entity(sf::Vector2i _position) :
-    position(_position)
+
+Entity::Entity(sf::Vector2i _position, Direction _orientation) :
+    position(_position),
+    orientation(_orientation)
 {}
 
 sf::Vector2i Entity::getPosition() const
@@ -9,8 +12,17 @@ sf::Vector2i Entity::getPosition() const
     return position;
 }
 
+void Entity::setPosition(sf::Vector2i _position)
+{
+    position = _position;
+}
 
-Portal::Portal(sf::Vector2i _position, PortalDirection _direction) :
-    Entity::Entity(_position),
-    direction(_direction)
-{}
+Direction Entity::getOrientation() const
+{
+    return orientation;
+}
+
+void Entity::setOrientation(Direction _orientation)
+{
+    orientation = _orientation;
+}
