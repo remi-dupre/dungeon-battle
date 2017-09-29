@@ -14,7 +14,7 @@ inline constexpr std::size_t array_length(T (&)[N])
 }
 
 // (option string, option action, reads a name)
-inline constexpr std::tuple<const char*, Option, bool> command_line_options[3] =
+constexpr std::tuple<const char*, Option, bool> command_line_options[3] =
 {
     { "c", Option::Config, true },
     { "config", Option::Config, true },

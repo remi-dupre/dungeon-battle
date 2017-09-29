@@ -2,7 +2,7 @@
 CXX = g++
 
 # Compiler flags
-CFLAGS = -std=c++1z
+CFLAGS = -std=c++1y
 
 # Debuguer flags
 DFLAGS =
