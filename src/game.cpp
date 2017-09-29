@@ -24,9 +24,7 @@ void Game::init(const std::map<Option, std::string>& options)
     if (!config.vsync) // Don't activate vertical synchronization and framerate limit at the same time
         window.setFramerateLimit(config.maxfps);
 
-    map = std::make_unique<Map>(20, 20);
-
-    map->loadFromFile("map1.map");
+    map.loadFromFile("map1.map");
 }
 
 void Game::run()
@@ -72,10 +70,33 @@ void Game::update()
 
 void Game::display()
 {
-    if (map)
-        renderer.drawMap(*map);
+    renderer.drawMap(map);
 
     window.clear();
     renderer.display(window);
     window.display();
+}
+
+const std::vector<Entity>& Game::getEntities() const
+{
+    return entities;
+}
+
+std::vector<Entity> Game::getEntitiesOnCell(int x, int y) const
+{
+    return getEntitiesOnCell({x, y});
+}
+
+std::vector<Entity> Game::getEntitiesOnCell(sf::Vector2i position) const
+{
+    std::vector<Entity> entities_on_cell;
+    // Runs a copy on 'entities' outputed to 'entities_on_cell'
+    std::copy_if(
+        std::begin(entities), std::end(entities),
+        std::back_inserter(entities_on_cell),
+        [position](const Entity& e) -> bool {
+            return e.getPosition() == position;
+        }
+    );
+    return entities_on_cell;
 }

@@ -3,6 +3,10 @@
 #include "map.hpp"
 
 
+Map::Map() :
+    Map(0, 0)
+{}
+
 Map::Map(unsigned int _width, unsigned int _height) :
     // Copy redundant information about the shape
     width(_width), height(_height),
@@ -60,30 +64,6 @@ const CellType& Map::cellAt(unsigned int x, unsigned int y) const
     assert(x < width);
     assert(y < height);
     return cells[x + width * y];
-}
-
-const std::vector<Entity>& Map::getEntities() const
-{
-    return entities;
-}
-
-std::vector<Entity> Map::getEntitiesOnCell(int x, int y) const
-{
-    return getEntitiesOnCell({x, y});
-}
-
-std::vector<Entity> Map::getEntitiesOnCell(sf::Vector2i position) const
-{
-    std::vector<Entity> entities_on_cell;
-    // Runs a copy on 'entities' outputed to 'entities_on_cell'
-    std::copy_if(
-        std::begin(entities), std::end(entities),
-        std::back_inserter(entities_on_cell),
-        [position](const Entity& e) -> bool {
-            return e.getPosition() == position;
-        }
-    );
-    return entities_on_cell;
 }
 
 std::ostream &operator<<(std::ostream& stream, const Map& map)

@@ -37,6 +37,11 @@ class Map
 public:
 
     /**
+     * \brief Create an empty map
+     */
+    explicit Map();
+
+    /**
      * \brief Create a map full of floor
      * \param width The width of the map
      * \param height The height of the map
@@ -83,28 +88,6 @@ public:
      */
     const CellType& cellAt(unsigned int x, unsigned int y) const;
 
-    /**
-     * \brief Get the list of every entities on the map.
-     * \return Const reference to a vector containing all entities of the map.
-     * If two entities are on the same cell, the last one is over the first one.
-     */
-    const std::vector<Entity>& getEntities() const;
-
-    /**
-     * \brief Get all entities putted on a specific cell
-     * \param position Position vector of the cell
-     * \return A vector of copies of the entities putted on the cell.
-     */
-    std::vector<Entity> getEntitiesOnCell(sf::Vector2i position) const;
-
-    /**
-     * \brief Get all entities putted on a specific cell
-     * \param x X coordinate of the cell
-     * \param y Y coordinate of the cell
-     * \return A vector of copies of the entities putted on the cell.
-     */
-    std::vector<Entity> getEntitiesOnCell(int x, int y) const;
-
 private:
 
     unsigned int width;  ///< The width of the map
@@ -114,11 +97,6 @@ private:
      * \brief The type of each cell
      */
     std::vector<CellType> cells;
-
-    /**
-     * \brief A vector containing every entities availables on the map
-     */
-    std::vector<Entity> entities;
 
     friend std::ostream &operator<<(std::ostream&, const Map&);
     friend std::istream &operator>>(std::istream&, Map&);
