@@ -1,4 +1,4 @@
-#include "character.hpp"
+#include "entity.hpp"
 
 Entity::Entity(sf::Vector2i _position,
                Direction _orientation,
@@ -19,7 +19,7 @@ void Entity::setPosition(sf::Vector2i _position)
     position = _position;
 }
 
-int Entity::getOrientation() const
+Direction Entity::getOrientation() const
 {
     return orientation;
 }

@@ -7,7 +7,7 @@ enum class EntityType
     Hero,
     Monster,
     Stairs
-}
+};
 
 enum class Direction
 {
@@ -15,19 +15,19 @@ enum class Direction
     Down,
     Left,
     Right
-}
+};
 
 class Entity
 {
 public:
 
-    Entity(sf::Vector2i position, int orientation, EntityType type);
+    Entity(sf::Vector2i position, Direction orientation, EntityType type);
     sf::Vector2i getPosition() const;
     void setPosition(sf::Vector2i position);
 
-    int getOrientation() const;
-    void setOrientation(int orientation);
-    
+    Direction getOrientation() const;
+    void setOrientation(Direction orientation);
+
 protected:
 
     sf::Vector2i position;
