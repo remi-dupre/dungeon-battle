@@ -53,4 +53,6 @@ struct Configuration
      * All the options are saved, the old file is deleted.
      */
     void write(const std::string& filename);
+
+    static const Configuration default_configuration;
 };

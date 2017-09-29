@@ -71,31 +71,32 @@ void Game::update()
 void Game::display()
 {
     renderer.drawMap(map);
+    renderer.drawEntities(entities);
 
     window.clear();
     renderer.display(window);
     window.display();
 }
 
-const std::vector<Entity>& Game::getEntities() const
+const std::vector<std::shared_ptr<Entity>>& Game::getEntities() const
 {
     return entities;
 }
 
-std::vector<Entity> Game::getEntitiesOnCell(int x, int y) const
+std::vector<std::shared_ptr<Entity>> Game::getEntitiesOnCell(int x, int y) const
 {
     return getEntitiesOnCell({x, y});
 }
 
-std::vector<Entity> Game::getEntitiesOnCell(sf::Vector2i position) const
+std::vector<std::shared_ptr<Entity>> Game::getEntitiesOnCell(sf::Vector2i position) const
 {
-    std::vector<Entity> entities_on_cell;
+    std::vector<std::shared_ptr<Entity>> entities_on_cell;
     // Runs a copy on 'entities' outputed to 'entities_on_cell'
     std::copy_if(
         std::begin(entities), std::end(entities),
         std::back_inserter(entities_on_cell),
-        [position](const Entity& e) -> bool {
-            return e.getPosition() == position;
+        [position](const std::shared_ptr<Entity>& e) -> bool {
+            return e->getPosition() == position;
         }
     );
     return entities_on_cell;

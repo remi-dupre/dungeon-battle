@@ -92,3 +92,4 @@ void Configuration::write(const std::string& filename)
 
     return;
 }
+const Configuration Configuration::default_configuration = Configuration();

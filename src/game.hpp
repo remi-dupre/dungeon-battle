@@ -6,6 +6,7 @@
 #pragma once
 
 #include <map>
+#include <memory>
 #include <string>
 
 #include <SFML/Graphics.hpp>
@@ -63,14 +64,14 @@ public:
      * \return Const reference to a vector containing all entities of the map.
      * If two entities are on the same cell, the last one is over the first one.
      */
-    const std::vector<Entity>& getEntities() const;
+    const std::vector<std::shared_ptr<Entity>>& getEntities() const;
 
     /**
      * \brief Get all entities putted on a specific cell
      * \param position Position vector of the cell
      * \return A vector of copies of the entities putted on the cell.
      */
-    std::vector<Entity> getEntitiesOnCell(sf::Vector2i position) const;
+    std::vector<std::shared_ptr<Entity>> getEntitiesOnCell(sf::Vector2i position) const;
 
     /**
      * \brief Get all entities putted on a specific cell
@@ -78,7 +79,7 @@ public:
      * \param y Y coordinate of the cell
      * \return A vector of copies of the entities putted on the cell.
      */
-    std::vector<Entity> getEntitiesOnCell(int x, int y) const;
+    std::vector<std::shared_ptr<Entity>> getEntitiesOnCell(int x, int y) const;
 
 
 private:
@@ -89,9 +90,5 @@ private:
 
     Map map; ///< The map
 
-    /**
-     * \brief A vector containing every entities availables on the map
-     */
-    std::vector<Entity> entities;
-
+    std::vector<std::shared_ptr<Entity>> entities; ///< The entities
 };

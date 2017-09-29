@@ -5,8 +5,11 @@
 
 #pragma once
 
+#include <memory>
+
 #include <SFML/Graphics.hpp>
 
+#include "config.hpp"
 #include "map.hpp"
 
 
@@ -33,10 +36,17 @@ public:
      * \brief Draw the map
      * \param map The map to draw
      *
-     * This function set the internal data of the Renderer class
-     * to draw the map on the window later.
+     * This function draws the map.
      */
     void drawMap(const Map& map);
+
+    /**
+     * \brief Draw the entities
+     * \param entities A vector of entities to draw
+     *
+     * This function draws the entities
+     */
+    void drawEntities(const std::vector<std::shared_ptr<Entity>>& entities);
 
     /**
      * \brief Display on the window the objects drawn before
@@ -52,7 +62,8 @@ public:
 private:
 
     const float tile_size; ///< Size of the tiles on screen in pixels
-    const float screen_ratio; ///< Base ratio of the screen
     std::vector<sf::Vertex> map_vertices; ///< Vertex array used to render the map
     sf::Texture map_texture; ///< Texture of the tiles
+
+    std::vector<std::pair<int, std::vector<sf::Vertex>>> entities_vertices; ///< Vertex array used to render entities
 };

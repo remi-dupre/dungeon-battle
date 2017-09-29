@@ -2,8 +2,7 @@
 
 
 Renderer::Renderer() :
-    tile_size(1.f),
-    screen_ratio(600.f / 800.f)
+    tile_size(48.f)
 {
     view.setCenter({10.f, 10.f});
 }
@@ -23,10 +22,10 @@ void Renderer::drawMap(const Map& map)
         {
             CellType cell = map.cellAt(x, y);
 
-            sf::Vertex v1({ x    * tile_size,  y    * tile_size});
-            sf::Vertex v2({ x    * tile_size, (y+1) * tile_size});
-            sf::Vertex v3({(x+1) * tile_size,  y    * tile_size});
-            sf::Vertex v4({(x+1) * tile_size, (y+1) * tile_size});
+            sf::Vertex v1({static_cast<float>(x)  , static_cast<float>(y)  });
+            sf::Vertex v2({static_cast<float>(x)  , static_cast<float>(y+1)});
+            sf::Vertex v3({static_cast<float>(x+1), static_cast<float>(y)  });
+            sf::Vertex v4({static_cast<float>(x+1), static_cast<float>(y+1)});
 
             switch (cell)
             {
@@ -64,10 +63,20 @@ void Renderer::drawMap(const Map& map)
     }
 }
 
+void Renderer::drawEntities(const std::vector<std::shared_ptr<Entity>>& entities)
+{
+    for (const auto& entity : entities)
+    {
+
+    }
+}
+
 void Renderer::display(sf::RenderTarget& target)
 {
-
     // Keep aspect ratio
+    float screen_ratio = static_cast<float>(Configuration::default_configuration.height) /
+        static_cast<float>(Configuration::default_configuration.width);
+
     float screen_x = static_cast<float>(target.getSize().x);
     float screen_y = static_cast<float>(target.getSize().y);
 
@@ -87,7 +96,8 @@ void Renderer::display(sf::RenderTarget& target)
         x_offset = (screen_x - x) / screen_x;
     }
 
-    view.setSize({20.f, screen_ratio * 20.f});
+    view.setSize({Configuration::default_configuration.width / tile_size,
+                  Configuration::default_configuration.height / tile_size});
     view.setViewport({x_offset/ 2.f, y_offset / 2.f, 1.f - x_offset, 1.f - y_offset});
 
     target.setView(view);
