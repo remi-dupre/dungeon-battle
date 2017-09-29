@@ -126,7 +126,7 @@ std::istream &operator>>(std::istream& stream, Map& map)
 
     map.cells.clear();
 
-    // Create the map from the string representing it
+    // Loads the map from the string representing it
     std::transform(
         std::begin(map_str), std::end(map_str),
         std::back_inserter(map.cells),
