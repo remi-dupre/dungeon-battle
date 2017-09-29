@@ -39,7 +39,7 @@ Action get_input_hero(const Configuration& config)
     return Action();
 }
 
-Action control::get_input(const Entity& entity, const std::vector<std::shared_ptr<Entity>>& entities, std::function<const CellType&(unsigned int, unsigned int)> cell_at, const Configuration& config)
+Action control::get_input(const Entity& entity, const std::vector<std::shared_ptr<Entity>>& entities, const std::function<const CellType&(unsigned int, unsigned int)>& cell_at, const Configuration& config)
 {
     switch (entity.getType())
     {
