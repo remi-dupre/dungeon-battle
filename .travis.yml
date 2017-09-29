@@ -20,7 +20,7 @@ script:
  - docker exec -t artful bash -c "cd /travis;
    make doc CXX=g++-7";
  - docker exec -t artful bash -c "cd /travis;
-   make cppcheck-html CHECK_DIR=doc/check CXX=g++-7";
+   make cppcheck-html CHECK_DIR=doc/html/check CXX=g++-7";
  - docker exec -t artful bash -c "cd /travis;
    make debug CXX=g++-7;"
  - docker exec -t artful bash -c "cd /travis;
