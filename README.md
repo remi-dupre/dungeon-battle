@@ -6,7 +6,7 @@ Software engineering project.
 
 # Compiling
 
-The project is written in **C++14**, in order to compile it you need 
+The project is written in **C++14**, in order to compile it you need
 
 - A C++ STL that supports at least C++11.
 - The **SFML** library version `2.4.2` or more recent.
@@ -37,6 +37,18 @@ You should also install **GNU Make** :
 apt-get install make
 ```
 
+### Optional dependencies
+Documentation is generated with **doxygen** and is required to `make doc` :
+```bash
+apt-get install doxygen
+```
+
+Some extra tests can be done by running `make test` and it requires **cppcheck** and **cxxgen** :
+```bash
+apt-get install cppcheck cxxgen
+```
+
+
 ## Compilation
 
 In order to compile the project, assuming you have all the dependencies mentioned above, you have to run the command :
@@ -54,6 +66,8 @@ You can also generate the documentation by running `make doc`, which requires do
 # Other informations
 
 We defined a preferred coding style in the file [coding_style.md](https://github.com/remi-dupre/dungeon-battle/blob/master/coding_style.md).
+
+Some warning from the linter are listed on [github pages](https://remi-dupre.github.io/dungeon-battle/check/index.html).
 
 
 Made by Jean-Baptiste Daval, Rémi Dupré, Benjamin Graillot, Lucas Gréaux and Garance Gourdel.

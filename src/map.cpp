@@ -7,9 +7,9 @@ Map::Map() :
     Map(0, 0)
 {}
 
-Map::Map(unsigned int _width, unsigned int _height) :
+Map::Map(unsigned int width, unsigned int height) :
     // Copy redundant information about the shape
-    width(_width), height(_height),
+    width(width), height(height),
     // Fill the map with floors
     cells(width * height, CellType::Floor)
 {

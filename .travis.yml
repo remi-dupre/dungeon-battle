@@ -14,11 +14,13 @@ install:
  - docker exec -t artful bash -c "apt-get install -y --no-install-recommends build-essential"
  - docker exec -t artful bash -c "apt-get install -y --no-install-recommends libsfml-dev"
  - docker exec -t artful bash -c "apt-get install -y --no-install-recommends doxygen"
- - docker exec -t artful bash -c "apt-get install -y --no-install-recommends cxxtest"
+ - docker exec -t artful bash -c "apt-get install -y --no-install-recommends cxxtest cppcheck"
 
 script:
  - docker exec -t artful bash -c "cd /travis;
    make doc CXX=g++-7";
+ - docker exec -t artful bash -c "cd /travis;
+   make cppcheck-html CHECK_DIR=doc/check CXX=g++-7";
  - docker exec -t artful bash -c "cd /travis;
    make debug CXX=g++-7;"
  - docker exec -t artful bash -c "cd /travis;

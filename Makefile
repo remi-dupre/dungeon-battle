@@ -33,6 +33,9 @@ EXEC = dungeon-battle
 # Documentation directory
 DOC_DIR = doc
 
+# Dir where to output cppcheck reports
+CHECK_DIR = check
+
 SRC_DIR_TEST = tests
 SRC_TEST = $(SRC_DIR_TEST)/test_configuration.cpp \
            $(SRC_DIR_TEST)/test_parse_arguments.cpp
@@ -40,9 +43,9 @@ OBJ_TEST = $(SRC_TEST:$(SRC_DIR_TEST)/%.cpp=$(BUILD_DIR_TEST)/%.o)
 EXEC_TEST = $(SRC_TEST:$(SRC_DIR_TEST)/%.cpp=$(SRC_DIR_TEST)/%)
 
 
-.PHONY: all release debug test doc clean
+.PHONY: all release debug test doc cppcheck-html clean
 
-all: release doc test
+all: release doc cppcheck-html test
 
 release: CFLAGS += -O3 -DNDEBUG
 release: $(EXEC)
@@ -52,13 +55,23 @@ debug: $(EXEC)
 
 # Exectutes tests using cxxtest
 test: tests/test.cpp
-	$(CXX) -o tests/test tests/test.cpp && ./tests/test
+	@echo "=== Runing unit tests"
+	@$(CXX) -o tests/test tests/test.cpp && ./tests/test
+	@echo -e "\n=== Runing linter"
+	cppcheck --enable=all --inconclusive $(SRC_DIR) 1> /dev/null
+
 tests/test.cpp: tests/test.hpp
 	cxxtestgen --error-printer -o tests/test.cpp tests/test.hpp
 
 # Generate the documentation
 doc:
 	doxygen .doxygen.conf
+
+# Generate linter's report
+cppcheck-html:
+	cppcheck --enable=all --inconclusive --xml $(SRC_DIR) 2> tmp_cppcheck.xml
+	cppcheck-htmlreport --file=tmp_cppcheck.xml --report-dir=$(CHECK_DIR) --source-dir=.
+	@rm tmp_cppcheck.xml
 
 # Build object file from source file
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp $(SRC_DIR)/%.hpp
@@ -89,5 +102,6 @@ clean:
 	rm -rf $(BUILD_DIR)
 	rm -rf $(DOC_DIR)
 	rm -rf $(EXEC_TEST)
+	rm -rf $(CHECK_DIR)
 	rm -rf dungeon-battle
 	rm -rf *~
