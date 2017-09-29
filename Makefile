@@ -50,8 +50,11 @@ release: $(EXEC)
 debug: DFLAGS += -ggdb
 debug: $(EXEC)
 
-test: debug
-test: $(EXEC_TEST)
+# Exectutes tests using cxxtest
+test: tests/test.cpp
+	$(CXX) -o tests/test tests/test.cpp && ./tests/test
+tests/test.cpp: tests/test.hpp
+	cxxtestgen --error-printer -o tests/test.cpp tests/test.hpp
 
 # Generate the documentation
 doc:
