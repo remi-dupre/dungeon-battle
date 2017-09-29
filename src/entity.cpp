@@ -1,10 +1,9 @@
 #include "entity.hpp"
 
 
-Entity::Entity(sf::Vector2i _position, Direction _orientation, EntityType _type) :
+Entity::Entity(sf::Vector2i _position, Direction _orientation) :
     position(_position),
-    orientation(_orientation),
-    type(_type)
+    orientation(_orientation)
 {}
 
 sf::Vector2i Entity::getPosition() const
