@@ -6,7 +6,7 @@ Software engineering project.
 
 # Compiling
 
-The project is written in **C++17**, in order to compile it you need 
+The project is written in **C++14**, in order to compile it you need 
 
 - A C++ STL that supports at least C++11.
 - The **SFML** library version `2.4.2` or more recent.
@@ -21,12 +21,12 @@ You can install **SFML** on *Debian* distributions with the command :
 apt-get install libsfml-dev
 ```
 
-The supported compilers are **g++** 7 and **clang++** 5, or any later version.
+The supported compilers are **g++** 5 and **clang++** 4, or any later version.
 
-On *Ubuntu* 17.10, **g++** 7 can be installed with the command :
+On *Ubuntu* 16.04, **g++** 5 can be installed with the command :
 
 ```bash
-apt-get install g++-7
+apt-get install g++
 ```
 
 **LLVM** binaries for *Debian* and *Ubuntu* which include **clang++** can also be found on [their website](http://releases.llvm.org/download.html).
