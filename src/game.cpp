@@ -2,6 +2,7 @@
 #include <string>
 
 #include "args.hpp"
+#include "control.hpp"
 #include "game.hpp"
 
 
@@ -9,7 +10,6 @@ Game::Game() {}
 
 void Game::init(const std::map<Option, std::string>& options)
 {
-    Configuration config;
     config.read(options.at(Option::Config));
 
     sf::Uint32 style = sf::Style::Close | sf::Style::Resize;
@@ -42,6 +42,15 @@ void Game::run()
         }
 
         float time_since_last_frame = timer.restart().asSeconds();
+
+        for (auto& entity : entities)
+        {
+            Action action = control::get_input(*entity, entities,
+                                               [this](unsigned int x, unsigned int y) -> const CellType& {
+                                                   return this->map.cellAt(x, y);
+                                               },
+                                               config);
+        }
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z))
         {

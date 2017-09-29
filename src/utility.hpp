@@ -11,6 +11,7 @@
  */
 enum class Direction
 {
+    None, ///< No specific direction
     Left, ///< Left
     Right, ///< Right
     Up, ///< Up
