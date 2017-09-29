@@ -84,6 +84,7 @@ std::vector<Entity> Map::getEntitiesOnCell(sf::Vector2i position) const
         }
     );
     return entities_on_cell;
+}
 
 std::ostream &operator<<(std::ostream& stream, const Map& map)
 {

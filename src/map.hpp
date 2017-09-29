@@ -6,13 +6,10 @@
 #pragma once
 
 #include <algorithm>
-<<<<<<< HEAD
 #include <iterator>
-=======
 #include <fstream>
 #include <iostream>
 #include <string>
->>>>>>> 88af1b3e965f62de2b5a0c18b19807fc7ddeca76
 #include <vector>
 
 #include "entity.hpp"
