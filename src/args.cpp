@@ -22,7 +22,7 @@ inline constexpr std::tuple<const char*, Option, bool> command_line_options[3] =
 };
 
 
-int parse_arguments(std::map<Option, std::string>& options, int argc, char **argv)
+int parse_arguments(std::map<Option, std::string>& options, int argc, char** argv)
 {
     for (int n = 1; n < argc; n++)
     {
@@ -96,15 +96,6 @@ int parse_arguments(std::map<Option, std::string>& options, int argc, char **arg
 
             options[option] = std::string(argv[++n]);
         }
-    }
-
-    auto help = options.find(Option::Help);
-
-    if(help != options.end())
-    {
-        // Display help message
-
-        return -1;
     }
 
     return 0;
