@@ -7,6 +7,8 @@
 
 #include <SFML/System/Vector2.hpp>
 
+#include "utility.hpp"
+
 
 /**
  * \brief Static information about the type of the entity
@@ -17,18 +19,6 @@ enum class EntityType
     Monster, ///< A monster
     Stairs ///< A staircase
 };
-
-/**
- * \brief Dynamic information about the orientation of the entity
- */
-enum class Direction
-{
-    Left, ///< Left
-    Right ///< Right
-    Up, ///< Up
-    Down, ///< Down
-};
-
 
 /**
  * \brief Represents anything that is interactive

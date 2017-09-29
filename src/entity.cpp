@@ -1,4 +1,5 @@
 #include "entity.hpp"
+#include "utility.hpp"
 
 
 Entity::Entity(sf::Vector2i _position, Direction _orientation) :
