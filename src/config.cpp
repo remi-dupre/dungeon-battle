@@ -75,6 +75,18 @@ void Configuration::read(const std::string& filename)
     return;
 }
 
+std::ostream& operator<<(std::ostream& stream, const Configuration& config)
+{
+    return stream <<
+    "[Video]" << std::endl <<
+    "width=" << config.width << std::endl <<
+    "height=" << config.height << std::endl <<
+    "scalefactor=" << config.scalefactor << std::endl <<
+    "fullscreen=" << config.fullscreen << std::endl <<
+    "vsync=" << config.vsync << std::endl <<
+    "maxfps=" << config.maxfps << std::endl;
+}
+
 void Configuration::write(const std::string& filename)
 {
     std::ofstream config_file(filename);
@@ -82,14 +94,9 @@ void Configuration::write(const std::string& filename)
     if (!config_file.is_open())
         return;
 
-    config_file << "[Video]" << std::endl;
-    config_file << "width=" << width << std::endl;
-    config_file << "height=" << height << std::endl;
-    config_file << "scalefactor=" << scalefactor << std::endl;
-    config_file << "fullscreen=" << fullscreen << std::endl;
-    config_file << "vsync=" << vsync << std::endl;
-    config_file << "maxfps=" << maxfps << std::endl;
+    config_file << *this;
 
     return;
 }
+
 const Configuration Configuration::default_configuration = Configuration();

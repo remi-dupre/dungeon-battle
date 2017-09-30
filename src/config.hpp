@@ -55,4 +55,13 @@ struct Configuration
     void write(const std::string& filename);
 
     static const Configuration default_configuration;
+
+    friend std::ostream& operator<<(std::ostream&, const Configuration&);
 };
+
+/**
+ * \brief `operator<<` overload for `Configuration`
+ *
+ * Overloads `operator<<` to output configurations to streams
+ */
+std::ostream& operator<<(std::ostream& stream, const Configuration& config);
