@@ -42,7 +42,7 @@ public:
     explicit Map();
 
     /**
-     * \brief Create a map full of floor
+     * \brief Create a map full of empty cells
      * \param width The width of the map
      * \param height The height of the map
      */

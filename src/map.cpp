@@ -11,7 +11,7 @@ Map::Map(unsigned int width, unsigned int height) :
     // Copy redundant information about the shape
     width(width), height(height),
     // Fill the map with floors
-    cells(width * height, CellType::Floor)
+    cells(width * height, CellType::Empty)
 {
     assert (width > 0);
     assert (height > 0);
