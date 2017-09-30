@@ -1,3 +1,4 @@
+#include <cmath>
 #include <map>
 #include <string>
 
@@ -83,6 +84,7 @@ void Game::run()
                         default:
                             break;
                     }
+                    entity->setOrientation(action.direction);
                     break;
                 default:
                     break;
@@ -141,8 +143,28 @@ std::vector<std::shared_ptr<Entity>> Game::getEntitiesOnCell(sf::Vector2u positi
     std::copy_if(
         std::begin(entities), std::end(entities),
         std::back_inserter(entities_on_cell),
-        [position](const std::shared_ptr<Entity>& e) -> bool {
+        [&position](const std::shared_ptr<Entity>& e) -> bool {
             return e->getPosition() == position;
+        }
+    );
+    return entities_on_cell;
+}
+
+std::vector<std::shared_ptr<Entity>> Game::getEntitiesAroundCell(unsigned int x, unsigned int y, unsigned int d) const
+{
+    return getEntitiesAroundCell({x, y}, d);
+}
+
+std::vector<std::shared_ptr<Entity>> Game::getEntitiesAroundCell(sf::Vector2u position, unsigned int d) const
+{
+    std::vector<std::shared_ptr<Entity>> entities_on_cell;
+    // Runs a copy on 'entities' outputed to 'entities_on_cell'
+    std::copy_if(
+        std::begin(entities), std::end(entities),
+        std::back_inserter(entities_on_cell),
+        [&position, d](const std::shared_ptr<Entity>& e) -> bool {
+            sf::Vector2u p = e->getPosition();
+            return std::max(p.x, position.x) - std::min(p.x, position.x) + std::max(p.y, position.y) - std::min(p.y, position.y) <= d;
         }
     );
     return entities_on_cell;

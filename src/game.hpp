@@ -48,39 +48,56 @@ public:
     /**
      * \brief Update the game
      *
-     * This function updates the game
+     * This function updates the game.
      */
     void update();
 
     /**
      * \brief Display the game
      *
-     * This function draws the game on the screen
+     * This function draws the game on the screen.
      */
     void display();
 
     /**
-     * \brief Get the list of every entities on the map.
-     * \return Const reference to a vector containing all entities of the map.
+     * \brief Get the list of every entities on the map
+     * \return Const reference to a vector containing all entities of the map
+     * 
      * If two entities are on the same cell, the last one is over the first one.
      */
     const std::vector<std::shared_ptr<Entity>>& getEntities() const;
 
     /**
-     * \brief Get all entities putted on a specific cell
+     * \brief Get all entities put on a specific cell
      * \param position Position vector of the cell
-     * \return A vector of copies of the entities putted on the cell.
+     * \return A vector of pointers to entities put on the cell
      */
     std::vector<std::shared_ptr<Entity>> getEntitiesOnCell(sf::Vector2u position) const;
 
     /**
-     * \brief Get all entities putted on a specific cell
+     * \brief Get all entities put on a specific cell
      * \param x X coordinate of the cell
      * \param y Y coordinate of the cell
-     * \return A vector of copies of the entities putted on the cell.
+     * \return A vector of pointers to entities put on the cell
      */
     std::vector<std::shared_ptr<Entity>> getEntitiesOnCell(unsigned int x, unsigned int y) const;
 
+    /**
+     * \brief Get all entities in range of a specific cell
+     * \param position Position vector of the cell
+     * \param d Radius of the l<SUB>1</SUB> norm sphere that is searched
+     * \return A vector of pointers to entities at distance less than are equal to d from the cell
+     */
+    std::vector<std::shared_ptr<Entity>> getEntitiesAroundCell(sf::Vector2u position, unsigned int d) const;
+
+    /**
+     * \brief Get all entities in range of a specific cell
+     * \param x X coordinate of the cell
+     * \param y Y coordinate of the cell
+     * \param d Radius of the l<SUB>1</SUB> norm sphere that is searched
+     * \return A vector of pointers to entities at distance less than are equal to d from the cell
+     */
+    std::vector<std::shared_ptr<Entity>> getEntitiesAroundCell(unsigned int x, unsigned int y, unsigned int d) const;
 
 private:
 
