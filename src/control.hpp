@@ -1,3 +1,8 @@
+/**
+ * \file control.hpp
+ * \brief Retrieve actions performed by entities.
+ */
+
 #pragma once
 
 #include <functional>
@@ -9,14 +14,20 @@
 #include "map.hpp"
 
 
+/**
+ * \brief A type of action
+ */
 enum class ActionType
 {
-    None,
-    Move,
-    Attack,
-    Interract
+    None, ///< No action
+    Move, ///< Move action
+    Attack, ///< Attack action
+    Interract ///< Interract action
 };
 
+/**
+ * \brief Represents an action
+ */
 struct Action
 {
     ActionType type; ///< Type of the action
@@ -27,20 +38,20 @@ struct Action
      * 
      * This creates an action with no type and no direction.
      */
-    Action();
+    explicit Action();
 
     /**
      * \brief Create an action with no direction
      * \param type The type of the action
      */
-    Action(ActionType type);
+    explicit Action(ActionType type);
 
     /**
      * \brief Create an action
      * \param type The type of the action
      * \param direction The direction of the action
      */
-    Action(ActionType type, Direction direction);
+    explicit Action(ActionType type, Direction direction);
 };
 
 namespace control
