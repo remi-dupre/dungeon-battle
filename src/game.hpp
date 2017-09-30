@@ -71,7 +71,7 @@ public:
      * \param position Position vector of the cell
      * \return A vector of copies of the entities putted on the cell.
      */
-    std::vector<std::shared_ptr<Entity>> getEntitiesOnCell(sf::Vector2i position) const;
+    std::vector<std::shared_ptr<Entity>> getEntitiesOnCell(sf::Vector2u position) const;
 
     /**
      * \brief Get all entities putted on a specific cell
@@ -79,7 +79,7 @@ public:
      * \param y Y coordinate of the cell
      * \return A vector of copies of the entities putted on the cell.
      */
-    std::vector<std::shared_ptr<Entity>> getEntitiesOnCell(int x, int y) const;
+    std::vector<std::shared_ptr<Entity>> getEntitiesOnCell(unsigned int x, unsigned int y) const;
 
 
 private:

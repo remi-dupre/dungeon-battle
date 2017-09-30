@@ -4,6 +4,8 @@
 #include "args.hpp"
 #include "control.hpp"
 #include "game.hpp"
+#include "map.hpp"
+#include "utility.hpp"
 
 
 Game::Game() {}
@@ -50,6 +52,41 @@ void Game::run()
                                                    return this->map.cellAt(x, y);
                                                },
                                                config);
+            
+            sf::Vector2u position = entity->getPosition();
+
+            switch (action.type)
+            {
+                case ActionType::Move:
+                    switch(action.direction)
+                    {
+                        case Direction::Left:
+                            if (position.y-- > 0)
+                                if(map.cellAt(position.x, position.y) != CellType::Wall)
+                                    entity->setPosition(position);
+                            break;
+                        case Direction::Right:
+                            if (position.x++ < map.getWidth())
+                                if (map.cellAt(position.x, position.y) != CellType::Wall)
+                                    entity->setPosition(position);
+                            break;
+                        case Direction::Up:
+                            if (position.x-- > 0)
+                                if (map.cellAt(position.x, position.y) != CellType::Wall)
+                                    entity->setPosition(position);
+                            break;
+                        case Direction::Down:
+                            if (position.y++ < map.getHeight())
+                                if (map.cellAt(position.x, position.y) != CellType::Wall)
+                                    entity->setPosition(position);
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                default:
+                    break;
+            }
         }
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z))
@@ -92,12 +129,12 @@ const std::vector<std::shared_ptr<Entity>>& Game::getEntities() const
     return entities;
 }
 
-std::vector<std::shared_ptr<Entity>> Game::getEntitiesOnCell(int x, int y) const
+std::vector<std::shared_ptr<Entity>> Game::getEntitiesOnCell(unsigned int x, unsigned int y) const
 {
     return getEntitiesOnCell({x, y});
 }
 
-std::vector<std::shared_ptr<Entity>> Game::getEntitiesOnCell(sf::Vector2i position) const
+std::vector<std::shared_ptr<Entity>> Game::getEntitiesOnCell(sf::Vector2u position) const
 {
     std::vector<std::shared_ptr<Entity>> entities_on_cell;
     // Runs a copy on 'entities' outputed to 'entities_on_cell'

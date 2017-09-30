@@ -63,12 +63,12 @@ public:
     /**
      * \brief Get the width of the map
      */
-    int getWidth() const;
+    unsigned int getWidth() const;
 
     /**
      * \brief Get the heigth of the map
      */
-    int getHeight() const;
+    unsigned int getHeight() const;
 
     /**
      * \brief Get a read-write access to a cell by its coordinates
@@ -86,7 +86,7 @@ public:
      * \return Const reference to the cell
      * `x` and `y` must be in the ranges `[0, map.width)` and `[0, map.heigth)`
      */
-    const CellType& cellAt(unsigned int x, unsigned int y) const;
+    CellType cellAt(unsigned int x, unsigned int y) const;
 
 private:
 

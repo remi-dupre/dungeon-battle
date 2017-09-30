@@ -34,7 +34,7 @@ public:
      * \param position The position of the entity
      * \param orientation The orientation of the entity
      */
-    Entity(EntityType type, sf::Vector2i position, Direction orientation);
+    Entity(EntityType type, sf::Vector2u position, Direction orientation);
 
     /**
      * \brief Return the type of the entity
@@ -44,13 +44,13 @@ public:
     /**
      * \brief Return the position of the entity
      */
-    sf::Vector2i getPosition() const;
+    sf::Vector2u getPosition() const;
 
     /**
      * \brief Set the position of the entity
      * \param position The position to set
      */
-    void setPosition(sf::Vector2i position);
+    void setPosition(sf::Vector2u position);
 
     /**
      * \brief Return the orientation of the entity
@@ -66,6 +66,6 @@ public:
 protected:
 
     EntityType type; ///< The type of the entity
-    sf::Vector2i position; ///< The position of the entity
+    sf::Vector2u position; ///< The position of the entity
     Direction orientation; ///< The orientation of the entity
 };

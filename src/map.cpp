@@ -42,12 +42,12 @@ void Map::saveToFile(const std::string& filename) const
     return;
 }
 
-int Map::getWidth() const
+unsigned int Map::getWidth() const
 {
     return width;
 }
 
-int Map::getHeight() const
+unsigned int Map::getHeight() const
 {
     return height;
 }
@@ -59,7 +59,7 @@ CellType& Map::cellAt(unsigned int x, unsigned int y)
     return cells[x + width * y];
 }
 
-const CellType& Map::cellAt(unsigned int x, unsigned int y) const
+CellType Map::cellAt(unsigned int x, unsigned int y) const
 {
     assert(x < width);
     assert(y < height);
