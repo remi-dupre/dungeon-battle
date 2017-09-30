@@ -134,7 +134,7 @@ std::istream& operator>>(std::istream& stream, Map& map)
     std::transform(
         std::begin(map_str), std::end(map_str),
         std::back_inserter(map.cells),
-        [] (const char& c) -> CellType
+        [](const char& c) -> CellType
         {
             switch (c)
             {

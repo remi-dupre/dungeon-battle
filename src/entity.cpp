@@ -30,5 +30,6 @@ Direction Entity::getOrientation() const
 
 void Entity::setOrientation(Direction _orientation)
 {
-    orientation = _orientation;
+    if (_orientation != Direction::None)
+        orientation = _orientation;
 }

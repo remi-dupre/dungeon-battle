@@ -52,8 +52,11 @@ struct Configuration
      * This function saves the current configuration to a file.
      * All the options are saved, the old file is deleted.
      */
-    void write(const std::string& filename);
+    void write(const std::string& filename) const;
 
+    /**
+     * \brief A configuration with default values
+     */
     static const Configuration default_configuration;
 
     friend std::ostream& operator<<(std::ostream&, const Configuration&);

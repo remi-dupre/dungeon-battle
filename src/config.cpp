@@ -87,7 +87,7 @@ std::ostream& operator<<(std::ostream& stream, const Configuration& config)
     "maxfps=" << config.maxfps << std::endl;
 }
 
-void Configuration::write(const std::string& filename)
+void Configuration::write(const std::string& filename) const
 {
     std::ofstream config_file(filename);
 

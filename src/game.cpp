@@ -67,7 +67,7 @@ void Game::run()
                                     entity->setPosition(position);
                             break;
                         case Direction::Right:
-                            if (position.x++ < map.getWidth())
+                            if (++position.x < map.getWidth())
                                 if (map.cellAt(position.x, position.y) != CellType::Wall)
                                     entity->setPosition(position);
                             break;
@@ -77,7 +77,7 @@ void Game::run()
                                     entity->setPosition(position);
                             break;
                         case Direction::Down:
-                            if (position.y++ < map.getHeight())
+                            if (++position.y < map.getHeight())
                                 if (map.cellAt(position.x, position.y) != CellType::Wall)
                                     entity->setPosition(position);
                             break;
@@ -139,6 +139,7 @@ std::vector<std::shared_ptr<Entity>> Game::getEntitiesOnCell(unsigned int x, uns
 std::vector<std::shared_ptr<Entity>> Game::getEntitiesOnCell(sf::Vector2u position) const
 {
     std::vector<std::shared_ptr<Entity>> entities_on_cell;
+
     // Runs a copy on 'entities' outputed to 'entities_on_cell'
     std::copy_if(
         std::begin(entities), std::end(entities),
@@ -147,6 +148,7 @@ std::vector<std::shared_ptr<Entity>> Game::getEntitiesOnCell(sf::Vector2u positi
             return e->getPosition() == position;
         }
     );
+
     return entities_on_cell;
 }
 
@@ -158,6 +160,7 @@ std::vector<std::shared_ptr<Entity>> Game::getEntitiesAroundCell(unsigned int x,
 std::vector<std::shared_ptr<Entity>> Game::getEntitiesAroundCell(sf::Vector2u position, unsigned int d) const
 {
     std::vector<std::shared_ptr<Entity>> entities_on_cell;
+    
     // Runs a copy on 'entities' outputed to 'entities_on_cell'
     std::copy_if(
         std::begin(entities), std::end(entities),
@@ -167,5 +170,6 @@ std::vector<std::shared_ptr<Entity>> Game::getEntitiesAroundCell(sf::Vector2u po
             return std::max(p.x, position.x) - std::min(p.x, position.x) + std::max(p.y, position.y) - std::min(p.y, position.y) <= d;
         }
     );
+
     return entities_on_cell;
 }
