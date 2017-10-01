@@ -80,11 +80,14 @@ int pattern_min_y(const Pattern& pattern);
 int pattern_max_y(const Pattern& pattern);
 
 /**
- * \brief Translate a pattern to remove negative coordinates
+ * \brief Translate a pattern to remove negative coordinates.
+ * \param pattern A pattern that could have negative coordinates.
+ * \param entities A set of entities that should be placed on the pattern, they will be modified to correspond to the same place.
+ * \return The newly aligned pattern.
  *
- * This will also align the pattern on top left.
+ * \note This will also align the pattern on top left.
  */
-Pattern normalized_pattern(Pattern& pattern);
+Pattern normalized_pattern(Pattern& pattern, std::vector<Entity>&  entities);
 
 /**
  * \brief Merge patterns, placing them around given positions

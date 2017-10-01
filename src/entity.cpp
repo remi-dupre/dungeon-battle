@@ -2,10 +2,10 @@
 #include "utility.hpp"
 
 
-Entity::Entity(EntityType _type, sf::Vector2u _position, Direction _orientation) :
-    type(_type),
-    position(_position),
-    orientation(_orientation)
+Entity::Entity(EntityType type_, sf::Vector2u position_, Direction orientation_) :
+    type(type_),
+    position(position_),
+    orientation(orientation_)
 {}
 
 EntityType Entity::getType() const
@@ -18,9 +18,9 @@ sf::Vector2u Entity::getPosition() const
     return position;
 }
 
-void Entity::setPosition(sf::Vector2u _position)
+void Entity::setPosition(sf::Vector2u position_)
 {
-    position = _position;
+    position = position_;
 }
 
 Direction Entity::getOrientation() const
@@ -28,8 +28,8 @@ Direction Entity::getOrientation() const
     return orientation;
 }
 
-void Entity::setOrientation(Direction _orientation)
+void Entity::setOrientation(Direction orientation_)
 {
-    if (_orientation != Direction::None)
-        orientation = _orientation;
+    if (orientation_ != Direction::None)
+        orientation = orientation_;
 }
