@@ -4,7 +4,7 @@
 
 
 Map::Map() :
-    Map(0, 0)
+    Map(1, 1)
 {}
 
 Map::Map(unsigned int width, unsigned int height) :
