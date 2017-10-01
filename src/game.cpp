@@ -40,9 +40,19 @@ void Game::init(const std::map<Option, std::string>& options)
 
     auto level = generate(gen_options);
     map = std::get<Map>(level);
-    entities  = std::get<std::vector<std::shared_ptr<Entity>>>(level);
+    entities = std::get<std::vector<std::shared_ptr<Entity>>>(level);
 
-    entities.push_back(std::make_shared<Entity>(EntityType::Hero, sf::Vector2u(0, 0), Direction::Left));
+    auto entry_stairs = std::find_if(entities.begin(), entities.end(),
+                                     [](const std::shared_ptr<Entity> e) -> bool
+                                     {
+                                         return e->getType() == EntityType::Stairs;
+    });
+
+    sf::Vector2u start_pos;
+    if (entry_stairs != entities.end())
+        start_pos = (*entry_stairs)->getPosition();
+
+    entities.push_back(std::make_shared<Entity>(EntityType::Hero, start_pos, Direction::Left));
 
     map.saveToFile("map.map");
 }
