@@ -27,7 +27,17 @@ void Game::init(const std::map<Option, std::string>& options)
     if (!config.vsync) // Don't activate vertical synchronization and framerate limit at the same time
         window.setFramerateLimit(config.maxfps);
 
-    map.loadFromFile("map1.map");
+    // Generate a map
+    GenerationMode gen_options;
+    gen_options.width = 100;
+    gen_options.height = 40;
+    gen_options.nb_rooms = 2;
+    gen_options.rooms_size = 650;
+
+    auto level = generate(gen_options);
+    map = std::get<Map>(level);
+
+    map.saveToFile("map.map");
 }
 
 void Game::run()
@@ -58,7 +68,7 @@ void Game::run()
                 },
                 config
             );
-            
+
             sf::Vector2u position = entity->getPosition();
 
             switch (action.type)
@@ -165,7 +175,7 @@ std::vector<std::shared_ptr<Entity>> Game::getEntitiesAroundCell(unsigned int x,
 std::vector<std::shared_ptr<Entity>> Game::getEntitiesAroundCell(sf::Vector2u position, unsigned int d) const
 {
     std::vector<std::shared_ptr<Entity>> entities_on_cell;
-    
+
     // Runs a copy on 'entities' outputed to 'entities_on_cell'
     std::copy_if(
         std::begin(entities), std::end(entities),

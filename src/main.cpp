@@ -8,8 +8,6 @@
 #include "args.hpp"
 #include "game.hpp"
 
-#include "generation.hpp"
-
 
 int main(int argc, char** argv)
 {
@@ -33,17 +31,6 @@ int main(int argc, char** argv)
             return 0;
         }
     }
-
-    // Generate a map for a console demo
-    GenerationMode gen_options({
-        .width = 100,
-        .height = 40,
-        .nb_rooms = 2,
-        .rooms_size = 650
-    });
-    auto level = generate(gen_options);
-    auto map = std::get<Map>(level);
-    std::cout << map;
 
     Game game;
     game.init(options);
