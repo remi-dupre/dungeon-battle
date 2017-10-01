@@ -1,4 +1,5 @@
 #include "generation.hpp"
+#include "rand.hpp"
 
 
 Pattern generateCave(int size)
@@ -144,11 +145,8 @@ std::pair<Map, std::vector<Entity>> generate(const GenerationMode &mode)
     std::vector<std::pair<int, int>> room_positions;
 
     // Create rooms of random size
-    std::random_device rd;
-    std::mt19937 rand_gen(rd());
-    std::uniform_int_distribution<> room_size_dis(mode.room_min_size, mode.room_max_size);
     for (int i_room = 0 ; i_room < mode.nb_rooms ; i_room++)
-        rooms.push_back(generateCave(room_size_dis(rand_gen)));
+        rooms.push_back(generateCave(Random::uniform_int(mode.room_min_size, mode.room_max_size)));
 
     int map_right = 0; // right position of the end of last room
     for (auto& room : rooms)

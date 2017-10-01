@@ -27,6 +27,7 @@ void Game::init(const std::map<Option, std::string>& options)
     if (!config.vsync) // Don't activate vertical synchronization and framerate limit at the same time
         window.setFramerateLimit(config.maxfps);
 
+    // Seed the rng
     std::random_device r;
     Random::seed(r());
 

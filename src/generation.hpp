@@ -46,35 +46,35 @@ Pattern generateCave(int size);
 
 
 /**
- * \brief Minimum x coordinate of cells in the pattern.
- * \attr pattern A pattern.
- * \return The minimum of x coordinates.
+ * \brief Minimum x coordinate of cells in the pattern
+ * \attr pattern A pattern
+ * \return The minimum of x coordinates
  */
 int getPatternMinX(const Pattern& pattern);
 
 /**
- * \brief Maximum x coordinate of cells in the pattern.
- * \attr pattern A pattern.
- * \return The maximum of x coordinates.
+ * \brief Maximum x coordinate of cells in the pattern
+ * \attr pattern A pattern
+ * \return The maximum of x coordinates
  */
 int getPatternMaxX(const Pattern& pattern);
 
 /**
- * \brief Minimum y coordinate of cells in the pattern.
- * \attr pattern A pattern.
- * \return The minimum of y coordinates.
+ * \brief Minimum y coordinate of cells in the pattern
+ * \attr pattern A pattern
+ * \return The minimum of y coordinates
  */
 int getPatternMinY(const Pattern& pattern);
 
 /**
- * \brief Maximum y coordinate of cells in the pattern.
- * \attr pattern A pattern.
- * \return The maximum of y coordinates.
+ * \brief Maximum y coordinate of cells in the pattern
+ * \attr pattern A pattern
+ * \return The maximum of y coordinates
  */
 int getPatternMaxY(const Pattern& pattern);
 
 /**
- * \brief Translate a pattern to remove negative coordinates.
+ * \brief Translate a pattern to remove negative coordinates
  *
  * This will also align the pattern on top left.
  */
