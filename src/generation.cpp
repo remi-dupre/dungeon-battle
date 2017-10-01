@@ -1,5 +1,6 @@
-#include "generation.hpp"
 #include <iostream>
+
+#include "generation.hpp"
 
 
 Pattern generateCave(int size)
@@ -12,7 +13,7 @@ Pattern generateCave(int size)
     // Add cells around the first one
     surrounding.insert(std::make_pair(0, 0));
     // Add a new cell to surrounding, if it isn't already in the patern.
-    auto addSurrounding = [&cells, &surrounding] (int x, int y) -> void
+    auto addSurrounding = [&cells, &surrounding](int x, int y) -> void
     {
         if (cells.count(std::make_pair(x, y)) == 0)
             surrounding.insert(std::make_pair(x, y));
