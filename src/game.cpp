@@ -51,7 +51,7 @@ void Game::run()
 {
     sf::Clock timer;
 
-    float time_since_last_update;
+    float time_since_last_update = 0.0f;
 
     while (window.isOpen())
     {
