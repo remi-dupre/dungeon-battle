@@ -1,5 +1,3 @@
-#include <iostream>
-
 #include "generation.hpp"
 
 
@@ -39,6 +37,49 @@ Pattern generateCave(int size)
     return cells;
 }
 
+int getPatternMinX(const Pattern& pattern)
+{
+    int min_x = std::numeric_limits<int>::max();
+    for (auto cell : pattern)
+        min_x = std::min(min_x, cell.first);
+    return min_x;
+}
+
+int getPatternMaxX(const Pattern& pattern)
+{
+    int max_x = std::numeric_limits<int>::min();
+    for (auto cell : pattern)
+        max_x = std::max(max_x, cell.first);
+    return max_x;
+}
+
+int getPatternMinY(const Pattern& pattern)
+{
+    int min_y = std::numeric_limits<int>::max();
+    for (auto cell : pattern)
+        min_y = std::min(min_y, cell.second);
+    return min_y;
+}
+
+int getPatternMaxY(const Pattern& pattern)
+{
+    int max_y = std::numeric_limits<int>::min();
+    for (auto cell : pattern)
+        max_y = std::max(max_y, cell.first);
+    return max_y;
+}
+
+
+Pattern normalizedPattern(Pattern& pattern)
+{
+    int min_x = getPatternMinX(pattern);
+    int min_y = getPatternMinY(pattern);
+
+    Pattern normalized;
+    for (auto& cell : pattern)
+        normalized.insert({cell.first-min_x, cell.second-min_y});
+    return normalized;
+}
 
 Pattern mergePatterns(
     const std::vector<std::pair<int, int>>& positions,
@@ -102,16 +143,28 @@ std::pair<Map, std::vector<Entity>> generate(const GenerationMode &mode)
     std::vector<Pattern> rooms;
     std::vector<std::pair<int, int>> room_positions;
 
-    rooms.push_back(generateCave(mode.room_size));
-    room_positions.push_back({(1./3.)*mode.width, (1./2.)*mode.height});
+    // Create rooms of random size
+    std::random_device rd;
+    std::mt19937 rand_gen(rd());
+    std::uniform_int_distribution<> room_size_dis(mode.room_min_size, mode.room_max_size);
+    for (int i_room = 0 ; i_room < mode.nb_rooms ; i_room++)
+        rooms.push_back(generateCave(room_size_dis(rand_gen)));
 
-    rooms.push_back(generateCave(mode.room_size));
-    room_positions.push_back({(2./3.)*mode.width, (1./2.)*mode.height});
+    int map_right = 0; // right position of the end of last room
+    for (auto& room : rooms)
+    {
+        int room_left = getPatternMinX(room);
+        int room_right = getPatternMaxX(room);
+        int pos_x = 2 + map_right - room_left;
+
+        map_right += 2 + (room_right - room_left);
+        room_positions.push_back({pos_x, 0});
+    }
 
     Pattern cells = mergePatterns(room_positions, rooms);
 
     // Outputs result into the map
-    Map map = mapOfPattern(cells, mode.width, mode.height);
+    Map map = mapOfPattern(normalizedPattern(cells), getPatternMaxX(cells), getPatternMaxY(cells));
 
     std::vector<Entity> entities;
     return {map, entities};

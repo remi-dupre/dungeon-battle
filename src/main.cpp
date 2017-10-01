@@ -1,7 +1,5 @@
 #include <map>
 #include <string>
-#include <ctime>
-#include <random>
 
 #include <SFML/Graphics.hpp>
 
@@ -11,8 +9,6 @@
 
 int main(int argc, char** argv)
 {
-    std::srand(std::time(nullptr));
-
     std::map<Option, std::string> options;
     options[Option::Config] = "config.ini";
 
