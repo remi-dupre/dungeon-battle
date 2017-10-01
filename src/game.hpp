@@ -12,6 +12,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "config.hpp"
+#include "generation.hpp"
 #include "map.hpp"
 #include "render.hpp"
 
@@ -62,7 +63,7 @@ public:
     /**
      * \brief Get the list of every entities on the map
      * \return Const reference to a vector containing all entities of the map
-     * 
+     *
      * If two entities are on the same cell, the last one is over the first one.
      */
     const std::vector<std::shared_ptr<Entity>>& getEntities() const;
