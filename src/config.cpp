@@ -17,7 +17,8 @@ Configuration::Configuration() :
     right_key(sf::Keyboard::Key::D),
     up_key(sf::Keyboard::Key::Z),
     down_key(sf::Keyboard::Key::S),
-    menu_key(sf::Keyboard::Key::Escape)
+    menu_key(sf::Keyboard::Key::Escape),
+    interaction_key(sf::Keyboard::Key::E)
 {}
 
 void Configuration::read(const std::string& filename)
