@@ -32,7 +32,7 @@ void Game::init(const std::map<Option, std::string>& options)
     gen_options.width = 100;
     gen_options.height = 40;
     gen_options.nb_rooms = 2;
-    gen_options.rooms_size = 650;
+    gen_options.room_size = 650;
 
     auto level = generate(gen_options);
     map = std::get<Map>(level);
