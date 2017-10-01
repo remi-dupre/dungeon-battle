@@ -35,7 +35,7 @@ int pattern_max_y(const Pattern& pattern)
 }
 
 
-Pattern normalized_pattern(Pattern& pattern)
+Pattern normalized_pattern(Pattern& pattern, std::vector<std::shared_ptr<Entity>>& entities)
 {
     int min_x = pattern_min_x(pattern);
     int min_y = pattern_min_y(pattern);
@@ -43,6 +43,11 @@ Pattern normalized_pattern(Pattern& pattern)
     Pattern normalized;
     for (auto& cell : pattern)
         normalized.insert({cell.first-min_x, cell.second-min_y});
+    for (auto& entity : entities)
+    {
+        auto pos = entity->getPosition();
+        entity->setPosition({pos.x-min_x, pos.y-min_y});
+    }
     return normalized;
 }
 
@@ -220,8 +225,14 @@ Level generate(const GenerationMode &mode)
     Pattern cells = merged_patterns(positions, patterns);
 
     // Outputs result into the map
-    Map map = map_of_pattern(normalized_pattern(cells), pattern_max_x(cells), pattern_max_y(cells));
-
     std::vector<std::shared_ptr<Entity>> entities;
+    entities.push_back(std::make_shared<Entity>(
+        EntityType::Stairs,
+        sf::Vector2u(positions[0].first, positions[0].second),
+        Direction::Right
+    ));
+
+    Map map = map_of_pattern(normalized_pattern(cells, entities), pattern_max_x(cells), pattern_max_y(cells));
+
     return {map, entities};
 }
