@@ -121,37 +121,45 @@ Pattern make_hallway(std::pair<int, int> cell1, std::pair<int, int> cell2)
         if (y1+y > y2)
             y--;
         path.insert({x, y});
-        path.insert({x-1, y});
-        path.insert({x, y-1});
         path.insert({x+1, y});
         path.insert({x, y+1});
+        path.insert({x+1, y+1});
     }
 
     return path;
 }
 
-Pattern generate_cave(int size)
-{
-    if (size < 0)
-        size = 1;
 
-    Pattern cells;
+void cavestyle_patch(Pattern& pattern, int nb_additions)
+{
     Pattern surrounding;
-    // Add cells around the first one
-    surrounding.insert(std::make_pair(0, 0));
-    // Add a new cell to surrounding, if it isn't already in the patern.
-    auto addSurrounding = [&cells, &surrounding](int x, int y) -> void
+
+    // Function to add a new cell to surrounding, if it isn't already in the patern.
+    auto addSurrounding = [&pattern, &surrounding](int x, int y) -> void
     {
-        if (cells.count(std::make_pair(x, y)) == 0)
-            surrounding.insert(std::make_pair(x, y));
+        if (pattern.count({x, y}) == 0)
+            surrounding.insert({x, y});
     };
 
-    for(int nb_cells = 0 ; nb_cells < size ; nb_cells++)
+
+    // Add cells around the first ones
+    for (auto& cell : pattern)
+    {
+        int x = cell.first;
+        int y = cell.second;
+        addSurrounding(x+1, y);
+        addSurrounding(x-1, y);
+        addSurrounding(x, y+1);
+        addSurrounding(x, y-1);
+    }
+
+    // Create noise
+    for(int nb_cells = 0 ; nb_cells < nb_additions ; nb_cells++)
     {
         // Select a cell to insert
         auto selected = surrounding.begin();
         std::advance(selected, Random::uniform_int(0, surrounding.size()-1));
-        cells.insert(*selected);
+        pattern.insert(*selected);
         // Refresh surrounding set of the pattern
         int new_x, new_y;
         std::tie(new_x, new_y) = *selected;
@@ -162,7 +170,16 @@ Pattern generate_cave(int size)
         // Can't select this cell anymore
         surrounding.erase(selected);
     }
+}
 
+Pattern generate_cave(int size)
+{
+    if (size < 0)
+        size = 1;
+
+    Pattern cells;
+    cells.insert(std::make_pair(0, 0));
+    cavestyle_patch(cells, size-1);
     return cells;
 }
 
@@ -185,9 +202,9 @@ std::pair<Map, std::vector<Entity>> generate(const GenerationMode &mode)
     {
         int room_left = pattern_min_x(patterns[i_room]);
         int room_right = pattern_max_x(patterns[i_room]);
-        int pos_x = 10 + map_right - room_left;
+        int pos_x = 1 + mode.room_margin + map_right - room_left;
 
-        map_right += 10 + (room_right - room_left);
+        map_right += 1 + mode.room_margin + (room_right - room_left);
         positions.push_back({pos_x, Random::uniform_int(-50, 50)});
     }
 
@@ -195,6 +212,7 @@ std::pair<Map, std::vector<Entity>> generate(const GenerationMode &mode)
     for (int i_room = 1 ; i_room < mode.nb_rooms ; i_room++)
     {
         patterns.push_back(make_hallway(positions[i_room-1], positions[i_room]));
+        cavestyle_patch(patterns.back(), patterns.back().size());
         positions.push_back(positions[i_room-1]);
     }
 
