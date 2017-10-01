@@ -1,43 +1,7 @@
 #include "generation.hpp"
 
 
-Pattern generateCave(int size)
-{
-    if (size < 0)
-        size = 1;
-
-    Pattern cells;
-    Pattern surrounding;
-    // Add cells around the first one
-    surrounding.insert(std::make_pair(0, 0));
-    // Add a new cell to surrounding, if it isn't already in the patern.
-    auto addSurrounding = [&cells, &surrounding](int x, int y) -> void
-    {
-        if (cells.count(std::make_pair(x, y)) == 0)
-            surrounding.insert(std::make_pair(x, y));
-    };
-
-    for(int nb_cells = 0 ; nb_cells < size ; nb_cells++)
-    {
-        // Select a cell to insert
-        auto selected = surrounding.begin();
-        std::advance(selected, std::rand() % surrounding.size());
-        cells.insert(*selected);
-        // Refresh surrounding set of the pattern
-        int new_x, new_y;
-        std::tie(new_x, new_y) = *selected;
-        addSurrounding(new_x+1, new_y);
-        addSurrounding(new_x-1, new_y);
-        addSurrounding(new_x, new_y+1);
-        addSurrounding(new_x, new_y-1);
-        // Can't select this cell anymore
-        surrounding.erase(selected);
-    }
-
-    return cells;
-}
-
-int getPatternMinX(const Pattern& pattern)
+int pattern_min_x(const Pattern& pattern)
 {
     int min_x = std::numeric_limits<int>::max();
     for (auto cell : pattern)
@@ -45,7 +9,7 @@ int getPatternMinX(const Pattern& pattern)
     return min_x;
 }
 
-int getPatternMaxX(const Pattern& pattern)
+int pattern_max_x(const Pattern& pattern)
 {
     int max_x = std::numeric_limits<int>::min();
     for (auto cell : pattern)
@@ -53,7 +17,7 @@ int getPatternMaxX(const Pattern& pattern)
     return max_x;
 }
 
-int getPatternMinY(const Pattern& pattern)
+int pattern_min_y(const Pattern& pattern)
 {
     int min_y = std::numeric_limits<int>::max();
     for (auto cell : pattern)
@@ -61,7 +25,7 @@ int getPatternMinY(const Pattern& pattern)
     return min_y;
 }
 
-int getPatternMaxY(const Pattern& pattern)
+int pattern_max_y(const Pattern& pattern)
 {
     int max_y = std::numeric_limits<int>::min();
     for (auto cell : pattern)
@@ -70,10 +34,10 @@ int getPatternMaxY(const Pattern& pattern)
 }
 
 
-Pattern normalizedPattern(Pattern& pattern)
+Pattern normalized_pattern(Pattern& pattern)
 {
-    int min_x = getPatternMinX(pattern);
-    int min_y = getPatternMinY(pattern);
+    int min_x = pattern_min_x(pattern);
+    int min_y = pattern_min_y(pattern);
 
     Pattern normalized;
     for (auto& cell : pattern)
@@ -81,7 +45,7 @@ Pattern normalizedPattern(Pattern& pattern)
     return normalized;
 }
 
-Pattern mergePatterns(
+Pattern merged_patterns(
     const std::vector<std::pair<int, int>>& positions,
     const std::vector<Pattern>& patterns)
 {
@@ -100,8 +64,7 @@ Pattern mergePatterns(
     return fullMap;
 }
 
-
-Map mapOfPattern(const Pattern& pattern, int width, int height)
+Map map_of_pattern(const Pattern& pattern, int width, int height)
 {
     Map map(width, height);
 
@@ -137,34 +100,108 @@ Map mapOfPattern(const Pattern& pattern, int width, int height)
 }
 
 
+Pattern make_hallway(std::pair<int, int> cell1, std::pair<int, int> cell2)
+{
+    int x1, y1, x2, y2;
+    std::tie(x1, y1) = cell1;
+    std::tie(x2, y2) = cell2;
+
+    int x=0, y=0;
+    Pattern path;
+    path.insert({0, 0});
+    while (x1+x != x2 || y1+y != y2)
+    {
+        if (x1+x < x2)
+            x++;
+        if (x1+x > x2)
+            x--;
+        if (y1+y < y2)
+            y++;
+        if (y1+y > y2)
+            y--;
+        path.insert({x, y});
+        path.insert({x-1, y});
+        path.insert({x, y-1});
+        path.insert({x+1, y});
+        path.insert({x, y+1});
+    }
+
+    return path;
+}
+
+Pattern generate_cave(int size)
+{
+    if (size < 0)
+        size = 1;
+
+    Pattern cells;
+    Pattern surrounding;
+    // Add cells around the first one
+    surrounding.insert(std::make_pair(0, 0));
+    // Add a new cell to surrounding, if it isn't already in the patern.
+    auto addSurrounding = [&cells, &surrounding](int x, int y) -> void
+    {
+        if (cells.count(std::make_pair(x, y)) == 0)
+            surrounding.insert(std::make_pair(x, y));
+    };
+
+    for(int nb_cells = 0 ; nb_cells < size ; nb_cells++)
+    {
+        // Select a cell to insert
+        auto selected = surrounding.begin();
+        std::advance(selected, Random::uniform_int(0, surrounding.size()-1));
+        cells.insert(*selected);
+        // Refresh surrounding set of the pattern
+        int new_x, new_y;
+        std::tie(new_x, new_y) = *selected;
+        addSurrounding(new_x+1, new_y);
+        addSurrounding(new_x-1, new_y);
+        addSurrounding(new_x, new_y+1);
+        addSurrounding(new_x, new_y-1);
+        // Can't select this cell anymore
+        surrounding.erase(selected);
+    }
+
+    return cells;
+}
+
 std::pair<Map, std::vector<Entity>> generate(const GenerationMode &mode)
 {
     // List of rooms.
-    std::vector<Pattern> rooms;
-    std::vector<std::pair<int, int>> room_positions;
+    std::vector<Pattern> patterns;
+    std::vector<std::pair<int, int>> positions;
 
     // Create rooms of random size
-    std::random_device rd;
-    std::mt19937 rand_gen(rd());
-    std::uniform_int_distribution<> room_size_dis(mode.room_min_size, mode.room_max_size);
     for (int i_room = 0 ; i_room < mode.nb_rooms ; i_room++)
-        rooms.push_back(generateCave(room_size_dis(rand_gen)));
-
-    int map_right = 0; // right position of the end of last room
-    for (auto& room : rooms)
     {
-        int room_left = getPatternMinX(room);
-        int room_right = getPatternMaxX(room);
-        int pos_x = 2 + map_right - room_left;
-
-        map_right += 2 + (room_right - room_left);
-        room_positions.push_back({pos_x, 0});
+        int room_size = Random::uniform_int(mode.room_min_size, mode.room_max_size);
+        patterns.push_back(generate_cave(room_size));
     }
 
-    Pattern cells = mergePatterns(room_positions, rooms);
+    // Position rooms
+    int map_right = 0; // right position of the end of last room
+    for (int i_room = 0 ; i_room < mode.nb_rooms ; i_room++)
+    {
+        int room_left = pattern_min_x(patterns[i_room]);
+        int room_right = pattern_max_x(patterns[i_room]);
+        int pos_x = 10 + map_right - room_left;
+
+        map_right += 10 + (room_right - room_left);
+        positions.push_back({pos_x, Random::uniform_int(-50, 50)});
+    }
+
+    // Add ways between rooms
+    for (int i_room = 1 ; i_room < mode.nb_rooms ; i_room++)
+    {
+        patterns.push_back(make_hallway(positions[i_room-1], positions[i_room]));
+        positions.push_back(positions[i_room-1]);
+    }
+
+
+    Pattern cells = merged_patterns(positions, patterns);
 
     // Outputs result into the map
-    Map map = mapOfPattern(normalizedPattern(cells), getPatternMaxX(cells), getPatternMaxY(cells));
+    Map map = map_of_pattern(normalized_pattern(cells), pattern_max_x(cells), pattern_max_y(cells));
 
     std::vector<Entity> entities;
     return {map, entities};

@@ -5,13 +5,13 @@
 
 #pragma once
 
-#include <random>
 #include <set>
 #include <tuple>
 #include <vector>
 #include <limits>
 #include <algorithm>
 
+#include "rand.hpp"
 #include "entity.hpp"
 #include "map.hpp"
 
@@ -34,51 +34,39 @@ struct GenerationMode
 
 
 /**
- * \brief Contain a cave containing a fixed number of cells
- * \param size The number of cell the room contains
- * \return A set containing cells of the cave
- *
- * The room will be randomized. It will be centered on coordinate (0, 0).
- * \note If the size is less than 1, the room will still be of size 1.
- * \warning Some coordinates will be negative.
- */
-Pattern generateCave(int size);
-
-
-/**
  * \brief Minimum x coordinate of cells in the pattern.
  * \attr pattern A pattern.
  * \return The minimum of x coordinates.
  */
-int getPatternMinX(const Pattern& pattern);
+int pattern_min_x(const Pattern& pattern);
 
 /**
  * \brief Maximum x coordinate of cells in the pattern.
  * \attr pattern A pattern.
  * \return The maximum of x coordinates.
  */
-int getPatternMaxX(const Pattern& pattern);
+int pattern_max_x(const Pattern& pattern);
 
 /**
  * \brief Minimum y coordinate of cells in the pattern.
  * \attr pattern A pattern.
  * \return The minimum of y coordinates.
  */
-int getPatternMinY(const Pattern& pattern);
+int pattern_min_y(const Pattern& pattern);
 
 /**
  * \brief Maximum y coordinate of cells in the pattern.
  * \attr pattern A pattern.
  * \return The maximum of y coordinates.
  */
-int getPatternMaxY(const Pattern& pattern);
+int pattern_max_y(const Pattern& pattern);
 
 /**
  * \brief Translate a pattern to remove negative coordinates.
  *
  * This will also align the pattern on top left.
  */
-Pattern normalizedPattern(Pattern& pattern);
+Pattern normalized_pattern(Pattern& pattern);
 
 /**
  * \brief Merge patterns, placing them around given positions
@@ -88,7 +76,7 @@ Pattern normalizedPattern(Pattern& pattern);
  *
  * \warning The new pattern can still contain negative coordinates.
  */
-Pattern mergePatterns(
+Pattern merged_patterns(
     const std::vector<std::pair<int, int>>& positions,
     const std::vector<Pattern>& patterns);
 
@@ -99,7 +87,27 @@ Pattern mergePatterns(
  * \param height The height of the map (it means the pattern might be truncated)
  * \return A map where the pattern is surrounded by walls
  */
-Map mapOfPattern(const Pattern& pattern, int width, int height);
+Map map_of_pattern(const Pattern& pattern, int width, int height);
+
+
+/**
+ * \brief Generate a hallway from point cell1 to cell2.
+ * \param cell1 Coordinates of first extremity of the path.
+ * \param cell2 Coordinates of second extremity of the path.
+ * \return The pattern corresponding to a path linking cell1 to cell2 if the cell (0, 0) of the pattern is placed on cell1.
+ */
+Pattern make_hallway(std::pair<int, int> cell1, std::pair<int, int> cell2);
+
+/**
+ * \brief Contain a cave containing a fixed number of cells
+ * \param size The number of cell the room contains
+ * \return A set containing cells of the cave
+ *
+ * The room will be randomized. It will be centered on coordinate (0, 0).
+ * \note If the size is less than 1, the room will still be of size 1.
+ * \warning Some coordinates will be negative.
+ */
+Pattern generate_cave(int size);
 
 /**
  * \brief Generate an entire level
