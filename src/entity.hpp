@@ -34,7 +34,7 @@ public:
      * \param position The position of the entity
      * \param orientation The orientation of the entity
      */
-    Entity(EntityType type, sf::Vector2u position, Direction orientation);
+    Entity(EntityType _type, sf::Vector2u _position, Direction _orientation);
 
     /**
      * \brief Return the type of the entity
@@ -50,7 +50,7 @@ public:
      * \brief Set the position of the entity
      * \param position The position to set
      */
-    void setPosition(sf::Vector2u position);
+    void setPosition(sf::Vector2u _position);
 
     /**
      * \brief Return the orientation of the entity
@@ -61,7 +61,7 @@ public:
      * \brief Set the orientation of the entity
      * \param position The orientation to set
      */
-    void setOrientation(Direction orientation);
+    void setOrientation(Direction _orientation);
 
 protected:
 

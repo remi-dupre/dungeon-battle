@@ -35,7 +35,7 @@ inline Action get_input_hero(const Configuration& config)
         return Action(ActionType::Move, Direction::Up);
     if (sf::Keyboard::isKeyPressed(config.down_key))
         return Action(ActionType::Move, Direction::Down);
-    
+
     return Action();
 }
 
