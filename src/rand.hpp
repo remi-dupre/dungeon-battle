@@ -22,7 +22,10 @@ public:
      * \param seed The seed to give to the engine
      */
     template <typename S>
-    static void seed(S seed);
+    static void seed(S seed)
+    {
+        random_engine.seed(seed);
+    }
 
     /**
      * \brief Return a random integer

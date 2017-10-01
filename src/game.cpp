@@ -27,6 +27,9 @@ void Game::init(const std::map<Option, std::string>& options)
     if (!config.vsync) // Don't activate vertical synchronization and framerate limit at the same time
         window.setFramerateLimit(config.maxfps);
 
+    std::random_device r;
+    Random::seed(r());
+
     // Generate a map
     GenerationMode gen_options;
     gen_options.width = 100;
