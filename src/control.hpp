@@ -44,14 +44,14 @@ struct Action
      * \brief Create an action with no direction
      * \param type The type of the action
      */
-    explicit Action(ActionType _type);
+    explicit Action(ActionType type);
 
     /**
      * \brief Create an action
      * \param type The type of the action
      * \param direction The direction of the action
      */
-    explicit Action(ActionType _type, Direction _direction);
+    explicit Action(ActionType type, Direction direction);
 };
 
 namespace control
