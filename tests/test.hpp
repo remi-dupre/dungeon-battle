@@ -7,6 +7,14 @@
 #include "../src/config.cpp"
 #include "../src/args.hpp"
 #include "../src/args.cpp"
+#include "../src/map.hpp"
+#include "../src/map.cpp"
+#include "../src/entity.hpp"
+#include "../src/entity.cpp"
+#include "../src/generation.hpp"
+#include "../src/generation.cpp"
+#include "../src/rand.hpp"
+#include "../src/rand.cpp"
 
 
 #pragma GCC diagnostic ignored "-Wpragmas"
@@ -75,5 +83,50 @@ public:
 
         TS_ASSERT_EQUALS(parse_arguments(options, array_length(argv), argv), 0);
         TS_ASSERT_EQUALS(options[Option::Config], "config2.ini");
+    }
+};
+
+
+// Number of maps to generate for a test
+int NB_MAP_TEST = 10;
+
+int MIN_ROOMS = 1;
+int MAX_ROOMS = 20;
+
+int MIN_MARGIN = 0;
+int MAX_MARGIN = 50;
+
+int ROOM_MIN_SIZE = 50;
+int ROOM_MAX_SIZE = 500;
+
+
+class GeneratorTester : public CxxTest::TestSuite
+{
+public:
+    /* Test that maps can be generated without any segfault
+     */
+    void testGeneration()
+    {
+        GenerationMode gen_options;
+
+        for (int test = 0 ; test < NB_MAP_TEST ; test++)
+        {
+            TS_TRACE(std::string("Generating map ") + std::to_string((test)+1) + std::string("/") + std::to_string(NB_MAP_TEST));
+            gen_options.room_min_size = ROOM_MIN_SIZE;
+            gen_options.room_max_size = ROOM_MAX_SIZE;
+            gen_options.nb_rooms = Random::uniform_int(MIN_ROOMS, MAX_ROOMS);
+            gen_options.room_margin = Random::uniform_int(MIN_MARGIN, MAX_MARGIN);
+
+            auto level = generate(gen_options);
+            auto& map = std::get<0>(level);
+            auto& entities = std::get<1>(level);
+
+            // Check that the stairs are placed on a floor
+            for (auto& entity : entities)
+                TS_ASSERT(
+                    entity->getType() != EntityType::Stairs
+                    || map.cellAt(entity->getPosition().x, entity->getPosition().y) == CellType::Floor
+                );
+        }
     }
 };

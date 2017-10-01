@@ -191,6 +191,19 @@ Pattern generate_cave(int size)
     return cells;
 }
 
+Pattern generate_banana(int avg_side)
+{
+    int x1 = Random::uniform_int(-avg_side/2, avg_side/2);
+    int y1 = Random::uniform_int(-avg_side/2, avg_side/2);
+    int x2 = Random::uniform_int(-avg_side/2, avg_side/2);
+    int y2 = Random::uniform_int(-avg_side/2, avg_side/2);
+
+    auto path1 = make_hallway({0, 0}, {x1, y1});
+    auto path2 = make_hallway({0, 0}, {x2, y2});
+
+    return merged_patterns({{0, 0}, {0, 0}}, {path1, path2});
+}
+
 Level generate(const GenerationMode &mode)
 {
     // List of rooms.
@@ -201,6 +214,10 @@ Level generate(const GenerationMode &mode)
     for (int i_room = 0 ; i_room < mode.nb_rooms ; i_room++)
     {
         int room_size = Random::uniform_int(mode.room_min_size, mode.room_max_size);
+
+        // Pattern shape = generate_banana(room_size);
+        // cavestyle_patch(shape, shape.size()*5);
+        // patterns.push_back(shape);
         patterns.push_back(generate_cave(room_size));
     }
 
