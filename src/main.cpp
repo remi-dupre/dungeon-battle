@@ -39,7 +39,7 @@ int main(int argc, char** argv)
         .width = 100,
         .height = 40,
         .nb_rooms = 2,
-        .rooms_size = 650
+        .room_size = 650
     });
     auto level = generate(gen_options);
     auto map = std::get<Map>(level);
