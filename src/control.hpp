@@ -22,7 +22,7 @@ enum class ActionType
     None, ///< No action
     Move, ///< Move action
     Attack, ///< Attack action
-    Interract ///< Interract action
+    Interact ///< Interact action
 };
 
 /**

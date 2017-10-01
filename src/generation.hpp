@@ -35,6 +35,7 @@ struct GenerationMode
     int nb_rooms; ///< number of rooms to create on the map
     int room_min_size; ///< minimum number of cells contained on a room
     int room_max_size; ///< maximum number of cells contained on a room
+    int room_margin; ///< minimum space added between two rooms
 };
 
 
@@ -114,6 +115,13 @@ Map map_of_pattern(const Pattern& pattern, int width, int height);
  * \return The pattern corresponding to a path linking cell1 to cell2 if the cell (0, 0) of the pattern is placed on cell1.
  */
 Pattern make_hallway(std::pair<int, int> cell1, std::pair<int, int> cell2);
+
+/**
+ * \brief Add cells to a pattern so that it looks cave styled.
+ * \param pattern The pattern to modify into cave styled.
+ * \param nb_additions The number of cells to add to the pattern.
+ */
+void cavestyle_patch(Pattern& pattern, int nb_additions);
 
 /**
  * \brief Contain a cave containing a fixed number of cells
