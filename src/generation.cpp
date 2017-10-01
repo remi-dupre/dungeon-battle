@@ -86,14 +86,17 @@ Map map_of_pattern(const Pattern& pattern, int width, int height)
     // Function to check wether a cell adjacent to (x, y) is a floor
     auto hasFloorNext = [height, width, map](int x, int y)
     {
-        if (x > 0 && map.cellAt(x-1, y) == CellType::Floor)
-            return true;
-        if (y > 0 && map.cellAt(x, y-1) == CellType::Floor)
-            return true;
-        if (x+1 < width && map.cellAt(x+1, y) == CellType::Floor)
-            return true;
-        if (y+1 < height && map.cellAt(x, y+1) == CellType::Floor)
-            return true;
+        for (int i = x-1 ; i <= x+1 ; i++)
+        {
+            for (int j = y-1 ; j <= y+1 ; j++)
+            {
+                if (i >= 0 && i < width && j >= 0 && j < height)
+                {
+                    if ((i != x || j != y) && map.cellAt(i, j) == CellType::Floor)
+                        return true;
+                }
+            }
+        }
         return false;
     };
     // Add walls
@@ -220,7 +223,6 @@ Level generate(const GenerationMode &mode)
         cavestyle_patch(patterns.back(), patterns.back().size());
         positions.push_back(positions[i_room-1]);
     }
-
 
     Pattern cells = merged_patterns(positions, patterns);
 
