@@ -87,8 +87,12 @@ void Game::run()
 
 void Game::update()
 {
-    for (auto& entity : entities)
+    static decltype(entities)::size_type n = 0;
+
+    while (n < entities.size())
     {
+        auto& entity = entities[n];
+
         Action action = control::get_input(
             *entity,
             entities,
@@ -139,8 +143,15 @@ void Game::update()
         if (entity->getType() == EntityType::Hero)
         {
             renderer.setViewCenter(entity->getPosition());
+
+            if (action.type == ActionType::None)
+                return;
         }
+
+        n++;
     }
+
+    n = 0;
 }
 
 void Game::display()
