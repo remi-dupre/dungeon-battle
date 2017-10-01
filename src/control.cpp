@@ -15,14 +15,14 @@ Action::Action() :
     direction(Direction::None)
 {}
 
-Action::Action(ActionType _type) :
-    type(_type),
+Action::Action(ActionType type_) :
+    type(type_),
     direction(Direction::None)
 {}
 
-Action::Action(ActionType _type, Direction _direction) :
-    type(_type),
-    direction(_direction)
+Action::Action(ActionType type_, Direction direction_) :
+    type(type_),
+    direction(direction_)
 {}
 
 inline Action get_input_hero(const Configuration& config)

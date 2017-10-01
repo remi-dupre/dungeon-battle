@@ -1,4 +1,5 @@
 #include "generation.hpp"
+#include "rand.hpp"
 
 
 int pattern_min_x(const Pattern& pattern)

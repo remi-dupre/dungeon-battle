@@ -34,35 +34,47 @@ struct GenerationMode
 
 
 /**
- * \brief Minimum x coordinate of cells in the pattern.
- * \attr pattern A pattern.
- * \return The minimum of x coordinates.
+ * \brief Contain a cave containing a fixed number of cells
+ * \param size The number of cell the room contains
+ * \return A set containing cells of the cave
+ *
+ * The room will be randomized. It will be centered on coordinate (0, 0).
+ * \note If the size is less than 1, the room will still be of size 1.
+ * \warning Some coordinates will be negative.
+ */
+Pattern generateCave(int size);
+
+
+/**
+ * \brief Minimum x coordinate of cells in the pattern
+ * \attr pattern A pattern
+ * \return The minimum of x coordinates
  */
 int pattern_min_x(const Pattern& pattern);
 
 /**
- * \brief Maximum x coordinate of cells in the pattern.
- * \attr pattern A pattern.
- * \return The maximum of x coordinates.
+ * \brief Maximum x coordinate of cells in the pattern
+ * \attr pattern A pattern
+ * \return The maximum of x coordinates
  */
 int pattern_max_x(const Pattern& pattern);
 
 /**
- * \brief Minimum y coordinate of cells in the pattern.
- * \attr pattern A pattern.
- * \return The minimum of y coordinates.
+ * \brief Minimum y coordinate of cells in the pattern
+ * \attr pattern A pattern
+ * \return The minimum of y coordinates
  */
 int pattern_min_y(const Pattern& pattern);
 
 /**
- * \brief Maximum y coordinate of cells in the pattern.
- * \attr pattern A pattern.
- * \return The maximum of y coordinates.
+ * \brief Maximum y coordinate of cells in the pattern
+ * \attr pattern A pattern
+ * \return The maximum of y coordinates
  */
 int pattern_max_y(const Pattern& pattern);
 
 /**
- * \brief Translate a pattern to remove negative coordinates.
+ * \brief Translate a pattern to remove negative coordinates
  *
  * This will also align the pattern on top left.
  */

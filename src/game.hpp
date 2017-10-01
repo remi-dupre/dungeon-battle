@@ -7,6 +7,7 @@
 
 #include <map>
 #include <memory>
+#include <random>
 #include <string>
 
 #include <SFML/Graphics.hpp>
@@ -14,6 +15,7 @@
 #include "config.hpp"
 #include "generation.hpp"
 #include "map.hpp"
+#include "rand.hpp"
 #include "render.hpp"
 
 
