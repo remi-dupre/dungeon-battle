@@ -5,11 +5,12 @@
 
 #pragma once
 
+#include <algorithm>
+#include <limits>
+#include <memory>
 #include <set>
 #include <tuple>
 #include <vector>
-#include <limits>
-#include <algorithm>
 
 #include "rand.hpp"
 #include "entity.hpp"
@@ -21,6 +22,10 @@
  */
 typedef std::set<std::pair<int, int>> Pattern;
 
+/**
+ * \brief A level, with the map and the entities
+ */
+typedef std::pair<Map, std::vector<std::shared_ptr<Entity>>> Level;
 
 /**
  * \brief Parameters on how to generate the level
@@ -126,4 +131,4 @@ Pattern generate_cave(int size);
  * \param mode Parameters used to generate the map
  * \return A pair containing the map, and the entities places at the start of the level
  */
-std::pair<Map, std::vector<Entity>> generate(const GenerationMode &mode);
+Level generate(const GenerationMode &mode);
