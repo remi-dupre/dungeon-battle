@@ -25,7 +25,7 @@ Action::Action(ActionType _type, Direction _direction) :
     direction(_direction)
 {}
 
-Action get_input_hero(const Configuration& config)
+inline Action get_input_hero(const Configuration& config)
 {
     if (sf::Keyboard::isKeyPressed(config.left_key))
         return Action(ActionType::Move, Direction::Left);
@@ -39,13 +39,17 @@ Action get_input_hero(const Configuration& config)
     return Action();
 }
 
-Action control::get_input(const Entity& entity, const std::vector<std::shared_ptr<Entity>>& entities, const std::function<const CellType&(unsigned int, unsigned int)>& cell_at, const Configuration& config)
+#include "ai.inl"
+
+Action control::get_input(const Entity& entity, const std::vector<std::shared_ptr<Entity>>& entities, const std::function<CellType(unsigned int, unsigned int)>& cell_at, const Configuration& config)
 {
     switch (entity.getType())
     {
         case EntityType::Hero:
             return get_input_hero(config);
             break;
+        case EntityType::Monster:
+            return get_input_monster(entity, entities, cell_at);
         default:
             return Action();
             break;

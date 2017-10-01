@@ -48,11 +48,16 @@ void Game::run()
 
         for (auto& entity : entities)
         {
-            Action action = control::get_input(*entity, entities,
-                                               [this](unsigned int x, unsigned int y) -> const CellType& {
-                                                   return this->map.cellAt(x, y);
-                                               },
-                                               config);
+            Action action = control::get_input(
+                *entity,
+                entities,
+                [this](unsigned int x, unsigned int y) -> CellType {
+                    if (x < this->map.getWidth() && y < this->map.getHeight())
+                        return this->map.cellAt(x, y);
+                    return CellType::Empty;
+                },
+                config
+            );
             
             sf::Vector2u position = entity->getPosition();
 
