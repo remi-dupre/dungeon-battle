@@ -65,9 +65,32 @@ void Renderer::drawMap(const Map& map)
 
 void Renderer::drawEntities(const std::vector<std::shared_ptr<Entity>>& entities)
 {
+    entities_vertices.clear();
+    entities_vertices.push_back({0, {}});
+    entities_vertices[0].second.reserve(entities.size() * 4);
+
     for (const auto& entity : entities)
     {
+        int x = entity->getPosition().x;
+        int y = entity->getPosition().y;
 
+        sf::Vertex v1({static_cast<float>(x) + 0.1f  , static_cast<float>(y)   + 0.1f});
+        sf::Vertex v2({static_cast<float>(x) + 0.1f  , static_cast<float>(y+1) - 0.1f});
+        sf::Vertex v3({static_cast<float>(x+1) - 0.1f, static_cast<float>(y)   + 0.1f});
+        sf::Vertex v4({static_cast<float>(x+1) - 0.1f, static_cast<float>(y+1) - 0.1f});
+
+        v1.color = sf::Color::Red;
+        v2.color = sf::Color::Red;
+        v3.color = sf::Color::Red;
+        v4.color = sf::Color::Red;
+
+        entities_vertices[0].second.push_back(v1);
+        entities_vertices[0].second.push_back(v2);
+        entities_vertices[0].second.push_back(v4);
+
+        entities_vertices[0].second.push_back(v1);
+        entities_vertices[0].second.push_back(v3);
+        entities_vertices[0].second.push_back(v4);
     }
 }
 
@@ -103,4 +126,9 @@ void Renderer::display(sf::RenderTarget& target)
     target.setView(view);
 
     target.draw(map_vertices.data(), map_vertices.size(), sf::PrimitiveType::Triangles);
+
+    for (auto& entity_layer : entities_vertices)
+    {
+        target.draw(entity_layer.second.data(), entity_layer.second.size(), sf::PrimitiveType::Triangles);
+    }
 }

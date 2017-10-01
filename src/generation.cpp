@@ -183,7 +183,7 @@ Pattern generate_cave(int size)
     return cells;
 }
 
-std::pair<Map, std::vector<Entity>> generate(const GenerationMode &mode)
+Level generate(const GenerationMode &mode)
 {
     // List of rooms.
     std::vector<Pattern> patterns;
@@ -222,6 +222,6 @@ std::pair<Map, std::vector<Entity>> generate(const GenerationMode &mode)
     // Outputs result into the map
     Map map = map_of_pattern(normalized_pattern(cells), pattern_max_x(cells), pattern_max_y(cells));
 
-    std::vector<Entity> entities;
+    std::vector<std::shared_ptr<Entity>> entities;
     return {map, entities};
 }

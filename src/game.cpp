@@ -40,6 +40,7 @@ void Game::init(const std::map<Option, std::string>& options)
 
     auto level = generate(gen_options);
     map = std::get<Map>(level);
+    entities  = std::get<std::vector<std::shared_ptr<Entity>>>(level);
 
     map.saveToFile("map.map");
 }
