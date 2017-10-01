@@ -27,6 +27,7 @@ struct Configuration
     sf::Keyboard::Key up_key;          ///< Key pressed to go up, default value is sf::Keyboard::Z
     sf::Keyboard::Key down_key;        ///< Key pressed to go down, default value is sf::Keyboars::S
     sf::Keyboard::Key menu_key;        ///< Key pressed to display the menu, default value is sf::Keyboard::Escape
+    sf::Keyboard::Key interaction_key; ///< Key pressed to interact with an entity, default value is sf::Keyboard::E
 
     /**
      * \brief Default constructor

@@ -2,7 +2,7 @@
 
 
 Renderer::Renderer() :
-    tile_size(48.f)
+    tile_size(32.f)
 {
     view.setCenter({40.f, 20.f});
 }
@@ -94,6 +94,11 @@ void Renderer::drawEntities(const std::vector<std::shared_ptr<Entity>>& entities
     }
 }
 
+void Renderer::setViewCenter(sf::Vector2u center)
+{
+    view.setCenter(static_cast<sf::Vector2f>(center));
+}
+
 void Renderer::display(sf::RenderTarget& target)
 {
     // Keep aspect ratio
@@ -119,8 +124,8 @@ void Renderer::display(sf::RenderTarget& target)
         x_offset = (screen_x - x) / screen_x;
     }
 
-    view.setSize({Configuration::default_configuration.width / tile_size * 10.f,
-                  Configuration::default_configuration.height / tile_size * 10.f});
+    view.setSize({Configuration::default_configuration.width / tile_size,
+                  Configuration::default_configuration.height / tile_size});
     view.setViewport({x_offset / 2.f, y_offset / 2.f, 1.f - x_offset, 1.f - y_offset});
 
     target.setView(view);

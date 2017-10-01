@@ -42,12 +42,16 @@ void Game::init(const std::map<Option, std::string>& options)
     map = std::get<Map>(level);
     entities  = std::get<std::vector<std::shared_ptr<Entity>>>(level);
 
+    entities.push_back(std::make_shared<Entity>(EntityType::Hero, sf::Vector2u(0, 0), Direction::Left));
+
     map.saveToFile("map.map");
 }
 
 void Game::run()
 {
     sf::Clock timer;
+
+    float time_since_last_update = 0.0f;
 
     while (window.isOpen())
     {
@@ -59,73 +63,12 @@ void Game::run()
                 window.close();
         }
 
-        float time_since_last_frame = timer.restart().asSeconds();
+        time_since_last_update += timer.restart().asSeconds();
 
-        for (auto& entity : entities)
+        if (time_since_last_update > 1.f / 10.f)
         {
-            Action action = control::get_input(
-                *entity,
-                entities,
-                [this](unsigned int x, unsigned int y) -> CellType {
-                    if (x < this->map.getWidth() && y < this->map.getHeight())
-                        return this->map.cellAt(x, y);
-                    return CellType::Empty;
-                },
-                config
-            );
-
-            sf::Vector2u position = entity->getPosition();
-
-            switch (action.type)
-            {
-                case ActionType::Move:
-                    switch(action.direction)
-                    {
-                        case Direction::Left:
-                            if (position.y-- > 0)
-                                if(map.cellAt(position.x, position.y) != CellType::Wall)
-                                    entity->setPosition(position);
-                            break;
-                        case Direction::Right:
-                            if (++position.x < map.getWidth())
-                                if (map.cellAt(position.x, position.y) != CellType::Wall)
-                                    entity->setPosition(position);
-                            break;
-                        case Direction::Up:
-                            if (position.x-- > 0)
-                                if (map.cellAt(position.x, position.y) != CellType::Wall)
-                                    entity->setPosition(position);
-                            break;
-                        case Direction::Down:
-                            if (++position.y < map.getHeight())
-                                if (map.cellAt(position.x, position.y) != CellType::Wall)
-                                    entity->setPosition(position);
-                            break;
-                        default:
-                            break;
-                    }
-                    entity->setOrientation(action.direction);
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z))
-        {
-            renderer.view.move(0.0f, -0.1f);
-        }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-        {
-            renderer.view.move(0.0f, 0.1f);
-        }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
-        {
-            renderer.view.move(-0.1f, 0.0f);
-        }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-        {
-            renderer.view.move(0.1f, 0.0f);
+            update();
+            time_since_last_update -= 1.f / 10.f;
         }
 
         display();
@@ -134,6 +77,60 @@ void Game::run()
 
 void Game::update()
 {
+    for (auto& entity : entities)
+    {
+        Action action = control::get_input(
+            *entity,
+            entities,
+            [this](unsigned int x, unsigned int y) -> CellType {
+                if (x < this->map.getWidth() && y < this->map.getHeight())
+                    return this->map.cellAt(x, y);
+                return CellType::Empty;
+            },
+            config
+        );
+
+        sf::Vector2u position = entity->getPosition();
+
+        switch (action.type)
+        {
+        case ActionType::Move:
+            switch(action.direction)
+            {
+            case Direction::Left:
+                if (position.x-- > 0)
+                    if(map.cellAt(position.x, position.y) != CellType::Wall)
+                        entity->setPosition(position);
+                break;
+            case Direction::Right:
+                if (++position.x < map.getWidth())
+                    if (map.cellAt(position.x, position.y) != CellType::Wall)
+                        entity->setPosition(position);
+                break;
+            case Direction::Up:
+                if (position.y-- > 0)
+                    if (map.cellAt(position.x, position.y) != CellType::Wall)
+                        entity->setPosition(position);
+                break;
+            case Direction::Down:
+                if (++position.y < map.getHeight())
+                    if (map.cellAt(position.x, position.y) != CellType::Wall)
+                        entity->setPosition(position);
+                break;
+            default:
+                break;
+            }
+            entity->setOrientation(action.direction);
+            break;
+        default:
+            break;
+        }
+
+        if (entity->getType() == EntityType::Hero)
+        {
+            renderer.setViewCenter(entity->getPosition());
+        }
+    }
 }
 
 void Game::display()
