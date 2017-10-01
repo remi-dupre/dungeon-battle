@@ -35,7 +35,7 @@ struct Action
 
     /**
      * \brief Default constructor
-     * 
+     *
      * This creates an action with no type and no direction.
      */
     explicit Action();
@@ -44,14 +44,14 @@ struct Action
      * \brief Create an action with no direction
      * \param type The type of the action
      */
-    explicit Action(ActionType type);
+    explicit Action(ActionType _type);
 
     /**
      * \brief Create an action
      * \param type The type of the action
      * \param direction The direction of the action
      */
-    explicit Action(ActionType type, Direction direction);
+    explicit Action(ActionType _type, Direction _direction);
 };
 
 namespace control

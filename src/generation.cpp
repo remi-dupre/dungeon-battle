@@ -1,5 +1,6 @@
-#include "generation.hpp"
 #include <iostream>
+
+#include "generation.hpp"
 
 
 Pattern generateCave(int size)
@@ -12,7 +13,7 @@ Pattern generateCave(int size)
     // Add cells around the first one
     surrounding.insert(std::make_pair(0, 0));
     // Add a new cell to surrounding, if it isn't already in the patern.
-    auto addSurrounding = [&cells, &surrounding] (int x, int y) -> void
+    auto addSurrounding = [&cells, &surrounding](int x, int y) -> void
     {
         if (cells.count(std::make_pair(x, y)) == 0)
             surrounding.insert(std::make_pair(x, y));
@@ -23,7 +24,6 @@ Pattern generateCave(int size)
         // Select a cell to insert
         auto selected = surrounding.begin();
         std::advance(selected, std::rand() % surrounding.size());
-        surrounding.erase(*selected);
         cells.insert(*selected);
         // Refresh surrounding set of the pattern
         int new_x, new_y;
@@ -32,6 +32,8 @@ Pattern generateCave(int size)
         addSurrounding(new_x-1, new_y);
         addSurrounding(new_x, new_y+1);
         addSurrounding(new_x, new_y-1);
+        // Can't select this cell anymore
+        surrounding.erase(selected);
     }
 
     return cells;
