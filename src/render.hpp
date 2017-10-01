@@ -49,6 +49,11 @@ public:
     void drawEntities(const std::vector<std::shared_ptr<Entity>>& entities);
 
     /**
+     * \brief Set the view center
+     */
+    void setViewCenter(sf::Vector2u center);
+
+    /**
      * \brief Display on the window the objects drawn before
      * \param target The RenderTarget to draw on
      *
@@ -57,8 +62,6 @@ public:
      */
     void display(sf::RenderTarget& target);
 
-    sf::View view;
-
 private:
 
     const float tile_size; ///< Size of the tiles on screen in pixels
@@ -66,4 +69,6 @@ private:
     sf::Texture map_texture; ///< Texture of the tiles
 
     std::vector<std::pair<int, std::vector<sf::Vertex>>> entities_vertices; ///< Vertex array used to render entities
+
+    sf::View view;
 };
