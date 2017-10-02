@@ -5,32 +5,40 @@
 int pattern_min_x(const Pattern& pattern)
 {
     int min_x = std::numeric_limits<int>::max();
+
     for (auto cell : pattern)
         min_x = std::min(min_x, cell.first);
+
     return min_x;
 }
 
 int pattern_max_x(const Pattern& pattern)
 {
     int max_x = std::numeric_limits<int>::min();
+
     for (auto cell : pattern)
         max_x = std::max(max_x, cell.first);
+
     return max_x;
 }
 
 int pattern_min_y(const Pattern& pattern)
 {
     int min_y = std::numeric_limits<int>::max();
+
     for (auto cell : pattern)
         min_y = std::min(min_y, cell.second);
+
     return min_y;
 }
 
 int pattern_max_y(const Pattern& pattern)
 {
     int max_y = std::numeric_limits<int>::min();
+
     for (auto cell : pattern)
         max_y = std::max(max_y, cell.first);
+
     return max_y;
 }
 
@@ -41,13 +49,16 @@ Pattern normalized_pattern(Pattern& pattern, std::vector<std::shared_ptr<Entity>
     int min_y = pattern_min_y(pattern);
 
     Pattern normalized;
+
     for (auto& cell : pattern)
         normalized.insert({cell.first-min_x, cell.second-min_y});
+
     for (auto& entity : entities)
     {
         auto pos = entity->getPosition();
         entity->setPosition({pos.x-min_x, pos.y-min_y});
     }
+
     return normalized;
 }
 
@@ -56,6 +67,7 @@ Pattern merged_patterns(
     const std::vector<Pattern>& patterns)
 {
     std::set<std::pair<int, int>> fullMap;
+
     for (size_t i_pattern = 0 ; i_pattern < patterns.size() ; i_pattern++)
     {
         int x_center, y_center;
@@ -67,6 +79,7 @@ Pattern merged_patterns(
             fullMap.insert({x_cell + x_center, y_cell + y_center});
         }
     }
+
     return fullMap;
 }
 
@@ -97,8 +110,10 @@ Map map_of_pattern(const Pattern& pattern, int width, int height)
                 }
             }
         }
+
         return false;
     };
+
     // Add walls
     for (int x = 0 ; x < width ; x++)
         for(int y = 0 ; y < height ; y++)
@@ -118,6 +133,7 @@ Pattern make_hallway(std::pair<int, int> cell1, std::pair<int, int> cell2)
     int x=0, y=0;
     Pattern path;
     path.insert({0, 0});
+
     while (x1+x != x2 || y1+y != y2)
     {
         if (x1+x < x2)
@@ -149,7 +165,6 @@ void cavestyle_patch(Pattern& pattern, int nb_additions)
             surrounding.insert({x, y});
     };
 
-
     // Add cells around the first ones
     for (auto& cell : pattern)
     {
@@ -166,8 +181,10 @@ void cavestyle_patch(Pattern& pattern, int nb_additions)
     {
         // Select a cell to insert
         auto selected = surrounding.begin();
+    
         std::advance(selected, Random::uniform_int(0, surrounding.size()-1));
         pattern.insert(*selected);
+    
         // Refresh surrounding set of the pattern
         int new_x, new_y;
         std::tie(new_x, new_y) = *selected;
@@ -175,6 +192,7 @@ void cavestyle_patch(Pattern& pattern, int nb_additions)
         addSurrounding(new_x-1, new_y);
         addSurrounding(new_x, new_y+1);
         addSurrounding(new_x, new_y-1);
+
         // Can't select this cell anymore
         surrounding.erase(selected);
     }
@@ -186,8 +204,10 @@ Pattern generate_cave(int size)
         size = 1;
 
     Pattern cells;
+
     cells.insert(std::make_pair(0, 0));
     cavestyle_patch(cells, size-1);
+
     return cells;
 }
 
