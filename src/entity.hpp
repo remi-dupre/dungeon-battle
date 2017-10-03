@@ -68,7 +68,7 @@ public:
 
 protected:
 
-    EntityType type; ///< The type of the entity
+    const EntityType type; ///< The type of the entity
     sf::Vector2u position; ///< The position of the entity
     Direction orientation; ///< The orientation of the entity
 };
@@ -89,7 +89,11 @@ public:
      * \param hp The hp of the character
      * \param force The force of the character
      */
-    Character(EntityType type_, sf::Vector2u position_, Direction orientation_, unsigned int hpMax, unsigned int force);
+    Character(EntityType type_,
+              sf::Vector2u position_,
+              Direction orientation_,
+              unsigned int hpMax,
+              unsigned int strength);
 
     /**
      * \brief Return the max hp of the character
@@ -122,17 +126,17 @@ public:
     /**
      * \brief Return the force of the character
      */
-    unsigned int getForce() const;
+    unsigned int getStrength() const;
 
     /**
      * \brief Set the force of the character
      * \param force The force to set
      */
-    void setForce(unsigned int force);
+    void setStrength(unsigned int strength);
 
 protected:
 
     unsigned int hpMax; ///< The max hp of the character
     unsigned int hp; ///< The hp of the character
-    unsigned int force; ///< The force of the character
+    unsigned int strength; ///< The force of the character
 };
