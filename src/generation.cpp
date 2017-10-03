@@ -4,42 +4,42 @@
 
 int pattern_min_x(const Pattern& pattern)
 {
-    int min_x = std::numeric_limits<int>::max();
-
-    for (auto cell : pattern)
-        min_x = std::min(min_x, cell.first);
-
-    return min_x;
+    return std::min_element(
+        begin(pattern), end(pattern),
+        [](const auto& a, const auto& b) {
+            return a.first < b.first;
+        }
+    )->first;
 }
 
 int pattern_max_x(const Pattern& pattern)
 {
-    int max_x = std::numeric_limits<int>::min();
-
-    for (auto cell : pattern)
-        max_x = std::max(max_x, cell.first);
-
-    return max_x;
+    return std::max_element(
+        begin(pattern), end(pattern),
+        [](const auto& a, const auto& b) {
+            return a.first < b.first;
+        }
+    )->first;
 }
 
 int pattern_min_y(const Pattern& pattern)
 {
-    int min_y = std::numeric_limits<int>::max();
-
-    for (auto cell : pattern)
-        min_y = std::min(min_y, cell.second);
-
-    return min_y;
+    return std::min_element(
+        begin(pattern), end(pattern),
+        [](const auto& a, const auto& b) {
+            return a.second < b.second;
+        }
+    )->second;
 }
 
 int pattern_max_y(const Pattern& pattern)
 {
-    int max_y = std::numeric_limits<int>::min();
-
-    for (auto cell : pattern)
-        max_y = std::max(max_y, cell.first);
-
-    return max_y;
+    return std::max_element(
+        begin(pattern), end(pattern),
+        [](const auto& a, const auto& b) {
+            return a.second < b.second;
+        }
+    )->second;
 }
 
 
@@ -51,12 +51,16 @@ Pattern normalized_pattern(Pattern& pattern, std::vector<std::shared_ptr<Entity>
     Pattern normalized;
 
     for (auto& cell : pattern)
-        normalized.insert({cell.first-min_x, cell.second-min_y});
+    {
+        assert(cell.first  - min_x >= 0);
+        assert(cell.second - min_y >= 0);
+        normalized.insert({cell.first - min_x, cell.second - min_y});
+    }
 
     for (auto& entity : entities)
     {
         auto pos = entity->getPosition();
-        entity->setPosition({pos.x-min_x, pos.y-min_y});
+        entity->setPosition({pos.x - min_x, pos.y - min_y});
     }
 
     return normalized;
@@ -66,16 +70,21 @@ Pattern merged_patterns(
     const std::vector<std::pair<int, int>>& positions,
     const std::vector<Pattern>& patterns)
 {
+    // Every pattern must have a position
+    assert(positions.size() == patterns.size());
+
     std::set<std::pair<int, int>> fullMap;
 
     for (size_t i_pattern = 0 ; i_pattern < patterns.size() ; i_pattern++)
     {
-        int x_center, y_center;
-        std::tie(x_center, y_center) = positions[i_pattern];
+        int x_center = positions[i_pattern].first;
+        int y_center = positions[i_pattern].second;
+
         for(auto pattern_cell : patterns[i_pattern])
         {
-            int x_cell, y_cell;
-            std::tie(x_cell, y_cell) = pattern_cell;
+            int x_cell = pattern_cell.first;
+            int y_cell = pattern_cell.second;
+
             fullMap.insert({x_cell + x_center, y_cell + y_center});
         }
     }
@@ -83,17 +92,22 @@ Pattern merged_patterns(
     return fullMap;
 }
 
-Map map_of_pattern(const Pattern& pattern, int width, int height)
+Map map_of_pattern(const Pattern& pattern)
 {
+    // Keeps a 1-unit margin at every border
+    int width = 1 + pattern_max_x(pattern) + 1;
+    int height = 1 + pattern_max_y(pattern) + 1;
     Map map(width, height);
 
     // Add cells of the pattern on the floor
     for (auto &cell : pattern)
     {
-        int x, y;
-        std::tie(x, y) = cell;
-        if (x > 0  && x < width && y > 0 && y < height)
-            map.cellAt(x, y) = CellType::Floor;
+        int x = cell.first;
+        int y = cell.second;
+
+        assert(x+1 > 0 && x+1 < width);
+        assert(y+1 > 0 && y+1 < height);
+        map.cellAt(x+1, y+1) = CellType::Floor;
     }
 
     // Function to check wether a cell adjacent to (x, y) is a floor
@@ -126,6 +140,9 @@ Map map_of_pattern(const Pattern& pattern, int width, int height)
 
 Pattern generate_rectangle(int width, int height)
 {
+    assert(width > 0);
+    assert(height > 0);
+
     // Process where will be (0, 0)
     int center_x = width / 2;
     int center_y = height / 2;
@@ -135,11 +152,14 @@ Pattern generate_rectangle(int width, int height)
     for (int x = 0 ; x < width ; x++)
         for (int y = 0 ; y < height ; y++)
             room.insert({x-center_x, y-center_y});
+
     return room;
 }
 
 Pattern generate_rectangle(int size)
 {
+    assert(size > 0);
+
     int medium_width = std::sqrt(size);
     float ratio = Random::uniform_float((2.f / 3.f), (4.f / 3.f));
 
@@ -280,7 +300,7 @@ Level generate(const GenerationMode &mode)
         int pos_x = 1 + mode.room_margin + map_right - room_left;
 
         map_right += 1 + mode.room_margin + (room_right - room_left);
-        positions.push_back({pos_x, Random::uniform_int(-50, 50)});
+        positions.push_back({pos_x, Random::uniform_int(-25, 25)});
     }
 
     // Add ways between rooms
@@ -333,7 +353,7 @@ Level generate(const GenerationMode &mode)
     }
 
     // Outputs result into the map
-    Map map = map_of_pattern(normalized_pattern(cells, entities), pattern_max_x(cells), pattern_max_y(cells));
+    Map map = map_of_pattern(normalized_pattern(cells, entities));
 
     return {map, entities};
 }

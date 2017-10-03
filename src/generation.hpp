@@ -6,6 +6,7 @@
 #pragma once
 
 #include <algorithm>
+#include <cassert>
 #include <cmath>
 #include <limits>
 #include <memory>
@@ -113,13 +114,11 @@ Pattern merged_patterns(
     const std::vector<Pattern>& patterns);
 
 /**
- * \brief Generate a map corresponding to a floor pattern
- * \param pattern The cells included in the map as floors
- * \param width The with of the map (it means the pattern might be truncated)
- * \param height The height of the map (it means the pattern might be truncated)
- * \return A map where the pattern is surrounded by walls
+ * \brief Generate a map corresponding to a floor pattern.
+ * \param pattern The cells included in the map as floors.
+ * \return A map where the pattern is surrounded by walls.
  */
-Map map_of_pattern(const Pattern& pattern, int width, int height);
+Map map_of_pattern(const Pattern& pattern);
 
 
 /**
