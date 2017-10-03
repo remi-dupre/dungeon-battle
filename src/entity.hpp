@@ -37,6 +37,8 @@ public:
      */
     Entity(EntityType _type, sf::Vector2u _position, Direction _orientation);
 
+    virtual ~Entity() = default;
+
     /**
      * \brief Return the type of the entity
      */
@@ -63,8 +65,6 @@ public:
      * \param position The orientation to set
      */
     void setOrientation(Direction _orientation);
-
-    virtual ~Entity() = default;
 
 protected:
 
