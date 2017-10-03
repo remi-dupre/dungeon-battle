@@ -38,6 +38,12 @@ void Game::init(const std::map<Option, std::string>& options)
     gen_options.nb_rooms = 10;
     gen_options.room_margin = 4;
 
+    // Base stats of Heros and Monsters
+    unsigned int baseHeroHp = 20;
+    unsigned int baseMonsterHp = 5;
+    unsigned int baseHeroForce = 1;
+    unsigned int baseMonsterForce = 1;
+
     auto level = generate(gen_options);
     map = std::get<Map>(level);
     entities = std::get<std::vector<std::shared_ptr<Entity>>>(level);
@@ -52,7 +58,7 @@ void Game::init(const std::map<Option, std::string>& options)
     if (entry_stairs != entities.end())
         start_pos = (*entry_stairs)->getPosition();
 
-    entities.push_back(std::make_shared<Entity>(EntityType::Hero, start_pos, Direction::Left));
+    entities.push_back(std::shared_ptr<Entity>(new Character(EntityType::Hero, start_pos, Direction::Left, baseHeroHp, baseHeroForce)));
 
     map.saveToFile("map.map");
 }
