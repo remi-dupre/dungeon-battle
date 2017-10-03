@@ -124,7 +124,31 @@ Map map_of_pattern(const Pattern& pattern, int width, int height)
 }
 
 
-Pattern make_hallway(std::pair<int, int> cell1, std::pair<int, int> cell2)
+Pattern generate_rectangle(int width, int height)
+{
+    // Process where will be (0, 0)
+    int center_x = width / 2;
+    int center_y = height / 2;
+
+    // Add every cells in the pattern
+    Pattern room;
+    for (int x = 0 ; x < width ; x++)
+        for (int y = 0 ; y < height ; y++)
+            room.insert({x-center_x, y-center_y});
+    return room;
+}
+
+Pattern generate_rectangle(int size)
+{
+    int medium_width = std::sqrt(size);
+    float ratio = Random::uniform_float((2.f / 3.f), (4.f / 3.f));
+
+    int width = std::max(2, static_cast<int>(ratio * medium_width));
+    int height = std::max(2, size / width);
+    return generate_rectangle(width, height);
+}
+
+Pattern generate_hallway(std::pair<int, int> cell1, std::pair<int, int> cell2)
 {
     int x1, y1, x2, y2;
     std::tie(x1, y1) = cell1;
@@ -153,7 +177,6 @@ Pattern make_hallway(std::pair<int, int> cell1, std::pair<int, int> cell2)
     return path;
 }
 
-
 void cavestyle_patch(Pattern& pattern, int nb_additions)
 {
     Pattern surrounding;
@@ -181,10 +204,10 @@ void cavestyle_patch(Pattern& pattern, int nb_additions)
     {
         // Select a cell to insert
         auto selected = surrounding.begin();
-    
+
         std::advance(selected, Random::uniform_int(0, surrounding.size()-1));
         pattern.insert(*selected);
-    
+
         // Refresh surrounding set of the pattern
         int new_x, new_y;
         std::tie(new_x, new_y) = *selected;
@@ -218,8 +241,8 @@ Pattern generate_banana(int avg_side)
     int x2 = Random::uniform_int(-avg_side/2, avg_side/2);
     int y2 = Random::uniform_int(-avg_side/2, avg_side/2);
 
-    auto path1 = make_hallway({0, 0}, {x1, y1});
-    auto path2 = make_hallway({0, 0}, {x2, y2});
+    auto path1 = generate_hallway({0, 0}, {x1, y1});
+    auto path2 = generate_hallway({0, 0}, {x2, y2});
 
     return merged_patterns({{0, 0}, {0, 0}}, {path1, path2});
 }
@@ -235,10 +258,17 @@ Level generate(const GenerationMode &mode)
     {
         int room_size = Random::uniform_int(mode.room_min_size, mode.room_max_size);
 
-        // Pattern shape = generate_banana(room_size);
-        // cavestyle_patch(shape, shape.size()*5);
-        // patterns.push_back(shape);
-        patterns.push_back(generate_cave(room_size));
+        switch (mode.type)
+        {
+            case LevelType::Cave:
+                patterns.push_back(generate_cave(room_size));
+                break;
+
+            case LevelType::Flat:
+            default:
+                patterns.push_back(generate_rectangle(room_size));
+                break;
+        }
     }
 
     // Position rooms
@@ -256,21 +286,40 @@ Level generate(const GenerationMode &mode)
     // Add ways between rooms
     for (int i_room = 1 ; i_room < mode.nb_rooms ; i_room++)
     {
-        patterns.push_back(make_hallway(positions[i_room-1], positions[i_room]));
-        cavestyle_patch(patterns.back(), patterns.back().size());
-        positions.push_back(positions[i_room-1]);
+        auto hall_start = positions[i_room-1];
+        auto hall_end = positions[i_room];
+        switch (mode.type)
+        {
+            case LevelType::Cave:
+                patterns.push_back(generate_hallway(hall_start, hall_end));
+                positions.push_back(positions[i_room-1]);
+                cavestyle_patch(patterns.back(), patterns.back().size());
+                break;
+
+            case LevelType::Flat:
+            default:
+                patterns.push_back(generate_hallway(hall_start, hall_end));
+                positions.push_back(positions[i_room-1]);
+                break;
+        }
     }
 
     Pattern cells = merged_patterns(positions, patterns);
 
-    // Outputs result into the map
+    // Add stairs in first and last map
     std::vector<std::shared_ptr<Entity>> entities;
     entities.push_back(std::make_shared<Entity>(
         EntityType::Stairs,
         sf::Vector2u(positions[0].first, positions[0].second),
         Direction::Right
     ));
+    entities.push_back(std::make_shared<Entity>(
+        EntityType::Stairs,
+        sf::Vector2u(positions[mode.nb_rooms-1].first, positions[mode.nb_rooms-1].second),
+        Direction::Right
+    ));
 
+    // Outputs result into the map
     Map map = map_of_pattern(normalized_pattern(cells, entities), pattern_max_x(cells), pattern_max_y(cells));
 
     return {map, entities};

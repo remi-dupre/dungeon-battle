@@ -6,6 +6,7 @@
 #pragma once
 
 #include <algorithm>
+#include <cmath>
 #include <limits>
 #include <memory>
 #include <set>
@@ -28,6 +29,15 @@ typedef std::set<std::pair<int, int>> Pattern;
 typedef std::pair<Map, std::vector<std::shared_ptr<Entity>>> Level;
 
 /**
+ * \brief Describe the general design of the level.
+ */
+enum class LevelType
+{
+    Flat, ///< Rectangular-shaped rooms
+    Cave ///< Cave shaped rooms
+};
+
+/**
  * \brief Parameters on how to generate the level
  */
 struct GenerationMode
@@ -36,6 +46,7 @@ struct GenerationMode
     int room_min_size; ///< minimum number of cells contained on a room
     int room_max_size; ///< maximum number of cells contained on a room
     int room_margin; ///< minimum space added between two rooms
+    LevelType type; ///< Kind of design for the rooms
 };
 
 
@@ -112,12 +123,31 @@ Map map_of_pattern(const Pattern& pattern, int width, int height);
 
 
 /**
+ * \brief Generate the pattern for a rectangular room.
+ * \param width Width of the room.
+ * \param height Height of the room.
+ * \return The pattern of the room.
+ * \note The rectangle will be centered on (0, 0)
+ */
+Pattern generate_rectangle(int width, int height);
+
+/**
+ * \brief Generate the pattern for a rectangular room.
+ * \param size An approximate surface of the room.
+ * \return The pattern of the room.
+ * \note The rectangle will be centered on (0, 0)
+ *
+ * This will randomly pickup a width and height so that the surface is roughly size.
+ */
+Pattern generate_rectangle(int size);
+
+/**
  * \brief Generate a hallway from point cell1 to cell2.
  * \param cell1 Coordinates of first extremity of the path.
  * \param cell2 Coordinates of second extremity of the path.
  * \return The pattern corresponding to a path linking cell1 to cell2 if the cell (0, 0) of the pattern is placed on cell1.
  */
-Pattern make_hallway(std::pair<int, int> cell1, std::pair<int, int> cell2);
+Pattern generate_hallway(std::pair<int, int> cell1, std::pair<int, int> cell2);
 
 /**
  * \brief Add cells to a pattern so that it looks cave styled.
