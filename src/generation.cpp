@@ -318,8 +318,19 @@ Level generate(const GenerationMode &mode)
         EntityType::Stairs,
         Interaction::GoUp,
         sf::Vector2u(positions[mode.nb_rooms-1].first, positions[mode.nb_rooms-1].second),
-        Direction::Right
+        Direction::Left
     ));
+
+    // Add monsters in other maps
+    for (int i_map = 1 ; i_map+1 < mode.nb_rooms ; i_map++)
+    {
+        entities.push_back(std::make_shared<Character>(
+            EntityType::Monster,
+            Interaction::None,
+            sf::Vector2u(positions[i_map].first, positions[i_map].second),
+            Direction::Left, 3, 1
+        ));
+    }
 
     // Outputs result into the map
     Map map = map_of_pattern(normalized_pattern(cells, entities), pattern_max_x(cells), pattern_max_y(cells));
