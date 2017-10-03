@@ -36,32 +36,32 @@ void Entity::setOrientation(Direction orientation_)
 
 
 Character::Character(EntityType type_, sf::Vector2u position_, Direction orientation_, unsigned int hp_, unsigned int force_) :
-	Entity(type_, position_, orientation_),
-	hp(hp_),
-	force(force_)
+    Entity(type_, position_, orientation_),
+    hp(hp_),
+    force(force_)
 {}
 
 unsigned int Character::getHp() const
 {
-	return hp;
+    return hp;
 }
 
 void Character::setHp(unsigned int hp_)
 {
-	hp = hp_;
+    hp = hp_;
 }
 
 void Character::addHp(int hp_)
 {
-	hp += hp_;
+    (static_cast<int>(hp) < -hp_) ? hp = 0 : hp += hp_;
 }
 
 unsigned int Character::getForce() const
 {
-	return force;
+    return force;
 }
 
 void Character::setForce(unsigned int force_)
 {
-	force = force_;
+    force = force_;
 }
