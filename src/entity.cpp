@@ -53,7 +53,7 @@ void Character::setHp(unsigned int hp_)
 
 void Character::addHp(int hp_)
 {
-    (static_cast<int>(hp) < -hp_) ? hp = 0 : hp += hp_;
+    (static_cast<int>(hp) < -hp_) ? hp = 0 : hp += hp_; // Berk
 }
 
 unsigned int Character::getForce() const
