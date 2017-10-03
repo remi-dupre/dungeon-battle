@@ -79,10 +79,28 @@ void Renderer::drawEntities(const std::vector<std::shared_ptr<Entity>>& entities
         sf::Vertex v3({static_cast<float>(x+1) - 0.1f, static_cast<float>(y)   + 0.1f});
         sf::Vertex v4({static_cast<float>(x+1) - 0.1f, static_cast<float>(y+1) - 0.1f});
 
-        v1.color = sf::Color::Red;
-        v2.color = sf::Color::Red;
-        v3.color = sf::Color::Red;
-        v4.color = sf::Color::Red;
+        switch (entity->getType())
+        {
+            case EntityType::Hero:
+                v1.color = sf::Color::Red;
+                v2.color = sf::Color::Red;
+                v3.color = sf::Color::Red;
+                v4.color = sf::Color::Red;
+                break;
+            case EntityType::Stairs:
+                v1.color = sf::Color::Yellow;
+                v2.color = sf::Color::Yellow;
+                v3.color = sf::Color::Yellow;
+                v4.color = sf::Color::Yellow;
+                break;
+            case EntityType::Monster:
+                v1.color = sf::Color::Green;
+                v2.color = sf::Color::Green;
+                v3.color = sf::Color::Green;
+                v4.color = sf::Color::Green;
+                break;
+        }
+
 
         entities_vertices[0].second.push_back(v1);
         entities_vertices[0].second.push_back(v2);
