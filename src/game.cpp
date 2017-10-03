@@ -59,7 +59,7 @@ void Game::init(const std::map<Option, std::string>& options)
     if (entry_stairs != entities.end())
         start_pos = (*entry_stairs)->getPosition();
 
-    entities.push_back(std::make_shared<Character>(EntityType::Hero, start_pos, Direction::Left, baseHeroHp, baseHeroForce));
+    entities.push_back(std::make_shared<Character>(EntityType::Hero, Interaction::None, start_pos, Direction::Left, baseHeroHp, baseHeroForce));
 
     map.saveToFile("map.map");
 }

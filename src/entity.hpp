@@ -22,6 +22,18 @@ enum class EntityType
     Stairs ///< A staircase
 };
 
+
+/**
+ * \brief Static information about the interaction with the entity
+ */
+enum class Interaction
+{
+    None, ///< None
+    GoUp, ///< Go up
+    GoDown ///< Go down
+};
+
+
 /**
  * \brief Represents anything that is interactive
  */
@@ -35,7 +47,7 @@ public:
      * \param position The position of the entity
      * \param orientation The orientation of the entity
      */
-    Entity(EntityType _type, sf::Vector2u _position, Direction _orientation);
+    Entity(EntityType _type, Interaction _interaction, sf::Vector2u _position, Direction _orientation);
 
     virtual ~Entity() = default;
 
@@ -43,6 +55,11 @@ public:
      * \brief Return the type of the entity
      */
     EntityType getType() const;
+
+    /**
+     * \brief Return the interaction with the entity
+     */
+    Interaction getInteraction() const;
 
     /**
      * \brief Return the position of the entity
@@ -68,7 +85,8 @@ public:
 
 protected:
 
-    EntityType type; ///< The type of the entity
+    const EntityType type; ///< The type of the entity
+    const Interaction interaction; ///< The result of the interaction with the entity
     sf::Vector2u position; ///< The position of the entity
     Direction orientation; ///< The orientation of the entity
 };
@@ -84,12 +102,18 @@ public:
     /**
      * \brief Create a character
      * \param type The type of the character
+     * \param interaction The interaction with the entity
      * \param position The position of the character
      * \param orientation The orientation of the character
      * \param hp The hp of the character
      * \param force The force of the character
      */
-    Character(EntityType type_, sf::Vector2u position_, Direction orientation_, unsigned int hpMax, unsigned int force);
+    Character(EntityType type_,
+              Interaction interaction_,
+              sf::Vector2u position_,
+              Direction orientation_,
+              unsigned int hpMax,
+              unsigned int strength);
 
     /**
      * \brief Return the max hp of the character
@@ -122,17 +146,17 @@ public:
     /**
      * \brief Return the force of the character
      */
-    unsigned int getForce() const;
+    unsigned int getStrength() const;
 
     /**
      * \brief Set the force of the character
      * \param force The force to set
      */
-    void setForce(unsigned int force);
+    void setStrength(unsigned int strength);
 
 protected:
 
     unsigned int hpMax; ///< The max hp of the character
     unsigned int hp; ///< The hp of the character
-    unsigned int force; ///< The force of the character
+    unsigned int strength; ///< The force of the character
 };

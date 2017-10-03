@@ -310,6 +310,7 @@ Level generate(const GenerationMode &mode)
     std::vector<std::shared_ptr<Entity>> entities;
     entities.push_back(std::make_shared<Entity>(
         EntityType::Stairs,
+        Interaction::GoDown,
         sf::Vector2u(positions[0].first, positions[0].second),
         Direction::Right
     ));

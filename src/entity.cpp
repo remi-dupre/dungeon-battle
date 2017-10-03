@@ -4,8 +4,9 @@
 #include "utility.hpp"
 
 
-Entity::Entity(EntityType type_, sf::Vector2u position_, Direction orientation_) :
+Entity::Entity(EntityType type_, Interaction interaction_, sf::Vector2u position_, Direction orientation_) :
     type(type_),
+    interaction(interaction_),
     position(position_),
     orientation(orientation_)
 {}
@@ -13,6 +14,11 @@ Entity::Entity(EntityType type_, sf::Vector2u position_, Direction orientation_)
 EntityType Entity::getType() const
 {
     return type;
+}
+
+Interaction Entity::getInteraction() const
+{
+    return interaction;
 }
 
 sf::Vector2u Entity::getPosition() const
@@ -37,11 +43,16 @@ void Entity::setOrientation(Direction orientation_)
 }
 
 
-Character::Character(EntityType type_, sf::Vector2u position_, Direction orientation_, unsigned int hpMax_, unsigned int force_) :
-    Entity(type_, position_, orientation_),
+Character::Character(EntityType type_,
+                     Interaction interaction_,
+                     sf::Vector2u position_,
+                     Direction orientation_,
+                     unsigned int hpMax_,
+                     unsigned int strength_) :
+    Entity(type_, interaction_, position_, orientation_),
     hpMax(hpMax_),
     hp(hpMax_),
-    force(force_)
+    strength(strength_)
 {}
 
 unsigned int Character::getHpMax() const
@@ -69,12 +80,12 @@ void Character::addHp(int hp_)
     (static_cast<int>(hp) < -hp_) ? hp = 0 : hp = std::min(hp+hp_, hpMax);
 }
 
-unsigned int Character::getForce() const
+unsigned int Character::getStrength() const
 {
-    return force;
+    return strength;
 }
 
-void Character::setForce(unsigned int force_)
+void Character::setStrength(unsigned int strength_)
 {
-    force = force_;
+    strength = strength_;
 }
