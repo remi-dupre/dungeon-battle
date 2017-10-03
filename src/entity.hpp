@@ -63,9 +63,63 @@ public:
      */
     void setOrientation(Direction _orientation);
 
+    virtual ~Entity() = default;
+
 protected:
 
     EntityType type; ///< The type of the entity
     sf::Vector2u position; ///< The position of the entity
     Direction orientation; ///< The orientation of the entity
+};
+
+
+/**
+ * \brief Represents a living entity
+ */
+class Character : public Entity
+{
+public:
+
+    /**
+     * \brief Create a character
+     * \param type The type of the character
+     * \param position The position of the character
+     * \param orientation The orientation of the character
+     * \param hp The hp of the character
+     * \param force The force of the character
+     */
+    Character(EntityType type_, sf::Vector2u position_, Direction orientation_, unsigned int hp, unsigned int force);
+
+    /**
+     * \brief Return the hp of the character
+     */
+    unsigned int getHp() const;
+
+    /**
+     * \brief Set the hp of the character
+     * \param hp The hp to set
+     */
+    void setHp(unsigned int hp);
+
+    /**
+     * \brief Add hp to the character
+     * \param hp The hp to add
+     */
+    void addHp(int hp);
+
+    /**
+     * \brief Return the force of the character
+     */
+    unsigned int getForce() const;
+
+    /**
+     * \brief Set the force of the character
+     * \param force The force to set
+     */
+    void setForce(unsigned int force);
+
+protected:
+
+    unsigned int hp; ///< The hp of the character
+    unsigned int force; ///< The force of the character
 };
