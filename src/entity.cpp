@@ -1,3 +1,5 @@
+#include <algorithm>
+
 #include "entity.hpp"
 #include "utility.hpp"
 
@@ -35,11 +37,22 @@ void Entity::setOrientation(Direction orientation_)
 }
 
 
-Character::Character(EntityType type_, sf::Vector2u position_, Direction orientation_, unsigned int hp_, unsigned int force_) :
+Character::Character(EntityType type_, sf::Vector2u position_, Direction orientation_, unsigned int hpMax_, unsigned int force_) :
     Entity(type_, position_, orientation_),
-    hp(hp_),
+    hpMax(hpMax_),
+    hp(hpMax_),
     force(force_)
 {}
+
+unsigned int Character::getHpMax() const
+{
+    return hpMax;
+}
+
+void Character::setHpMax(unsigned int hpMax_)
+{
+    hpMax = hpMax_;
+}
 
 unsigned int Character::getHp() const
 {
@@ -53,7 +66,7 @@ void Character::setHp(unsigned int hp_)
 
 void Character::addHp(int hp_)
 {
-    (static_cast<int>(hp) < -hp_) ? hp = 0 : hp += hp_;
+    (static_cast<int>(hp) < -hp_) ? hp = 0 : hp = std::min(hp+hp_, hpMax);
 }
 
 unsigned int Character::getForce() const

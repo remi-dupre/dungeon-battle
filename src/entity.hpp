@@ -6,6 +6,7 @@
 #pragma once
 
 #include <SFML/System/Vector2.hpp>
+#include <algorithm>
 
 #include "utility.hpp"
 
@@ -88,7 +89,18 @@ public:
      * \param hp The hp of the character
      * \param force The force of the character
      */
-    Character(EntityType type_, sf::Vector2u position_, Direction orientation_, unsigned int hp, unsigned int force);
+    Character(EntityType type_, sf::Vector2u position_, Direction orientation_, unsigned int hpMax, unsigned int force);
+
+    /**
+     * \brief Return the max hp of the character
+     */
+    unsigned int getHpMax() const;
+
+    /**
+     * \brief Set the max hp of the character
+     * \param hpMax The hp to set as max
+     */
+    void setHpMax(unsigned int hpMax);
 
     /**
      * \brief Return the hp of the character
@@ -120,6 +132,7 @@ public:
 
 protected:
 
+    unsigned int hpMax; ///< The max hp of the character
     unsigned int hp; ///< The hp of the character
     unsigned int force; ///< The force of the character
 };
