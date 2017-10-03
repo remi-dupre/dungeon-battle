@@ -316,6 +316,7 @@ Level generate(const GenerationMode &mode)
     ));
     entities.push_back(std::make_shared<Entity>(
         EntityType::Stairs,
+        Interaction::GoUp,
         sf::Vector2u(positions[mode.nb_rooms-1].first, positions[mode.nb_rooms-1].second),
         Direction::Right
     ));
