@@ -18,7 +18,7 @@ matrix:
 
 script:
  - make doc
- - make cppcheck-html CHECK_DIR=doc/html/check CXX=g++-7
+ - make cppcheck-html CHECK_DIR=doc/html/check
  - make debug
  - make test
 
