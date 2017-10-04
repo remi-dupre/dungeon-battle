@@ -13,14 +13,12 @@ matrix:
             - doxygen
             - cxxtest
             - cppcheck
-      env:
-        - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
 
 script:
- - make doc
- - make cppcheck-html CHECK_DIR=doc/html/check
- - make debug
- - make test
+ - make doc CXX=g++-5
+ - make cppcheck-html CHECK_DIR=doc/html/check CXX=g++-5
+ - make debug CXX=g++-5
+ - make test CXX=g++-5
 
 deploy:
   name: Travis Documentation Generation
