@@ -154,9 +154,21 @@ public:
      */
     void setStrength(unsigned int strength);
 
+    /**
+     * \brief Return the sight radius of the character
+     */
+    unsigned int getSightRadius() const;
+
+    /**
+     * \brief Set the sight radius of the character
+     * \param sightRadius The sight radius to set
+     */
+    void setSightRadius(unsigned int sightRadius);
+
 protected:
 
     unsigned int hpMax; ///< The max hp of the character
     unsigned int hp; ///< The hp of the character
     unsigned int strength; ///< The force of the character
+    unsigned int sightRadius; ///< The sight radius of the character (0 for infinity)
 };

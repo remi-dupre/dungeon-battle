@@ -52,7 +52,8 @@ Character::Character(EntityType type_,
     Entity(type_, interaction_, position_, orientation_),
     hpMax(hpMax_),
     hp(hpMax_),
-    strength(strength_)
+    strength(strength_),
+    sightRadius(0)
 {}
 
 unsigned int Character::getHpMax() const
@@ -88,4 +89,14 @@ unsigned int Character::getStrength() const
 void Character::setStrength(unsigned int strength_)
 {
     strength = strength_;
+}
+
+unsigned int Character::getSightRadius() const
+{
+    return sightRadius;
+}
+
+void Character::setSightRadius(unsigned int sightRadius_)
+{
+    sightRadius = sightRadius_;
 }
