@@ -56,6 +56,9 @@ release: $(EXEC)
 debug: DFLAGS += -ggdb
 debug: $(EXEC)
 
+rebuild: clean
+rebuild: release
+
 # Exectutes tests using cxxtest
 test: tests/test.cpp
 	@echo "=== Runing unit tests"
