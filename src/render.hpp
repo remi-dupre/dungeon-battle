@@ -12,6 +12,7 @@
 #include "config.hpp"
 #include "map.hpp"
 #include "rand.hpp"
+#include "utility.hpp"
 
 
 /**
@@ -66,9 +67,12 @@ public:
 private:
 
     /**
-     * \brief Add a single cell to the vertex array
+     * \brief Draw a single cell
+     * \param coords The coordinates of the cell
+     * \param cell The type of the cell
      *
-     *
+     * This function adds the vertices of a cell to the vertex array
+     * to draw it later
      */
     void drawCell(sf::Vector2i coords, CellType cell);
 

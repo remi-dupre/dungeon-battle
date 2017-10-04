@@ -158,7 +158,7 @@ void Renderer::drawCell(sf::Vector2i coords, CellType cell)
     case CellType::Empty:
         [[fallthrough]];
     default:
-        break;
+        return; // Don't draw empty/unkonwn cells
     }
 
     map_vertices.push_back(v1);
