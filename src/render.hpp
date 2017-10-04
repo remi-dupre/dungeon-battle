@@ -11,6 +11,7 @@
 
 #include "config.hpp"
 #include "map.hpp"
+#include "rand.hpp"
 
 
 /**
@@ -64,9 +65,16 @@ public:
 
 private:
 
+    /**
+     * \brief Add a single cell to the vertex array
+     *
+     *
+     */
+    void drawCell(sf::Vector2i coords, CellType cell);
+
     const float tile_size; ///< Size of the tiles on screen in pixels
     std::vector<sf::Vertex> map_vertices; ///< Vertex array used to render the map
-    sf::Texture map_texture; ///< Texture of the tiles
+    sf::Texture tileset; ///< Texture of the tiles
 
     std::vector<std::pair<int, std::vector<sf::Vertex>>> entities_vertices; ///< Vertex array used to render entities
 
