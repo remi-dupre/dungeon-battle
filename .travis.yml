@@ -1,30 +1,26 @@
-sudo: required
+language: c++
 
-services:
-  - docker
-
-language: cpp
-
-before_install:
- - docker run -d --name artful -v $(pwd):/travis ubuntu:artful tail -f /dev/null
- - docker ps
-
-install:
- - docker exec -t artful bash -c "apt-get update"
- - docker exec -t artful bash -c "apt-get install -y --no-install-recommends build-essential"
- - docker exec -t artful bash -c "apt-get install -y --no-install-recommends libsfml-dev"
- - docker exec -t artful bash -c "apt-get install -y --no-install-recommends doxygen"
- - docker exec -t artful bash -c "apt-get install -y --no-install-recommends cxxtest cppcheck"
+matrix:
+  include:
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-5
+            - libsfml-dev
+            - doxygen
+            - cxxtest
+            - cppcheck
+      env:
+        - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
 
 script:
- - docker exec -t artful bash -c "cd /travis;
-   make doc CXX=g++-7";
- - docker exec -t artful bash -c "cd /travis;
-   make cppcheck-html CHECK_DIR=doc/html/check CXX=g++-7";
- - docker exec -t artful bash -c "cd /travis;
-   make debug CXX=g++-7;"
- - docker exec -t artful bash -c "cd /travis;
-   make test CXX=g++-7;"
+ - make doc
+ - make cppcheck-html CHECK_DIR=doc/html/check CXX=g++-7
+ - make debug
+ - make test
 
 deploy:
   name: Travis Documentation Generation
