@@ -59,7 +59,7 @@ debug: $(EXEC)
 # Exectutes tests using cxxtest
 test: tests/test.cpp
 	@echo "=== Runing unit tests"
-	@$(CXX) -o tests/test tests/test.cpp && ./tests/test
+	@$(CXX) -o tests/test tests/test.cpp $(CFLAGS) $(DFLAGS) $(WFLAGS) && ./tests/test
 	@echo -e "\n=== Runing linter"
 	cppcheck --enable=all --inconclusive $(SRC_DIR) 1> /dev/null
 
