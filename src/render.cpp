@@ -124,7 +124,7 @@ void Renderer::drawCell(sf::Vector2i coords, CellType cell)
     if (cell == CellType::Empty)
         return;
 
-    Random::seed(17 * coords.x + 53 * coords.y);
+    Random::seed(std::hash<sf::Vector2i>{}(coords));
 
     sf::Vector2f c = static_cast<sf::Vector2f>(coords);
 

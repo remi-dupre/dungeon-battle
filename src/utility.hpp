@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include <functional>
+
 
 /**
  * \brief Direction of an entity or an action
@@ -17,3 +19,14 @@ enum class Direction
     Up, ///< Up
     Down ///< Down
 };
+
+namespace std
+{
+    template<> struct hash<sf::Vector2i>
+    {
+        size_t operator()(const sf::Vector2i& v) const
+        {
+            return 349 * v.x + 547 * v.y;
+        }
+    };
+}
