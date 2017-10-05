@@ -70,6 +70,13 @@ void Renderer::drawEntities(const std::vector<std::shared_ptr<Entity>>& entities
                 v3.color = sf::Color::Green;
                 v4.color = sf::Color::Green;
                 break;
+            case EntityType::None:
+            default:
+                v1.color = sf::Color::Black;
+                v2.color = sf::Color::Black;
+                v3.color = sf::Color::Black;
+                v4.color = sf::Color::Black;
+                break;
         }
 
         entities_vertices[0].second.push_back(v1);
