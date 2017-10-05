@@ -65,7 +65,7 @@ You can also generate the documentation by running `make doc`, which requires do
 
 # Other informations
 
-We defined a preferred coding style in the file [coding_style.md](https://github.com/remi-dupre/dungeon-battle/blob/master/coding_style.md).
+We defined a preferred coding style in the file [CONTRIBUTING.md](https://github.com/remi-dupre/dungeon-battle/blob/master/CONTRIBUTING.md).
 
 Some warning from the linter are listed on [github pages](https://remi-dupre.github.io/dungeon-battle/check/index.html).
 
