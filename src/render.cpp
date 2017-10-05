@@ -4,9 +4,8 @@
 Renderer::Renderer() :
     tile_size(32.f)
 {
-    view.setCenter({40.f, 20.f});
+    tileset.loadFromFile("data/tileset.png");
 }
-
 
 void Renderer::drawMap(const Map& map)
 {
@@ -22,43 +21,7 @@ void Renderer::drawMap(const Map& map)
         {
             CellType cell = map.cellAt(x, y);
 
-            sf::Vertex v1({static_cast<float>(x)  , static_cast<float>(y)  });
-            sf::Vertex v2({static_cast<float>(x)  , static_cast<float>(y+1)});
-            sf::Vertex v3({static_cast<float>(x+1), static_cast<float>(y)  });
-            sf::Vertex v4({static_cast<float>(x+1), static_cast<float>(y+1)});
-
-            switch (cell)
-            {
-                // TODO(Krokmou): Assign a texture to the tiles
-                case CellType::Floor: // Floor is grey
-                    v1.color = {100, 100, 100};
-                    v2.color = {100, 100, 100};
-                    v3.color = {100, 100, 100};
-                    v4.color = {100, 100, 100};
-                    break;
-                case CellType::Wall: // Walls are white
-                    v1.color = {255, 255, 255};
-                    v2.color = {255, 255, 255};
-                    v3.color = {255, 255, 255};
-                    v4.color = {255, 255, 255};
-                    break;
-                case CellType::Empty:
-                    [[fallthrough]];
-                default:
-                    v1.color = {0, 0, 0};
-                    v2.color = {0, 0, 0};
-                    v3.color = {0, 0, 0};
-                    v4.color = {0, 0, 0};
-                    break;
-            }
-
-            map_vertices.push_back(v1);
-            map_vertices.push_back(v2);
-            map_vertices.push_back(v4);
-
-            map_vertices.push_back(v1);
-            map_vertices.push_back(v3);
-            map_vertices.push_back(v4);
+            drawCell({x, y}, cell);
         }
     }
 }
@@ -79,6 +42,14 @@ void Renderer::drawEntities(const std::vector<std::shared_ptr<Entity>>& entities
         sf::Vertex v3({static_cast<float>(x+1) - 0.1f, static_cast<float>(y)   + 0.1f});
         sf::Vertex v4({static_cast<float>(x+1) - 0.1f, static_cast<float>(y+1) - 0.1f});
 
+        if (entity->getType() == EntityType::Stairs)
+        {
+            v1.position = {static_cast<float>(x)  , static_cast<float>(y)  };
+            v2.position = {static_cast<float>(x)  , static_cast<float>(y+1)};
+            v3.position = {static_cast<float>(x+1), static_cast<float>(y)  };
+            v4.position = {static_cast<float>(x+1), static_cast<float>(y+1)};
+        }
+
         switch (entity->getType())
         {
             case EntityType::Hero:
@@ -87,20 +58,26 @@ void Renderer::drawEntities(const std::vector<std::shared_ptr<Entity>>& entities
                 v3.color = sf::Color::Red;
                 v4.color = sf::Color::Red;
                 break;
+
             case EntityType::Stairs:
                 v1.color = sf::Color::Yellow;
                 v2.color = sf::Color::Yellow;
                 v3.color = sf::Color::Yellow;
                 v4.color = sf::Color::Yellow;
                 break;
+
             case EntityType::Monster:
                 v1.color = sf::Color::Green;
                 v2.color = sf::Color::Green;
                 v3.color = sf::Color::Green;
                 v4.color = sf::Color::Green;
                 break;
-        }
 
+            case EntityType::None:
+                [[fallthrough]];
+            default:
+                break;
+        }
 
         entities_vertices[0].second.push_back(v1);
         entities_vertices[0].second.push_back(v2);
@@ -148,10 +125,95 @@ void Renderer::display(sf::RenderTarget& target)
 
     target.setView(view);
 
-    target.draw(map_vertices.data(), map_vertices.size(), sf::PrimitiveType::Triangles);
+    sf::RenderStates rstates(&tileset);
+    target.draw(map_vertices.data(), map_vertices.size(), sf::PrimitiveType::Triangles, rstates);
 
     for (auto& entity_layer : entities_vertices)
     {
         target.draw(entity_layer.second.data(), entity_layer.second.size(), sf::PrimitiveType::Triangles);
     }
+}
+
+void Renderer::drawCell(sf::Vector2i coords, CellType cell)
+{
+    if (cell == CellType::Empty)
+        return;
+
+    Random::seed(std::hash<sf::Vector2i>{}(coords));
+
+    sf::Vector2f c = static_cast<sf::Vector2f>(coords);
+
+    sf::Vertex v1({c});
+    sf::Vertex v2({c.x, c.y + 1.f});
+    sf::Vertex v3({c.x + 1.f, c.y});
+    sf::Vertex v4({c.x + 1.f, c.y + 1.f});
+
+    int tile_nb;
+    int rotation = Random::uniform_int(0, 3);
+
+    switch (cell)
+    {
+        case CellType::Floor:
+            tile_nb = Random::uniform_int(0, 7);
+            switch (rotation)
+            {
+            case 0:
+                v1.texCoords = {32.f * tile_nb, 0.f};
+                v2.texCoords = {32.f * tile_nb, 31.f};
+                v4.texCoords = {32.f * tile_nb + 31.f, 31.f};
+                v3.texCoords = {32.f * tile_nb + 31.f, 0.f};
+                break;
+
+            case 1:
+                v2.texCoords = {32.f * tile_nb, 0.f};
+                v4.texCoords = {32.f * tile_nb, 31.f};
+                v3.texCoords = {32.f * tile_nb + 31.f, 31.f};
+                v1.texCoords = {32.f * tile_nb + 31.f, 0.f};
+                break;
+
+            case 2:
+                v4.texCoords = {32.f * tile_nb, 0.f};
+                v3.texCoords = {32.f * tile_nb, 31.f};
+                v1.texCoords = {32.f * tile_nb + 31.f, 31.f};
+                v2.texCoords = {32.f * tile_nb + 31.f, 0.f};
+                break;
+
+            case 3:
+                v3.texCoords = {32.f * tile_nb, 0.f};
+                v1.texCoords = {32.f * tile_nb, 31.f};
+                v2.texCoords = {32.f * tile_nb + 31.f, 31.f};
+                v4.texCoords = {32.f * tile_nb + 31.f, 0.f};
+                break;
+
+            default:
+                break;
+            }
+
+            // v1.color = {75, 75, 75};
+            // v2.color = {75, 75, 75};
+            // v3.color = {75, 75, 75};
+            // v4.color = {75, 75, 75};
+            break;
+
+        case CellType::Wall:
+            tile_nb = Random::uniform_int(0, 6);
+            v1.texCoords = {32.f * tile_nb, 32.f};
+            v2.texCoords = {32.f * tile_nb, 63.f};
+            v3.texCoords = {32.f * tile_nb + 31.f, 32.f};
+            v4.texCoords = {32.f * tile_nb + 31.f, 63.f};
+            break;
+
+        case CellType::Empty:
+            [[fallthrough]];
+        default:
+            return; // Don't draw empty/unkonwn cells
+    }
+
+    map_vertices.push_back(v1);
+    map_vertices.push_back(v2);
+    map_vertices.push_back(v4);
+
+    map_vertices.push_back(v1);
+    map_vertices.push_back(v3);
+    map_vertices.push_back(v4);
 }

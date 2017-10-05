@@ -12,6 +12,7 @@
 #include "config.hpp"
 #include "entity.hpp"
 #include "map.hpp"
+#include "ai.hpp"
 
 
 /**
@@ -59,5 +60,5 @@ namespace control
     /**
      * \brief Return an action performed by an entity
      */
-    Action get_input(const Entity& entity, const std::vector<std::shared_ptr<Entity>>& entities, const std::function<CellType(unsigned int, unsigned int)>& cell_at, const Configuration& config);
+    Action get_input(const Entity& entity, const std::vector<std::shared_ptr<Entity>>& entities, const Map& map, const Configuration& config);
 };

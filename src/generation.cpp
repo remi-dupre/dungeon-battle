@@ -95,9 +95,10 @@ Pattern merged_patterns(
 
 Map map_of_pattern(const Pattern& pattern)
 {
-    // Keeps a 1-unit margin at top and right border
-    int width = pattern_max_x(pattern) + 1 + 1;
-    int height = pattern_max_y(pattern) + 1 + 1;
+    // The coordinates are from 0 to pattern_max_?
+    // Add a 1-unit margin at top and right border
+    int width = pattern_max_x(pattern) + 2;
+    int height = pattern_max_y(pattern) + 2;
     Map map(width, height);
 
     // Add cells of the pattern on the floor

@@ -244,4 +244,4 @@ float x = static_cast<float>(n);
 Tests
 =====
 
-Fichier nommé `test_***.cpp` dans le dossier `tests` et contenant une fonction `main` qui effectue les tests.
+Fichier ```test.hpp``` dans le dossier ```tests```.

@@ -2,12 +2,7 @@
 #include <map>
 #include <string>
 
-#include "args.hpp"
-#include "control.hpp"
 #include "game.hpp"
-#include "map.hpp"
-#include "utility.hpp"
-
 
 Game::Game() {}
 
@@ -104,48 +99,59 @@ void Game::update()
         Action action = control::get_input(
             *entity,
             entities,
-            [this](unsigned int x, unsigned int y) -> CellType {
-                if (x < this->map.getWidth() && y < this->map.getHeight())
-                    return this->map.cellAt(x, y);
-                return CellType::Empty;
-            },
+            map,
             config
         );
 
         sf::Vector2u position = entity->getPosition();
 
+        bool perform_action = false;
+
         switch (action.type)
         {
-        case ActionType::Move:
-            switch(action.direction)
-            {
-            case Direction::Left:
-                if (position.x-- > 0)
-                    if(map.cellAt(position.x, position.y) != CellType::Wall)
-                        entity->setPosition(position);
-                break;
-            case Direction::Right:
-                if (++position.x < map.getWidth())
-                    if (map.cellAt(position.x, position.y) != CellType::Wall)
-                        entity->setPosition(position);
-                break;
-            case Direction::Up:
-                if (position.y-- > 0)
-                    if (map.cellAt(position.x, position.y) != CellType::Wall)
-                        entity->setPosition(position);
-                break;
-            case Direction::Down:
-                if (++position.y < map.getHeight())
-                    if (map.cellAt(position.x, position.y) != CellType::Wall)
-                        entity->setPosition(position);
+            case ActionType::Move:
+                switch(action.direction)
+                {
+                    case Direction::Left:
+                        if (position.x-- > 0)
+                            perform_action = true;
+                        break;
+                    case Direction::Right:
+                        if (++position.x < map.getWidth())
+                            perform_action = true;
+                        break;
+                    case Direction::Up:
+                        if (position.y-- > 0)
+                            perform_action = true;
+                        break;
+                    case Direction::Down:
+                        if (++position.y < map.getHeight())
+                            perform_action = true;
+                        break;
+                    default:
+                        break;
+                }
+                if (perform_action)
+                {
+                    auto entities_on_target = getEntitiesOnCell(position);
+
+                    if(map.cellAt(position.x, position.y) == CellType::Wall)
+                        perform_action = false;
+                    else if (std::find_if(entities_on_target.begin(), entities_on_target.end(),
+                        [](const std::shared_ptr<Entity> e) -> bool {
+                            EntityType t = e->getType();
+                            return t == EntityType::Hero || t == EntityType::Monster;
+                        }) != entities_on_target.end())
+                        perform_action = false;
+                }
+                if (perform_action)
+                {
+                    entity->setPosition(position);
+                }
+                entity->setOrientation(action.direction);
                 break;
             default:
                 break;
-            }
-            entity->setOrientation(action.direction);
-            break;
-        default:
-            break;
         }
 
         if (entity->getType() == EntityType::Hero)

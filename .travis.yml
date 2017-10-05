@@ -6,7 +6,7 @@ services:
 language: cpp
 
 before_install:
- - docker run -d --name artful -v $(pwd):/travis ubuntu:artful tail -f /dev/null
+ - docker run -d --name artful -v $(pwd):/travis ubuntu:xenial tail -f /dev/null
  - docker ps
 
 install:
@@ -18,13 +18,13 @@ install:
 
 script:
  - docker exec -t artful bash -c "cd /travis;
-   make doc CXX=g++-7";
+   make doc";
  - docker exec -t artful bash -c "cd /travis;
-   make cppcheck-html CHECK_DIR=doc/html/check CXX=g++-7";
+   make cppcheck-html CHECK_DIR=doc/html/check";
  - docker exec -t artful bash -c "cd /travis;
-   make debug CXX=g++-7;"
+   make debug"
  - docker exec -t artful bash -c "cd /travis;
-   make test CXX=g++-7;"
+   make test"
 
 deploy:
   name: Travis Documentation Generation

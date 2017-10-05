@@ -9,7 +9,7 @@ Software engineering project.
 The project is written in **C++14**, in order to compile it you need
 
 - A C++ STL that supports at least C++11.
-- The **SFML** library version `2.4.2` or more recent.
+- The **SFML** library version `2.3.2` or more recent.
 
 The project can be built on most *Linux* distributions and *macOS*. Building on *Windows* is not supported, though building in *cygwin* or *bash on Windows* should work fine.
 
@@ -70,7 +70,7 @@ You can also generate the documentation by running `make doc`, which requires do
 
 # Other informations
 
-We defined a preferred coding style in the file [coding_style.md](https://github.com/remi-dupre/dungeon-battle/blob/master/coding_style.md).
+We defined a preferred coding style in the file [CONTRIBUTING.md](https://github.com/remi-dupre/dungeon-battle/blob/master/CONTRIBUTING.md).
 
 Some warning from the linter are listed on [github pages](https://remi-dupre.github.io/dungeon-battle/check/index.html).
 

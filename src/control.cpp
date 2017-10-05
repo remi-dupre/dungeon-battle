@@ -41,9 +41,7 @@ inline Action get_input_hero(const Entity& entity, const Configuration& config)
     return Action();
 }
 
-#include "ai.inl"
-
-Action control::get_input(const Entity& entity, const std::vector<std::shared_ptr<Entity>>& entities, const std::function<CellType(unsigned int, unsigned int)>& cell_at, const Configuration& config)
+Action control::get_input(const Entity& entity, const std::vector<std::shared_ptr<Entity>>& entities, const Map &map, const Configuration& config)
 {
     switch (entity.getType())
     {
@@ -51,7 +49,8 @@ Action control::get_input(const Entity& entity, const std::vector<std::shared_pt
             return get_input_hero(entity, config);
             break;
         case EntityType::Monster:
-            return get_input_monster(entity, entities, cell_at);
+            return get_input_monster(static_cast<const Character&>(entity), entities, map);
+            break;
         default:
             return Action();
             break;

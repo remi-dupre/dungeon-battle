@@ -23,7 +23,8 @@ SRC = $(SRC_DIR)/main.cpp \
       $(SRC_DIR)/generation.cpp \
       $(SRC_DIR)/args.cpp \
       $(SRC_DIR)/control.cpp \
-      $(SRC_DIR)/rand.cpp
+      $(SRC_DIR)/rand.cpp \
+      $(SRC_DIR)/ai.cpp
 # List of files to compile
 
 BUILD_DIR = build
@@ -56,10 +57,13 @@ release: $(EXEC)
 debug: DFLAGS += -ggdb
 debug: $(EXEC)
 
+rebuild: clean
+rebuild: release
+
 # Exectutes tests using cxxtest
 test: tests/test.cpp
 	@echo "=== Runing unit tests"
-	@$(CXX) -o tests/test tests/test.cpp && ./tests/test
+	@$(CXX) -o tests/test tests/test.cpp $(CFLAGS) $(DFLAGS) $(WFLAGS) && ./tests/test
 	@echo -e "\n=== Runing linter"
 	cppcheck --enable=all --inconclusive $(SRC_DIR) 1> /dev/null
 
