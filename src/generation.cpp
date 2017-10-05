@@ -117,7 +117,6 @@ Map map_of_pattern(const Pattern& pattern)
         {
             for (int j = y-1 ; j <= y+1 ; j++)
             {
-
                 if (i >= 0 && i < width && j >= 0 && j < height)
                 {
                     if ((i != x || j != y) && map.cellAt(i, j) == CellType::Floor)

@@ -42,6 +42,14 @@ void Renderer::drawEntities(const std::vector<std::shared_ptr<Entity>>& entities
         sf::Vertex v3({static_cast<float>(x+1) - 0.1f, static_cast<float>(y)   + 0.1f});
         sf::Vertex v4({static_cast<float>(x+1) - 0.1f, static_cast<float>(y+1) - 0.1f});
 
+        if (entity->getType() == EntityType::Stairs)
+        {
+            v1.position = {static_cast<float>(x)  , static_cast<float>(y)  };
+            v2.position = {static_cast<float>(x)  , static_cast<float>(y+1)};
+            v3.position = {static_cast<float>(x+1), static_cast<float>(y)  };
+            v4.position = {static_cast<float>(x+1), static_cast<float>(y+1)};
+        }
+
         switch (entity->getType())
         {
             case EntityType::Hero:
@@ -138,16 +146,17 @@ void Renderer::drawCell(sf::Vector2i coords, CellType cell)
     switch (cell)
     {
     case CellType::Floor:
-        tile_nb = Random::uniform_int(0, 5);
-        v1.texCoords = {32.f*tile_nb, 32.f};
-        v2.texCoords = {32.f*tile_nb, 63.f};
-        v3.texCoords = {32.f*tile_nb + 31.f, 32.f};
-        v4.texCoords = {32.f*tile_nb + 31.f, 63.f};
+        tile_nb = Random::uniform_int(0, 2);
+        v1.texCoords = {32.f*2.f*tile_nb, 32.f};
+        v2.texCoords = {32.f*2.f*tile_nb, 63.f};
+        v3.texCoords = {32.f*2.f*tile_nb + 31.f, 32.f};
+        v4.texCoords = {32.f*2.f*tile_nb + 31.f, 63.f};
         v1.color = {75, 75, 75};
         v2.color = {75, 75, 75};
         v3.color = {75, 75, 75};
         v4.color = {75, 75, 75};
         break;
+
     case CellType::Wall:
         tile_nb = Random::uniform_int(0, 3);
         v1.texCoords = {32.f*tile_nb, 0.f};
@@ -155,6 +164,7 @@ void Renderer::drawCell(sf::Vector2i coords, CellType cell)
         v3.texCoords = {32.f*tile_nb + 31.f, 0.f};
         v4.texCoords = {32.f*tile_nb + 31.f, 31.f};
         break;
+
     case CellType::Empty:
         [[fallthrough]];
     default:
