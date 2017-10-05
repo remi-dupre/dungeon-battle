@@ -49,7 +49,8 @@ Action control::get_input(const Entity& entity, const std::vector<std::shared_pt
             return get_input_hero(entity, config);
             break;
         case EntityType::Monster:
-            return get_input_monster(entity, entities, map);
+            return get_input_monster(static_cast<const Character&>(entity), entities, map);
+            break;
         default:
             return Action();
             break;

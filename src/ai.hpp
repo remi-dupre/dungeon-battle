@@ -7,10 +7,11 @@
 
 #include <memory>
 
+
+#include "control.hpp"
 #include "entity.hpp"
 #include "map.hpp"
-#include "control.hpp"
-
+#include "utility.hpp"
 
 
 struct Action;
@@ -27,8 +28,8 @@ sf::Vector2u get_hero_position(const std::vector<std::shared_ptr<Entity>>& entit
  * \param map The map.
  */
 
-Action get_input_monster(const Entity& monster, const std::vector<std::shared_ptr<Entity>>& entities, const Map& map);
+Action get_input_monster(const Character& monster, const std::vector<std::shared_ptr<Entity>>& entities, const Map& map);
 
 
 
-Action just_moving(const Entity& monster, const std::vector<std::shared_ptr<Entity>>& entities, const Map& map);
+Action just_moving(const Character& monster, const std::vector<std::shared_ptr<Entity>>& entities, const Map& map);
