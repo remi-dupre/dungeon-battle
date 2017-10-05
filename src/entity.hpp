@@ -47,7 +47,7 @@ public:
      * \param position The position of the entity
      * \param orientation The orientation of the entity
      */
-    Entity(EntityType _type, Interaction _interaction, sf::Vector2u _position, Direction _orientation);
+    Entity(EntityType type, Interaction interaction, sf::Vector2u position, Direction orientation);
 
     virtual ~Entity() = default;
 
@@ -70,7 +70,7 @@ public:
      * \brief Set the position of the entity
      * \param position The position to set
      */
-    void setPosition(sf::Vector2u _position);
+    void setPosition(sf::Vector2u position);
 
     /**
      * \brief Return the orientation of the entity
@@ -81,7 +81,7 @@ public:
      * \brief Set the orientation of the entity
      * \param position The orientation to set
      */
-    void setOrientation(Direction _orientation);
+    void setOrientation(Direction orientation);
 
 protected:
 
@@ -108,10 +108,10 @@ public:
      * \param hp The hp of the character
      * \param force The force of the character
      */
-    Character(EntityType type_,
-              Interaction interaction_,
-              sf::Vector2u position_,
-              Direction orientation_,
+    Character(EntityType type,
+              Interaction interaction,
+              sf::Vector2u position,
+              Direction orientation,
               unsigned int hpMax,
               unsigned int strength);
 
