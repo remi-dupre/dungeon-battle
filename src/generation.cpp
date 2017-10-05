@@ -95,8 +95,8 @@ Pattern merged_patterns(
 Map map_of_pattern(const Pattern& pattern)
 {
     // Keeps a 1-unit margin at every border
-    int width = 1 + pattern_max_x(pattern) + 1;
-    int height = 1 + pattern_max_y(pattern) + 1;
+    int width = pattern_max_x(pattern) + 3;
+    int height = pattern_max_y(pattern) + 3;
     Map map(width, height);
 
     // Add cells of the pattern on the floor
@@ -117,6 +117,7 @@ Map map_of_pattern(const Pattern& pattern)
         {
             for (int j = y-1 ; j <= y+1 ; j++)
             {
+
                 if (i >= 0 && i < width && j >= 0 && j < height)
                 {
                     if ((i != x || j != y) && map.cellAt(i, j) == CellType::Floor)

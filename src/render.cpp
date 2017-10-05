@@ -4,7 +4,7 @@
 Renderer::Renderer() :
     tile_size(32.f)
 {
-    tileset.loadFromFile("tileset.png");
+    tileset.loadFromFile("data/tileset.png");
 }
 
 void Renderer::drawMap(const Map& map)
