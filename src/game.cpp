@@ -2,12 +2,7 @@
 #include <map>
 #include <string>
 
-#include "args.hpp"
-#include "control.hpp"
 #include "game.hpp"
-#include "map.hpp"
-#include "utility.hpp"
-
 
 Game::Game() {}
 
@@ -103,11 +98,7 @@ void Game::update()
         Action action = control::get_input(
             *entity,
             entities,
-            [this](unsigned int x, unsigned int y) -> CellType {
-                if (x < this->map.getWidth() && y < this->map.getHeight())
-                    return this->map.cellAt(x, y);
-                return CellType::Empty;
-            },
+            map,
             config
         );
 

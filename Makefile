@@ -23,7 +23,8 @@ SRC = $(SRC_DIR)/main.cpp \
       $(SRC_DIR)/generation.cpp \
       $(SRC_DIR)/args.cpp \
       $(SRC_DIR)/control.cpp \
-      $(SRC_DIR)/rand.cpp
+      $(SRC_DIR)/rand.cpp \
+      $(SRC_DIR)/ai.cpp
 # List of files to compile
 
 BUILD_DIR = build
