@@ -1,31 +1,32 @@
 #include "ai.hpp"
 
 bool has_hero(const std::vector<std::shared_ptr<Entity>>& entities){
-	for(int n = 0; n < entities.size(); n++)
-	{
-		auto entity = entities[n];
-		if(entity->getType() == EntityType::Hero)
-		{
-			return true;
-		}
-	}
-	return false;
+    for(const auto& entity : entities)
+    {
+        if(entity->getType() == EntityType::Hero)
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 
 sf::Vector2u get_hero_position(const std::vector<std::shared_ptr<Entity>>& entities){
-	for(int n = 0; n < entities.size(); n++)
-	{
-		auto entity = entities[n];
-		if(entity->getType() == EntityType::Hero)
-		{
-			return entity->getPosition();
-		}
-	}
+    for(const auto& entity : entities)
+    {
+        if(entity->getType() == EntityType::Hero)
+        {
+            return entity->getPosition();
+        }
+    }
+
+    return {0, 0};
 }
- /*
+
+/*
 sf::Vector2u relative_position(int x, int y, sf::Vector2u position){
-	return 
+return
 }*/
 
 Action get_input_monster(const Character& entity, const std::vector<std::shared_ptr<Entity>>& entities, const Map& map)
@@ -40,21 +41,15 @@ Action get_input_monster(const Character& entity, const std::vector<std::shared_
     int sightperimeter = 2*sight+1;
     std::vector<std::vector<bool>> seen(sightperimeter, std::vector<bool>(sightperimeter,false) );
 
-    
     int curent_x = 0;
     int curent_y = 0;
-
 
     return Action();
 }
 
-
-
-
-
-Action just_moving(const Character& entity, const std::vector<std::shared_ptr<Entity>>& entities, const Map& map)
+Action just_moving(const Character& entity, [[maybe_unused]] const std::vector<std::shared_ptr<Entity>>& entities, const Map& map)
 {
-	sf::Vector2u position = entity.getPosition();
+    sf::Vector2u position = entity.getPosition();
 
     if (map.cellAt(position.x-1, position.y) == CellType::Floor)
         return Action(ActionType::Move, Direction::Left);
