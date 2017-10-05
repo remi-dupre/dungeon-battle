@@ -47,6 +47,11 @@ Some extra tests can be done by running `make test` and it requires **cppcheck**
 ```bash
 apt-get install cppcheck cxxgen
 ```
+To execute tests you can run `make test` :
+```
+make test     # Build tester and runs it
+tests/test -v # Run the test again with extra informations
+```
 
 
 ## Compilation
