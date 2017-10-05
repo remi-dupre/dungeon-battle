@@ -58,24 +58,24 @@ void Renderer::drawEntities(const std::vector<std::shared_ptr<Entity>>& entities
                 v3.color = sf::Color::Red;
                 v4.color = sf::Color::Red;
                 break;
+
             case EntityType::Stairs:
                 v1.color = sf::Color::Yellow;
                 v2.color = sf::Color::Yellow;
                 v3.color = sf::Color::Yellow;
                 v4.color = sf::Color::Yellow;
                 break;
+
             case EntityType::Monster:
                 v1.color = sf::Color::Green;
                 v2.color = sf::Color::Green;
                 v3.color = sf::Color::Green;
                 v4.color = sf::Color::Green;
                 break;
+
             case EntityType::None:
+                [[fallthrough]];
             default:
-                v1.color = sf::Color::Black;
-                v2.color = sf::Color::Black;
-                v3.color = sf::Color::Black;
-                v4.color = sf::Color::Black;
                 break;
         }
 
@@ -152,30 +152,30 @@ void Renderer::drawCell(sf::Vector2i coords, CellType cell)
 
     switch (cell)
     {
-    case CellType::Floor:
-        tile_nb = Random::uniform_int(0, 2);
-        v1.texCoords = {32.f*2.f*tile_nb, 32.f};
-        v2.texCoords = {32.f*2.f*tile_nb, 63.f};
-        v3.texCoords = {32.f*2.f*tile_nb + 31.f, 32.f};
-        v4.texCoords = {32.f*2.f*tile_nb + 31.f, 63.f};
-        v1.color = {75, 75, 75};
-        v2.color = {75, 75, 75};
-        v3.color = {75, 75, 75};
-        v4.color = {75, 75, 75};
-        break;
+        case CellType::Floor:
+            tile_nb = Random::uniform_int(0, 2);
+            v1.texCoords = {32.f*2.f*tile_nb, 32.f};
+            v2.texCoords = {32.f*2.f*tile_nb, 63.f};
+            v3.texCoords = {32.f*2.f*tile_nb + 31.f, 32.f};
+            v4.texCoords = {32.f*2.f*tile_nb + 31.f, 63.f};
+            v1.color = {75, 75, 75};
+            v2.color = {75, 75, 75};
+            v3.color = {75, 75, 75};
+            v4.color = {75, 75, 75};
+            break;
 
-    case CellType::Wall:
-        tile_nb = Random::uniform_int(0, 3);
-        v1.texCoords = {32.f*tile_nb, 0.f};
-        v2.texCoords = {32.f*tile_nb, 31.f};
-        v3.texCoords = {32.f*tile_nb + 31.f, 0.f};
-        v4.texCoords = {32.f*tile_nb + 31.f, 31.f};
-        break;
+        case CellType::Wall:
+            tile_nb = Random::uniform_int(0, 3);
+            v1.texCoords = {32.f*tile_nb, 0.f};
+            v2.texCoords = {32.f*tile_nb, 31.f};
+            v3.texCoords = {32.f*tile_nb + 31.f, 0.f};
+            v4.texCoords = {32.f*tile_nb + 31.f, 31.f};
+            break;
 
-    case CellType::Empty:
-        [[fallthrough]];
-    default:
-        return; // Don't draw empty/unkonwn cells
+        case CellType::Empty:
+            [[fallthrough]];
+        default:
+            return; // Don't draw empty/unkonwn cells
     }
 
     map_vertices.push_back(v1);
