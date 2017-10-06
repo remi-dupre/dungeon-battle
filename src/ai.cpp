@@ -1,8 +1,8 @@
 #include "ai.hpp"
 
-bool cell_seen(std::vector<std::vector<bool>> &seen, sf::Vector2i position, sf::Vector2i curentposition, int sight){
-    bool test = seen[position.x + sight - curentposition.x][position.y + sight - curentposition.y];
-    seen[position.x + sight - curentposition.x][position.y + sight - curentposition.y] = true;
+bool cell_seen(std::vector<std::vector<bool>> &seen, sf::Vector2i position, sf::Vector2i startposition, int sight){
+    bool test = seen[position.x + sight - startposition.x][position.y + sight - startposition.y];
+    seen[position.x + sight - startposition.x][position.y + sight - startposition.y] = true;
     return test;
 }
 
@@ -24,10 +24,11 @@ Action bfs_monster(const Character& entity, const std::vector<std::shared_ptr<En
 
     std::vector<sf::Vector2i> dir ={{1,0},{-1,0},{0,1},{0,-1}};
     std::map<sf::Vector2i,Direction> dirtoact = {
-        {{1,0} , Direction::Left},
-        {{-1,0}, Direction::Right},
-        {{0,1} , Direction::Up},
-        {{0,-1}, Direction::Down}};
+        {{-1,0} , Direction::Left},
+        {{1,0}, Direction::Right},
+        {{0,-1} , Direction::Up},
+        {{0,1}, Direction::Down}};
+
 
     for(auto ori : dir)
     {
@@ -48,16 +49,18 @@ Action bfs_monster(const Character& entity, const std::vector<std::shared_ptr<En
         int depth; Action ret;
         std::tie(curentposition,depth, ret) = next_cells.front();
         next_cells.pop();
+        
         for(auto ori : dir)
-        {
+        {  
             sf::Vector2i position = curentposition + ori;
             if ( (map.cellAt(position.x,position.y)==CellType::Floor)&&
                 (depth < sight)&&
-                (!cell_seen(seen,position, curentposition, sight))){
+                (!cell_seen(seen,position, startposition, sight))){
                 if (position == hero_postion)return ret;
                 next_cells.push(std::make_tuple(position,depth+1,ret));
             }
         }
+
     }
     return Action();
 }
