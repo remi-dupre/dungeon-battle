@@ -147,9 +147,9 @@ void separate_rooms(
     int spacing)
 {
     assert(positions.size() == rooms.size());
-    int nb_rooms = positions.size();
 
     // The direction each rooms will be send to
+    int nb_rooms = positions.size();
     std::vector<std::pair<int, int>> direction(nb_rooms, {0, 0});
     for (int i1 = 0 ; i1 < nb_rooms ; i1++)
     {
@@ -171,8 +171,8 @@ void separate_rooms(
                 if (positions[i1] == positions[i2])
                 {
                     // Moves room2 in a random direction.
-                    int delta_x = Random::uniform_int(-2, 2);
-                    int delta_y = Random::uniform_int(-2, 2);
+                    int delta_x = Random::uniform_int(0, 1);
+                    int delta_y = Random::uniform_int(0, 1);
                     direction[i1] = {delta_x, delta_y};
                 }
             }
