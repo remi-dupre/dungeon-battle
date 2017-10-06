@@ -25,7 +25,7 @@ Interaction Entity::getInteraction() const
     return interaction;
 }
 
-sf::Vector2u Entity::getPosition() const
+sf::Vector2i Entity::getPosition() const
 {
     return position;
 }
