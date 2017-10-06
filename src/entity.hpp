@@ -5,8 +5,12 @@
 
 #pragma once
 
-#include <SFML/System/Vector2.hpp>
 #include <algorithm>
+#include <functional>
+#include <memory>
+#include <vector>
+
+#include <SFML/System/Vector2.hpp>
 
 #include "utility.hpp"
 
@@ -118,6 +122,22 @@ public:
     /**
      * \brief Return the max hp of the character
      */
+    unsigned int getLevel() const;
+
+    /**
+     * \brief Set the max hp of the character
+     * \param hpMax The hp to set as max
+     */
+    void setLevel(unsigned int level);
+
+    /**
+     * \brief Increment the level of the character
+     */
+    void levelUp();
+
+    /**
+     * \brief Return the max hp of the character
+     */
     unsigned int getHpMax() const;
 
     /**
@@ -165,10 +185,43 @@ public:
      */
     void setSightRadius(unsigned int sightRadius);
 
+
+    /**
+     * \brief Return the experience of the character
+     */
+    unsigned int getExperience() const;
+
+    /**
+     * \brief Set the experience of the character
+     * \param experience The experience to set
+     */
+    void setExperience(unsigned int experience);
+
+    /**
+     * \brief Add experience to the character
+     * \param experience The experience to add
+     */
+    void addExperience(unsigned int experience);
+
 protected:
 
+    unsigned int level; ///< The level of the character
+    std::function<unsigned int(unsigned int)> experienceCurve; ///< The experience curve of the character
+    unsigned int experience; ///< The experience of the character
     unsigned int hpMax; ///< The max hp of the character
     unsigned int hp; ///< The hp of the character
     unsigned int strength; ///< The force of the character
     unsigned int sightRadius; ///< The sight radius of the character (0 for infinity)
 };
+
+/**
+ * \brief Test if a vector of entities contains a hero
+ * \param entities A vector of entities
+ */
+bool has_hero(const std::vector<std::shared_ptr<Entity>>& entities);
+
+/**
+ * \brief Return the position of the first hero in a vector of entities
+ * \param entities A vector of entities containing a hero
+ */
+sf::Vector2u get_hero_position(const std::vector<std::shared_ptr<Entity>>& entities);
