@@ -158,13 +158,14 @@ void Renderer::drawCell(sf::Vector2i coords, CellType cell, const Map& map)
     v4.position = {p.x + 1.f, p.y + 1.f};
 
     // TODO: Completer ce tableau
+    // C'est tellement hardcodé
     const sf::Vector2f tiles_coord[] = {
-        {Random::uniform_int(0, 3) * 32.f, 128.f},
+        {Random::uniform_int(0, 5) * 32.f, 128.f},
         {0.f, 96.f}, {32.f, 96.f}, {0.f, 64.f}, {64.f, 96.f},
-        {}, {}, {}, {96.f, 96.f},
-        {}, {}, {}, {},
-        {}, {},
-        {Random::uniform_int(0, 3) * 32.f, 0.f}
+        {0.f, 128.f}, {0.f, 128.f}, {0.f, 128.f}, {96.f, 96.f},
+        {0.f, 128.f}, {0.f, 128.f}, {0.f, 128.f}, {0.f, 128.f},
+        {0.f, 128.f}, {0.f, 128.f},
+        {Random::uniform_int(0, 5) * 32.f, 0.f}
     };
 
     sf::Vector2i next_tiles[] = {{0, -1}, {1, 0}, {0, 1}, {-1, 0}};
