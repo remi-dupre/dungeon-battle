@@ -68,13 +68,13 @@ public:
     /**
      * \brief Return the position of the entity
      */
-    sf::Vector2u getPosition() const;
+    sf::Vector2i getPosition() const;
 
     /**
      * \brief Set the position of the entity
      * \param position The position to set
      */
-    void setPosition(sf::Vector2u position);
+    void setPosition(sf::Vector2i position);
 
     /**
      * \brief Return the orientation of the entity
@@ -91,7 +91,7 @@ protected:
 
     const EntityType type; ///< The type of the entity
     const Interaction interaction; ///< The result of the interaction with the entity
-    sf::Vector2u position; ///< The position of the entity
+    sf::Vector2i position; ///< The position of the entity
     Direction orientation; ///< The orientation of the entity
 };
 
@@ -114,7 +114,7 @@ public:
      */
     Character(EntityType type,
               Interaction interaction,
-              sf::Vector2u position,
+              sf::Vector2i position,
               Direction orientation,
               unsigned int hpMax,
               unsigned int strength);
