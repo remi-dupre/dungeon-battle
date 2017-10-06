@@ -51,7 +51,7 @@ public:
      * \param position The position of the entity
      * \param orientation The orientation of the entity
      */
-    Entity(EntityType type, Interaction interaction, sf::Vector2u position, Direction orientation);
+    Entity(EntityType type, Interaction interaction, sf::Vector2i position, Direction orientation);
 
     virtual ~Entity() = default;
 

@@ -8,7 +8,7 @@ Action bfs_monster(const Character& entity, const std::vector<std::shared_ptr<En
 
     sf::Vector2i hero_postion;
     if (has_hero(entities)) hero_postion = get_hero_position(entities);
-    else return just_moving(entity,entities,map);
+    else return just_moving(entity,map);
 
     int sightperimeter = 2*sight+1;
     std::vector<std::vector<bool>> seen(sightperimeter, std::vector<bool>(sightperimeter,false) );
@@ -28,19 +28,18 @@ Action bfs_monster(const Character& entity, const std::vector<std::shared_ptr<En
     {
         sf::Vector2i position = curentposition + ori;
         if (position == hero_postion){
-            Action ret(ActionType::Attack, std::map<sf::Vector2i,Direction>(ori));
+            Action ret(ActionType::Attack, dirtoact[ori]);
             return ret;
         }
-        Action ret(ActionType::Move, std::map<sf::Vector2i,Direction>(ori));
-        return ret;
-        next_cells.push(std::make_tuple(position,1,ret))
+        Action ret(ActionType::Move, dirtoact[ori]);
+        next_cells.push(std::make_tuple(position,1,ret));
     }
 
 }
 
 Action get_input_monster(const Character& entity, const std::vector<std::shared_ptr<Entity>>& entities, const Map& map)
 {
-    has_hero(entities)
+    assert(has_hero(entities));
     return just_moving(entity,map);
 }
 

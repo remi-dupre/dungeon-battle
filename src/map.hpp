@@ -77,7 +77,7 @@ public:
      * \return Reference to the cell
      * `x` and `y` must be in the ranges `[0, map.width)` and `[0, map.heigth)`
      */
-    CellType& cellAt(unsigned int x, unsigned int y);
+    CellType& cellAt(int x, int y);
 
     /**
      * \brief Get a read only access to a cell by its coordinates
@@ -86,7 +86,7 @@ public:
      * \return Const reference to the cell
      * `x` and `y` must be in the ranges `[0, map.width)` and `[0, map.heigth)`
      */
-    CellType cellAt(unsigned int x, unsigned int y) const;
+    CellType cellAt(int x, int y) const;
 
 private:
 

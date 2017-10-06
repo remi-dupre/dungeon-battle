@@ -80,7 +80,7 @@ public:
      * \param position Position vector of the cell
      * \return A vector of pointers to entities put on the cell
      */
-    std::vector<std::shared_ptr<Entity>> getEntitiesOnCell(sf::Vector2u position) const;
+    std::vector<std::shared_ptr<Entity>> getEntitiesOnCell(sf::Vector2i position) const;
 
     /**
      * \brief Get all entities put on a specific cell
@@ -88,7 +88,7 @@ public:
      * \param y Y coordinate of the cell
      * \return A vector of pointers to entities put on the cell
      */
-    std::vector<std::shared_ptr<Entity>> getEntitiesOnCell(unsigned int x, unsigned int y) const;
+    std::vector<std::shared_ptr<Entity>> getEntitiesOnCell(int x, int y) const;
 
     /**
      * \brief Get all entities in range of a specific cell
@@ -96,7 +96,7 @@ public:
      * \param d Radius of the l<SUB>1</SUB> norm sphere that is searched
      * \return A vector of pointers to entities at distance less than are equal to d from the cell
      */
-    std::vector<std::shared_ptr<Entity>> getEntitiesAroundCell(sf::Vector2u position, unsigned int d) const;
+    std::vector<std::shared_ptr<Entity>> getEntitiesAroundCell(sf::Vector2i position, int d) const;
 
     /**
      * \brief Get all entities in range of a specific cell
@@ -105,7 +105,7 @@ public:
      * \param d Radius of the l<SUB>1</SUB> norm sphere that is searched
      * \return A vector of pointers to entities at distance less than are equal to d from the cell
      */
-    std::vector<std::shared_ptr<Entity>> getEntitiesAroundCell(unsigned int x, unsigned int y, unsigned int d) const;
+    std::vector<std::shared_ptr<Entity>> getEntitiesAroundCell(int x, int y, int d) const;
 
 private:
 

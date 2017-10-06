@@ -8,7 +8,7 @@
 #include "utility.hpp"
 
 
-Entity::Entity(EntityType type_, Interaction interaction_, sf::Vector2u position_, Direction orientation_) :
+Entity::Entity(EntityType type_, Interaction interaction_, sf::Vector2i position_, Direction orientation_) :
     type(type_),
     interaction(interaction_),
     position(position_),
@@ -30,7 +30,7 @@ sf::Vector2i Entity::getPosition() const
     return position;
 }
 
-void Entity::setPosition(sf::Vector2u position_)
+void Entity::setPosition(sf::Vector2i position_)
 {
     position = position_;
 }
@@ -49,7 +49,7 @@ void Entity::setOrientation(Direction orientation_)
 
 Character::Character(EntityType type_,
                      Interaction interaction_,
-                     sf::Vector2u position_,
+                     sf::Vector2i position_,
                      Direction orientation_,
                      unsigned int hpMax_,
                      unsigned int strength_) :
@@ -157,7 +157,7 @@ bool has_hero(const std::vector<std::shared_ptr<Entity>>& entities){
 }
 
 
-sf::Vector2u get_hero_position(const std::vector<std::shared_ptr<Entity>>& entities){
+sf::Vector2i get_hero_position(const std::vector<std::shared_ptr<Entity>>& entities){
     for(const auto& entity : entities)
     {
         if(entity->getType() == EntityType::Hero)
