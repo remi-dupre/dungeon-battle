@@ -168,5 +168,11 @@ namespace math
     template <typename T>
     constexpr sf::Vector3<T> normalize(sf::Vector3<T> a);
 
+    /**
+     * \brief Compare two 2D vectors
+     */
+    template <typename T>
+    bool operator<(sf::Vector2<T> a, sf::Vector2<T> b);
+
     #include "ai.inl"
 }

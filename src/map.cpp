@@ -7,7 +7,7 @@ Map::Map() :
     Map(1, 1)
 {}
 
-Map::Map(unsigned int width, unsigned int height) :
+Map::Map(int width, int height) :
     // Copy redundant information about the shape
     width(width), height(height),
     // Fill the map with floors
@@ -42,12 +42,12 @@ void Map::saveToFile(const std::string& filename) const
     return;
 }
 
-unsigned int Map::getWidth() const
+int Map::getWidth() const
 {
     return width;
 }
 
-unsigned int Map::getHeight() const
+int Map::getHeight() const
 {
     return height;
 }
@@ -73,9 +73,9 @@ std::ostream& operator<<(std::ostream& stream, const Map& map)
 {
     stream << map.width << ' ' << map.height << std::endl;
 
-    for (unsigned int y = 0; y < map.height; y++)
+    for (int y = 0; y < map.height; y++)
     {
-        for (unsigned int x = 0; x < map.width; x++)
+        for (int x = 0; x < map.width; x++)
         {
             switch (map.cellAt(x, y))
             {

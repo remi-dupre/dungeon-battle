@@ -4,6 +4,7 @@
 
 #include "game.hpp"
 
+
 Game::Game() {}
 
 void Game::init(const std::map<Option, std::string>& options)
