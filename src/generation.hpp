@@ -52,18 +52,6 @@ struct GenerationMode
 
 
 /**
- * \brief Contain a cave containing a fixed number of cells
- * \param size The number of cell the room contains
- * \return A set containing cells of the cave
- *
- * The room will be randomized. It will be centered on coordinate (0, 0).
- * \note If the size is less than 1, the room will still be of size 1.
- * \warning Some coordinates will be negative.
- */
-Pattern generateCave(int size);
-
-
-/**
  * \brief Minimum x coordinate of cells in the pattern
  * \attr pattern A pattern
  * \return The minimum of x coordinates
@@ -92,6 +80,34 @@ int pattern_min_y(const Pattern& pattern);
 int pattern_max_y(const Pattern& pattern);
 
 /**
+ * \brief Check if a minimum space is assured between two rooms.
+ * \param position1 Center position of the first room.
+ * \param pattern1 Pattern of the first room.
+ * \param position2 Center position of the second room.
+ * \param pattern2 Pattern of the second room.
+ * \param spacing The minimum distance between two cells of the rooms.
+ * \return Returns true if any pair of cells are spaced of at least distance.
+ */
+bool spaced(
+    std::pair<int, int> position1, const Pattern& pattern1,
+    std::pair<int, int> position2, const Pattern& pattern2,
+    int spacing
+);
+
+/**
+ * \brief Check of a pattern is conflicting with another.
+ * \param position1 Center position of the first room.
+ * \param pattern1 Pattern of the first room.
+ * \param position2 Center position of the second room.
+ * \param pattern2 Pattern of the second room.
+ * \return Returns true if the two patterns have a common cell.
+ */
+bool superposed(
+    std::pair<int, int> position1, const Pattern& pattern1,
+    std::pair<int, int> position2, const Pattern& pattern2
+);
+
+/**
  * \brief Translate a pattern to remove negative coordinates.
  * \param pattern A pattern that could have negative coordinates.
  * \param entities A set of entities that should be placed on the pattern, they will be modified to correspond to the same place.
@@ -99,7 +115,10 @@ int pattern_max_y(const Pattern& pattern);
  *
  * \note This will also align the pattern on top left.
  */
-Pattern normalized_pattern(const Pattern& pattern, std::vector<Entity>&  entities);
+Pattern normalized_pattern(
+    const Pattern& pattern,
+    std::vector<Entity>&  entities
+);
 
 /**
  * \brief Merge patterns, placing them around given positions
@@ -111,7 +130,20 @@ Pattern normalized_pattern(const Pattern& pattern, std::vector<Entity>&  entitie
  */
 Pattern merged_patterns(
     const std::vector<std::pair<int, int>>& positions,
-    const std::vector<Pattern>& patterns);
+    const std::vector<Pattern>& patterns
+);
+
+/**
+ * \brief Modify rooms positioning to add spacing between them.
+ * \param Positions center positions of the rooms.
+ * \param Rooms patterns corresponding to th rooms.
+ * \param Spacing minimum space needed between pair of cells of two differents patterns.
+ */
+void separate_rooms(
+    std::vector<std::pair<int, int>>& positions,
+    const std::vector<Pattern>& rooms,
+    int spacing
+);
 
 /**
  * \brief Generate a map corresponding to a floor pattern.
@@ -139,6 +171,17 @@ Pattern generate_rectangle(int width, int height);
  * This will randomly pickup a width and height so that the surface is roughly size.
  */
 Pattern generate_rectangle(int size);
+
+/**
+ * \brief Contain a cave containing a fixed number of cells
+ * \param size The number of cell the room contains
+ * \return A set containing cells of the cave
+ *
+ * The room will be randomized. It will be centered on coordinate (0, 0).
+ * \note If the size is less than 1, the room will still be of size 1.
+ * \warning Some coordinates will be negative.
+ */
+Pattern generateCave(int size);
 
 /**
  * \brief Generate a hallway from point cell1 to cell2.
