@@ -16,6 +16,8 @@
 #include "../src/generation.cpp"
 #include "../src/rand.hpp"
 #include "../src/rand.cpp"
+#include "../src/utility.hpp"
+#include "../src/utility.cpp"
 
 
 #pragma GCC diagnostic ignored "-Wpragmas"
