@@ -28,19 +28,23 @@ Action bfs_monster(const Character& entity, const std::vector<std::shared_ptr<En
     {
         sf::Vector2i position = curentposition + ori;
         if (position == hero_postion){
-            return Action(ActionType::Attack, std::map(ori));
+            Action ret(ActionType::Attack, std::map<sf::Vector2i,Direction>(ori));
+            return ret;
         }
-        next_cells.push(std::make_tuple(position,1,Action(ActionType::Move, std::map(ori))))
+        Action ret(ActionType::Move, std::map<sf::Vector2i,Direction>(ori));
+        return ret;
+        next_cells.push(std::make_tuple(position,1,ret))
     }
 
 }
 
 Action get_input_monster(const Character& entity, const std::vector<std::shared_ptr<Entity>>& entities, const Map& map)
 {
-    return just_moving(entity,entities,map);
+    has_hero(entities)
+    return just_moving(entity,map);
 }
 
-Action just_moving(const Character& entity, [[maybe_unused]] const std::vector<std::shared_ptr<Entity>>& entities, const Map& map)
+Action just_moving(const Character& entity, const Map& map)
 {
     sf::Vector2i position = entity.getPosition();
 

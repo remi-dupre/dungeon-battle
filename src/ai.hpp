@@ -35,4 +35,4 @@ Action get_input_monster(const Character& monster, const std::vector<std::shared
 
 
 
-Action just_moving(const Character& monster, const std::vector<std::shared_ptr<Entity>>& entities, const Map& map);
+Action just_moving(const Character& monster, const Map& map);
