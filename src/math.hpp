@@ -29,7 +29,7 @@ namespace math
      * This function computes the dot product of two `sf::Vector2`.
      */
     template <typename T>
-    constexpr T dot(sf::Vector2<T> a, sf::Vector2<T> b);
+    constexpr T dot(const sf::Vector2<T> a, const sf::Vector2<T> b);
 
     /**
      * \brief Compute the dot product of two 3D vectors
@@ -40,7 +40,7 @@ namespace math
      * This function computes the dot product of two `sf::Vector3`.
      */
     template <typename T>
-    constexpr T dot(sf::Vector3<T> a, sf::Vector3<T> b);
+    constexpr T dot(const sf::Vector3<T> a, const sf::Vector3<T> b);
 
     /**
      * \brief Compute the Hadamard product of two 2D vectors
@@ -51,7 +51,7 @@ namespace math
      * This function computes the Hadamard product of two `sf::Vector2`.
      */
     template <typename T>
-    constexpr sf::Vector2<T> hadamard(sf::Vector2<T> a, sf::Vector2<T> b);
+    constexpr sf::Vector2<T> hadamard(const sf::Vector2<T> a, const sf::Vector2<T> b);
 
     /**
      * \brief Compute the Hadamard product of two 3D vectors
@@ -62,7 +62,7 @@ namespace math
      * This function computes the Hadamard product of two `sf::Vector3`.
      */
     template <typename T>
-    constexpr sf::Vector3<T> hadamard(sf::Vector3<T> a, sf::Vector2<T> b);
+    constexpr sf::Vector3<T> hadamard(const sf::Vector3<T> a, const sf::Vector2<T> b);
 
     /**
      * \brief Compute the cross product of two 2D vectors
@@ -73,7 +73,7 @@ namespace math
      * This function computes the third coordinate of the cross product of two `sf::Vector2`.
      */
     template <typename T>
-    constexpr T cross(sf::Vector2<T> a, sf::Vector2<T> b);
+    constexpr T cross(const sf::Vector2<T> a, const sf::Vector2<T> b);
 
     /**
      * \brief Compute the cross product of two 3D vectors
@@ -84,7 +84,7 @@ namespace math
      * This function computes the cross product of two `sf::Vector3`.
      */
     template <typename T>
-    constexpr sf::Vector3<T> cross(sf::Vector3<T> a, sf::Vector2<T> b);
+    constexpr sf::Vector3<T> cross(const sf::Vector3<T> a, const sf::Vector2<T> b);
 
     /**
      * \brief Compute the distance between two 2D vectors
@@ -95,7 +95,7 @@ namespace math
      * This function computes the distance between two `sf::Vector2`.
      */
     template <typename T>
-    constexpr T distance(sf::Vector2<T> a, sf::Vector2<T> b);
+    constexpr T distance(const sf::Vector2<T> a, const sf::Vector2<T> b);
 
     /**
      * \brief Compute the distance between two 3D vectors
@@ -106,7 +106,7 @@ namespace math
      * This function computes the distance between two `sf::Vector3`.
      */
     template <typename T>
-    constexpr T distance(sf::Vector3<T> a, sf::Vector3<T> b);
+    constexpr T distance(const sf::Vector3<T> a, const sf::Vector3<T> b);
 
     /**
      * \brief Compute the length squared of a vector
@@ -116,7 +116,7 @@ namespace math
      * This function computes the length squared of a `sf::Vector2`.
      */
     template <typename T>
-    constexpr T length_sqr(sf::Vector2<T> a);
+    constexpr T length_sqr(const sf::Vector2<T> a);
 
     /**
      * \brief Compute the length squared of a vector
@@ -126,7 +126,7 @@ namespace math
      * This function computes the length squared of a `sf::Vector3`.
      */
     template <typename T>
-    constexpr T length_sqr(sf::Vector3<T> a);
+    constexpr T length_sqr(const sf::Vector3<T> a);
 
     /**
      * \brief Compute the length of a vector
@@ -136,7 +136,7 @@ namespace math
      * This function computes the length of a `sf::Vector2`.
      */
     template <typename T>
-    constexpr T length(sf::Vector2<T> a);
+    constexpr T length(const sf::Vector2<T> a);
 
     /**
      * \brief Compute the length of a vector
@@ -146,7 +146,7 @@ namespace math
      * This function computes the length of a `sf::Vector3`.
      */
     template <typename T>
-    constexpr T length(sf::Vector3<T> a);
+    constexpr T length(const sf::Vector3<T> a);
 
     /**
      * \brief Normalize a 2D vector
@@ -156,7 +156,7 @@ namespace math
      * This function normalizes a `sf::vector2`.
      */
     template <typename T>
-    constexpr sf::Vector2<T> normalize(sf::Vector2<T> a);
+    constexpr sf::Vector2<T> normalize(const sf::Vector2<T> a);
 
     /**
      * \brief Normalize a 3D vector
@@ -166,13 +166,13 @@ namespace math
      * This function normalizes a `sf::vector3`.
      */
     template <typename T>
-    constexpr sf::Vector3<T> normalize(sf::Vector3<T> a);
+    constexpr sf::Vector3<T> normalize(const sf::Vector3<T> a);
 
     /**
      * \brief Compare two 2D vectors
      */
     template <typename T>
-    bool operator<(sf::Vector2<T> a, sf::Vector2<T> b);
+    bool operator<(const sf::Vector2<T> a, const sf::Vector2<T> b);
 
     #include "ai.inl"
 }
