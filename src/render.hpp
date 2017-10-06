@@ -74,13 +74,15 @@ private:
      * This function adds the vertices of a cell to the vertex array
      * to draw it later
      */
-    void drawCell(sf::Vector2i coords, CellType cell);
+    void drawCell(sf::Vector2i coords, CellType cell, const Map& map);
 
     const float tile_size; ///< Size of the tiles on screen in pixels
     std::vector<sf::Vertex> map_vertices; ///< Vertex array used to render the map
     sf::Texture tileset; ///< Texture of the tiles
 
     std::vector<std::pair<int, std::vector<sf::Vertex>>> entities_vertices; ///< Vertex array used to render entities
+    sf::Texture characters; ///< Texture of the characters
+
 
     sf::View view;
 };

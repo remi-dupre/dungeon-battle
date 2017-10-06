@@ -52,17 +52,20 @@ unsigned int Map::getHeight() const
     return height;
 }
 
-CellType& Map::cellAt(unsigned int x, unsigned int y)
+CellType& Map::cellAt(int x, int y)
 {
     assert(x < width);
     assert(y < height);
+    assert(x >= 0);
+    assert(y >= 0);
+
     return cells[x + width * y];
 }
 
-CellType Map::cellAt(unsigned int x, unsigned int y) const
+CellType Map::cellAt(int x, int y) const
 {
-    assert(x < width);
-    assert(y < height);
+    if (x < 0 || y < 0 || x > width || y > height)
+        return CellType::Empty;
     return cells[x + width * y];
 }
 
