@@ -1,6 +1,6 @@
 /**
 * \file AI.hpp
-* \brief Decide of the action of the monster. 
+* \brief Decide of the action of the monster.
 */
 
 #pragma once
@@ -11,6 +11,7 @@
 #include "control.hpp"
 #include "entity.hpp"
 #include "map.hpp"
+#include "math.hpp"
 #include "utility.hpp"
 
 

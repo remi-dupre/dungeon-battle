@@ -168,6 +168,5 @@ namespace math
     template <typename T>
     constexpr sf::Vector3<T> normalize(sf::Vector3<T> a);
 
-
-    #include "math.inl"
+    #include "ai.inl"
 }
