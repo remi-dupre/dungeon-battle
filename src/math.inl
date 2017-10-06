@@ -91,7 +91,7 @@ inline constexpr sf::Vector3<T> normalize(const sf::Vector3<T> a)
 }
 
 template <typename T>
-inline bool operator<(const sf::Vector2<T> a, const sf::Vector2<T> b)
+inline bool less(const sf::Vector2<T> a, const sf::Vector2<T> b)
 {
     return (a.x < b.x || (a.x == b.x && a.y < b.y));
 }
