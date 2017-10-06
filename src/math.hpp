@@ -172,7 +172,7 @@ namespace math
      * \brief Compare two 2D vectors
      */
     template <typename T>
-    bool operator<(const sf::Vector2<T> a, const sf::Vector2<T> b);
+    bool less(const sf::Vector2<T> a, const sf::Vector2<T> b);
 
     #include "ai.inl"
 }
