@@ -187,10 +187,10 @@ void Renderer::drawCell(sf::Vector2i coords, CellType cell, const Map& map)
 
         case CellType::Wall:
             tile_nb = Random::uniform_int(0, 3);
-            v1.texCoords = {32.f * tile_nb, 32.f};
-            v2.texCoords = {32.f * tile_nb, 63.f};
-            v3.texCoords = {32.f * tile_nb + 31.f, 32.f};
-            v4.texCoords = {32.f * tile_nb + 31.f, 63.f};
+            v1.texCoords = {32.f * tile_nb, 192.f};
+            v2.texCoords = {32.f * tile_nb, 223.f};
+            v3.texCoords = {32.f * tile_nb + 31.f, 192.f};
+            v4.texCoords = {32.f * tile_nb + 31.f, 223.f};
             break;
 
         case CellType::Empty:
