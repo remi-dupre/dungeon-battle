@@ -24,7 +24,9 @@ SRC = $(SRC_DIR)/main.cpp \
       $(SRC_DIR)/args.cpp \
       $(SRC_DIR)/control.cpp \
       $(SRC_DIR)/rand.cpp \
-      $(SRC_DIR)/ai.cpp
+      $(SRC_DIR)/ai.cpp \
+	  $(SRC_DIR)/utility.cpp
+
 # List of files to compile
 
 BUILD_DIR = build
@@ -110,5 +112,6 @@ clean:
 	rm -rf $(DOC_DIR)
 	rm -rf $(EXEC_TEST)
 	rm -rf $(CHECK_DIR)
+	rm -rf tests/test.cpp tests/test
 	rm -rf dungeon-battle
 	rm -rf *~

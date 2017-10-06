@@ -53,14 +53,8 @@ bool spaced(
         for (auto& cell2 : pattern2)
         {
             // Calculate real coordinates of both points
-            std::pair<int, int> point1 = {
-                cell1.first + position1.first,
-                cell1.second + position1.second
-            };
-            std::pair<int, int> point2 = {
-                cell2.first + position2.first,
-                cell2.second + position2.second
-            };
+            std::pair<int, int> point1 = cell1 + position1;
+            std::pair<int, int> point2 = cell2 + position2;
             // Check the distance between these points
             if (std::abs(point1.first - point2.first) + std::abs(point1.second - point2.second) <= spacing)
             {
@@ -80,10 +74,7 @@ bool superposed(
         // Must check for all points P1 of pattern1, P2 of pattern2 :
         //   position1 + P1 != position2 + P2
         // pos_in_2 represents the theorical coordinate of a point of pattern1 in pattern2 :
-        std::pair<int, int> pos_in_2 = {
-            cell.first + position1.first - position2.first,
-            cell.second + position1.second - position2.second
-        };
+        std::pair<int, int> pos_in_2 = position1 + cell - position2;
         if (pattern2.find(pos_in_2) != end(pattern2))
             return true;
     }
@@ -122,21 +113,12 @@ Pattern merged_patterns(
     // Every pattern must have a position
     assert(positions.size() == patterns.size());
 
+    // Contains the new postions of every cells
     std::set<std::pair<int, int>> fullMap;
 
     for (size_t i_pattern = 0 ; i_pattern < patterns.size() ; i_pattern++)
-    {
-        int x_center = positions[i_pattern].first;
-        int y_center = positions[i_pattern].second;
-
         for(auto pattern_cell : patterns[i_pattern])
-        {
-            int x_cell = pattern_cell.first;
-            int y_cell = pattern_cell.second;
-
-            fullMap.insert({x_cell + x_center, y_cell + y_center});
-        }
-    }
+            fullMap.insert(positions[i_pattern] + pattern_cell);
 
     return fullMap;
 }
@@ -163,17 +145,17 @@ void separate_rooms(
             if (!spaced(positions[i1], rooms[i1], positions[i2], rooms[i2], spacing))
             {
                 if (positions[i1].first > positions[i2].first)
-                    direction[i1] = {direction[i1].first + 1, direction[i1].second};
+                    direction[i1] += {1, 0};
 
                 if (positions[i1].second > positions[i2].second)
-                    direction[i1] = {direction[i1].first, direction[i1].second + 1};
+                    direction[i1] += {0, 1};
 
                 if (positions[i1] == positions[i2])
                 {
                     // Moves room2 in a random direction.
                     int delta_x = Random::uniform_int(0, 1);
                     int delta_y = Random::uniform_int(0, 1);
-                    direction[i1] = {delta_x, delta_y};
+                    direction[i1] += {delta_x, delta_y};
                 }
             }
         }
@@ -181,12 +163,7 @@ void separate_rooms(
 
     // Apply the position modifiers
     for (int i_room = 0 ; i_room < nb_rooms ; i_room++)
-    {
-        positions[i_room] = {
-            positions[i_room].first + direction[i_room].first,
-            positions[i_room].second + direction[i_room].second
-        };
-    }
+        positions[i_room] += direction[i_room];
 
     // Check if the spacing was already fixed.
     // If it isn't recursively calls this function.
@@ -304,22 +281,20 @@ void cavestyle_patch(Pattern& pattern, int nb_additions)
 {
     Pattern surrounding;
 
-    // Function to add a new cell to surrounding, if it isn't already in the patern.
-    auto addSurrounding = [&pattern, &surrounding](int x, int y) -> void
+    // Function to add a new cell to surrounding, if it isn't already in the pattern.
+    auto addSurrounding = [&pattern, &surrounding](std::pair<int, int> cell)
     {
-        if (pattern.count({x, y}) == 0)
-            surrounding.insert({x, y});
+        if (pattern.count(cell) == 0)
+            surrounding.insert(cell);
     };
 
     // Add cells around the first ones
     for (auto& cell : pattern)
     {
-        int x = cell.first;
-        int y = cell.second;
-        addSurrounding(x+1, y);
-        addSurrounding(x-1, y);
-        addSurrounding(x, y+1);
-        addSurrounding(x, y-1);
+        addSurrounding(cell + std::make_pair(1, 0));
+        addSurrounding(cell + std::make_pair(0, 1));
+        addSurrounding(cell - std::make_pair(1, 0));
+        addSurrounding(cell - std::make_pair(0, 1));
     }
 
     // Create noise
@@ -332,12 +307,10 @@ void cavestyle_patch(Pattern& pattern, int nb_additions)
         pattern.insert(*selected);
 
         // Refresh surrounding set of the pattern
-        int new_x, new_y;
-        std::tie(new_x, new_y) = *selected;
-        addSurrounding(new_x+1, new_y);
-        addSurrounding(new_x-1, new_y);
-        addSurrounding(new_x, new_y+1);
-        addSurrounding(new_x, new_y-1);
+        addSurrounding((*selected) + std::make_pair(1, 0));
+        addSurrounding((*selected) + std::make_pair(0, 1));
+        addSurrounding((*selected) - std::make_pair(1, 0));
+        addSurrounding((*selected) - std::make_pair(0, 1));
 
         // Can't select this cell anymore
         surrounding.erase(selected);
@@ -350,10 +323,8 @@ Pattern generate_cave(int size)
         size = 1;
 
     Pattern cells;
-
-    cells.insert(std::make_pair(0, 0));
+    cells.insert({0, 0});
     cavestyle_patch(cells, size-1);
-
     return cells;
 }
 
@@ -436,7 +407,7 @@ Level generate(const GenerationMode &mode)
     Pattern cells = merged_patterns(positions, patterns);
 
     // Verify that center of rooms are always filled
-    for (auto& pos : positions)
+    for (auto pos : positions)
         assert(cells.find(pos) != std::end(cells));
 
     // Add stairs in first and last map
