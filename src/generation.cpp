@@ -43,6 +43,54 @@ int pattern_max_y(const Pattern& pattern)
 }
 
 
+bool spaced(
+    std::pair<int, int> position1, const Pattern& pattern1,
+    std::pair<int, int> position2, const Pattern& pattern2,
+    int spacing)
+{
+    for (auto& cell1 : pattern1)
+    {
+        for (auto& cell2 : pattern2)
+        {
+            // Calculate real coordinates of both points
+            std::pair<int, int> point1 = {
+                cell1.first + position1.first,
+                cell1.second + position1.second
+            };
+            std::pair<int, int> point2 = {
+                cell2.first + position2.first,
+                cell2.second + position2.second
+            };
+            // Check the distance between these points
+            if (std::abs(point1.first - point2.first) + std::abs(point1.second - point2.second) <= spacing)
+            {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+bool superposed(
+    std::pair<int, int> position1, const Pattern& pattern1,
+    std::pair<int, int> position2, const Pattern& pattern2)
+{
+    for (auto& cell : pattern1)
+    {
+        // Must check for all points P1 of pattern1, P2 of pattern2 :
+        //   position1 + P1 != position2 + P2
+        // pos_in_2 represents the theorical coordinate of a point of pattern1 in pattern2 :
+        std::pair<int, int> pos_in_2 = {
+            cell.first + position1.first - position2.first,
+            cell.second + position1.second - position2.second
+        };
+        if (pattern2.find(pos_in_2) != end(pattern2))
+            return true;
+    }
+    return false;
+}
+
+
 Pattern normalized_pattern(const Pattern& pattern, std::vector<std::shared_ptr<Entity>>& entities)
 {
     // Removes 1 to add a margin
@@ -91,6 +139,65 @@ Pattern merged_patterns(
     }
 
     return fullMap;
+}
+
+void separate_rooms(
+    std::vector<std::pair<int, int>>& positions,
+    const std::vector<Pattern>& rooms,
+    int spacing)
+{
+    assert(positions.size() == rooms.size());
+    int nb_rooms = positions.size();
+
+    // The direction each rooms will be send to
+    std::vector<std::pair<int, int>> direction(nb_rooms, {0, 0});
+    for (int i1 = 0 ; i1 < nb_rooms ; i1++)
+    {
+        for (int i2 = 0 ; i2 < nb_rooms ; i2++)
+        {
+            if (i1 == i2)
+                break;
+
+            // Takes a distinct pair of rooms.
+            // Send them in a direction if they are not spaced enough.
+            if (!spaced(positions[i1], rooms[i1], positions[i2], rooms[i2], spacing))
+            {
+                if (positions[i1].first > positions[i2].first)
+                    direction[i1] = {direction[i1].first + 1, direction[i1].second};
+
+                if (positions[i1].second > positions[i2].second)
+                    direction[i1] = {direction[i1].first, direction[i1].second + 1};
+
+                if (positions[i1] == positions[i2])
+                {
+                    // Moves room2 in a random direction.
+                    int delta_x = Random::uniform_int(-2, 2);
+                    int delta_y = Random::uniform_int(-2, 2);
+                    direction[i1] = {delta_x, delta_y};
+                }
+            }
+        }
+    }
+
+    // Apply the position modifiers
+    for (int i_room = 0 ; i_room < nb_rooms ; i_room++)
+    {
+        positions[i_room] = {
+            positions[i_room].first + direction[i_room].first,
+            positions[i_room].second + direction[i_room].second
+        };
+    }
+
+    // Check if the spacing was already fixed.
+    // If it isn't recursively calls this function.
+    for (int i1 = 0 ; i1 < nb_rooms ; i1++)
+    {
+        if (direction[i1] != std::make_pair(0, 0))
+        {
+            separate_rooms(positions, rooms, spacing);
+            return;
+        }
+    }
 }
 
 Map map_of_pattern(const Pattern& pattern)
@@ -174,15 +281,15 @@ Pattern generate_hallway(std::pair<int, int> cell1, std::pair<int, int> cell2)
     Pattern path;
     path.insert({0, 0});
 
-    while (x1+x != x2 || y1+y != y2)
+    while (x1 + x != x2 || y1 + y != y2)
     {
-        if (x1+x < x2)
+        if (x1 + x < x2)
             x++;
-        if (x1+x > x2)
+        if (x1 + x > x2)
             x--;
-        if (y1+y < y2)
+        if (y1 + y < y2)
             y++;
-        if (y1+y > y2)
+        if (y1 + y > y2)
             y--;
         path.insert({x, y});
         path.insert({x+1, y});
@@ -287,17 +394,23 @@ Level generate(const GenerationMode &mode)
         }
     }
 
-    // Position rooms
-    int map_right = 0; // right position of the end of last room
-    for (int i_room = 0 ; i_room < mode.nb_rooms ; i_room++)
-    {
-        int room_left = pattern_min_x(patterns[i_room]);
-        int room_right = pattern_max_x(patterns[i_room]);
-        int pos_x = 1 + mode.room_margin + map_right - room_left;
+    // Places rooms in a non-linear way
+    while (positions.size() < patterns.size())
+        positions.push_back({0, 0});
+    separate_rooms(positions, patterns, mode.room_margin);
 
-        map_right += 1 + mode.room_margin + (room_right - room_left);
-        positions.push_back({pos_x, Random::uniform_int(-25, 25)});
-    }
+    // Position rooms
+    // int map_right = 0; // right position of the end of last room
+    // for (int i_room = 0 ; i_room < mode.nb_rooms ; i_room++)
+    // {
+    //     int room_left = pattern_min_x(patterns[i_room]);
+    //     int room_right = pattern_max_x(patterns[i_room]);
+    //     int pos_x = 1 + mode.room_margin + map_right - room_left;
+    //
+    //     map_right += 1 + mode.room_margin + (room_right - room_left);
+    //     positions.push_back({pos_x, Random::uniform_int(-25, 25)});
+    // }
+
 
     // Add ways between rooms
     for (int i_room = 1 ; i_room < mode.nb_rooms ; i_room++)

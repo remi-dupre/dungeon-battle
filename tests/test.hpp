@@ -89,16 +89,16 @@ public:
 
 
 // Number of maps to generate for a test
-constexpr int NB_MAP_TEST = 1000;
+constexpr int NB_MAP_TEST = 50;
 
 constexpr int MIN_ROOMS = 2;
-constexpr int MAX_ROOMS = 20;
+constexpr int MAX_ROOMS = 15;
 
 constexpr int MIN_MARGIN = 0;
 constexpr int MAX_MARGIN = 50;
 
 constexpr int ROOM_MIN_SIZE = 50;
-constexpr int ROOM_MAX_SIZE = 500;
+constexpr int ROOM_MAX_SIZE = 300;
 
 
 class GeneratorTester : public CxxTest::TestSuite
