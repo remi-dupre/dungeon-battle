@@ -88,6 +88,16 @@ public:
      */
     CellType cellAt(int x, int y) const;
 
+    /**
+     * \brief Check if there is a wall next to a cell
+     */
+    bool wallNext(int x, int y) const;
+
+    /**
+     * \brief Check if there is a wall next to a cell
+     */
+    bool wallNext(sf::Vector2i coords) const;
+
 private:
 
     int width;  ///< The width of the map

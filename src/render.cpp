@@ -47,11 +47,6 @@ void Renderer::drawEntities(const std::vector<std::shared_ptr<Entity>>& entities
         v3.position = {p.x + 1.f, p.y};
         v4.position = {p.x + 1.f, p.y + 1.f};
 
-        v1.texCoords = {32.f, 0.f};
-        v2.texCoords = {32.f, 31.f};
-        v3.texCoords = {63.f, 0.f};
-        v4.texCoords = {63.f, 31.f};
-
         switch (entity->getType())
         {
             case EntityType::Hero:
@@ -69,10 +64,10 @@ void Renderer::drawEntities(const std::vector<std::shared_ptr<Entity>>& entities
                break;
 
             case EntityType::Monster:
-                v1.color = sf::Color::Green;
-                v2.color = sf::Color::Green;
-                v3.color = sf::Color::Green;
-                v4.color = sf::Color::Green;
+                v1.texCoords = {32.f, 0.f};
+                v2.texCoords = {32.f, 31.f};
+                v3.texCoords = {63.f, 0.f};
+                v4.texCoords = {63.f, 31.f};
                 break;
 
             case EntityType::None:
@@ -144,6 +139,8 @@ void Renderer::display(sf::RenderTarget& target)
     }
 }
 
+#include <iostream>
+
 void Renderer::drawCell(sf::Vector2i coords, CellType cell, const Map& map)
 {
     if (cell == CellType::Empty)
@@ -160,37 +157,48 @@ void Renderer::drawCell(sf::Vector2i coords, CellType cell, const Map& map)
     v3.position = {p.x + 1.f, p.y};
     v4.position = {p.x + 1.f, p.y + 1.f};
 
-    int nb_walls = 0;
-    for (int i = -1; i <= 1; i++)
+    // TODO: Completer ce tableau
+    const sf::Vector2f tiles_coord[] = {
+        {Random::uniform_int(0, 3) * 32.f, 128.f},
+        {0.f, 96.f}, {32.f, 96.f}, {0.f, 64.f}, {64.f, 96.f},
+        {}, {}, {}, {96.f, 96.f},
+        {}, {}, {}, {},
+        {}, {},
+        {Random::uniform_int(0, 3) * 32.f, 0.f}
+    };
+
+    sf::Vector2i next_tiles[] = {{0, -1}, {1, 0}, {0, 1}, {-1, 0}};
+    int tile_index = 0;
+
+    for (int i = 0; i < 4; i++)
     {
-        for (int j = -1; j <= 1; j++)
-        {
-            if (map.cellAt(coords.x + i, coords.y + j) == CellType::Wall)
-                nb_walls++;
-        }
+        if (map.wallNext(coords + next_tiles[i]))
+            tile_index |= 1 << i;
     }
+    if (map.wallNext(coords))
+        tile_index = 15;
+
+    assert(0 <= tile_index && tile_index < 16);
 
     int tile_nb;
+
+    sf::Vector2f t = tiles_coord[tile_index];
 
     switch (cell)
     {
         case CellType::Floor:
-            if (nb_walls > 0)
-                tile_nb = Random::uniform_int(0, 3);
-            else
-                tile_nb = Random::uniform_int(5, 7);
-            v1.texCoords = {32.f * tile_nb, 0.f};
-            v2.texCoords = {32.f * tile_nb, 31.f};
-            v4.texCoords = {32.f * tile_nb + 31.f, 31.f};
-            v3.texCoords = {32.f * tile_nb + 31.f, 0.f};
+            v1.texCoords = t;
+            v2.texCoords = {t.x, t.y + 31.f};
+            v3.texCoords = {t.x + 31.f, t.y};
+            v4.texCoords = {t.x + 31.f, t.y + 31.f};
             break;
 
         case CellType::Wall:
             tile_nb = Random::uniform_int(0, 3);
-            v1.texCoords = {32.f * tile_nb, 192.f};
-            v2.texCoords = {32.f * tile_nb, 223.f};
-            v3.texCoords = {32.f * tile_nb + 31.f, 192.f};
-            v4.texCoords = {32.f * tile_nb + 31.f, 223.f};
+            v1.texCoords = {32.f * tile_nb, 160.f};
+            v2.texCoords = {32.f * tile_nb, 191.f};
+            v3.texCoords = {32.f * tile_nb + 31.f, 160.f};
+            v4.texCoords = {32.f * tile_nb + 31.f, 191.f};
             break;
 
         case CellType::Empty:

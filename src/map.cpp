@@ -69,6 +69,25 @@ CellType Map::cellAt(int x, int y) const
     return cells[x + width * y];
 }
 
+bool Map::wallNext(int x, int y) const
+{
+    return wallNext({x, y});
+}
+
+bool Map::wallNext(sf::Vector2i coords) const
+{
+    for (int i = -1; i <= 1; i++)
+    {
+        for (int j = -1; j <= 1; j++)
+        {
+            if (cellAt(coords.x + i, coords.y + j) == CellType::Wall)
+                return true;
+        }
+    }
+
+    return false;
+}
+
 std::ostream& operator<<(std::ostream& stream, const Map& map)
 {
     stream << map.width << ' ' << map.height << std::endl;
