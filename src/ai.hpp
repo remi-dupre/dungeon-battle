@@ -1,6 +1,6 @@
 /**
 * \file AI.hpp
-* \brief Decide of the action of the monster. 
+* \brief Decide of the action of the monster.
 */
 
 #pragma once
@@ -11,6 +11,7 @@
 #include "control.hpp"
 #include "entity.hpp"
 #include "map.hpp"
+#include "math.hpp"
 #include "utility.hpp"
 
 
@@ -19,7 +20,7 @@ struct Action;
 
 bool has_hero(const std::vector<std::shared_ptr<Entity>>& entities);
 
-sf::Vector2u get_hero_position(const std::vector<std::shared_ptr<Entity>>& entities);
+sf::Vector2i get_hero_position(const std::vector<std::shared_ptr<Entity>>& entities);
 
 /**
  * \brief Decide of the action of the monster.

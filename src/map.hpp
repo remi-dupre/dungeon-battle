@@ -46,7 +46,7 @@ public:
      * \param width The width of the map
      * \param height The height of the map
      */
-    explicit Map(unsigned int width, unsigned int height);
+    explicit Map(int width, int height);
 
     /**
      * \brief Load the map from a file
@@ -63,12 +63,12 @@ public:
     /**
      * \brief Get the width of the map
      */
-    unsigned int getWidth() const;
+    int getWidth() const;
 
     /**
      * \brief Get the heigth of the map
      */
-    unsigned int getHeight() const;
+    int getHeight() const;
 
     /**
      * \brief Get a read-write access to a cell by its coordinates
@@ -77,7 +77,7 @@ public:
      * \return Reference to the cell
      * `x` and `y` must be in the ranges `[0, map.width)` and `[0, map.heigth)`
      */
-    CellType& cellAt(unsigned int x, unsigned int y);
+    CellType& cellAt(int x, int y);
 
     /**
      * \brief Get a read only access to a cell by its coordinates
@@ -86,12 +86,12 @@ public:
      * \return Const reference to the cell
      * `x` and `y` must be in the ranges `[0, map.width)` and `[0, map.heigth)`
      */
-    CellType cellAt(unsigned int x, unsigned int y) const;
+    CellType cellAt(int x, int y) const;
 
 private:
 
-    unsigned int width;  ///< The width of the map
-    unsigned int height; ///< The height of the map
+    int width;  ///< The width of the map
+    int height; ///< The height of the map
 
     /**
      * \brief The type of each cell

@@ -5,8 +5,12 @@
 
 #pragma once
 
-#include <SFML/System/Vector2.hpp>
 #include <algorithm>
+#include <functional>
+#include <memory>
+#include <vector>
+
+#include <SFML/System/Vector2.hpp>
 
 #include "utility.hpp"
 
@@ -47,7 +51,7 @@ public:
      * \param position The position of the entity
      * \param orientation The orientation of the entity
      */
-    Entity(EntityType type, Interaction interaction, sf::Vector2u position, Direction orientation);
+    Entity(EntityType type, Interaction interaction, sf::Vector2i position, Direction orientation);
 
     virtual ~Entity() = default;
 
@@ -64,13 +68,13 @@ public:
     /**
      * \brief Return the position of the entity
      */
-    sf::Vector2u getPosition() const;
+    sf::Vector2i getPosition() const;
 
     /**
      * \brief Set the position of the entity
      * \param position The position to set
      */
-    void setPosition(sf::Vector2u position);
+    void setPosition(sf::Vector2i position);
 
     /**
      * \brief Return the orientation of the entity
@@ -87,7 +91,7 @@ protected:
 
     const EntityType type; ///< The type of the entity
     const Interaction interaction; ///< The result of the interaction with the entity
-    sf::Vector2u position; ///< The position of the entity
+    sf::Vector2i position; ///< The position of the entity
     Direction orientation; ///< The orientation of the entity
 };
 
@@ -110,10 +114,26 @@ public:
      */
     Character(EntityType type,
               Interaction interaction,
-              sf::Vector2u position,
+              sf::Vector2i position,
               Direction orientation,
               unsigned int hpMax,
               unsigned int strength);
+
+    /**
+     * \brief Return the max hp of the character
+     */
+    unsigned int getLevel() const;
+
+    /**
+     * \brief Set the max hp of the character
+     * \param hpMax The hp to set as max
+     */
+    void setLevel(unsigned int level);
+
+    /**
+     * \brief Increment the level of the character
+     */
+    void levelUp();
 
     /**
      * \brief Return the max hp of the character
@@ -165,10 +185,43 @@ public:
      */
     void setSightRadius(unsigned int sightRadius);
 
+
+    /**
+     * \brief Return the experience of the character
+     */
+    unsigned int getExperience() const;
+
+    /**
+     * \brief Set the experience of the character
+     * \param experience The experience to set
+     */
+    void setExperience(unsigned int experience);
+
+    /**
+     * \brief Add experience to the character
+     * \param experience The experience to add
+     */
+    void addExperience(unsigned int experience);
+
 protected:
 
+    unsigned int level; ///< The level of the character
+    std::function<unsigned int(unsigned int)> experienceCurve; ///< The experience curve of the character
+    unsigned int experience; ///< The experience of the character
     unsigned int hpMax; ///< The max hp of the character
     unsigned int hp; ///< The hp of the character
     unsigned int strength; ///< The force of the character
     unsigned int sightRadius; ///< The sight radius of the character (0 for infinity)
 };
+
+/**
+ * \brief Test if a vector of entities contains a hero
+ * \param entities A vector of entities
+ */
+bool has_hero(const std::vector<std::shared_ptr<Entity>>& entities);
+
+/**
+ * \brief Return the position of the first hero in a vector of entities
+ * \param entities A vector of entities containing a hero
+ */
+sf::Vector2i get_hero_position(const std::vector<std::shared_ptr<Entity>>& entities);
