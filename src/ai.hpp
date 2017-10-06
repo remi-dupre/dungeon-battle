@@ -20,7 +20,7 @@ struct Action;
 
 bool has_hero(const std::vector<std::shared_ptr<Entity>>& entities);
 
-sf::Vector2u get_hero_position(const std::vector<std::shared_ptr<Entity>>& entities);
+sf::Vector2i get_hero_position(const std::vector<std::shared_ptr<Entity>>& entities);
 
 /**
  * \brief Decide of the action of the monster.

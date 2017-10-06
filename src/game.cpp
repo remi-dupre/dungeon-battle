@@ -51,7 +51,7 @@ void Game::init(const std::map<Option, std::string>& options)
                                          return e->getType() == EntityType::Stairs;
     });
 
-    sf::Vector2u start_pos;
+    sf::Vector2i start_pos;
     if (entry_stairs != entities.end())
         start_pos = (*entry_stairs)->getPosition();
 
@@ -103,7 +103,7 @@ void Game::update()
             config
         );
 
-        sf::Vector2u position = entity->getPosition();
+        sf::Vector2i position = entity->getPosition();
 
         bool perform_action = false;
 
@@ -183,12 +183,12 @@ const std::vector<std::shared_ptr<Entity>>& Game::getEntities() const
     return entities;
 }
 
-std::vector<std::shared_ptr<Entity>> Game::getEntitiesOnCell(unsigned int x, unsigned int y) const
+std::vector<std::shared_ptr<Entity>> Game::getEntitiesOnCell(int x, int y) const
 {
     return getEntitiesOnCell({x, y});
 }
 
-std::vector<std::shared_ptr<Entity>> Game::getEntitiesOnCell(sf::Vector2u position) const
+std::vector<std::shared_ptr<Entity>> Game::getEntitiesOnCell(sf::Vector2i position) const
 {
     std::vector<std::shared_ptr<Entity>> entities_on_cell;
 
@@ -204,12 +204,12 @@ std::vector<std::shared_ptr<Entity>> Game::getEntitiesOnCell(sf::Vector2u positi
     return entities_on_cell;
 }
 
-std::vector<std::shared_ptr<Entity>> Game::getEntitiesAroundCell(unsigned int x, unsigned int y, unsigned int d) const
+std::vector<std::shared_ptr<Entity>> Game::getEntitiesAroundCell(int x, int y, int d) const
 {
     return getEntitiesAroundCell({x, y}, d);
 }
 
-std::vector<std::shared_ptr<Entity>> Game::getEntitiesAroundCell(sf::Vector2u position, unsigned int d) const
+std::vector<std::shared_ptr<Entity>> Game::getEntitiesAroundCell(sf::Vector2i position, int d) const
 {
     std::vector<std::shared_ptr<Entity>> entities_on_cell;
 
@@ -218,7 +218,7 @@ std::vector<std::shared_ptr<Entity>> Game::getEntitiesAroundCell(sf::Vector2u po
         std::begin(entities), std::end(entities),
         std::back_inserter(entities_on_cell),
         [&position, d](const std::shared_ptr<Entity>& e) -> bool {
-            sf::Vector2u p = e->getPosition();
+            sf::Vector2i p = e->getPosition();
             return std::max(p.x, position.x) - std::min(p.x, position.x) + std::max(p.y, position.y) - std::min(p.y, position.y) <= d;
         }
     );

@@ -331,13 +331,13 @@ Level generate(const GenerationMode &mode)
     entities.push_back(std::make_shared<Entity>(
         EntityType::Stairs,
         Interaction::GoDown,
-        sf::Vector2u(positions[0].first, positions[0].second),
+        sf::Vector2i(positions[0].first, positions[0].second),
         Direction::Right
     ));
     entities.push_back(std::make_shared<Entity>(
         EntityType::Stairs,
         Interaction::GoUp,
-        sf::Vector2u(positions[mode.nb_rooms-1].first, positions[mode.nb_rooms-1].second),
+        sf::Vector2i(positions[mode.nb_rooms-1].first, positions[mode.nb_rooms-1].second),
         Direction::Left
     ));
 
@@ -347,7 +347,7 @@ Level generate(const GenerationMode &mode)
         entities.push_back(std::make_shared<Character>(
             EntityType::Monster,
             Interaction::None,
-            sf::Vector2u(positions[i_map].first, positions[i_map].second),
+            sf::Vector2i(positions[i_map].first, positions[i_map].second),
             Direction::Left, 3, 1
         ));
     }

@@ -53,7 +53,7 @@ public:
     /**
      * \brief Set the view center
      */
-    void setViewCenter(sf::Vector2u center);
+    void setViewCenter(sf::Vector2i center);
 
     /**
      * \brief Display on the window the objects drawn before

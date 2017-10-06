@@ -3,10 +3,10 @@
 
 Action BFS_monster(const Character& entity, const std::vector<std::shared_ptr<Entity>>& entities, const Map& map)
 {
-    sf::Vector2u position = entity.getPosition();
+    sf::Vector2i position = entity.getPosition();
     int sight = entity.getSightRadius();
 
-    sf::Vector2u hero_postion;
+    sf::Vector2i hero_postion;
     if (has_hero(entities)) hero_postion = get_hero_position(entities);
     else return just_moving(entity,entities,map);
 
@@ -19,13 +19,13 @@ Action BFS_monster(const Character& entity, const std::vector<std::shared_ptr<En
 
 Action get_input_monster(const Character& entity, const std::vector<std::shared_ptr<Entity>>& entities, const Map& map)
 {
-   
+
     return just_moving(entity,entities,map);
 }
 
-Action just_moving(const Character& entity, [[maybe_unused]] const std::vector<std::shared_ptr<Entity>>& entities, const Map& map)
+Action just_moving(const Character& entity, const std::vector<std::shared_ptr<Entity>>& entities, const Map& map)
 {
-    sf::Vector2u position = entity.getPosition();
+    sf::Vector2i position = entity.getPosition();
 
     if (map.cellAt(position.x-1, position.y) == CellType::Floor)
         return Action(ActionType::Move, Direction::Left);

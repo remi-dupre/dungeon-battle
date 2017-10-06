@@ -91,7 +91,7 @@ void Renderer::drawEntities(const std::vector<std::shared_ptr<Entity>>& entities
     }
 }
 
-void Renderer::setViewCenter(sf::Vector2u center)
+void Renderer::setViewCenter(sf::Vector2i center)
 {
     view.setCenter(static_cast<sf::Vector2f>(center));
 }
