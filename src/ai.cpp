@@ -1,37 +1,5 @@
 #include "ai.hpp"
 
-bool has_hero(const std::vector<std::shared_ptr<Entity>>& entities)
-{
-    for(const auto& entity : entities)
-    {
-        if(entity->getType() == EntityType::Hero)
-        {
-            return true;
-        }
-    }
-    return false;
-}
-
-
-sf::Vector2i get_hero_position(const std::vector<std::shared_ptr<Entity>>& entities)
-{
-    for(const auto& entity : entities)
-    {
-        if(entity->getType() == EntityType::Hero)
-        {
-            return entity->getPosition();
-        }
-    }
-
-    return {0, 0};
-}
-
-
-bool cell_seen(std::vector<std::vector<bool>> seen, sf::Vector2i cell, sf::Vector2i startcell, int sight)
-{
-    return seen[cell.x+sight-startcell.x][cell.y+sight-startcell.y];
-}
-
 
 Action bfs_monster(const Character& entity, const std::vector<std::shared_ptr<Entity>>& entities, const Map& map)
 {
