@@ -2,6 +2,7 @@
 
 #include <map>
 #include <string>
+#include <random>
 
 #include "../src/config.hpp"
 #include "../src/config.cpp"
@@ -88,16 +89,16 @@ public:
 
 
 // Number of maps to generate for a test
-int NB_MAP_TEST = 10;
+constexpr int NB_MAP_TEST = 1000;
 
-int MIN_ROOMS = 1;
-int MAX_ROOMS = 20;
+constexpr int MIN_ROOMS = 2;
+constexpr int MAX_ROOMS = 20;
 
-int MIN_MARGIN = 0;
-int MAX_MARGIN = 50;
+constexpr int MIN_MARGIN = 0;
+constexpr int MAX_MARGIN = 50;
 
-int ROOM_MIN_SIZE = 50;
-int ROOM_MAX_SIZE = 500;
+constexpr int ROOM_MIN_SIZE = 50;
+constexpr int ROOM_MAX_SIZE = 500;
 
 
 class GeneratorTester : public CxxTest::TestSuite
@@ -111,11 +112,21 @@ public:
 
         for (int test = 0 ; test < NB_MAP_TEST ; test++)
         {
-            TS_TRACE(std::string("Generating map ") + std::to_string((test)+1) + std::string("/") + std::to_string(NB_MAP_TEST));
+            TS_TRACE("Generating map " + std::to_string(test+1) + "/" + std::to_string(NB_MAP_TEST));
             gen_options.room_min_size = ROOM_MIN_SIZE;
             gen_options.room_max_size = ROOM_MAX_SIZE;
             gen_options.nb_rooms = Random::uniform_int(MIN_ROOMS, MAX_ROOMS);
             gen_options.room_margin = Random::uniform_int(MIN_MARGIN, MAX_MARGIN);
+            gen_options.type = static_cast<LevelType>(Random::uniform_int(0, 1));
+
+            TS_TRACE("nb_rooms : " + std::to_string(gen_options.nb_rooms));
+            TS_TRACE("room_margin : " + std::to_string(gen_options.room_margin));
+            TS_TRACE("type : " + std::to_string(static_cast<int>(gen_options.type)));
+
+            std::random_device r;
+            int seed = r();
+            Random::seed(seed);
+            TS_TRACE("Seed : " + std::to_string(seed));
 
             auto level = generate(gen_options);
             auto& map = std::get<0>(level);

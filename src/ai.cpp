@@ -24,12 +24,9 @@ sf::Vector2u get_hero_position(const std::vector<std::shared_ptr<Entity>>& entit
     return {0, 0};
 }
 
-/*
-sf::Vector2u relative_position(int x, int y, sf::Vector2u position){
-return
-}*/
 
-Action get_input_monster(const Character& entity, const std::vector<std::shared_ptr<Entity>>& entities, const Map& map)
+
+Action BFS_monster(const Character& entity, const std::vector<std::shared_ptr<Entity>>& entities, const Map& map)
 {
     sf::Vector2u position = entity.getPosition();
     int sight = entity.getSightRadius();
@@ -43,8 +40,12 @@ Action get_input_monster(const Character& entity, const std::vector<std::shared_
 
     int curent_x = 0;
     int curent_y = 0;
+}
 
-    return Action();
+Action get_input_monster(const Character& entity, const std::vector<std::shared_ptr<Entity>>& entities, const Map& map)
+{
+   
+    return just_moving(entity,entities,map);
 }
 
 Action just_moving(const Character& entity, [[maybe_unused]] const std::vector<std::shared_ptr<Entity>>& entities, const Map& map)

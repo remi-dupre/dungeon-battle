@@ -99,7 +99,7 @@ int pattern_max_y(const Pattern& pattern);
  *
  * \note This will also align the pattern on top left.
  */
-Pattern normalized_pattern(Pattern& pattern, std::vector<Entity>&  entities);
+Pattern normalized_pattern(const Pattern& pattern, std::vector<Entity>&  entities);
 
 /**
  * \brief Merge patterns, placing them around given positions

@@ -43,10 +43,11 @@ int pattern_max_y(const Pattern& pattern)
 }
 
 
-Pattern normalized_pattern(Pattern& pattern, std::vector<std::shared_ptr<Entity>>& entities)
+Pattern normalized_pattern(const Pattern& pattern, std::vector<std::shared_ptr<Entity>>& entities)
 {
-    int min_x = pattern_min_x(pattern);
-    int min_y = pattern_min_y(pattern);
+    // Removes 1 to add a margin
+    int min_x = pattern_min_x(pattern) - 1;
+    int min_y = pattern_min_y(pattern) - 1;
 
     Pattern normalized;
 
@@ -94,9 +95,10 @@ Pattern merged_patterns(
 
 Map map_of_pattern(const Pattern& pattern)
 {
-    // Keeps a 1-unit margin at every border
-    int width = pattern_max_x(pattern) + 3;
-    int height = pattern_max_y(pattern) + 3;
+    // The coordinates are from 0 to pattern_max_?
+    // Add a 1-unit margin at top and right border
+    int width = pattern_max_x(pattern) + 2;
+    int height = pattern_max_y(pattern) + 2;
     Map map(width, height);
 
     // Add cells of the pattern on the floor
@@ -105,25 +107,19 @@ Map map_of_pattern(const Pattern& pattern)
         int x = cell.first;
         int y = cell.second;
 
-        assert(x+1 > 0 && x+1 < width);
-        assert(y+1 > 0 && y+1 < height);
-        map.cellAt(x+1, y+1) = CellType::Floor;
+        assert(x >= 0 && x < width);
+        assert(y >= 0 && y < height);
+        map.cellAt(x, y) = CellType::Floor;
     }
 
     // Function to check wether a cell adjacent to (x, y) is a floor
     auto hasFloorNext = [height, width, map](int x, int y)
     {
         for (int i = x-1 ; i <= x+1 ; i++)
-        {
             for (int j = y-1 ; j <= y+1 ; j++)
-            {
                 if (i >= 0 && i < width && j >= 0 && j < height)
-                {
                     if ((i != x || j != y) && map.cellAt(i, j) == CellType::Floor)
                         return true;
-                }
-            }
-        }
 
         return false;
     };
@@ -326,6 +322,10 @@ Level generate(const GenerationMode &mode)
 
     Pattern cells = merged_patterns(positions, patterns);
 
+    // Verify that center of rooms are always filled
+    for (auto& pos : positions)
+        assert(cells.find(pos) != std::end(cells));
+
     // Add stairs in first and last map
     std::vector<std::shared_ptr<Entity>> entities;
     entities.push_back(std::make_shared<Entity>(
@@ -353,7 +353,8 @@ Level generate(const GenerationMode &mode)
     }
 
     // Outputs result into the map
-    Map map = map_of_pattern(normalized_pattern(cells, entities));
+    cells = normalized_pattern(cells, entities);
+    Map map = map_of_pattern(cells);
 
     return {map, entities};
 }
