@@ -84,6 +84,9 @@ private:
     std::vector<std::pair<int, std::vector<sf::Vertex>>> entities_vertices; ///< Vertex array used to render entities
     sf::Texture characters; ///< Texture of the characters
 
+    std::vector<sf::Vertex> charlie;
+    sf::Texture charlie_tex; ///< Texture of the characters
+
 
     sf::View view;
 };

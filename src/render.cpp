@@ -6,6 +6,7 @@ Renderer::Renderer() :
 {
     tileset.loadFromFile("data/tileset.png");
     characters.loadFromFile("data/characters.png");
+    charlie_tex.loadFromFile("data/charlie.png");
 }
 
 void Renderer::drawMap(const Map& map)
@@ -33,6 +34,8 @@ void Renderer::drawEntities(const std::vector<std::shared_ptr<Entity>>& entities
     entities_vertices.push_back({0, {}});
     entities_vertices[0].second.reserve(entities.size() * 4);
 
+    charlie.clear();
+
     for (const auto& entity : entities)
     {
         int x = entity->getPosition().x;
@@ -42,10 +45,60 @@ void Renderer::drawEntities(const std::vector<std::shared_ptr<Entity>>& entities
 
         sf::Vertex v1, v2, v3, v4;
 
-        v1.position = p;
+        v1.position = {p.x, p.y};
         v2.position = {p.x, p.y + 1.f};
         v3.position = {p.x + 1.f, p.y};
         v4.position = {p.x + 1.f, p.y + 1.f};
+
+        if (entity->getType() == EntityType::Hero)
+        {
+            v1.position = {p.x, p.y - 0.3f};
+            v2.position = {p.x, p.y + 1.f};
+            v3.position = {p.x + 1.f, p.y - 0.3f};
+            v4.position = {p.x + 1.f, p.y + 1.f};
+
+            switch (entity->getOrientation())
+            {
+            case Direction::Down:
+                v1.texCoords = {0.f, 0.f};
+                v2.texCoords = {0.f, 48.f};
+                v3.texCoords = {32.f, 0.f};
+                v4.texCoords = {32.f, 48.f};
+                break;
+
+            case Direction::Left:
+                v1.texCoords = {0.f, 49.f};
+                v2.texCoords = {0.f, 96.f};
+                v3.texCoords = {32.f, 49.f};
+                v4.texCoords = {32.f, 96.f};
+                break;
+
+            case Direction::Right:
+                v1.texCoords = {0.f, 97.f};
+                v2.texCoords = {0.f, 144.f};
+                v3.texCoords = {32.f, 97.f};
+                v4.texCoords = {32.f, 144.f};
+                break;
+
+            case Direction::Up:
+                v1.texCoords = {0.f, 145.f};
+                v2.texCoords = {0.f, 192.f};
+                v3.texCoords = {32.f, 145.f};
+                v4.texCoords = {32.f, 192.f};
+                break;
+            }
+
+            charlie.push_back(v1);
+            charlie.push_back(v2);
+            charlie.push_back(v4);
+
+            charlie.push_back(v1);
+            charlie.push_back(v3);
+            charlie.push_back(v4);
+
+            continue;
+        }
+
 
         switch (entity->getType())
         {
@@ -137,9 +190,13 @@ void Renderer::display(sf::RenderTarget& target)
                     sf::PrimitiveType::Triangles,
                     entities_rstates);
     }
-}
 
-#include <iostream>
+    sf::RenderStates charlie_rstates(&charlie_tex);
+    target.draw(charlie.data(),
+                charlie.size(),
+                sf::PrimitiveType::Triangles,
+                charlie_rstates);
+}
 
 void Renderer::drawCell(sf::Vector2i coords, CellType cell, const Map& map)
 {
