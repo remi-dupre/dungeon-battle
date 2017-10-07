@@ -39,21 +39,23 @@ apt-get install make
 
 ### Optional dependencies
 Documentation is generated with **doxygen** and is required to `make doc`:
+
 ```bash
 apt-get install doxygen
 ```
 
 Some extra tests can be done by running `make test` and it requires **cppcheck** and **cxxgen**:
+
 ```bash
 apt-get install cppcheck cxxgen
 ```
 
 To execute the tests use `make test`:
+
 ```bash
 make test     # Build tester and runs it
 tests/test -v # Run the test again with extra informations
 ```
-
 
 ## Compilation
 
@@ -76,4 +78,4 @@ We defined a preferred coding style in the file [CONTRIBUTING.md](https://github
 Some warning from the linter are listed on [github pages](https://remi-dupre.github.io/dungeon-battle/check/index.html).
 
 
-Made by Jean-Baptiste Daval, Rémi Dupré, Benjamin Graillot, Lucas Gréaux and Garance Gourdel.
+Made by Jean-Baptiste Daval, Rémi Dupré, Garance Gourdel, Benjamin Graillot and Lucas Gréaux.

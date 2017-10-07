@@ -5,8 +5,8 @@ Renderer::Renderer() :
     tile_size(32.f)
 {
     tileset.loadFromFile("data/tileset.png");
-    characters.loadFromFile("data/characters.png");
     charlie_tex.loadFromFile("data/charlie.png");
+    entities_tileset.loadFromFile("data/entities.png");
 }
 
 void Renderer::drawMap(const Map& map)
@@ -182,7 +182,7 @@ void Renderer::display(sf::RenderTarget& target)
                 map_rstates);
 
 
-    sf::RenderStates entities_rstates(&characters);
+    sf::RenderStates entities_rstates(&entities_tileset);
     for (auto& entity_layer : entities_vertices)
     {
         target.draw(entity_layer.second.data(),
@@ -214,14 +214,13 @@ void Renderer::drawCell(sf::Vector2i coords, CellType cell, const Map& map)
     v3.position = {p.x + 1.f, p.y};
     v4.position = {p.x + 1.f, p.y + 1.f};
 
-    // TODO: Completer ce tableau
     // C'est tellement hardcodé
     const sf::Vector2f tiles_coord[] = {
         {Random::uniform_int(0, 5) * 32.f, 128.f},
         {0.f, 96.f}, {32.f, 96.f}, {0.f, 64.f}, {64.f, 96.f},
-        {0.f, 128.f}, {0.f, 128.f}, {0.f, 128.f}, {96.f, 96.f},
-        {0.f, 128.f}, {0.f, 128.f}, {0.f, 128.f}, {0.f, 128.f},
-        {0.f, 128.f}, {0.f, 128.f},
+        {32.f, 64.f}, {64.f, 64.f}, {0.f, 32.f}, {96.f, 96.f},
+        {96.f, 64.f}, {128.f, 64.f}, {32.f, 32.f}, {160.f, 64.f},
+        {64.f, 32.f}, {96.f, 32.f},
         {Random::uniform_int(0, 5) * 32.f, 0.f}
     };
 
