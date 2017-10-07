@@ -30,10 +30,10 @@ void Game::init(const std::map<Option, std::string>& options)
     // Generate a map
     GenerationMode gen_options;
     gen_options.room_min_size = 50;
-    gen_options.room_max_size = 800;
+    gen_options.room_max_size = 300;
     gen_options.nb_rooms = 4;
     gen_options.room_margin = 1;
-    gen_options.type = LevelType::Cave;
+    gen_options.type = LevelType::Flat;
 
     // Base stats of Heros and Monsters
     unsigned int baseHeroHp = 20;
