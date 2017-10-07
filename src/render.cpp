@@ -42,49 +42,54 @@ void Renderer::drawEntities(const std::vector<std::shared_ptr<Entity>>& entities
         int y = entity->getPosition().y;
 
         sf::Vector2f p = {static_cast<float>(x), static_cast<float>(y)};
+        p *= tile_size;
 
         sf::Vertex v1, v2, v3, v4;
 
         v1.position = {p.x, p.y};
-        v2.position = {p.x, p.y + 1.f};
-        v3.position = {p.x + 1.f, p.y};
-        v4.position = {p.x + 1.f, p.y + 1.f};
+        v2.position = {p.x, p.y + tile_size};
+        v3.position = {p.x + tile_size, p.y};
+        v4.position = {p.x + tile_size, p.y + tile_size};
 
         if (entity->getType() == EntityType::Hero)
         {
-            v1.position = {p.x, p.y - 0.3f};
-            v2.position = {p.x, p.y + 1.f};
-            v3.position = {p.x + 1.f, p.y - 0.3f};
-            v4.position = {p.x + 1.f, p.y + 1.f};
+            v1.position = {p.x - 1.f, p.y - 25.f};
+            v2.position = {p.x - 1.f, p.y + tile_size - 8.f};
+            v3.position = {p.x + tile_size - 1.f, p.y - 25.f};
+            v4.position = {p.x + tile_size - 1.f, p.y + tile_size - 8.f};
 
             switch (entity->getOrientation())
             {
             case Direction::Down:
                 v1.texCoords = {0.f, 0.f};
                 v2.texCoords = {0.f, 48.f};
-                v3.texCoords = {32.f, 0.f};
-                v4.texCoords = {32.f, 48.f};
+                v3.texCoords = {31.f, 0.f};
+                v4.texCoords = {31.f, 48.f};
                 break;
 
             case Direction::Left:
                 v1.texCoords = {0.f, 49.f};
                 v2.texCoords = {0.f, 96.f};
-                v3.texCoords = {32.f, 49.f};
-                v4.texCoords = {32.f, 96.f};
+                v3.texCoords = {31.f, 49.f};
+                v4.texCoords = {31.f, 96.f};
                 break;
 
             case Direction::Right:
                 v1.texCoords = {0.f, 97.f};
                 v2.texCoords = {0.f, 144.f};
-                v3.texCoords = {32.f, 97.f};
-                v4.texCoords = {32.f, 144.f};
+                v3.texCoords = {31.f, 97.f};
+                v4.texCoords = {31.f, 144.f};
                 break;
 
             case Direction::Up:
                 v1.texCoords = {0.f, 145.f};
                 v2.texCoords = {0.f, 192.f};
-                v3.texCoords = {32.f, 145.f};
-                v4.texCoords = {32.f, 192.f};
+                v3.texCoords = {31.f, 145.f};
+                v4.texCoords = {31.f, 192.f};
+                break;
+
+            case Direction::None:
+            default:
                 break;
             }
 
@@ -141,7 +146,7 @@ void Renderer::drawEntities(const std::vector<std::shared_ptr<Entity>>& entities
 
 void Renderer::setViewCenter(sf::Vector2i center)
 {
-    view.setCenter(static_cast<sf::Vector2f>(center));
+    view.setCenter(tile_size * static_cast<sf::Vector2f>(center));
 }
 
 void Renderer::display(sf::RenderTarget& target)
@@ -169,8 +174,8 @@ void Renderer::display(sf::RenderTarget& target)
         x_offset = (screen_x - x) / screen_x;
     }
 
-    view.setSize({Configuration::default_configuration.width / tile_size,
-                  Configuration::default_configuration.height / tile_size});
+    view.setSize({static_cast<float>(Configuration::default_configuration.width),
+                static_cast<float>(Configuration::default_configuration.height)});
     view.setViewport({x_offset / 2.f, y_offset / 2.f, 1.f - x_offset, 1.f - y_offset});
 
     target.setView(view);
@@ -205,14 +210,14 @@ void Renderer::drawCell(sf::Vector2i coords, CellType cell, const Map& map)
 
     Random::seed(std::hash<sf::Vector2i>{}(coords));
 
-    sf::Vector2f p = static_cast<sf::Vector2f>(coords);
+    sf::Vector2f p = tile_size * static_cast<sf::Vector2f>(coords);
 
     sf::Vertex v1, v2, v3, v4;
 
     v1.position = p;
-    v2.position = {p.x, p.y + 1.f};
-    v3.position = {p.x + 1.f, p.y};
-    v4.position = {p.x + 1.f, p.y + 1.f};
+    v2.position = {p.x, p.y + tile_size};
+    v3.position = {p.x + tile_size, p.y};
+    v4.position = {p.x + tile_size, p.y + tile_size};
 
     // C'est tellement hardcodé
     const sf::Vector2f tiles_coord[] = {
