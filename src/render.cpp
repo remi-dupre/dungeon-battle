@@ -235,7 +235,7 @@ void Renderer::drawCell(sf::Vector2i coords, CellType cell, const Map& map)
     v3.position = {p.x + tile_size, p.y};
     v4.position = {p.x + tile_size, p.y + tile_size};
 
-    // C'est tellement hardcodé
+    // Texture rectangles for floor are hardcoded for now
     const sf::Vector2f tiles_coord[] = {
         {Random::uniform_int(0, 5) * 32.f, 128.f},
         {0.f, 96.f}, {32.f, 96.f}, {0.f, 64.f}, {64.f, 96.f},

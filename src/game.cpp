@@ -102,9 +102,6 @@ void Game::update()
 
     for (auto& entity : entities)
     {
-        //C'est un hack dégueulasse pour l'instant, pas taper !
-        entity->setPosition(entity->getPosition());
-
         if (entity->getType() == entity_turn)
         {
             Action action =
