@@ -28,7 +28,7 @@ void Renderer::drawMap(const Map& map)
     }
 }
 
-void Renderer::drawEntities(const std::vector<std::shared_ptr<Entity>>& entities)
+void Renderer::drawEntities(const std::vector<std::shared_ptr<Entity>>& entities, float frame_time)
 {
     entities_vertices.clear();
     entities_vertices.push_back({0, {}});
@@ -38,10 +38,13 @@ void Renderer::drawEntities(const std::vector<std::shared_ptr<Entity>>& entities
 
     for (const auto& entity : entities)
     {
-        int x = entity->getPosition().x;
-        int y = entity->getPosition().y;
+        sf::Vector2f p = {static_cast<float>(entity->getPosition().x),
+                          static_cast<float>(entity->getPosition().y)};
 
-        sf::Vector2f p = {static_cast<float>(x), static_cast<float>(y)};
+        sf::Vector2f old_p = {static_cast<float>(entity->getOldPosition().x),
+                              static_cast<float>(entity->getOldPosition().y)};
+
+        p = (1.f - frame_time) * p + frame_time * old_p;
         p *= tile_size;
 
         sf::Vertex v1, v2, v3, v4;
@@ -144,9 +147,9 @@ void Renderer::drawEntities(const std::vector<std::shared_ptr<Entity>>& entities
     }
 }
 
-void Renderer::setViewCenter(sf::Vector2i center)
+void Renderer::setViewCenter(sf::Vector2f center)
 {
-    view.setCenter(tile_size * static_cast<sf::Vector2f>(center));
+    view.setCenter(tile_size * center);
 }
 
 void Renderer::display(sf::RenderTarget& target)

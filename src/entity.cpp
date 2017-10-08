@@ -32,6 +32,7 @@ sf::Vector2i Entity::getPosition() const
 
 void Entity::setPosition(sf::Vector2i position_)
 {
+    old_position = position;
     position = position_;
 }
 
@@ -44,6 +45,21 @@ void Entity::setOrientation(Direction orientation_)
 {
     if (orientation_ != Direction::None)
         orientation = orientation_;
+}
+
+sf::Vector2i Entity::getOldPosition()
+{
+    return old_position;
+}
+
+void Entity::setMoving(bool moving_)
+{
+    moving = moving_;
+}
+
+bool Entity::isMoving()
+{
+    return moving;
 }
 
 

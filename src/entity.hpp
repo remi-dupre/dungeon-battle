@@ -87,12 +87,21 @@ public:
      */
     void setOrientation(Direction orientation);
 
+    sf::Vector2i getOldPosition();
+
+    void setMoving(bool moving);
+
+    bool isMoving();
+
 protected:
 
     const EntityType type; ///< The type of the entity
     const Interaction interaction; ///< The result of the interaction with the entity
     sf::Vector2i position; ///< The position of the entity
     Direction orientation; ///< The orientation of the entity
+
+    bool moving; ///< Tells whether the entity is currently moving or not
+    sf::Vector2i old_position; ///< The old position of the entity
 };
 
 

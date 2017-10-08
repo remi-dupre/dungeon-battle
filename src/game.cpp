@@ -47,18 +47,24 @@ void Game::init(const std::map<Option, std::string>& options)
     entities = std::get<std::vector<std::shared_ptr<Entity>>>(level);
 
     auto entry_stairs = std::find_if(entities.begin(), entities.end(),
-                                     [](const std::shared_ptr<Entity> e) -> bool
-                                     {
-                                         return e->getType() == EntityType::Stairs;
+    [](const std::shared_ptr<Entity> e) -> bool
+    {
+            return e->getType() == EntityType::Stairs;
     });
 
     sf::Vector2i start_pos;
     if (entry_stairs != entities.end())
         start_pos = (*entry_stairs)->getPosition();
 
-    entities.push_back(std::make_shared<Character>(EntityType::Hero, Interaction::None, start_pos, Direction::Left, baseHeroHp, baseHeroForce));
+    entities.push_back(std::make_shared<Character>(EntityType::Hero,
+                                                   Interaction::None,
+                                                   start_pos,
+                                                   Direction::Left,
+                                                   baseHeroHp,
+                                                   baseHeroForce));
 
-    map.saveToFile("map.map");
+    entity_turn = EntityType::Hero;
+    next_move = 0.f;
 }
 
 void Game::run()
@@ -77,12 +83,12 @@ void Game::run()
                 window.close();
         }
 
-        time_since_last_update += timer.restart().asSeconds();
+        time_since_last_update = timer.restart().asSeconds();
 
-        if (time_since_last_update > 1.f / 10.f)
+        next_move -= time_since_last_update;
+        if (next_move <= 0.f)
         {
             update();
-            time_since_last_update -= 1.f / 10.f;
         }
 
         display();
@@ -91,58 +97,66 @@ void Game::run()
 
 void Game::update()
 {
-    static decltype(entities)::size_type n = 0;
-
-    while (n < entities.size())
+    for (auto& entity : entities)
     {
-        auto& entity = entities[n];
+        //C'est un hack dégueulasse pour l'instant, pas taper !
+        entity->setPosition(entity->getPosition());
 
-        Action action = control::get_input(
-            *entity,
-            entities,
-            map,
-            config
-        );
-
-        sf::Vector2i position = entity->getPosition();
-
-        bool perform_action = false;
-
-        switch (action.type)
+        if (entity->getType() == entity_turn)
         {
+            Action action =
+                control::get_input(
+                    *entity,
+                    entities,
+                    map,
+                    config
+                );
+
+            sf::Vector2i position = entity->getPosition();
+
+            bool perform_action = false;
+
+            switch (action.type)
+            {
             case ActionType::Move:
                 switch(action.direction)
                 {
-                    case Direction::Left:
-                        if (position.x-- > 0)
-                            perform_action = true;
-                        break;
-                    case Direction::Right:
-                        if (++position.x < map.getWidth())
-                            perform_action = true;
-                        break;
-                    case Direction::Up:
-                        if (position.y-- > 0)
-                            perform_action = true;
-                        break;
-                    case Direction::Down:
-                        if (++position.y < map.getHeight())
-                            perform_action = true;
-                        break;
-                    default:
-                        break;
+                case Direction::Left:
+                    if (position.x-- > 0)
+                        perform_action = true;
+                    break;
+                case Direction::Right:
+                    if (++position.x < map.getWidth())
+                        perform_action = true;
+                    break;
+                case Direction::Up:
+                    if (position.y-- > 0)
+                        perform_action = true;
+                    break;
+                case Direction::Down:
+                    if (++position.y < map.getHeight())
+                        perform_action = true;
+                    break;
+                default:
+                    break;
                 }
                 if (perform_action)
                 {
                     auto entities_on_target = getEntitiesOnCell(position);
+                    auto entity_on_target =
+                        std::find_if(
+                                     entities_on_target.begin(),
+                                     entities_on_target.end(),
+                                     [](const std::shared_ptr<Entity> e) -> bool
+                                     {
+                                         EntityType t = e->getType();
+                                         return t == EntityType::Hero || t == EntityType::Monster;
+                                     }
+                                     );
 
                     if(map.cellAt(position.x, position.y) == CellType::Wall)
                         perform_action = false;
-                    else if (std::find_if(entities_on_target.begin(), entities_on_target.end(),
-                        [](const std::shared_ptr<Entity> e) -> bool {
-                            EntityType t = e->getType();
-                            return t == EntityType::Hero || t == EntityType::Monster;
-                        }) != entities_on_target.end())
+                    else if (entity_on_target != entities_on_target.end())
                         perform_action = false;
                 }
                 if (perform_action)
@@ -153,24 +167,29 @@ void Game::update()
                 break;
             default:
                 break;
-        }
+            }
 
-        if (entity->getType() == EntityType::Hero)
-        {
-            if (action.type == ActionType::None)
+            if (entity->getType() == EntityType::Hero)
+            {
+                if (action.type != ActionType::None)
+                {
+                    entity_turn = EntityType::Monster;
+                    next_move = 1.f / 10.f;
+                }
                 return;
-        }
+            }
 
-        n++;
+        }
     }
 
-    n = 0;
+    entity_turn = EntityType::Hero;
+    next_move = 1.f / 10.f;
 }
 
 void Game::display()
 {
     renderer.drawMap(map);
-    renderer.drawEntities(entities);
+    renderer.drawEntities(entities, std::max(next_move, 0.f) * 10.f);
 
     auto hero = std::find_if(entities.begin(), entities.end(),
         [](const std::shared_ptr<Entity>& e)
@@ -178,8 +197,12 @@ void Game::display()
             return e->getType() == EntityType::Hero;
         });
     if (hero != entities.end())
-        renderer.setViewCenter((*hero)->getPosition());
-
+    {
+        float frac = std::max(next_move, 0.f) * 10.f;
+        sf::Vector2f view_center = (1.f - frac) * static_cast<sf::Vector2f>((*hero)->getPosition())
+            + frac * static_cast<sf::Vector2f>((*hero)->getOldPosition());
+        renderer.setViewCenter(view_center);
+    }
 
     window.clear();
     renderer.display(window);
