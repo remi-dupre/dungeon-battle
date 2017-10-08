@@ -113,7 +113,9 @@ void Renderer::drawEntities(const std::vector<std::shared_ptr<Entity>>& entities
             continue;
         }
 
-        sf::Color slime_color = {Random::uniform_int(0, 255), Random::uniform_int(0, 255), Random::uniform_int(0, 255)};
+        sf::Color slime_color = {static_cast<sf::Uint8>(Random::uniform_int(0, 255)),
+                                 static_cast<sf::Uint8>(Random::uniform_int(0, 255)),
+                                 static_cast<sf::Uint8>(Random::uniform_int(0, 255))};
 
         if (!entity->isMoving())
             frame = 0.f;

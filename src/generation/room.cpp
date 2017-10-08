@@ -130,7 +130,7 @@ std::vector<std::shared_ptr<Entity>> place_monsters(const Pattern& room, float l
     assert(load >= 0.f);
     assert(load <= 100.f);
 
-    int nb_monsters = room.size() * load / 100.f;
+    unsigned int nb_monsters = room.size() * load / 100.f;
 
     std::set<int> chosen_cells; // Indexes of cells on which we place monsters
     while (chosen_cells.size() < nb_monsters)
@@ -163,7 +163,7 @@ std::vector<std::shared_ptr<Entity>> merged_entities(
 {
     assert(positions.size() == entities.size());
 
-    for (int i_room = 0 ; i_room < positions.size() ; i_room++)
+    for (size_t i_room = 0 ; i_room < positions.size() ; i_room++)
     {
         for (auto& entity : entities[i_room])
         {
