@@ -157,8 +157,6 @@ void Game::update()
 
         if (entity->getType() == EntityType::Hero)
         {
-            renderer.setViewCenter(entity->getPosition());
-
             if (action.type == ActionType::None)
                 return;
         }
@@ -173,6 +171,15 @@ void Game::display()
 {
     renderer.drawMap(map);
     renderer.drawEntities(entities);
+
+    auto hero = std::find_if(entities.begin(), entities.end(),
+        [](const std::shared_ptr<Entity>& e)
+        {
+            return e->getType() == EntityType::Hero;
+        });
+    if (hero != entities.end())
+        renderer.setViewCenter((*hero)->getPosition());
+
 
     window.clear();
     renderer.display(window);
