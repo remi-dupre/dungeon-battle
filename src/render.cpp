@@ -28,6 +28,8 @@ void Renderer::drawMap(const Map& map)
     }
 }
 
+#include <iostream>
+
 void Renderer::drawEntities(const std::vector<std::shared_ptr<Entity>>& entities, float frame_time)
 {
     entities_vertices.clear();
@@ -47,6 +49,10 @@ void Renderer::drawEntities(const std::vector<std::shared_ptr<Entity>>& entities
         p = (1.f - frame_time) * p + frame_time * old_p;
         p *= tile_size;
 
+        float frame  = std::floor(frame_time * 3.999f);
+        if (!entity->isMoving())
+            frame = 0.f;
+
         sf::Vertex v1, v2, v3, v4;
 
         v1.position = {p.x, p.y};
@@ -64,31 +70,31 @@ void Renderer::drawEntities(const std::vector<std::shared_ptr<Entity>>& entities
             switch (entity->getOrientation())
             {
             case Direction::Down:
-                v1.texCoords = {0.f, 0.f};
-                v2.texCoords = {0.f, 48.f};
-                v3.texCoords = {31.f, 0.f};
-                v4.texCoords = {31.f, 48.f};
+                v1.texCoords = {frame * 32.f, 0.f};
+                v2.texCoords = {frame * 32.f, 48.f};
+                v3.texCoords = {frame * 32.f + 31.f, 0.f};
+                v4.texCoords = {frame * 32.f + 31.f, 48.f};
                 break;
 
             case Direction::Left:
-                v1.texCoords = {0.f, 49.f};
-                v2.texCoords = {0.f, 96.f};
-                v3.texCoords = {31.f, 49.f};
-                v4.texCoords = {31.f, 96.f};
+                v1.texCoords = {frame * 32.f, 49.f};
+                v2.texCoords = {frame * 32.f, 96.f};
+                v3.texCoords = {frame * 32.f + 31.f, 49.f};
+                v4.texCoords = {frame * 32.f + 31.f, 96.f};
                 break;
 
             case Direction::Right:
-                v1.texCoords = {0.f, 97.f};
-                v2.texCoords = {0.f, 144.f};
-                v3.texCoords = {31.f, 97.f};
-                v4.texCoords = {31.f, 144.f};
+                v1.texCoords = {frame * 32.f, 97.f};
+                v2.texCoords = {frame * 32.f, 144.f};
+                v3.texCoords = {frame * 32.f + 31.f, 97.f};
+                v4.texCoords = {frame * 32.f + 31.f, 144.f};
                 break;
 
             case Direction::Up:
-                v1.texCoords = {0.f, 145.f};
-                v2.texCoords = {0.f, 192.f};
-                v3.texCoords = {31.f, 145.f};
-                v4.texCoords = {31.f, 192.f};
+                v1.texCoords = {frame * 32.f, 145.f};
+                v2.texCoords = {frame * 32.f, 192.f};
+                v3.texCoords = {frame * 32.f + 31.f, 145.f};
+                v4.texCoords = {frame * 32.f + 31.f, 192.f};
                 break;
 
             case Direction::None:
@@ -111,10 +117,6 @@ void Renderer::drawEntities(const std::vector<std::shared_ptr<Entity>>& entities
         switch (entity->getType())
         {
             case EntityType::Hero:
-                v1.texCoords = {0.f, 0.f};
-                v2.texCoords = {0.f, 31.f};
-                v3.texCoords = {31.f, 0.f};
-                v4.texCoords = {31.f, 31.f};
                 break;
 
             case EntityType::Stairs:
@@ -125,10 +127,10 @@ void Renderer::drawEntities(const std::vector<std::shared_ptr<Entity>>& entities
                break;
 
             case EntityType::Monster:
-                v1.texCoords = {32.f, 0.f};
-                v2.texCoords = {32.f, 31.f};
-                v3.texCoords = {63.f, 0.f};
-                v4.texCoords = {63.f, 31.f};
+                v1.texCoords = {32.f, frame * 32.f};
+                v2.texCoords = {32.f, frame * 32.f + 31.f};
+                v3.texCoords = {63.f, frame * 32.f};
+                v4.texCoords = {63.f, frame * 32.f + 31.f};
                 break;
 
             case EntityType::None:

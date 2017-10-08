@@ -52,6 +52,11 @@ sf::Vector2i Entity::getOldPosition()
     return old_position;
 }
 
+void Entity::setOldPosition(sf::Vector2i position)
+{
+    old_position = position;
+}
+
 void Entity::setMoving(bool moving_)
 {
     moving = moving_;

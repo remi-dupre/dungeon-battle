@@ -97,6 +97,8 @@ void Game::run()
 
 void Game::update()
 {
+    bool monster_moving = false;
+
     for (auto& entity : entities)
     {
         //C'est un hack dégueulasse pour l'instant, pas taper !
@@ -169,27 +171,38 @@ void Game::update()
                 break;
             }
 
+            entity->setMoving(true);
+
             if (entity->getType() == EntityType::Hero)
             {
                 if (action.type != ActionType::None)
                 {
                     entity_turn = EntityType::Monster;
-                    next_move = 1.f / 10.f;
+                    next_move = 1.f / 3.f;
                 }
                 return;
             }
-
+            else if (action.type != ActionType::None)
+            {
+                monster_moving = true;
+            }
+        }
+        else
+        {
+            entity->setOldPosition(entity->getPosition());
+            entity->setMoving(false);
         }
     }
 
     entity_turn = EntityType::Hero;
-    next_move = 1.f / 10.f;
+    if (monster_moving) // No animation time for monsters if they do not move or attack
+        next_move = 1.f / 3.f;
 }
 
 void Game::display()
 {
     renderer.drawMap(map);
-    renderer.drawEntities(entities, std::max(next_move, 0.f) * 10.f);
+    renderer.drawEntities(entities, std::max(next_move, 0.f) * 3.f);
 
     auto hero = std::find_if(entities.begin(), entities.end(),
         [](const std::shared_ptr<Entity>& e)
@@ -198,7 +211,7 @@ void Game::display()
         });
     if (hero != entities.end())
     {
-        float frac = std::max(next_move, 0.f) * 10.f;
+        float frac = std::max(next_move, 0.f) * 3.f;
         sf::Vector2f view_center = (1.f - frac) * static_cast<sf::Vector2f>((*hero)->getPosition())
             + frac * static_cast<sf::Vector2f>((*hero)->getOldPosition());
         renderer.setViewCenter(view_center);

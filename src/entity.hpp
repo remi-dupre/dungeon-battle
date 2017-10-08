@@ -89,6 +89,8 @@ public:
 
     sf::Vector2i getOldPosition();
 
+    void setOldPosition(sf::Vector2i position);
+
     void setMoving(bool moving);
 
     bool isMoving();
