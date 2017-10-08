@@ -12,11 +12,11 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "config.hpp"
+#include "generation/level.hpp"
 
 #include "args.hpp"
+#include "config.hpp"
 #include "control.hpp"
-#include "generation.hpp"
 #include "map.hpp"
 #include "rand.hpp"
 #include "render.hpp"

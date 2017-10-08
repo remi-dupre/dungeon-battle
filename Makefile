@@ -20,12 +20,14 @@ SRC = $(SRC_DIR)/main.cpp \
       $(SRC_DIR)/config.cpp \
       $(SRC_DIR)/game.cpp \
       $(SRC_DIR)/entity.cpp \
-      $(SRC_DIR)/generation.cpp \
       $(SRC_DIR)/args.cpp \
       $(SRC_DIR)/control.cpp \
       $(SRC_DIR)/rand.cpp \
       $(SRC_DIR)/ai.cpp \
-	  $(SRC_DIR)/utility.cpp
+      $(SRC_DIR)/utility.cpp \
+      $(SRC_DIR)/generation/pattern.cpp \
+      $(SRC_DIR)/generation/room.cpp \
+      $(SRC_DIR)/generation/level.cpp
 
 # List of files to compile
 
@@ -84,11 +86,11 @@ cppcheck-html:
 
 # Build object file from source file
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp $(SRC_DIR)/%.hpp
-	@mkdir -p $(BUILD_DIR)
+	@mkdir -p $(BUILD_DIR) $(BUILD_DIR)/generation
 	$(CXX) -o $@ -c $< $(CFLAGS) $(DFLAGS) $(WFLAGS)
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
-	@mkdir -p $(BUILD_DIR)
+	@mkdir -p $(BUILD_DIR) $(BUILD_DIR)/generation
 	$(CXX) -o $@ -c $< $(CFLAGS) $(DFLAGS) $(WFLAGS)
 
 # Build executable from object files
@@ -97,7 +99,7 @@ $(EXEC): $(OBJ)
 
 # Build test object file from source file
 $(BUILD_DIR)/test_%.o: $(SRC_DIR_TEST)/test_%.cpp
-	@mkdir -p $(BUILD_DIR)
+	@mkdir -p $(BUILD_DIR) $(BUILD_DIR)/generation
 	$(CXX) -o $@ -c $< $(CFLAGS) $(DFLAGS) $(WFLAGS)
 
 # Build and execute test
@@ -108,7 +110,7 @@ $(SRC_DIR_TEST)/%: $(BUILD_DIR)/%.o
 
 # Clean the workspace
 clean:
-	rm -rf $(BUILD_DIR)
+	rm -rf $(BUILD_DIR) $(BUILD_DIR)/generation
 	rm -rf $(DOC_DIR)
 	rm -rf $(EXEC_TEST)
 	rm -rf $(CHECK_DIR)
