@@ -4,6 +4,13 @@
 #include <string>
 #include <random>
 
+#include "../src/generation/pattern.hpp"
+#include "../src/generation/pattern.cpp"
+#include "../src/generation/room.hpp"
+#include "../src/generation/room.cpp"
+#include "../src/generation/level.hpp"
+#include "../src/generation/level.cpp"
+
 #include "../src/config.hpp"
 #include "../src/config.cpp"
 #include "../src/args.hpp"
@@ -12,8 +19,6 @@
 #include "../src/map.cpp"
 #include "../src/entity.hpp"
 #include "../src/entity.cpp"
-#include "../src/generation.hpp"
-#include "../src/generation.cpp"
 #include "../src/rand.hpp"
 #include "../src/rand.cpp"
 #include "../src/utility.hpp"
