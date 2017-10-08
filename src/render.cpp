@@ -113,6 +113,7 @@ void Renderer::drawEntities(const std::vector<std::shared_ptr<Entity>>& entities
             continue;
         }
 
+        sf::Color slime_color = {Random::uniform_int(0, 255), Random::uniform_int(0, 255), Random::uniform_int(0, 255)};
 
         switch (entity->getType())
         {
@@ -131,6 +132,11 @@ void Renderer::drawEntities(const std::vector<std::shared_ptr<Entity>>& entities
                 v2.texCoords = {32.f, frame * 32.f + 31.f};
                 v3.texCoords = {63.f, frame * 32.f};
                 v4.texCoords = {63.f, frame * 32.f + 31.f};
+
+                v1.color = slime_color;
+                v2.color = slime_color;
+                v3.color = slime_color;
+                v4.color = slime_color;
                 break;
 
             case EntityType::None:
