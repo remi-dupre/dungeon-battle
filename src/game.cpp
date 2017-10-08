@@ -171,12 +171,12 @@ void Game::update()
                 break;
             }
 
-            entity->setMoving(true);
 
             if (entity->getType() == EntityType::Hero)
             {
                 if (action.type != ActionType::None)
                 {
+                    entity->setMoving(true);
                     entity_turn = EntityType::Monster;
                     next_move = 1.f / 3.f;
                 }
@@ -184,6 +184,7 @@ void Game::update()
             }
             else if (action.type != ActionType::None)
             {
+                entity->setMoving(true);
                 monster_moving = true;
             }
         }

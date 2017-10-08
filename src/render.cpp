@@ -115,6 +115,9 @@ void Renderer::drawEntities(const std::vector<std::shared_ptr<Entity>>& entities
 
         sf::Color slime_color = {Random::uniform_int(0, 255), Random::uniform_int(0, 255), Random::uniform_int(0, 255)};
 
+        if (!entity->isMoving())
+            frame = 0.f;
+
         switch (entity->getType())
         {
             case EntityType::Hero:
