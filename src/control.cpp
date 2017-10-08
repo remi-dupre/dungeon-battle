@@ -41,7 +41,10 @@ inline Action get_input_hero(const Entity& entity, const Configuration& config)
     return Action();
 }
 
-Action control::get_input(const Entity& entity, const std::vector<std::shared_ptr<Entity>>& entities, const Map &map, const Configuration& config)
+Action control::get_input(const Entity& entity,
+                          const std::vector<std::shared_ptr<Entity>>& entities,
+                          const Map &map,
+                          const Configuration& config)
 {
     switch (entity.getType())
     {

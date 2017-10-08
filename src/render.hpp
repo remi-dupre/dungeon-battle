@@ -49,12 +49,12 @@ public:
      *
      * This function draws the entities
      */
-    void drawEntities(const std::vector<std::shared_ptr<Entity>>& entities);
+    void drawEntities(const std::vector<std::shared_ptr<Entity>>& entities, float frame_time);
 
     /**
      * \brief Set the view center
      */
-    void setViewCenter(sf::Vector2i center);
+    void setViewCenter(sf::Vector2f center);
 
     /**
      * \brief Display on the window the objects drawn before

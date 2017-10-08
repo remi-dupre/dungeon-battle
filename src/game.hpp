@@ -116,4 +116,7 @@ private:
     Map map; ///< The map
 
     std::vector<std::shared_ptr<Entity>> entities; ///< The entities
+
+    EntityType entity_turn;
+    float next_move;
 };
