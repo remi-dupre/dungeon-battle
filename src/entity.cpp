@@ -47,7 +47,7 @@ void Entity::setOrientation(Direction orientation_)
         orientation = orientation_;
 }
 
-sf::Vector2i Entity::getOldPosition()
+sf::Vector2i Entity::getOldPosition() const
 {
     return old_position;
 }
@@ -57,7 +57,7 @@ void Entity::setMoving(bool moving_)
     moving = moving_;
 }
 
-bool Entity::isMoving()
+bool Entity::isMoving() const
 {
     return moving;
 }
@@ -67,7 +67,7 @@ void Entity::setAttacking(bool attacking_)
     attacking = attacking_;
 }
 
-bool Entity::isAttacking()
+bool Entity::isAttacking() const
 {
     return attacking;
 }

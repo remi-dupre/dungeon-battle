@@ -90,12 +90,12 @@ public:
     /**
      * \brief Return the position at the previous move of the entity
      */
-    sf::Vector2i getOldPosition();
+    sf::Vector2i getOldPosition() const;
 
     /**
      * \brief Return true if the entity is currently moving
      */
-    bool isMoving();
+    bool isMoving() const;
 
     /**
      * \brief Set if the entity is currently moving
@@ -105,7 +105,7 @@ public:
     /**
      * \brief Return true if the entity is currently attacking
      */
-    bool isAttacking();
+    bool isAttacking() const;
 
     /**
      * \brief Set if the entity is currently attacking
