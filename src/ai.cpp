@@ -50,6 +50,8 @@ Action bfs_monster(const Character& entity, const std::vector<std::shared_ptr<En
         {{0,-1} , Direction::Up},
         {{0,1}, Direction::Down}};
 
+    int save_min_dist = std::numeric_limits<int>::max();
+    Action save_action = Action();
 
     for(auto ori : dir)
     {
@@ -83,11 +85,16 @@ Action bfs_monster(const Character& entity, const std::vector<std::shared_ptr<En
                 && (!cell_seen(seen,position, startposition, sight)))
             {
                 next_cells.push(std::make_tuple(position,depth+1,ret));
+                if (math::distance(position,hero_postion) < save_min_dist)
+                {
+                    save_min_dist = math::distance(position,hero_postion);
+                    save_action = ret; 
+                }
             }
         }
 
     }
-    return Action();
+    return save_action;
 }
 
 Action get_input_monster(const Character& entity, const std::vector<std::shared_ptr<Entity>>& entities, const Map& map)

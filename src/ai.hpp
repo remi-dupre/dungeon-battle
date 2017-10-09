@@ -7,6 +7,7 @@
 
 #include <cassert>
 #include <cmath>
+#include <limits>
 #include <map>
 #include <memory>
 #include <queue>
