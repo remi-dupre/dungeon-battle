@@ -69,10 +69,10 @@ test: tests/test.cpp
 	@echo "=== Runing unit tests"
 	@$(CXX) -o tests/test tests/test.cpp $(CFLAGS) $(DFLAGS) $(WFLAGS) && ./tests/test -v
 	@echo -e "\n=== Runing linter"
-	cppcheck --enable=all --inconclusive $(SRC_DIR) 1> /dev/null
+	cppcheck --enable=all --suppressions-list=.cppignore --inconclusive $(SRC_DIR) 1> /dev/null
 
 tests/test.cpp: tests/test.hpp
-	cxxtestgen --error-printer --check-config -o tests/test.cpp tests/test.hpp
+	cxxtestgen --error-printer -o tests/test.cpp tests/test.hpp
 
 # Generate the documentation
 doc:
