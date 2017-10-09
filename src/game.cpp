@@ -176,7 +176,7 @@ void Game::update()
                 {
                     entity->setMoving(true);
                     entity_turn = EntityType::Monster;
-                    next_move = 1.f / 3.f;
+                    next_move = 1.f / config.animation_speed;
                 }
                 return;
             }
@@ -195,13 +195,13 @@ void Game::update()
 
     entity_turn = EntityType::Hero;
     if (monster_moving) // No animation time for monsters if they do not move or attack
-        next_move = 1.f / 3.f;
+        next_move = 1.f / config.animation_speed;
 }
 
 void Game::display()
 {
     renderer.drawMap(map);
-    renderer.drawEntities(entities, std::max(next_move, 0.f) * 3.f);
+    renderer.drawEntities(entities, std::max(next_move, 0.f) * config.animation_speed);
 
     auto hero = std::find_if(entities.begin(), entities.end(),
         [](const std::shared_ptr<Entity>& e)
@@ -210,7 +210,7 @@ void Game::display()
         });
     if (hero != entities.end())
     {
-        float frac = std::max(next_move, 0.f) * 3.f;
+        float frac = std::max(next_move, 0.f) * config.animation_speed;
         sf::Vector2f view_center = (1.f - frac) * static_cast<sf::Vector2f>((*hero)->getPosition())
             + frac * static_cast<sf::Vector2f>((*hero)->getOldPosition());
         renderer.setViewCenter(view_center);

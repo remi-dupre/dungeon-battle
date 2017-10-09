@@ -13,6 +13,7 @@ Configuration::Configuration() :
     fullscreen(false),
     vsync(true),
     maxfps(60),
+    animation_speed(3.f),
     left_key(sf::Keyboard::Key::Q),
     right_key(sf::Keyboard::Key::D),
     up_key(sf::Keyboard::Key::Z),
@@ -62,6 +63,8 @@ void Configuration::read(const std::string& filename)
                 vsync = std::stoi(value);
             else if (option_name ==  "maxfps")
                 maxfps = std::stoi(value);
+            else if (option_name ==  "animation_speed")
+                animation_speed = std::stof(value);
         }
         catch (const std::invalid_argument& e)
         {
@@ -79,13 +82,14 @@ void Configuration::read(const std::string& filename)
 std::ostream& operator<<(std::ostream& stream, const Configuration& config)
 {
     return stream <<
-    "[Video]" << std::endl <<
-    "width=" << config.width << std::endl <<
-    "height=" << config.height << std::endl <<
-    "scalefactor=" << config.scalefactor << std::endl <<
-    "fullscreen=" << config.fullscreen << std::endl <<
-    "vsync=" << config.vsync << std::endl <<
-    "maxfps=" << config.maxfps << std::endl;
+        "[Video]" << std::endl <<
+        "width=" << config.width << std::endl <<
+        "height=" << config.height << std::endl <<
+        "scalefactor=" << config.scalefactor << std::endl <<
+        "fullscreen=" << config.fullscreen << std::endl <<
+        "vsync=" << config.vsync << std::endl <<
+        "maxfps=" << config.maxfps << std::endl <<
+        "animation_speed=" << config.animation_speed << std::endl;
 }
 
 void Configuration::write(const std::string& filename) const

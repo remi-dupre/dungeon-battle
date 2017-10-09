@@ -21,6 +21,7 @@ struct Configuration
     bool fullscreen;         ///< Toggles fullscreen mode, default value is false
     bool vsync;              ///< Toggles vertical synchronisation, default value is true
     unsigned int maxfps;     ///< Framerate limit of the window
+    float animation_speed;   ///< Animation speed
 
     sf::Keyboard::Key left_key;        ///< Key pressed to go left, default value is sf::Keyboard::Q
     sf::Keyboard::Key right_key;       ///< Key pressed to go right, default value is sf::Keyboard::D
