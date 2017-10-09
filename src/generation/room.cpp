@@ -124,7 +124,7 @@ Pattern generate_banana(int avg_side)
     return merged_patterns({{0, 0}, {0, 0}}, {path1, path2});
 }
 
-#include <iostream>
+
 std::vector<std::shared_ptr<Entity>> place_monsters(const Pattern& room, float load)
 {
     assert(load >= 0.f);

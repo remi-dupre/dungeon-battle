@@ -1,5 +1,5 @@
 /**
-* \file AI.hpp
+* \file ai.hpp
 * \brief Decide of the action of the monster.
 */
 

@@ -41,7 +41,7 @@ Pattern generate_rectangle(int size);
  * \note If the size is less than 1, the room will still be of size 1.
  * \warning Some coordinates will be negative.
  */
-Pattern generateCave(int size);
+Pattern generate_cave(int size);
 
 /**
  * \brief Generate a hallway from point cell1 to cell2.

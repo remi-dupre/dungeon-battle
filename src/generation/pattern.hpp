@@ -21,28 +21,28 @@ typedef std::set<std::pair<int, int>> Pattern;
 
 /**
  * \brief Minimum x coordinate of cells in the pattern
- * \attr pattern A pattern
+ * \param pattern A pattern
  * \return The minimum of x coordinates
  */
 int pattern_min_x(const Pattern& pattern);
 
 /**
  * \brief Maximum x coordinate of cells in the pattern
- * \attr pattern A pattern
+ * \param pattern A pattern
  * \return The maximum of x coordinates
  */
 int pattern_max_x(const Pattern& pattern);
 
 /**
  * \brief Minimum y coordinate of cells in the pattern
- * \attr pattern A pattern
+ * \param pattern A pattern
  * \return The minimum of y coordinates
  */
 int pattern_min_y(const Pattern& pattern);
 
 /**
  * \brief Maximum y coordinate of cells in the pattern
- * \attr pattern A pattern
+ * \param pattern A pattern
  * \return The maximum of y coordinates
  */
 int pattern_max_y(const Pattern& pattern);
