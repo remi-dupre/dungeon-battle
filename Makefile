@@ -72,7 +72,7 @@ test: tests/test.cpp
 	cppcheck --enable=all --inconclusive $(SRC_DIR) 1> /dev/null
 
 tests/test.cpp: tests/test.hpp
-	cxxtestgen --error-printer -o tests/test.cpp tests/test.hpp
+	cxxtestgen --error-printer --check-config -o tests/test.cpp tests/test.hpp
 
 # Generate the documentation
 doc:
@@ -80,7 +80,7 @@ doc:
 
 # Generate linter's report
 cppcheck-html:
-	cppcheck --enable=all --inconclusive --xml $(SRC_DIR) 2> tmp_cppcheck.xml
+	cppcheck --enable=all --suppressions-list=.cppignore --inconclusive --xml $(SRC_DIR) 2> tmp_cppcheck.xml
 	cppcheck-htmlreport --file=tmp_cppcheck.xml --report-dir=$(CHECK_DIR) --source-dir=.
 	@rm tmp_cppcheck.xml
 
