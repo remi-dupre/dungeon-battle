@@ -116,8 +116,8 @@ void Renderer::drawEntities(const std::vector<std::shared_ptr<Entity>>& entities
                                  static_cast<sf::Uint8>(Random::uniform_int(0, 255)),
                                  static_cast<sf::Uint8>(Random::uniform_int(0, 255))};
 
-        if (!entity->isMoving())
-            frame = 0.f;
+        // if (!entity->isMoving())
+        //     frame = 0.f;
 
         switch (entity->getType())
         {
