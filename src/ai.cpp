@@ -71,13 +71,13 @@ Action bfs_monster(const Character& entity, const std::vector<std::shared_ptr<En
     }
 
     while(!next_cells.empty())
-    {   
+    {
         int depth; Action ret;
         std::tie(curentposition,depth, ret) = next_cells.front();
         next_cells.pop();
-        
+
         for(auto ori : dir)
-        {  
+        {
             sf::Vector2i position = curentposition + ori;
             if (position == hero_postion) return ret;
             if ((map.cellAt(position.x,position.y) == CellType::Floor)
@@ -88,7 +88,7 @@ Action bfs_monster(const Character& entity, const std::vector<std::shared_ptr<En
                 if (math::distance(position,hero_postion) < save_min_dist)
                 {
                     save_min_dist = math::distance(position,hero_postion);
-                    save_action = ret; 
+                    save_action = ret;
                 }
             }
         }

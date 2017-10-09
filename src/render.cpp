@@ -47,7 +47,7 @@ void Renderer::drawEntities(const std::vector<std::shared_ptr<Entity>>& entities
 
         // Interpolate the current position with the old one if the entity is moving
         if (entity->isMoving())
-            p = (1.f - frame_time) * p + frame_time * old_p;
+            p += frame_time * (old_p - p);
         // Set the correct frame is the entity is doing something
         if (entity->isMoving() || entity->isAttacking())
             frame = std::floor(frame_time * 3.999f);
