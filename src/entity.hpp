@@ -83,7 +83,7 @@ public:
 
     /**
      * \brief Set the orientation of the entity
-     * \param position The orientation to set
+     * \param orientation The orientation to set
      */
     void setOrientation(Direction orientation);
 
@@ -143,8 +143,8 @@ public:
      * \param interaction The interaction with the entity
      * \param position The position of the character
      * \param orientation The orientation of the character
-     * \param hp The hp of the character
-     * \param force The force of the character
+     * \param hpMax The maximum hp of the character
+     * \param strength The force of the character
      */
     Character(EntityType type,
               Interaction interaction,
@@ -204,7 +204,7 @@ public:
 
     /**
      * \brief Set the force of the character
-     * \param force The force to set
+     * \param strength The force to set
      */
     void setStrength(unsigned int strength);
 

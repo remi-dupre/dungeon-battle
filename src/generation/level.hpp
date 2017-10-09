@@ -48,9 +48,9 @@ struct GenerationMode
 
 /**
  * \brief Modify rooms positioning to add spacing between them.
- * \param Positions center positions of the rooms.
- * \param Rooms patterns corresponding to th rooms.
- * \param Spacing minimum space needed between pair of cells of two differents patterns.
+ * \param positions center positions of the rooms.
+ * \param rooms patterns corresponding to th rooms.
+ * \param spacing minimum space needed between pair of cells of two differents patterns.
  */
 void separate_rooms(
     std::vector<std::pair<int, int>>& positions,

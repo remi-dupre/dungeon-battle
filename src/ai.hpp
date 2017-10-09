@@ -1,5 +1,5 @@
 /**
-* \file AI.hpp
+* \file ai.hpp
 * \brief Decide of the action of the monster.
 */
 
@@ -7,6 +7,7 @@
 
 #include <cassert>
 #include <cmath>
+#include <limits>
 #include <map>
 #include <memory>
 #include <queue>
