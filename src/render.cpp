@@ -27,9 +27,9 @@ void Renderer::drawMap(const Map& map)
     map_vertices.clear();
     map_vertices.reserve((max_corner.x - min_corner.x) * (max_corner.y - min_corner.y) * 4);
 
-    for (int x = min_corner.x; x < max_corner.x; x++)
+    for (int x = std::max(min_corner.x, 0); x < std::min(max_corner.x, map_w); x++)
     {
-        for (int y = min_corner.y; y < max_corner.y; y++)
+        for (int y = std::max(min_corner.y, 0); y < std::min(max_corner.y, map_h); y++)
         {
             CellType cell = map.cellAt(x, y);
 

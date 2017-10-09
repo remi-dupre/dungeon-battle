@@ -25,11 +25,25 @@ enum class Direction
 
 namespace std
 {
+    /**
+     * \brief Specialisation of std::less for sf::Vector2i
+     */
+    template<> struct less<sf::Vector2i>
+    {
+        bool operator() (const sf::Vector2i& a, const sf::Vector2i& b) const
+       {
+           return a.x < b.x || (a.x == b.x && a.y < b.y);
+       }
+    };
+
+    /**
+     * \brief Specialisation of hash struct for sf::Vector2i
+     */
     template<> struct hash<sf::Vector2i>
     {
         size_t operator()(const sf::Vector2i& v) const
         {
-            return 349 * v.x + 547 * v.y;
+            return 73856093 * v.x ^ 83492791 * v.y;
         }
     };
 

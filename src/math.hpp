@@ -3,6 +3,8 @@
  * \brief Helper math functions.
  */
 
+#pragma once
+
 #include <cmath>
 
 #include <SFML/System/Vector2.hpp>
@@ -186,15 +188,4 @@ namespace math
 
 
     #include "math.inl"
-}
-
-namespace std
-{
-    template<> struct less<sf::Vector2i>
-    {
-        bool operator() (const sf::Vector2i& a, const sf::Vector2i& b) const
-       {
-           return a.x < b.x || (a.x == b.x && a.y < b.y);
-       }
-    };
 }

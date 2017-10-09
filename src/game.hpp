@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include <cmath>
 #include <map>
 #include <memory>
 #include <random>
@@ -21,7 +22,6 @@
 #include "rand.hpp"
 #include "render.hpp"
 #include "utility.hpp"
-
 
 
 /**
