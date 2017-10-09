@@ -12,7 +12,9 @@ Entity::Entity(EntityType type_, Interaction interaction_, sf::Vector2i position
     type(type_),
     interaction(interaction_),
     position(position_),
-    orientation(orientation_)
+    orientation(orientation_),
+    moving(false),
+    attacking(false)
 {}
 
 EntityType Entity::getType() const
