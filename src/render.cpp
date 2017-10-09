@@ -40,18 +40,17 @@ void Renderer::drawEntities(const std::vector<std::shared_ptr<Entity>>& entities
 
     for (const auto& entity : entities)
     {
-        sf::Vector2f p = {static_cast<float>(entity->getPosition().x),
-                          static_cast<float>(entity->getPosition().y)};
+        sf::Vector2f p = tile_size * static_cast<sf::Vector2f>(entity->getPosition());
+        sf::Vector2f old_p = tile_size * static_cast<sf::Vector2f>(entity->getOldPosition());
 
-        sf::Vector2f old_p = {static_cast<float>(entity->getOldPosition().x),
-                              static_cast<float>(entity->getOldPosition().y)};
+        float frame = 0.f;
 
-        p = (1.f - frame_time) * p + frame_time * old_p;
-        p *= tile_size;
-
-        float frame  = std::floor(frame_time * 3.999f);
-        if (!entity->isMoving())
-            frame = 0.f;
+        // Interpolate the current position with the old one if the entity is moving
+        if (entity->isMoving())
+            p = (1.f - frame_time) * p + frame_time * old_p;
+        // Set the correct frame is the entity is doing something
+        if (entity->isMoving() || entity->isAttacking())
+            frame = std::floor(frame_time * 3.999f);
 
         sf::Vertex v1, v2, v3, v4;
 

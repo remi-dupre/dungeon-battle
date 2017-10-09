@@ -87,14 +87,34 @@ public:
      */
     void setOrientation(Direction orientation);
 
+    /**
+     * \brief Return the position at the previous move of the entity
+     */
     sf::Vector2i getOldPosition();
 
-    void setOldPosition(sf::Vector2i position);
-
-    void setMoving(bool moving);
-
+    /**
+     * \brief Return true if the entity is currently moving
+     */
     bool isMoving();
 
+    /**
+     * \brief Set if the entity is currently moving
+     */
+    void setMoving(bool moving);
+
+    /**
+     * \brief Return true if the entity is currently attacking
+     */
+    bool isAttacking();
+
+    /**
+     * \brief Set if the entity is currently attacking
+     */
+    void setAttacking(bool attacking);
+
+    /**
+     * \brief Return the zIndex of the entity
+     */
     int zIndex();
 
 protected:
@@ -104,8 +124,9 @@ protected:
     sf::Vector2i position; ///< The position of the entity
     Direction orientation; ///< The orientation of the entity
 
+    sf::Vector2i old_position; ///< The position of the entity at the previous turn
     bool moving; ///< Tells whether the entity is currently moving or not
-    sf::Vector2i old_position; ///< The old position of the entity
+    bool attacking; ///< Tells whether the entity is currently attacking or not
 };
 
 
