@@ -28,7 +28,7 @@ void thereisaobstacle(
 Action bfs_monster(const Character& entity, const std::vector<std::shared_ptr<Entity>>& entities, const Map& map)
 {
     sf::Vector2i startposition = entity.getPosition();
-    int sight = 6; //entity.getSightRadius();
+    int sight = 5; //entity.getSightRadius();
 
     sf::Vector2i hero_postion;
     if (has_hero(entities)) hero_postion = get_hero_position(entities);
@@ -50,8 +50,12 @@ Action bfs_monster(const Character& entity, const std::vector<std::shared_ptr<En
         {{0,-1} , Direction::Up},
         {{0,1}, Direction::Down}};
 
-    int save_min_dist = std::numeric_limits<int>::max();
+    int save_min_dist = math::distance(startposition,hero_postion);
     Action save_action = Action();
+
+    if (math::distance(startposition,hero_postion) >= sight)
+    // Le monstre est trop loin du héros pour le voir.
+        return Action();
 
     for(auto ori : dir)
     {
@@ -76,6 +80,12 @@ Action bfs_monster(const Character& entity, const std::vector<std::shared_ptr<En
         std::tie(curentposition,depth, ret) = next_cells.front();
         next_cells.pop();
 
+        if (math::distance(curentposition,hero_postion) < save_min_dist)
+        {
+            save_min_dist = math::distance(curentposition,hero_postion);
+            save_action = ret;
+        }
+
         for(auto ori : dir)
         {
             sf::Vector2i position = curentposition + ori;
@@ -85,11 +95,6 @@ Action bfs_monster(const Character& entity, const std::vector<std::shared_ptr<En
                 && (!cell_seen(seen,position, startposition, sight)))
             {
                 next_cells.push(std::make_tuple(position,depth+1,ret));
-                if (math::distance(position,hero_postion) < save_min_dist)
-                {
-                    save_min_dist = math::distance(position,hero_postion);
-                    save_action = ret;
-                }
             }
         }
 
