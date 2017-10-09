@@ -1,15 +1,34 @@
 #include "ai.hpp"
 
+
 bool cell_seen(std::vector<std::vector<bool>> &seen, sf::Vector2i position, sf::Vector2i startposition, int sight){
     bool test = seen[position.x + sight - startposition.x][position.y + sight - startposition.y];
     seen[position.x + sight - startposition.x][position.y + sight - startposition.y] = true;
     return test;
 }
 
+
+void thereisaobstacle(
+    const std::vector<std::shared_ptr<Entity>>& entities,
+    std::vector<std::vector<bool>> &seen,
+    sf::Vector2i startposition,
+    int sight)
+{
+    for(std::shared_ptr<Entity> entity : entities)
+    {
+        sf::Vector2i position = entity->getPosition();
+        if((std::abs(position.x - startposition.x) <= sight)
+            && (std::abs(position.y-startposition.y)<= sight)){
+            cell_seen(seen, position, startposition,sight);
+        }
+    }
+}
+
+
 Action bfs_monster(const Character& entity, const std::vector<std::shared_ptr<Entity>>& entities, const Map& map)
 {
     sf::Vector2i startposition = entity.getPosition();
-    int sight = 5; //entity.getSightRadius();
+    int sight = 6; //entity.getSightRadius();
 
     sf::Vector2i hero_postion;
     if (has_hero(entities)) hero_postion = get_hero_position(entities);
@@ -19,6 +38,8 @@ Action bfs_monster(const Character& entity, const std::vector<std::shared_ptr<En
     std::vector<std::vector<bool>> seen(sightperimeter, std::vector<bool>(sightperimeter,false) );
 
     sf::Vector2i curentposition = startposition;
+
+    thereisaobstacle(entities,seen,startposition,sight);
 
     std::queue<std::tuple<sf::Vector2i,int,Action>> next_cells;
 
@@ -39,8 +60,11 @@ Action bfs_monster(const Character& entity, const std::vector<std::shared_ptr<En
                 Action ret(ActionType::Attack, dirtoact[ori]);
                 return ret;
             }
-            Action ret(ActionType::Move, dirtoact[ori]);
-            next_cells.push(std::make_tuple(position,1,ret));
+            else if (!cell_seen(seen,position, startposition, sight))
+            {
+                Action ret(ActionType::Move, dirtoact[ori]);
+                next_cells.push(std::make_tuple(position,1,ret));
+            }
         }
     }
 
@@ -53,10 +77,11 @@ Action bfs_monster(const Character& entity, const std::vector<std::shared_ptr<En
         for(auto ori : dir)
         {  
             sf::Vector2i position = curentposition + ori;
-            if ( (map.cellAt(position.x,position.y)==CellType::Floor)&&
-                (depth < sight)&&
-                (!cell_seen(seen,position, startposition, sight))){
-                if (position == hero_postion)return ret;
+            if (position == hero_postion) return ret;
+            if ((map.cellAt(position.x,position.y) == CellType::Floor)
+                && (depth < sight)
+                && (!cell_seen(seen,position, startposition, sight)))
+            {
                 next_cells.push(std::make_tuple(position,depth+1,ret));
             }
         }
