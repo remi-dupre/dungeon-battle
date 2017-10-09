@@ -9,17 +9,27 @@ Renderer::Renderer() :
     entities_tileset.loadFromFile("data/entities.png");
 }
 
+void Renderer::setViewCenter(sf::Vector2f center)
+{
+    view.setCenter(tile_size * center);
+}
+
 void Renderer::drawMap(const Map& map)
 {
     int map_w = map.getWidth();
     int map_h = map.getHeight();
 
-    map_vertices.clear();
-    map_vertices.reserve(map_w * map_h * 4);
+    sf::Vector2i min_corner =
+        static_cast<sf::Vector2i>(math::floor((view.getCenter() - 0.5f * view.getSize()) / tile_size));
+    sf::Vector2i max_corner =
+        static_cast<sf::Vector2i>(math::ceil((view.getCenter() + 0.5f * view.getSize()) / tile_size));
 
-    for (int x = 0; x < map_w; x++)
+    map_vertices.clear();
+    map_vertices.reserve((max_corner.x - min_corner.x) * (max_corner.y - min_corner.y) * 4);
+
+    for (int x = min_corner.x; x < max_corner.x; x++)
     {
-        for (int y = 0; y < map_h; y++)
+        for (int y = min_corner.y; y < max_corner.y; y++)
         {
             CellType cell = map.cellAt(x, y);
 
@@ -27,8 +37,6 @@ void Renderer::drawMap(const Map& map)
         }
     }
 }
-
-#include <iostream>
 
 void Renderer::drawEntities(const std::vector<std::shared_ptr<Entity>>& entities, float frame_time)
 {
@@ -53,11 +61,6 @@ void Renderer::drawEntities(const std::vector<std::shared_ptr<Entity>>& entities
             frame = std::floor(frame_time * 3.999f);
 
         sf::Vertex v1, v2, v3, v4;
-
-        v1.position = {p.x, p.y};
-        v2.position = {p.x, p.y + tile_size};
-        v3.position = {p.x + tile_size, p.y};
-        v4.position = {p.x + tile_size, p.y + tile_size};
 
         if (entity->getType() == EntityType::Hero)
         {
@@ -112,12 +115,14 @@ void Renderer::drawEntities(const std::vector<std::shared_ptr<Entity>>& entities
             continue;
         }
 
+        v1.position = {p.x, p.y};
+        v2.position = {p.x, p.y + tile_size};
+        v3.position = {p.x + tile_size, p.y};
+        v4.position = {p.x + tile_size, p.y + tile_size};
+
         sf::Color slime_color = {static_cast<sf::Uint8>(Random::uniform_int(0, 255)),
                                  static_cast<sf::Uint8>(Random::uniform_int(0, 255)),
                                  static_cast<sf::Uint8>(Random::uniform_int(0, 255))};
-
-        // if (!entity->isMoving())
-        //     frame = 0.f;
 
         switch (entity->getType())
         {
@@ -157,11 +162,6 @@ void Renderer::drawEntities(const std::vector<std::shared_ptr<Entity>>& entities
         entities_vertices[0].second.push_back(v3);
         entities_vertices[0].second.push_back(v4);
     }
-}
-
-void Renderer::setViewCenter(sf::Vector2f center)
-{
-    view.setCenter(tile_size * center);
 }
 
 void Renderer::display(sf::RenderTarget& target)

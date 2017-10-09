@@ -89,3 +89,15 @@ inline constexpr sf::Vector3<T> normalize(const sf::Vector3<T> a)
         return a;
     return a / l;
 }
+
+template <typename T>
+inline constexpr sf::Vector2<T> floor(const sf::Vector2<T> a)
+{
+    return {std::floor(a.x), std::floor(a.y)};
+}
+
+template <typename T>
+inline constexpr sf::Vector2<T> ceil(const sf::Vector2<T> a)
+{
+    return {std::ceil(a.x), std::ceil(a.y)};
+}

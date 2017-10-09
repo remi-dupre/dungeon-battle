@@ -12,6 +12,7 @@
 
 #include "config.hpp"
 #include "map.hpp"
+#include "math.hpp"
 #include "rand.hpp"
 #include "utility.hpp"
 
@@ -36,8 +37,15 @@ public:
     Renderer(const Renderer&) = delete;
 
     /**
+     * \brief Set the view center
+     */
+    void setViewCenter(sf::Vector2f center);
+
+    /**
      * \brief Draw the map
      * \param map The map to draw
+     * \warning In order to draw correctly the map,
+     * this function MUST be called AFTER `setViewCenter`
      *
      * This function draws the map.
      */
@@ -50,11 +58,6 @@ public:
      * This function draws the entities
      */
     void drawEntities(const std::vector<std::shared_ptr<Entity>>& entities, float frame_time);
-
-    /**
-     * \brief Set the view center
-     */
-    void setViewCenter(sf::Vector2f center);
 
     /**
      * \brief Display on the window the objects drawn before

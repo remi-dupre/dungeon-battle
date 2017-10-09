@@ -168,6 +168,23 @@ namespace math
     template <typename T>
     constexpr sf::Vector3<T> normalize(const sf::Vector3<T> a);
 
+    /**
+     * \brief Round the coordinates of a 2D vector
+     * \param a A 2D vector
+     * \return The vector with coordinates rounded down
+     */
+    template <typename T>
+    constexpr sf::Vector2<T> floor(const sf::Vector2<T> a);
+
+    /**
+     * \brief Round up the coordinates of a 2D vector
+     * \param a A 2D vector
+     * \return The vector with coordinates rounded up
+     */
+    template <typename T>
+    constexpr sf::Vector2<T> ceil(const sf::Vector2<T> a);
+
+
     #include "math.inl"
 }
 

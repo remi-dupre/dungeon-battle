@@ -205,9 +205,6 @@ void Game::update()
 
 void Game::display()
 {
-    renderer.drawMap(map);
-    renderer.drawEntities(entities, std::max(next_move, 0.f) * config.animation_speed);
-
     auto hero = std::find_if(entities.begin(), entities.end(),
         [](const std::shared_ptr<Entity>& e)
         {
@@ -224,6 +221,9 @@ void Game::display()
         }
         renderer.setViewCenter(view_center);
     }
+
+    renderer.drawMap(map);
+    renderer.drawEntities(entities, std::max(next_move, 0.f) * config.animation_speed);
 
     window.clear();
     renderer.display(window);
@@ -271,7 +271,10 @@ std::vector<std::shared_ptr<Entity>> Game::getEntitiesAroundCell(sf::Vector2i po
         std::back_inserter(entities_on_cell),
         [&position, d](const std::shared_ptr<Entity>& e) -> bool {
             sf::Vector2i p = e->getPosition();
-            return std::max(p.x, position.x) - std::min(p.x, position.x) + std::max(p.y, position.y) - std::min(p.y, position.y) <= d;
+            return (std::max(p.x, position.x) -
+                    std::min(p.x, position.x) +
+                    std::max(p.y, position.y) -
+                    std::min(p.y, position.y)) <= d;
         }
     );
 
