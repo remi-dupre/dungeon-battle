@@ -53,9 +53,9 @@ Action bfs_monster(const Character& entity, const std::vector<std::shared_ptr<En
     int save_min_dist = math::distance(startposition,hero_postion);
     Action save_action = Action();
 
-    /*if (math::distance(startposition,hero_postion) >= sight) 
+    if (math::distance(startposition,hero_postion) >= sight) 
     // Le monstre est trop loin du héros pour le voir.
-        return Action();*/
+        return Action();
 
     for(auto ori : dir)
     {
