@@ -95,6 +95,8 @@ public:
 
     bool isMoving();
 
+    int zIndex();
+
 protected:
 
     const EntityType type; ///< The type of the entity

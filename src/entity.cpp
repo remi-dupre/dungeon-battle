@@ -68,6 +68,23 @@ bool Entity::isMoving()
 }
 
 
+int Entity::zIndex()
+{
+    switch(type)
+    {
+    case EntityType::None:
+        return 0;
+    case EntityType::Hero:
+        return 1;
+    case EntityType::Monster:
+        return 1;
+    case EntityType::Stairs:
+        return 0;
+    }
+}
+
+
+
 Character::Character(EntityType type_,
                      Interaction interaction_,
                      sf::Vector2i position_,
