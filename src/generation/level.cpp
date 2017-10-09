@@ -6,52 +6,75 @@ void separate_rooms(
     const std::vector<Pattern>& rooms,
     int spacing)
 {
+    assert(spacing >= 0);
     assert(positions.size() == rooms.size());
 
     // The direction each rooms will be send to
     int nb_rooms = positions.size();
-    std::vector<std::pair<int, int>> direction(nb_rooms, {0, 0});
-    for (int i1 = 0 ; i1 < nb_rooms ; i1++)
+
+    // Preprocess the surrounding of rooms to reduce distance calculations
+    std::vector<Pattern> frontiers(nb_rooms);
+    for (int i_room = 0 ; i_room < nb_rooms ; i_room++)
+        frontiers[i_room] = surrounding(rooms[i_room]);
+
+    bool go_on = true; // Set to true while we changed something
+    while(go_on)
     {
-        for (int i2 = 0 ; i2 < nb_rooms ; i2++)
+        go_on = false;
+        std::vector<std::pair<int, int>> direction(nb_rooms, {0, 0});
+
+        for (int i1 = 0 ; i1 < nb_rooms ; i1++)
         {
-            if (i1 == i2)
-                break;
-
-            // Takes a distinct pair of rooms.
-            // Send them in a direction if they are not spaced enough.
-            if (!spaced(positions[i1], rooms[i1], positions[i2], rooms[i2], spacing))
+            for (int i2 = 0 ; i2 < i1 ; i2++)
             {
-                if (positions[i1].first > positions[i2].first)
-                    direction[i1] += {1, 0};
-
-                if (positions[i1].second > positions[i2].second)
-                    direction[i1] += {0, 1};
-
-                if (positions[i1] == positions[i2])
+                // Takes a distinct pair of rooms.
+                // Send them in a direction if they are not spaced enough.
+                bool well_spaced =
+                    superposed(positions[i1], rooms[i1], positions[i2], rooms[i2])
+                    || !spaced(positions[i1], frontiers[i1], positions[i2], frontiers[i2], spacing);
+                if (well_spaced)
                 {
-                    // Moves room2 in a random direction.
-                    int delta_x = Random::uniform_int(0, 1);
-                    int delta_y = Random::uniform_int(0, 1);
-                    direction[i1] += {delta_x, delta_y};
+                    go_on = true;
+
+                    if (positions[i1].first > positions[i2].first)
+                    {
+                        int shift = std::max(1.f, (positions[i1].first - positions[i2].first + spacing) / 3.f);
+                        direction[i1] += {shift, 0};
+                    }
+
+                    if (positions[i1].second > positions[i2].second)
+                    {
+                        int shift = std::max(1.f, (positions[i1].second - positions[i2].second + spacing) / 3.f);
+                        direction[i1] += {0, shift};
+                    }
+
+                    if (positions[i1].first < positions[i2].first)
+                    {
+                        int shift = std::max(1.f, (positions[i2].first - positions[i1].first + spacing) / 3.f);
+                        direction[i2] += {shift, 0};
+                    }
+
+                    if (positions[i1].second < positions[i2].second)
+                    {
+                        int shift = std::max(1.f, (positions[i2].second - positions[i1].second + spacing) / 3.f);
+                        direction[i2] += {0, shift};
+                    }
+
+                    if (positions[i1] == positions[i2])
+                    {
+                        // Moves room2 in a random direction.
+                        int delta_x = Random::uniform_int(0, 1);
+                        int delta_y = Random::uniform_int(0, 1);
+                        direction[i1] += {2*delta_x-1, 2*delta_y-1};
+                            go_on = true;
+                    }
                 }
             }
         }
-    }
 
-    // Apply the position modifiers
-    for (int i_room = 0 ; i_room < nb_rooms ; i_room++)
-        positions[i_room] += direction[i_room];
-
-    // Check if the spacing was already fixed.
-    // If it isn't recursively calls this function.
-    for (int i1 = 0 ; i1 < nb_rooms ; i1++)
-    {
-        if (direction[i1] != std::make_pair(0, 0))
-        {
-            separate_rooms(positions, rooms, spacing);
-            return;
-        }
+        // Apply the position modifiers
+        for (int i_room = 0 ; i_room < nb_rooms ; i_room++)
+            positions[i_room] += direction[i_room];
     }
 }
 
@@ -121,7 +144,7 @@ Level generate(const GenerationMode &mode)
                 break;
         }
 
-        room_monsters[i_room] = place_monsters(patterns[i_room], mode.monster_load);
+        add_monsters(patterns[i_room], room_monsters[i_room], mode.monster_load);
     }
 
     // Places rooms in a non-linear way

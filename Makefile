@@ -67,9 +67,9 @@ rebuild: release
 # Exectutes tests using cxxtest
 test: tests/test.cpp
 	@echo "=== Runing unit tests"
-	@$(CXX) -o tests/test tests/test.cpp $(CFLAGS) $(DFLAGS) $(WFLAGS) && ./tests/test
+	@$(CXX) -o tests/test tests/test.cpp $(CFLAGS) $(DFLAGS) $(WFLAGS) && ./tests/test -v
 	@echo -e "\n=== Runing linter"
-	cppcheck --enable=all --inconclusive $(SRC_DIR) 1> /dev/null
+	cppcheck --enable=all --suppressions-list=.cppignore --inconclusive $(SRC_DIR) 1> /dev/null
 
 tests/test.cpp: tests/test.hpp
 	cxxtestgen --error-printer -o tests/test.cpp tests/test.hpp
@@ -80,7 +80,7 @@ doc:
 
 # Generate linter's report
 cppcheck-html:
-	cppcheck --enable=all --inconclusive --xml $(SRC_DIR) 2> tmp_cppcheck.xml
+	cppcheck --enable=all --suppressions-list=.cppignore --inconclusive --xml $(SRC_DIR) 2> tmp_cppcheck.xml
 	cppcheck-htmlreport --file=tmp_cppcheck.xml --report-dir=$(CHECK_DIR) --source-dir=.
 	@rm tmp_cppcheck.xml
 

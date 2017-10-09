@@ -42,6 +42,24 @@ int pattern_max_y(const Pattern& pattern)
 }
 
 
+Pattern surrounding(const Pattern& pattern)
+{
+    Pattern frontier;
+    for (const auto& cell : pattern)
+    {
+        bool outside =
+            pattern.find(cell + std::make_pair(1, 0)) == end(pattern)
+         || pattern.find(cell - std::make_pair(1, 0)) == end(pattern)
+         || pattern.find(cell + std::make_pair(0, 1)) == end(pattern)
+         || pattern.find(cell - std::make_pair(0, 1)) == end(pattern);
+
+        if (outside)
+            frontier.insert(cell);
+    }
+    return frontier;
+}
+
+
 bool spaced(
     std::pair<int, int> position1, const Pattern& pattern1,
     std::pair<int, int> position2, const Pattern& pattern2,

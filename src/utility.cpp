@@ -12,3 +12,7 @@ std::pair<int, int> std::operator -(const std::pair<int, int>& x, const std::pai
 void std::operator +=(std::pair<int, int>& x, const std::pair<int, int>& y) {
     x = x + y;
 }
+
+void std::operator -=(std::pair<int, int>& x, const std::pair<int, int>& y) {
+    x = x - y;
+}

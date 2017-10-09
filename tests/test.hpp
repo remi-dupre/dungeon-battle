@@ -96,7 +96,7 @@ public:
 
 
 // Number of maps to generate for a test
-constexpr int NB_MAP_TEST = 50;
+constexpr int NB_MAP_TEST = 1000;
 
 constexpr int MIN_ROOMS = 2;
 constexpr int MAX_ROOMS = 15;

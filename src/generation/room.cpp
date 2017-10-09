@@ -125,7 +125,7 @@ Pattern generate_banana(int avg_side)
 }
 
 
-std::vector<std::shared_ptr<Entity>> place_monsters(const Pattern& room, float load)
+void add_monsters(const Pattern& room, std::vector<std::shared_ptr<Entity>>& entities, float load)
 {
     assert(load >= 0.f);
     assert(load <= 100.f);
@@ -136,14 +136,12 @@ std::vector<std::shared_ptr<Entity>> place_monsters(const Pattern& room, float l
     while (chosen_cells.size() < nb_monsters)
         chosen_cells.insert(Random::uniform_int(0, room.size()-1));
 
-    std::vector<std::shared_ptr<Entity>> monsters;
-
     int index = 0;
     for (auto& cell : room)
     {
         if (chosen_cells.find(index) != end(chosen_cells))
         {
-            monsters.push_back(std::make_shared<Character>(
+            entities.push_back(std::make_shared<Character>(
                 EntityType::Monster,
                 Interaction::None,
                 sf::Vector2i(cell.first, cell.second),
@@ -152,8 +150,6 @@ std::vector<std::shared_ptr<Entity>> place_monsters(const Pattern& room, float l
         }
         index++;
     }
-
-    return monsters;
 }
 
 

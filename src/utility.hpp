@@ -71,4 +71,11 @@ namespace std
      * \param y A pair of int to add to x.
      */
     void operator +=(std::pair<int, int>& x, const std::pair<int, int>& y);
+
+    /**
+     * \brief Remove a pair from another.
+     * \param x A pair of int that will be decremented.
+     * \param y A pair of int to remove from x.
+     */
+    void operator -=(std::pair<int, int>& x, const std::pair<int, int>& y);
 }
