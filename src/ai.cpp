@@ -41,7 +41,7 @@ Action bfs_monster(const Character& monster, const std::vector<std::shared_ptr<E
     //Initialize the minimization of the euclidian distance to the hero
     int save_min_dist = math::distance(startposition,heropostion);
     Action save_action = Action();
-    if (save_min_dist >= sight) // Le monstre est trop loin du héros pour le voir.
+    if (save_min_dist >= sight) // The monster is to far from the hero.
         return Action();
 
 
@@ -62,6 +62,7 @@ Action bfs_monster(const Character& monster, const std::vector<std::shared_ptr<E
         {{1,0}, Direction::Right},
         {{0,-1} , Direction::Up},
         {{0,1}, Direction::Down}};
+
 
 
     //Adding the first cells in the queue.
@@ -85,7 +86,7 @@ Action bfs_monster(const Character& monster, const std::vector<std::shared_ptr<E
 
     // Dealing with all the cells in the queue.
     while(!next_cells.empty())
-    {   
+    {
         int depth; Action ret;
         std::tie(curentposition,depth, ret) = next_cells.front();
         next_cells.pop(); // Take a cell on the pile
@@ -100,7 +101,7 @@ Action bfs_monster(const Character& monster, const std::vector<std::shared_ptr<E
         
         // See it's closer cells
         for(auto ori : dir)
-        {  
+        {
             sf::Vector2i position = curentposition + ori;
             if (position == heropostion) // Have we fin the hero ?
                 // Then do the first move to go toward him.
