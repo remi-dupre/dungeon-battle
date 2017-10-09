@@ -99,7 +99,7 @@ Map map_of_pattern(const Pattern& pattern)
     }
 
     // Function to check wether a cell adjacent to (x, y) is a floor
-    auto hasFloorNext = [height, width, map](int x, int y)
+    auto hasFloorNext = [height, width, &map](int x, int y)
     {
         for (int i = x-1 ; i <= x+1 ; i++)
             for (int j = y-1 ; j <= y+1 ; j++)
