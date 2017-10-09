@@ -79,6 +79,69 @@ void separate_rooms(
 }
 
 
+std::vector<std::pair<size_t, size_t>> covering_paths(
+    const std::vector<std::pair<int, int>>& positions,
+    const std::vector<Pattern>& rooms)
+{
+    assert(positions.size() == rooms.size());
+
+    size_t nb_rooms = rooms.size();
+
+    // Resulting graph
+    std::vector<std::pair<size_t, size_t>> edges;
+
+    // Create a union-find representing connections
+    std::vector<size_t> link_uf(nb_rooms);
+    std::vector<size_t> size_uf(nb_rooms, 1);
+    for (size_t i = 0 ; i < nb_rooms ; i++)
+        link_uf[i] = i;
+
+    // Access function for the union find
+    std::function<size_t(size_t)> comp_repr = [&comp_repr, &link_uf] (size_t i_room) {
+        if (link_uf[i_room] == i_room)
+            return i_room;
+
+        size_t repr = comp_repr(link_uf[i_room]);
+        link_uf[i_room] = repr;
+        return repr;
+    };
+
+    // Create vertices in an increasing order
+    std::priority_queue<
+        std::tuple<int, size_t, size_t>, // dist, i, j
+        std::vector<std::tuple<int, size_t, size_t>>,
+        std::greater<std::tuple<int, size_t, size_t>>> candidates;
+
+    for (size_t i = 0 ; i < nb_rooms ; i++)
+        for (size_t j = 0 ; j < i ; j++)
+            candidates.push(std::make_tuple(
+                distance(positions[i], rooms[i], positions[j], rooms[j]),
+                i, j
+            ));
+
+    // Waits for rooms to be all linked
+    while (size_uf[comp_repr(0)] < nb_rooms)
+    {
+        int dist;
+        size_t l, r;
+        std::tie(dist, l, r) = candidates.top();
+
+        edges.push_back({l, r});
+
+        if (comp_repr(l) != comp_repr(r))
+        {
+            // Make union of two components
+            size_uf[comp_repr(l)] = size_uf[comp_repr(l)] + size_uf[comp_repr(r)];
+            link_uf[comp_repr(r)] = comp_repr(l);
+        }
+
+        candidates.pop();
+    }
+
+    return edges;
+}
+
+
 Map map_of_pattern(const Pattern& pattern)
 {
     // The coordinates are from 0 to pattern_max_?
@@ -152,38 +215,27 @@ Level generate(const GenerationMode &mode)
         positions.push_back({0, 0});
     separate_rooms(positions, patterns, mode.room_margin);
 
-    // Position rooms
-    // int map_right = 0; // right position of the end of last room
-    // for (int i_room = 0 ; i_room < mode.nb_rooms ; i_room++)
-    // {
-    //     int room_left = pattern_min_x(patterns[i_room]);
-    //     int room_right = pattern_max_x(patterns[i_room]);
-    //     int pos_x = 1 + mode.room_margin + map_right - room_left;
-    //
-    //     map_right += 1 + mode.room_margin + (room_right - room_left);
-    //     positions.push_back({pos_x, Random::uniform_int(-25, 25)});
-    // }
-
-
     std::vector<std::shared_ptr<Entity>> entities = merged_entities(positions, room_monsters);
 
     // Add ways between rooms
-    for (int i_room = 1 ; i_room < mode.nb_rooms ; i_room++)
+    auto edges = covering_paths(positions, patterns);
+    for (auto edge : edges)
     {
-        auto hall_start = positions[i_room-1];
-        auto hall_end = positions[i_room];
+        auto hall_start = positions[edge.first];
+        auto hall_end = positions[edge.second];
+
         switch (mode.type)
         {
             case LevelType::Cave:
                 patterns.push_back(generate_hallway(hall_start, hall_end));
-                positions.push_back(positions[i_room-1]);
+                positions.push_back(positions[edge.first]);
                 cavestyle_patch(patterns.back(), patterns.back().size());
                 break;
 
             case LevelType::Flat:
             default:
                 patterns.push_back(generate_hallway(hall_start, hall_end));
-                positions.push_back(positions[i_room-1]);
+                positions.push_back(positions[edge.first]);
                 break;
         }
     }
