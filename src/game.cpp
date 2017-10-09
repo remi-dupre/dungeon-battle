@@ -72,8 +72,6 @@ void Game::run()
 {
     sf::Clock timer;
 
-    float time_since_last_update = 0.0f;
-
     while (window.isOpen())
     {
         sf::Event event;
@@ -84,9 +82,7 @@ void Game::run()
                 window.close();
         }
 
-        time_since_last_update = timer.restart().asSeconds();
-
-        next_move -= time_since_last_update;
+        next_move -= timer.restart().asSeconds();
         if (next_move <= 0.f)
         {
             update();
@@ -98,7 +94,7 @@ void Game::run()
 
 void Game::update()
 {
-    bool monster_moving = false;
+    bool monster_acting = false;
 
     for (auto& entity : entities)
     {
@@ -145,14 +141,14 @@ void Game::update()
                     auto entities_on_target = getEntitiesOnCell(position);
                     auto entity_on_target =
                         std::find_if(
-                                     entities_on_target.begin(),
-                                     entities_on_target.end(),
-                                     [](const std::shared_ptr<Entity> e) -> bool
-                                     {
-                                         EntityType t = e->getType();
-                                         return t == EntityType::Hero || t == EntityType::Monster;
-                                     }
-                                     );
+                            entities_on_target.begin(),
+                            entities_on_target.end(),
+                            [](const std::shared_ptr<Entity> e) -> bool
+                            {
+                                EntityType t = e->getType();
+                                return t == EntityType::Hero || t == EntityType::Monster;
+                            }
+                    );
 
                     if(map.cellAt(position.x, position.y) == CellType::Wall)
                         perform_action = false;
@@ -169,12 +165,25 @@ void Game::update()
                 break;
             }
 
+            if (perform_action)
+            {
+                switch (action.type)
+                {
+                case ActionType::Move:
+                    entity->setMoving(true);
+                    break;
+                case ActionType::Attack:
+                    entity->setAttacking(true);
+                    break;
+                default:
+                    break;
+                }
+            }
 
             if (entity->getType() == EntityType::Hero)
             {
                 if (action.type != ActionType::None)
                 {
-                    entity->setMoving(true);
                     entity_turn = EntityType::Monster;
                     next_move = 1.f / config.animation_speed;
                 }
@@ -182,19 +191,18 @@ void Game::update()
             }
             else if (action.type != ActionType::None)
             {
-                entity->setMoving(true);
-                monster_moving = true;
+                monster_acting = true;
             }
         }
         else
         {
-            entity->setOldPosition(entity->getPosition());
             entity->setMoving(false);
+            entity->setAttacking(false);
         }
     }
 
     entity_turn = EntityType::Hero;
-    if (monster_moving) // No animation time for monsters if they do not move or attack
+    if (monster_acting) // No animation time for monsters if they do not move or attack
         next_move = 1.f / config.animation_speed;
 }
 
@@ -210,10 +218,13 @@ void Game::display()
         });
     if (hero != entities.end())
     {
-        float frac = std::max(next_move, 0.f) * config.animation_speed;
-        sf::Vector2f view_center = (1.f - frac) * static_cast<sf::Vector2f>((*hero)->getPosition())
-            + frac * static_cast<sf::Vector2f>((*hero)->getOldPosition());
-        renderer.setViewCenter(view_center);
+        if ((*hero)->isMoving())
+        {
+            float frac = std::max(next_move, 0.f) * config.animation_speed;
+            sf::Vector2f view_center = (1.f - frac) * static_cast<sf::Vector2f>((*hero)->getPosition())
+                + frac * static_cast<sf::Vector2f>((*hero)->getOldPosition());
+            renderer.setViewCenter(view_center);
+        }
     }
 
     window.clear();
