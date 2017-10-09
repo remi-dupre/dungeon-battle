@@ -11,6 +11,8 @@
 #include <vector>
 
 #include "../entity.hpp"
+#include "../utility.hpp"
+
 
 
 /**
@@ -46,6 +48,14 @@ int pattern_min_y(const Pattern& pattern);
  * \return The maximum of y coordinates
  */
 int pattern_max_y(const Pattern& pattern);
+
+
+/**
+ * \brief Returns a pattern containing the surrounding of a pattern
+ * \param pattern A filled pattern.
+ * \return A pattern only containing the frontier with the outside.
+ */
+Pattern surrounding(const Pattern& pattern);
 
 
 /**

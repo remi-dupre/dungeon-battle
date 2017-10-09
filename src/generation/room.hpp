@@ -73,10 +73,13 @@ Pattern generate_cave(int size);
 /**
  * \brief Creates monsters to place on the room.
  * \param room The pattern we want to place monsters on.
+ * \param entities The entities placed on the floor, it will be extended.
  * \param load Number of monsters per 100 units of space (must be < 100).
  * \return A vector containing monsters we want to add.
+ * \todo Don't place monster on occupied cells.
+ * \todo Implement a linear version.
  */
-std::vector<std::shared_ptr<Entity>> place_monsters(const Pattern& room, float load);
+void add_monsters(const Pattern& room, std::vector<std::shared_ptr<Entity>>& entities, float load);
 
 
 /**
