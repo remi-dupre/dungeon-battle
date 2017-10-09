@@ -26,22 +26,24 @@ enum class Direction
 namespace std
 {
     /**
-     * \brief Specialisation of std::less for sf::Vector2i
+     * \brief Specialisation of std::less for sf::Vector2<T>
      */
-    template<> struct less<sf::Vector2i>
+    template<typename T>
+    struct less<sf::Vector2<T>>
     {
-        bool operator() (const sf::Vector2i& a, const sf::Vector2i& b) const
+        bool operator() (const sf::Vector2<T>& a, const sf::Vector2<T>& b) const
        {
            return a.x < b.x || (a.x == b.x && a.y < b.y);
        }
     };
 
     /**
-     * \brief Specialisation of hash struct for sf::Vector2i
+     * \brief Specialisation of std::hash for sf::Vector2<T>
      */
-    template<> struct hash<sf::Vector2i>
+    template <typename T>
+    struct hash<sf::Vector2<T>>
     {
-        size_t operator()(const sf::Vector2i& v) const
+        size_t operator()(const sf::Vector2<T>& v) const
         {
             return 73856093 * v.x ^ 83492791 * v.y;
         }
