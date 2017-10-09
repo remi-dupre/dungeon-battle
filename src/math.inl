@@ -1,5 +1,5 @@
 template <typename T>
-inline constexpr T dots(const sf::Vector2<T> a, const sf::Vector2<T> b)
+inline constexpr T dot(const sf::Vector2<T> a, const sf::Vector2<T> b)
 {
     return a.x * b.x + a.y * b.y;
 }
@@ -23,13 +23,13 @@ inline constexpr sf::Vector3<T> hadamard(const sf::Vector3<T> a, const sf::Vecto
 }
 
 template <typename T>
-inline constexpr T cross(const sf::Vector2<T> a, const sf::Vector2<T> b);
+inline constexpr T cross(const sf::Vector2<T> a, const sf::Vector2<T> b)
 {
     return a.x * b.y - a.y * b.x;
 }
 
 template <typename T>
-inline constexpr sf::Vector3<T> cross(const sf::Vector3<T> a, const sf::Vector2<T> b);
+inline constexpr sf::Vector3<T> cross(const sf::Vector3<T> a, const sf::Vector2<T> b)
 {
     return sf::Vector3<T>(a.y * b.z - a.z * b.y,
                           a.z * b.x - a.x * b.z,

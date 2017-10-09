@@ -52,11 +52,6 @@ sf::Vector2i Entity::getOldPosition()
     return old_position;
 }
 
-void Entity::setOldPosition(sf::Vector2i position)
-{
-    old_position = position;
-}
-
 void Entity::setMoving(bool moving_)
 {
     moving = moving_;
@@ -67,6 +62,15 @@ bool Entity::isMoving()
     return moving;
 }
 
+void Entity::setAttacking(bool attacking_)
+{
+    attacking = attacking_;
+}
+
+bool Entity::isAttacking()
+{
+    return attacking;
+}
 
 int Entity::zIndex()
 {
@@ -80,9 +84,10 @@ int Entity::zIndex()
         return 1;
     case EntityType::Stairs:
         return 0;
+    default:
+        return 0;
     }
 }
-
 
 
 Character::Character(EntityType type_,
