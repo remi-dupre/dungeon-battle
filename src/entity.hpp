@@ -56,6 +56,11 @@ public:
     virtual ~Entity() = default;
 
     /**
+     * \brief Return the id of the entity
+     */
+    unsigned int getId() const;
+
+    /**
      * \brief Return the type of the entity
      */
     EntityType getType() const;
@@ -119,6 +124,7 @@ public:
 
 protected:
 
+    const unsigned int id; ///< The id of the entity
     const EntityType type; ///< The type of the entity
     const Interaction interaction; ///< The result of the interaction with the entity
     sf::Vector2i position; ///< The position of the entity

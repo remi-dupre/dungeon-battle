@@ -7,15 +7,21 @@
 #include "entity.hpp"
 #include "utility.hpp"
 
+unsigned int currentId = 0;
 
 Entity::Entity(EntityType type_, Interaction interaction_, sf::Vector2i position_, Direction orientation_) :
+    id(++currentId),
     type(type_),
     interaction(interaction_),
     position(position_),
-    orientation(orientation_),
-    moving(false),
-    attacking(false)
+    orientation(orientation_)
 {}
+
+
+unsigned int Entity::getId() const
+{
+    return id;
+}
 
 EntityType Entity::getType() const
 {
