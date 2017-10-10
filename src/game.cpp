@@ -42,10 +42,10 @@ void Game::init(const std::map<Option, std::string>& options)
     unsigned int baseHeroForce = 1;
     unsigned int baseMonsterForce = 1;
 
-    auto level = generate(gen_options);
+    Level level = generate(gen_options);
 
-    map = std::get<Map>(level);
-    entities = std::get<std::vector<std::shared_ptr<Entity>>>(level);
+    map = std::move(level.map);
+    entities = std::move(level.entities);
 
     auto entry_stairs = std::find_if(entities.begin(), entities.end(),
     [](const std::shared_ptr<Entity> e) -> bool

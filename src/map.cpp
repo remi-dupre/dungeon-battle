@@ -178,3 +178,11 @@ std::istream& operator>>(std::istream& stream, Map& map)
 
     return stream;
 }
+
+Map& Map::operator=(Map&& other)
+{
+    width = other.width;
+    height = other.height;
+    cells = std::move(other.cells);
+    return *this;
+}

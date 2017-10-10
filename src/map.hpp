@@ -25,7 +25,6 @@ enum class CellType
     Wall ///< A physical separation
 };
 
-
 /**
  * \brief Represents an entire level
  *
@@ -40,6 +39,11 @@ public:
      * \brief Create an empty map
      */
     explicit Map();
+
+    /**
+     * \brief Default move constructor
+     */
+    Map(Map&&) = default;
 
     /**
      * \brief Create a map full of empty cells
@@ -97,6 +101,8 @@ public:
      * \brief Check if there is a wall next to a cell
      */
     bool wallNext(sf::Vector2i coords) const;
+
+    Map& operator=(Map&& other);
 
 private:
 

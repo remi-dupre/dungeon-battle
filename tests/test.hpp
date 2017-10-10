@@ -135,9 +135,9 @@ public:
             Random::seed(seed);
             TS_TRACE("Seed : " + std::to_string(seed));
 
-            auto level = generate(gen_options);
-            auto& map = std::get<0>(level);
-            auto& entities = std::get<1>(level);
+            Level level = generate(gen_options);
+            Map map = std::move(level.map);
+            auto entities = std::move(level.entities);
 
             // Check that the stairs are placed on a floor
             for (auto& entity : entities)
