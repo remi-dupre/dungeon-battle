@@ -186,6 +186,16 @@ namespace math
     template <typename T>
     constexpr sf::Vector2<T> ceil(const sf::Vector2<T> a);
 
+    /**
+     * \brief Compute the distance un norm 1 between two 2D vectors
+     * \param a The first 2D vector
+     * \param b The second 2D vector
+     * \return The distance un norm 1 between *a* and *b*
+     *
+     * This function computes the distance between two `sf::Vector2`.
+     */
+    template <typename T>
+    constexpr T distance_1(const sf::Vector2<T> a, const sf::Vector2<T> b);
 
     #include "math.inl"
 }

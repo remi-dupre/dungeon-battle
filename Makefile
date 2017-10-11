@@ -67,7 +67,7 @@ rebuild: release
 # Exectutes tests using cxxtest
 test: tests/test.cpp
 	@echo "=== Runing unit tests"
-	@$(CXX) -o tests/test tests/test.cpp $(CFLAGS) $(DFLAGS) $(WFLAGS) && ./tests/test -v
+	@$(CXX) -o tests/test tests/test.cpp $(CFLAGS) $(WFLAGS) && ./tests/test -v
 	@echo -e "\n=== Runing linter"
 	cppcheck --enable=all --suppressions-list=.cppignore --inconclusive $(SRC_DIR) 1> /dev/null
 

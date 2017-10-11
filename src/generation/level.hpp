@@ -20,7 +20,11 @@
 /**
  * \brief A level, with the map and the entities
  */
-typedef std::pair<Map, std::vector<std::shared_ptr<Entity>>> Level;
+struct Level
+{
+    Map map;
+    std::vector<std::shared_ptr<Entity>> entities;
+};
 
 /**
  * \brief Describe the general design of the level.

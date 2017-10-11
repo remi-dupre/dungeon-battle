@@ -273,5 +273,5 @@ Level generate(const GenerationMode &mode)
     cells = normalized_pattern(cells, entities);
     Map map = map_of_pattern(cells);
 
-    return {map, entities};
+    return {std::move(map), std::move(entities)};
 }
