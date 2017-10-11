@@ -101,3 +101,9 @@ inline constexpr sf::Vector2<T> ceil(const sf::Vector2<T> a)
 {
     return {std::ceil(a.x), std::ceil(a.y)};
 }
+
+template <typename T>
+inline constexpr T distance_1(const sf::Vector2<T> a,const sf::Vector2<T> b)
+{
+    return std::abs(a.x - b.x) + std::abs(a.y - b.y);
+}

@@ -1,6 +1,7 @@
 #include "ai.hpp"
 
 
+
 bool cell_seen(std::vector<std::vector<bool>> &seen, sf::Vector2i position, sf::Vector2i startposition, int sight){
     bool test = seen[position.x + sight - startposition.x][position.y + sight - startposition.y];
     seen[position.x + sight - startposition.x][position.y + sight - startposition.y] = true;
@@ -38,11 +39,11 @@ Action bfs_monster(const Character& monster, const std::vector<std::shared_ptr<E
     else return Action(); // add random moves
 
 
-    //Initialize the minimization of the euclidian distance to the hero
-    int save_min_dist = math::distance(startposition,heropostion);
+    //Initialize the minimization of the nom1 distance to the hero
+    int save_min_dist = math::distance_1(startposition,heropostion);
     Action save_action = Action();
     if (save_min_dist >= sight) // The monster is to far from the hero.
-        return Action();
+        return Action(); //comment if you want infinite radius
 
 
     // Initiation of the bolean matrix that save which cells are available and not already seen.
@@ -92,10 +93,10 @@ Action bfs_monster(const Character& monster, const std::vector<std::shared_ptr<E
         next_cells.pop(); // Take a cell on the pile
 
 
-        if (math::distance(curentposition,heropostion) < save_min_dist) 
+        if (math::distance_1(curentposition,heropostion) < save_min_dist)
             // Is it closer to the hero ?
         {
-            save_min_dist = math::distance(curentposition,heropostion);
+            save_min_dist = math::distance_1(curentposition,heropostion);
             save_action = ret;  // Then save it.
         }
         
