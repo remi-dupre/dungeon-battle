@@ -130,25 +130,33 @@ void add_monsters(const Pattern& room, std::vector<std::shared_ptr<Entity>>& ent
     assert(load >= 0.f);
     assert(load <= 100.f);
 
-    unsigned int nb_monsters = room.size() * load / 100.f;
+    // Adds load/100 * size monsters in mean
+    size_t nb_monsters = std::floor(room.size() * load / 100.f);
+    float excess = (room.size() * load / 100.f) - nb_monsters;
+    nb_monsters += (Random::uniform_int(0, 1) < excess) ? 1 : 0;
 
-    std::set<int> chosen_cells; // Indexes of cells on which we place monsters
-    while (chosen_cells.size() < nb_monsters)
-        chosen_cells.insert(Random::uniform_int(0, room.size()-1));
-
-    int index = 0;
+    // Process cells we could place monsters on
+    std::vector<std::pair<int, int>> candidates;
     for (auto& cell : room)
+        candidates.push_back(cell);
+    nb_monsters = std::min(nb_monsters, candidates.size());
+
+    // Select nb_monsters's indexes among all candidates
+    std::vector<size_t> indexes(candidates.size());
+    for(size_t i = 0 ; i < candidates.size() ; i++)
+        indexes[i] = i;
+    std::random_shuffle(begin(indexes), end(indexes));
+
+    for (size_t i_chosen = 0 ; i_chosen < nb_monsters ; i_chosen++)
     {
-        if (chosen_cells.find(index) != end(chosen_cells))
-        {
-            entities.push_back(std::make_shared<Character>(
-                EntityType::Monster,
-                Interaction::None,
-                sf::Vector2i(cell.first, cell.second),
-                Direction::Left, 3, 1
-            ));
-        }
-        index++;
+        // Selected cell of index indexes[i_chosen]
+        auto& cell = candidates[indexes[i_chosen]];
+        entities.push_back(std::make_shared<Character>(
+            EntityType::Monster,
+            Interaction::None,
+            sf::Vector2i(cell.first, cell.second),
+            Direction::Left, 3, 1
+        ));
     }
 }
 

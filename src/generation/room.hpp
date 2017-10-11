@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include <algorithm>
 #include <cmath>
 #include <tuple>
 
@@ -76,8 +77,6 @@ Pattern generate_cave(int size);
  * \param entities The entities placed on the floor, it will be extended.
  * \param load Number of monsters per 100 units of space (must be < 100).
  * \return A vector containing monsters we want to add.
- * \todo Don't place monster on occupied cells.
- * \todo Implement a linear version.
  */
 void add_monsters(const Pattern& room, std::vector<std::shared_ptr<Entity>>& entities, float load);
 
