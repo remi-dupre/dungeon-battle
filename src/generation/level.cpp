@@ -106,11 +106,9 @@ std::vector<std::pair<size_t, size_t>> covering_paths(
         return repr;
     };
 
-    // Create vertices in an increasing order
-    std::priority_queue<
-        std::tuple<int, size_t, size_t>, // dist, i, j
-        std::vector<std::tuple<int, size_t, size_t>>,
-        std::greater<std::tuple<int, size_t, size_t>>> candidates;
+    // Create vertices (dist(i, j), i, j) in an increasing order
+    typedef std::tuple<int, size_t, size_t> Edge;
+    std::priority_queue<Edge, std::vector<Edge>, std::greater<Edge>> candidates;
 
     for (size_t i = 0 ; i < nb_rooms ; i++)
         for (size_t j = 0 ; j < i ; j++)

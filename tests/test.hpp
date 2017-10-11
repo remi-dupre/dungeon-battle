@@ -139,12 +139,21 @@ public:
             auto& map = std::get<0>(level);
             auto& entities = std::get<1>(level);
 
-            // Check that the stairs are placed on a floor
+
             for (auto& entity : entities)
+            {
+                // Check that all the entitites are placed on a floor
                 TS_ASSERT(
-                    entity->getType() != EntityType::Stairs
-                    || map.cellAt(entity->getPosition().x, entity->getPosition().y) == CellType::Floor
+                    map.cellAt(entity->getPosition().x, entity->getPosition().y) == CellType::Floor
                 );
+
+                // Check that 2 entities are not stacked (for now, none can)
+                for (auto& entity2 : entities)
+                    TS_ASSERT(
+                           entity == entity2
+                        || entity->getPosition() != entity2->getPosition()
+                    );
+            }
         }
     }
 };
