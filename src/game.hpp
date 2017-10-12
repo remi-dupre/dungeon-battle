@@ -109,6 +109,15 @@ public:
 
 private:
 
+    /**
+     * \brief Update an entity
+     * \return true if the entity could perform the action
+     *
+     * This function updates an entity.
+     */
+    bool update_entity(std::shared_ptr<Entity> entity, Action action);
+
+
     sf::RenderWindow window; ///< The render window of the game
     Configuration config; ///< The configuration of the game
     Renderer renderer; ///< The renderer
