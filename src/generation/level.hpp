@@ -7,12 +7,14 @@
 
 #include <queue>
 #include <tuple>
+#include <utility>
 #include <vector>
 
 #include "../map.hpp"
 #include "../entity.hpp"
 #include "../rand.hpp"
 
+#include "gen_pattern.hpp"
 #include "pattern.hpp"
 #include "room.hpp"
 
@@ -52,28 +54,12 @@ struct GenerationMode
 
 
 /**
- * \brief Modify rooms positioning to add spacing between them.
- * \param positions center positions of the rooms.
- * \param rooms patterns corresponding to th rooms.
- * \param spacing minimum space needed between pair of cells of two differents patterns.
- */
-void separate_rooms(
-    std::vector<std::pair<int, int>>& positions,
-    const std::vector<Pattern>& rooms,
-    int spacing
-);
-
-
-/**
  * \brief Gives a proposition of linkage between rooms.
  * \param positions The middle position of each room.
  * \param rooms The rooms we want to link.
  * \return The list of edges we want to add.
  */
-std::vector<std::pair<size_t, size_t>> covering_paths(
-    const std::vector<std::pair<int, int>>& positions,
-    const std::vector<Pattern>& rooms
-);
+std::vector<std::pair<size_t, size_t>> covering_paths(const std::vector<Room>& rooms);
 
 
 /**

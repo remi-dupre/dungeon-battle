@@ -1,186 +1,161 @@
 #include "room.hpp"
 
 
-Pattern generate_rectangle(int width, int height)
+Room::Room() :
+    position({0, 0})
+{}
+
+Room merged_rooms(const std::vector<Room>& rooms)
 {
-    assert(width > 0);
-    assert(height > 0);
+    Room merged;
 
-    // Process where will be (0, 0)
-    int center_x = width / 2;
-    int center_y = height / 2;
-
-    // Add every cells in the pattern
-    Pattern room;
-    for (int x = 0 ; x < width ; x++)
-        for (int y = 0 ; y < height ; y++)
-            room.insert({x-center_x, y-center_y});
-
-    return room;
-}
-
-Pattern generate_rectangle(int size)
-{
-    assert(size > 0);
-
-    int medium_width = std::sqrt(size);
-    float ratio = Random::uniform_float((2.f / 3.f), (4.f / 3.f));
-
-    int width = std::max(2, static_cast<int>(ratio * medium_width));
-    int height = std::max(2, size / width);
-    return generate_rectangle(width, height);
-}
-
-Pattern generate_hallway(std::pair<int, int> cell1, std::pair<int, int> cell2)
-{
-    int x1, y1, x2, y2;
-    std::tie(x1, y1) = cell1;
-    std::tie(x2, y2) = cell2;
-
-    int x=0, y=0;
-    Pattern path;
-    path.insert({0, 0});
-
-    while (x1 + x != x2 || y1 + y != y2)
+    for (size_t i_room = 0 ; i_room < rooms.size() ; i_room++)
     {
-        if (x1 + x < x2)
-            x++;
-        if (x1 + x > x2)
-            x--;
-        if (y1 + y < y2)
-            y++;
-        if (y1 + y > y2)
-            y--;
-        path.insert({x, y});
-        path.insert({x+1, y});
-        path.insert({x, y+1});
-        path.insert({x+1, y+1});
+        for (auto& cell : rooms[i_room].cells)
+            merged.cells.insert(cell + rooms[i_room].position);
+
+        for (auto entity : rooms[i_room].entities)
+        {
+            int x = entity->getPosition().x + rooms[i_room].position.first;
+            int y = entity->getPosition().y + rooms[i_room].position.second;
+
+            entity->setPosition({x, y});
+            merged.entities.push_back(entity);
+        }
     }
 
-    return path;
+    return merged;
 }
 
-void cavestyle_patch(Pattern& pattern, int nb_additions)
+void separate_rooms(std::vector<Room>& rooms, int spacing)
 {
-    Pattern surrounding;
+    assert(spacing >= 0);
 
-    // Function to add a new cell to surrounding, if it isn't already in the pattern.
-    auto addSurrounding = [&pattern, &surrounding](std::pair<int, int> cell)
-    {
-        if (pattern.count(cell) == 0)
-            surrounding.insert(cell);
-    };
+    size_t nb_rooms = rooms.size();
 
-    // Add cells around the first ones
-    for (auto& cell : pattern)
+    // Preprocess the surrounding of rooms to reduce distance calculations
+    std::vector<Pattern> frontiers(nb_rooms);
+    for (size_t i_room = 0 ; i_room < nb_rooms ; i_room++)
+        frontiers[i_room] = surrounding(rooms[i_room].cells);
+
+    bool go_on = true; // Set to true while we changed something
+    while(go_on)
     {
-        addSurrounding(cell + std::make_pair(1, 0));
-        addSurrounding(cell + std::make_pair(0, 1));
-        addSurrounding(cell - std::make_pair(1, 0));
-        addSurrounding(cell - std::make_pair(0, 1));
+        go_on = false;
+        std::vector<std::pair<int, int>> direction(nb_rooms, {0, 0});
+
+        for (size_t i1 = 0 ; i1 < nb_rooms ; i1++)
+        {
+            for (size_t i2 = 0 ; i2 < i1 ; i2++)
+            {
+                // Takes a distinct pair of rooms.
+                Room& room1 = rooms[i1];
+                Room& room2 = rooms[i2];
+
+                // Send them in a direction if they are not spaced enough.
+                bool well_spaced = superposed(room1.position, room1.cells, room2.position, room2.cells);
+                well_spaced     |= !spaced(room1.position, frontiers[i1], room2.position, frontiers[i2], spacing);
+
+                if (well_spaced)
+                {
+                    go_on = true;
+
+                    if (room1.position.first > room2.position.first)
+                    {
+                        int shift = std::max(1.f, (room1.position.first - room2.position.first + spacing) / 3.f);
+                        direction[i1] += {shift, 0};
+                    }
+
+                    if (room1.position.second > room2.position.second)
+                    {
+                        int shift = std::max(1.f, (room1.position.second - room2.position.second + spacing) / 3.f);
+                        direction[i1] += {0, shift};
+                    }
+
+                    if (room1.position.first < room2.position.first)
+                    {
+                        int shift = std::max(1.f, (room2.position.first - room1.position.first + spacing) / 3.f);
+                        direction[i2] += {shift, 0};
+                    }
+
+                    if (room1.position.second < room2.position.second)
+                    {
+                        int shift = std::max(1.f, (room2.position.second - room1.position.second + spacing) / 3.f);
+                        direction[i2] += {0, shift};
+                    }
+
+                    if (room1.position == room2.position)
+                    {
+                        // Moves room2 in a random direction.
+                        int delta_x = Random::uniform_int(0, 1);
+                        int delta_y = Random::uniform_int(0, 1);
+                        direction[i1] += {2*delta_x-1, 2*delta_y-1};
+                            go_on = true;
+                    }
+                }
+            }
+        }
+
+        // Apply the position modifiers
+        for (size_t i_room = 0 ; i_room < nb_rooms ; i_room++)
+            rooms[i_room].position += direction[i_room];
+    }
+}
+
+Room normalized_room(const Room& room)
+{
+    // Removes 1 to add a margin
+    int min_x = pattern_min_x(room.cells) - 1;
+    int min_y = pattern_min_y(room.cells) - 1;
+
+    Room normalized;
+
+    for (auto& cell : room.cells)
+    {
+        assert(cell.first  - min_x >= 0);
+        assert(cell.second - min_y >= 0);
+        normalized.cells.insert({cell.first - min_x, cell.second - min_y});
     }
 
-    // Create noise
-    for(int nb_cells = 0 ; nb_cells < nb_additions ; nb_cells++)
+    for (auto& entity : room.entities)
     {
-        // Select a cell to insert
-        auto selected = surrounding.begin();
-
-        std::advance(selected, Random::uniform_int(0, surrounding.size()-1));
-        pattern.insert(*selected);
-
-        // Refresh surrounding set of the pattern
-        addSurrounding((*selected) + std::make_pair(1, 0));
-        addSurrounding((*selected) + std::make_pair(0, 1));
-        addSurrounding((*selected) - std::make_pair(1, 0));
-        addSurrounding((*selected) - std::make_pair(0, 1));
-
-        // Can't select this cell anymore
-        surrounding.erase(selected);
+        auto pos = entity->getPosition();
+        entity->setPosition({pos.x - min_x, pos.y - min_y});
+        normalized.entities.push_back(entity);
     }
-}
 
-Pattern generate_cave(int size)
-{
-    if (size < 0)
-        size = 1;
-
-    Pattern cells;
-    cells.insert({0, 0});
-    cavestyle_patch(cells, size-1);
-    return cells;
-}
-
-Pattern generate_banana(int avg_side)
-{
-    int x1 = Random::uniform_int(-avg_side/2, avg_side/2);
-    int y1 = Random::uniform_int(-avg_side/2, avg_side/2);
-    int x2 = Random::uniform_int(-avg_side/2, avg_side/2);
-    int y2 = Random::uniform_int(-avg_side/2, avg_side/2);
-
-    auto path1 = generate_hallway({0, 0}, {x1, y1});
-    auto path2 = generate_hallway({0, 0}, {x2, y2});
-
-    return merged_patterns({{0, 0}, {0, 0}}, {path1, path2});
+    return normalized;
 }
 
 
-void add_monsters(const Pattern& room, std::vector<std::shared_ptr<Entity>>& entities, float load)
+void add_monsters(Room& room, float load)
 {
     assert(load >= 0.f);
     assert(load <= 100.f);
 
     // Adds load/100 * size monsters in mean
-    size_t nb_monsters = std::floor(room.size() * load / 100.f);
-    float excess = (room.size() * load / 100.f) - nb_monsters;
+    size_t nb_monsters = std::floor(room.cells.size() * load / 100.f);
+    float excess = (room.cells.size() * load / 100.f) - nb_monsters;
     nb_monsters += (Random::uniform_int(0, 1) < excess) ? 1 : 0;
 
     // Process cells we could place monsters on
     std::vector<std::pair<int, int>> candidates;
-    for (auto& cell : room)
+    for (auto& cell : room.cells)
         candidates.push_back(cell);
     nb_monsters = std::min(nb_monsters, candidates.size());
 
     // Select nb_monsters's indexes among all candidates
-    std::vector<size_t> indexes(candidates.size());
-    for(size_t i = 0 ; i < candidates.size() ; i++)
-        indexes[i] = i;
-    std::random_shuffle(begin(indexes), end(indexes));
+    std::random_shuffle(begin(candidates), end(candidates));
 
     for (size_t i_chosen = 0 ; i_chosen < nb_monsters ; i_chosen++)
     {
         // Selected cell of index indexes[i_chosen]
-        auto& cell = candidates[indexes[i_chosen]];
-        entities.push_back(std::make_shared<Character>(
+        auto& cell = candidates[i_chosen];
+        room.entities.push_back(std::make_shared<Character>(
             EntityType::Monster,
             Interaction::None,
             sf::Vector2i(cell.first, cell.second),
             Direction::Left, 3, 1
         ));
     }
-}
-
-
-std::vector<std::shared_ptr<Entity>> merged_entities(
-   const std::vector<std::pair<int, int>>& positions,
-   std::vector<std::vector<std::shared_ptr<Entity>>>& entities)
-{
-    assert(positions.size() == entities.size());
-
-    for (size_t i_room = 0 ; i_room < positions.size() ; i_room++)
-    {
-        for (auto& entity : entities[i_room])
-        {
-            entity->setPosition(sf::Vector2i(
-                entity->getPosition().x + positions[i_room].first,
-                entity->getPosition().y + positions[i_room].second
-            ));
-        }
-    }
-
-    std::vector<std::shared_ptr<Entity>> merged_entities;
-    for (auto& room_entities : entities)
-        merged_entities.insert(std::end(merged_entities), std::begin(room_entities), std::end(room_entities));
-
-    return merged_entities;
 }
