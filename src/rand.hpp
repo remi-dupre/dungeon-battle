@@ -8,9 +8,16 @@
 #include <random>
 
 
+enum class RandomType
+{
+    Game,
+    Render
+};
+
 /**
  * \brief Handle the generation of random numbers
  */
+template <RandomType T>
 class Random
 {
 public:
@@ -51,3 +58,23 @@ private:
 
     static std::mt19937 random_engine; ///< The internal random engine
 };
+
+template <RandomType T>
+std::mt19937 Random<T>::random_engine;
+
+template <RandomType T>
+int Random<T>::uniform_int(int a, int b)
+{
+    std::uniform_int_distribution<int> distribution(a, b);
+    return distribution(random_engine);
+}
+
+template <RandomType T>
+float Random<T>::uniform_float(float a, float b)
+{
+    std::uniform_real_distribution<float> distribution(a, b);
+    return distribution(random_engine);
+}
+
+typedef Random<RandomType::Game> Rand;
+typedef Random<RandomType::Render> RandRender;
