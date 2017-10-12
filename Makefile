@@ -22,7 +22,6 @@ SRC = $(SRC_DIR)/main.cpp \
       $(SRC_DIR)/entity.cpp \
       $(SRC_DIR)/args.cpp \
       $(SRC_DIR)/control.cpp \
-      $(SRC_DIR)/rand.cpp \
       $(SRC_DIR)/ai.cpp \
       $(SRC_DIR)/utility.cpp \
       $(SRC_DIR)/generation/pattern.cpp \
