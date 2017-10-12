@@ -100,20 +100,6 @@ bool superposed(
     std::pair<int, int> position2, const Pattern& pattern2
 );
 
-
-/**
- * \brief Translate a pattern to remove negative coordinates.
- * \param pattern A pattern that could have negative coordinates.
- * \param entities A set of entities that should be placed on the pattern, they will be modified to correspond to the same place.
- * \return The newly aligned pattern.
- *
- * \note This will also align the pattern on top left.
- */
-Pattern normalized_pattern(
-    const Pattern& pattern,
-    std::vector<std::shared_ptr<Entity>>& entities
-);
-
 /**
  * \brief Merge patterns, placing them around given positions
  * \param positions An array of position where the ith position is the position of the map aligned with the position (0, 0) of the pattern

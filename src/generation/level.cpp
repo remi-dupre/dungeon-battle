@@ -1,90 +1,8 @@
 #include "level.hpp"
 
 
-void separate_rooms(
-    std::vector<std::pair<int, int>>& positions,
-    const std::vector<Pattern>& rooms,
-    int spacing)
+std::vector<std::pair<size_t, size_t>> covering_paths(const std::vector<Room>& rooms)
 {
-    assert(spacing >= 0);
-    assert(positions.size() == rooms.size());
-
-    // The direction each rooms will be send to
-    int nb_rooms = positions.size();
-
-    // Preprocess the surrounding of rooms to reduce distance calculations
-    std::vector<Pattern> frontiers(nb_rooms);
-    for (int i_room = 0 ; i_room < nb_rooms ; i_room++)
-        frontiers[i_room] = surrounding(rooms[i_room]);
-
-    bool go_on = true; // Set to true while we changed something
-    while(go_on)
-    {
-        go_on = false;
-        std::vector<std::pair<int, int>> direction(nb_rooms, {0, 0});
-
-        for (int i1 = 0 ; i1 < nb_rooms ; i1++)
-        {
-            for (int i2 = 0 ; i2 < i1 ; i2++)
-            {
-                // Takes a distinct pair of rooms.
-                // Send them in a direction if they are not spaced enough.
-                bool well_spaced =
-                    superposed(positions[i1], rooms[i1], positions[i2], rooms[i2])
-                    || !spaced(positions[i1], frontiers[i1], positions[i2], frontiers[i2], spacing);
-                if (well_spaced)
-                {
-                    go_on = true;
-
-                    if (positions[i1].first > positions[i2].first)
-                    {
-                        int shift = std::max(1.f, (positions[i1].first - positions[i2].first + spacing) / 3.f);
-                        direction[i1] += {shift, 0};
-                    }
-
-                    if (positions[i1].second > positions[i2].second)
-                    {
-                        int shift = std::max(1.f, (positions[i1].second - positions[i2].second + spacing) / 3.f);
-                        direction[i1] += {0, shift};
-                    }
-
-                    if (positions[i1].first < positions[i2].first)
-                    {
-                        int shift = std::max(1.f, (positions[i2].first - positions[i1].first + spacing) / 3.f);
-                        direction[i2] += {shift, 0};
-                    }
-
-                    if (positions[i1].second < positions[i2].second)
-                    {
-                        int shift = std::max(1.f, (positions[i2].second - positions[i1].second + spacing) / 3.f);
-                        direction[i2] += {0, shift};
-                    }
-
-                    if (positions[i1] == positions[i2])
-                    {
-                        // Moves room2 in a random direction.
-                        int delta_x = Random::uniform_int(0, 1);
-                        int delta_y = Random::uniform_int(0, 1);
-                        direction[i1] += {2*delta_x-1, 2*delta_y-1};
-                            go_on = true;
-                    }
-                }
-            }
-        }
-
-        // Apply the position modifiers
-        for (int i_room = 0 ; i_room < nb_rooms ; i_room++)
-            positions[i_room] += direction[i_room];
-    }
-}
-
-
-std::vector<std::pair<size_t, size_t>> covering_paths(
-    const std::vector<std::pair<int, int>>& positions,
-    const std::vector<Pattern>& rooms)
-{
-    assert(positions.size() == rooms.size());
-
     size_t nb_rooms = rooms.size();
 
     // Resulting graph
@@ -111,11 +29,13 @@ std::vector<std::pair<size_t, size_t>> covering_paths(
     std::priority_queue<Edge, std::vector<Edge>, std::greater<Edge>> candidates;
 
     for (size_t i = 0 ; i < nb_rooms ; i++)
+    {
         for (size_t j = 0 ; j < i ; j++)
-            candidates.push(std::make_tuple(
-                distance(positions[i], rooms[i], positions[j], rooms[j]),
-                i, j
-            ));
+        {
+            int dist = distance(rooms[i].position, rooms[i].cells, rooms[j].position, rooms[j].cells);
+            candidates.push(std::make_tuple(dist, i, j));
+        }
+    }
 
     // Waits for rooms to be all linked
     while (size_uf[comp_repr(0)] < nb_rooms)
@@ -138,7 +58,6 @@ std::vector<std::pair<size_t, size_t>> covering_paths(
 
     return edges;
 }
-
 
 Map map_of_pattern(const Pattern& pattern)
 {
@@ -184,94 +103,75 @@ Map map_of_pattern(const Pattern& pattern)
 Level generate(const GenerationMode &mode)
 {
     // List of rooms.
-    std::vector<Pattern> patterns;
-    std::vector<std::pair<int, int>> positions;
-    std::vector<std::vector<std::shared_ptr<Entity>>> room_monsters(mode.nb_rooms);
+    std::vector<Room> rooms(mode.nb_rooms);
 
     // Create rooms of random size
-    for (int i_room = 0 ; i_room < mode.nb_rooms ; i_room++)
+    for (Room& room : rooms)
     {
         int room_size = Random::uniform_int(mode.room_min_size, mode.room_max_size);
 
         switch (mode.type)
         {
             case LevelType::Cave:
-                patterns.push_back(generate_cave(room_size));
+                room.cells = generate_cave(room_size);
                 break;
 
             case LevelType::Flat:
             default:
-                patterns.push_back(generate_rectangle(room_size));
+                room.cells = generate_rectangle(room_size);
                 break;
         }
 
-        add_monsters(patterns[i_room], room_monsters[i_room], mode.monster_load);
+        add_monsters(room, mode.monster_load);
     }
 
     // Places rooms in a non-linear way
-    while (positions.size() < patterns.size())
-        positions.push_back({0, 0});
-    separate_rooms(positions, patterns, mode.room_margin);
-
-    std::vector<std::shared_ptr<Entity>> entities = merged_entities(positions, room_monsters);
+    separate_rooms(rooms, mode.room_margin);
 
     // Add ways between rooms
-    auto edges = covering_paths(positions, patterns);
+    auto edges = covering_paths(rooms);
     for (auto edge : edges)
     {
-        auto hall_start = positions[edge.first];
-        auto hall_end = positions[edge.second];
+        // Create a pattern, placed at the first node position's
+        rooms.push_back(Room());
+        Room& path = rooms.back();
+        path.position = rooms[edge.first].position;
+
+        auto hall_start = rooms[edge.first].position;
+        auto hall_end = rooms[edge.second].position;
 
         switch (mode.type)
         {
             case LevelType::Cave:
-                patterns.push_back(generate_hallway(hall_start, hall_end));
-                positions.push_back(positions[edge.first]);
-                cavestyle_patch(patterns.back(), patterns.back().size());
+                path.cells = generate_hallway(hall_start, hall_end);
+                cavestyle_patch(path.cells, path.cells.size());
                 break;
 
             case LevelType::Flat:
             default:
-                patterns.push_back(generate_hallway(hall_start, hall_end));
-                positions.push_back(positions[edge.first]);
+                path.cells = generate_hallway(hall_start, hall_end);
                 break;
         }
     }
 
-    Pattern cells = merged_patterns(positions, patterns);
-
-    // Verify that center of rooms are always filled
-    for (auto pos : positions)
-        assert(cells.find(pos) != std::end(cells));
-
     // Add stairs in first and last map
-    entities.push_back(std::make_shared<Entity>(
+    rooms[0].entities.push_back(std::make_shared<Entity>(
         EntityType::Stairs,
         Interaction::GoDown,
-        sf::Vector2i(positions[0].first, positions[0].second),
+        sf::Vector2i(0, 0),
         Direction::Right
     ));
-    entities.push_back(std::make_shared<Entity>(
+    rooms[mode.nb_rooms-1].entities.push_back(std::make_shared<Entity>(
         EntityType::Stairs,
         Interaction::GoUp,
-        sf::Vector2i(positions[mode.nb_rooms-1].first, positions[mode.nb_rooms-1].second),
+        sf::Vector2i(0, 0),
         Direction::Left
     ));
 
-    // Add monsters in other maps
-    // for (int i_map = 1 ; i_map+1 < mode.nb_rooms ; i_map++)
-    // {
-    //     entities.push_back(std::make_shared<Character>(
-    //         EntityType::Monster,
-    //         Interaction::None,
-    //         sf::Vector2i(positions[i_map].first, positions[i_map].second),
-    //         Direction::Left, 3, 1
-    //     ));
-    // }
 
     // Outputs result into the map
-    cells = normalized_pattern(cells, entities);
-    Map map = map_of_pattern(cells);
+    Room full_level = normalized_room(merged_rooms(rooms));
+    Map map = map_of_pattern(full_level.cells);
 
-    return {std::move(map), std::move(entities)};
+    return {std::move(map), std::move(full_level.entities)};
 }

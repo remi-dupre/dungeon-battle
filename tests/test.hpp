@@ -10,6 +10,8 @@
 #include "../src/generation/room.cpp"
 #include "../src/generation/level.hpp"
 #include "../src/generation/level.cpp"
+#include "../src/generation/gen_pattern.hpp"
+#include "../src/generation/gen_pattern.cpp"
 
 #include "../src/config.hpp"
 #include "../src/config.cpp"

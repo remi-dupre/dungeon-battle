@@ -120,31 +120,6 @@ bool superposed(
     return false;
 }
 
-
-Pattern normalized_pattern(const Pattern& pattern, std::vector<std::shared_ptr<Entity>>& entities)
-{
-    // Removes 1 to add a margin
-    int min_x = pattern_min_x(pattern) - 1;
-    int min_y = pattern_min_y(pattern) - 1;
-
-    Pattern normalized;
-
-    for (auto& cell : pattern)
-    {
-        assert(cell.first  - min_x >= 0);
-        assert(cell.second - min_y >= 0);
-        normalized.insert({cell.first - min_x, cell.second - min_y});
-    }
-
-    for (auto& entity : entities)
-    {
-        auto pos = entity->getPosition();
-        entity->setPosition({pos.x - min_x, pos.y - min_y});
-    }
-
-    return normalized;
-}
-
 Pattern merged_patterns(
     const std::vector<std::pair<int, int>>& positions,
     const std::vector<Pattern>& patterns)
