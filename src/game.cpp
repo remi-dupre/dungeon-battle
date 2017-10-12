@@ -95,6 +95,7 @@ void Game::run()
 void Game::update()
 {
     bool monster_acting = false;
+    EntityType next_turn = EntityType::Hero;
 
     for (auto& entity : entities)
     {
@@ -186,10 +187,9 @@ void Game::update()
         {
             if (action.type != ActionType::None)
             {
-                entity_turn = EntityType::Monster;
+                next_turn = EntityType::Monster;
                 next_move = 1.f / config.animation_speed;
             }
-            return;
         }
         else if (action.type != ActionType::None)
         {
@@ -198,13 +198,20 @@ void Game::update()
 
     }
 
-    entity_turn = EntityType::Hero;
+    entity_turn = next_turn;
     if (monster_acting) // No animation time for monsters if they do not move or attack
         next_move = 1.f / config.animation_speed;
 }
 
 void Game::display()
 {
+    //Sort entities by zIndex and depth
+    std::sort(entities.begin(), entities.end(),
+              [](const std::shared_ptr<Entity>& e1, const std::shared_ptr<Entity>& e2){
+                  return e1->zIndex() < e2->zIndex()
+                      || (e1->zIndex() == e2->zIndex() && e1->getPosition().y < e2->getPosition().y);
+    });
+
     auto hero = std::find_if(entities.begin(), entities.end(),
         [](const std::shared_ptr<Entity>& e)
         {

@@ -60,5 +60,8 @@ namespace control
     /**
      * \brief Return an action performed by an entity
      */
-    Action get_input(const Entity& entity, const std::vector<std::shared_ptr<Entity>>& entities, const Map& map, const Configuration& config);
+    Action get_input(const Entity& entity,
+                     const std::vector<std::shared_ptr<Entity>>& entities,
+                     const Map& map,
+                     const Configuration& config);
 };

@@ -41,8 +41,7 @@ void Renderer::drawMap(const Map& map)
 void Renderer::drawEntities(const std::vector<std::shared_ptr<Entity>>& entities, float frame_time)
 {
     entities_vertices.clear();
-    entities_vertices.push_back({0, {}});
-    entities_vertices[0].second.reserve(entities.size() * 4);
+    entities_vertices.reserve(entities.size() * 4);
 
     charlie.clear();
 
@@ -156,13 +155,13 @@ void Renderer::drawEntities(const std::vector<std::shared_ptr<Entity>>& entities
                 break;
         }
 
-        entities_vertices[0].second.push_back(v1);
-        entities_vertices[0].second.push_back(v2);
-        entities_vertices[0].second.push_back(v4);
+        entities_vertices.push_back(v1);
+        entities_vertices.push_back(v2);
+        entities_vertices.push_back(v4);
 
-        entities_vertices[0].second.push_back(v1);
-        entities_vertices[0].second.push_back(v3);
-        entities_vertices[0].second.push_back(v4);
+        entities_vertices.push_back(v1);
+        entities_vertices.push_back(v3);
+        entities_vertices.push_back(v4);
     }
 }
 
@@ -203,15 +202,11 @@ void Renderer::display(sf::RenderTarget& target)
                 sf::PrimitiveType::Triangles,
                 map_rstates);
 
-
     sf::RenderStates entities_rstates(&entities_tileset);
-    for (auto& entity_layer : entities_vertices)
-    {
-        target.draw(entity_layer.second.data(),
-                    entity_layer.second.size(),
-                    sf::PrimitiveType::Triangles,
-                    entities_rstates);
-    }
+    target.draw(entities_vertices.data(),
+                entities_vertices.size(),
+                sf::PrimitiveType::Triangles,
+                entities_rstates);
 
     sf::RenderStates charlie_rstates(&charlie_tex);
     target.draw(charlie.data(),
