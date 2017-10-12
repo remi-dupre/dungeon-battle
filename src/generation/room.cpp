@@ -141,7 +141,8 @@ void add_monsters(Room& room, float load)
     // Process cells we could place monsters on
     std::vector<std::pair<int, int>> candidates;
     for (auto& cell : room.cells)
-        candidates.push_back(cell);
+        if (room.cells.find(cell) == end(room.cells))
+            candidates.push_back(cell);
     nb_monsters = std::min(nb_monsters, candidates.size());
 
     // Select nb_monsters's indexes among all candidates
