@@ -27,30 +27,6 @@ Room merged_rooms(const std::vector<Room>& rooms)
     return merged;
 }
 
-std::pair<std::pair<int, int>, std::pair<int, int>> closest_nodes(const Room& room1, const Room& room2)
-{
-    int best_dist = std::numeric_limits<int>::max();
-    std::pair<int, int> best_cell1({0, 0});
-    std::pair<int, int> best_cell2({0, 0});
-
-    for (auto& cell1 : room1.nodes)
-    {
-        for (auto& cell2 : room2.nodes)
-        {
-            int dist = std::abs(cell1.first - cell2.first) + std::abs(cell1.second - cell2.second);
-
-            if (dist < best_dist)
-            {
-                best_dist = dist;
-                best_cell1 = cell1;
-                best_cell2 = cell2;
-            }
-        }
-    }
-
-    return std::make_pair(best_cell1, best_cell2);
-}
-
 void separate_rooms(std::vector<Room>& rooms, int spacing)
 {
     assert(spacing >= 0);
@@ -141,13 +117,6 @@ Room normalized_room(const Room& room)
         normalized.cells.insert({cell.first - min_x, cell.second - min_y});
     }
 
-    for (auto& cell : room.nodes)
-    {
-        assert(cell.first  - min_x >= 0);
-        assert(cell.second - min_y >= 0);
-        normalized.nodes.insert({cell.first - min_x, cell.second - min_y});
-    }
-
     for (auto& entity : room.entities)
     {
         auto pos = entity->getPosition();
@@ -172,7 +141,7 @@ void add_monsters(Room& room, float load)
     // Process cells we could place monsters on
     std::vector<std::pair<int, int>> candidates;
     for (auto& cell : room.cells)
-        if (room.cells.find(cell) != end(room.cells))
+        if (room.cells.find(cell) == end(room.cells))
             candidates.push_back(cell);
     nb_monsters = std::min(nb_monsters, candidates.size());
 
