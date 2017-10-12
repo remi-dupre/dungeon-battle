@@ -62,11 +62,21 @@ CellType& Map::cellAt(int x, int y)
     return cells[x + width * y];
 }
 
+CellType& Map::cellAt(sf::Vector2i coords)
+{
+    return cellAt(coords.x, coords.y);
+}
+
 CellType Map::cellAt(int x, int y) const
 {
     if (x < 0 || y < 0 || x > width || y > height)
         return CellType::Empty;
     return cells[x + width * y];
+}
+
+CellType Map::cellAt(sf::Vector2i coords) const
+{
+    return cellAt(coords.x, coords.y);
 }
 
 bool Map::wallNext(int x, int y) const

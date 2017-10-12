@@ -117,7 +117,6 @@ private:
      */
     bool update_entity(std::shared_ptr<Entity> entity, Action action);
 
-
     sf::RenderWindow window; ///< The render window of the game
     Configuration config; ///< The configuration of the game
     Renderer renderer; ///< The renderer

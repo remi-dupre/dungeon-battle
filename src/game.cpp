@@ -144,75 +144,55 @@ void Game::update()
 bool Game::update_entity(std::shared_ptr<Entity> entity, Action action)
 {
     sf::Vector2i position = entity->getPosition();
-    bool perform_action = false;
+
+    entity->setOrientation(action.direction);
 
     switch (action.type)
     {
     case ActionType::Move:
+    {
+        position += to_vector2i(action.direction);
+        if(map.cellAt(position) != CellType::Floor)
+            return false; // Wall -> don't move
 
-        switch(action.direction)
-        {
-        case Direction::Left:
-            if (position.x-- > 0)
-                perform_action = true;
-            break;
-        case Direction::Right:
-            if (++position.x < map.getWidth())
-                perform_action = true;
-            break;
-        case Direction::Up:
-            if (position.y-- > 0)
-                perform_action = true;
-            break;
-        case Direction::Down:
-            if (++position.y < map.getHeight())
-                perform_action = true;
-            break;
-        default:
-            break;
-        }
+        auto entities_on_target = getEntitiesOnCell(position);
+        auto entity_on_target =
+            std::find_if(entities_on_target.begin(), entities_on_target.end(),
+                         [](const std::shared_ptr<Entity> e) -> bool
+                         {
+                             EntityType t = e->getType();
+                             return t == EntityType::Hero || t == EntityType::Monster;
+                         });
+        if (entity_on_target != entities_on_target.end())
+            return false; // Entity on target cell -> don't move
 
-        if (perform_action)
-        {
-            auto entities_on_target = getEntitiesOnCell(position);
-            auto entity_on_target =
-                std::find_if(entities_on_target.begin(), entities_on_target.end(),
-                    [](const std::shared_ptr<Entity> e) -> bool
-                    {
-                        EntityType t = e->getType();
-                        return t == EntityType::Hero || t == EntityType::Monster;
-                    });
+        entity->setPosition(position);
 
-            if (entity_on_target != entities_on_target.end())
-                perform_action = false;
-            else if(map.cellAt(position.x, position.y) != CellType::Floor)
-                perform_action = false;
-        }
+        return true;
+    } break;
 
-        if (perform_action)
-        {
-            entity->setPosition(position);
-        }
-        entity->setOrientation(action.direction);
-        break;
     case ActionType::Attack:
-        perform_action = true;
-        break;
+    {
+        return true;
+    } break;
+
     default:
         break;
     }
 
-    return perform_action;
+    return false;
 }
 
 void Game::display()
 {
     //Sort entities by zIndex and depth
     std::sort(entities.begin(), entities.end(),
-              [](const std::shared_ptr<Entity>& e1, const std::shared_ptr<Entity>& e2){
-                  return e1->zIndex() < e2->zIndex()
-                      || (e1->zIndex() == e2->zIndex() && e1->getPosition().y < e2->getPosition().y);
-    });
+        [](const std::shared_ptr<Entity>& e1, const std::shared_ptr<Entity>& e2)
+        {
+            return e1->zIndex() < e2->zIndex()
+                || (e1->zIndex() == e2->zIndex() && e1->getPosition().y < e2->getPosition().y);
+        }
+    );
 
     auto hero = std::find_if(entities.begin(), entities.end(),
         [](const std::shared_ptr<Entity>& e)
