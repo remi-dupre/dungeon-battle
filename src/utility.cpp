@@ -12,7 +12,11 @@ sf::Vector2i to_vector2i(Direction direction)
         return {-1, 0};
     case Direction::Right:
         return {1, 0};
+    default:
+        break;
     }
+
+    return {0, 0};
 }
 
 std::pair<int, int> std::operator +(const std::pair<int, int>& x, const std::pair<int, int>& y) {
