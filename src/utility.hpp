@@ -23,6 +23,8 @@ enum class Direction
     Down ///< Down
 };
 
+sf::Vector2i to_vector2i(Direction direction);
+
 namespace std
 {
     /**

@@ -84,13 +84,31 @@ public:
     CellType& cellAt(int x, int y);
 
     /**
+     * \brief Get a read-write access to a cell by its coordinates
+     * \param coords Coordinates of the cell
+     * \return Reference to the cell
+     * `x` and `y` must be in the ranges `[0, map.width)` and `[0, map.heigth)`
+     */
+    CellType& cellAt(sf::Vector2i coords);
+
+    /**
      * \brief Get a read only access to a cell by its coordinates
      * \param x X coordinate of the cell
      * \param y Y coordinate of the cell
-     * \return Const reference to the cell
-     * `x` and `y` must be in the ranges `[0, map.width)` and `[0, map.heigth)`
+     * \return The cell type of the cell
+     * `x` and `y` can be outside the ranges `[0, map.width)` and `[0, map.heigth)`
+     * in which case CellType::Empty is returned
      */
     CellType cellAt(int x, int y) const;
+
+    /**
+     * \brief Get a read only access to a cell by its coordinates
+     * \param coords Coordinates of the cell
+     * \return The cell type of the cell
+     * `x` and `y` can be outside the ranges `[0, map.width)` and `[0, map.heigth)`
+     * in which case CellType::Empty is returned
+     */
+    CellType cellAt(sf::Vector2i coords) const;
 
     /**
      * \brief Check if there is a wall next to a cell
