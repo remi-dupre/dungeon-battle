@@ -108,7 +108,7 @@ Level generate(const GenerationMode &mode)
     // Create rooms of random size
     for (Room& room : rooms)
     {
-        int room_size = Random::uniform_int(mode.room_min_size, mode.room_max_size);
+        int room_size = Rand::uniform_int(mode.room_min_size, mode.room_max_size);
 
         switch (mode.type)
         {

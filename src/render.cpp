@@ -47,7 +47,7 @@ void Renderer::drawEntities(const std::vector<std::shared_ptr<Entity>>& entities
 
     for (const auto& entity : entities)
     {
-        Random::seed(entity->getId());
+        RandRender::seed(entity->getId());
 
         sf::Vector2f p = tile_size * static_cast<sf::Vector2f>(entity->getPosition());
         sf::Vector2f old_p = tile_size * static_cast<sf::Vector2f>(entity->getOldPosition());
@@ -121,9 +121,9 @@ void Renderer::drawEntities(const std::vector<std::shared_ptr<Entity>>& entities
         v3.position = {p.x + tile_size, p.y};
         v4.position = {p.x + tile_size, p.y + tile_size};
 
-        sf::Color slime_color = {static_cast<sf::Uint8>(Random::uniform_int(0, 255)),
-                                 static_cast<sf::Uint8>(Random::uniform_int(0, 255)),
-                                 static_cast<sf::Uint8>(Random::uniform_int(0, 255))};
+        sf::Color slime_color = {static_cast<sf::Uint8>(RandRender::uniform_int(0, 255)),
+                                 static_cast<sf::Uint8>(RandRender::uniform_int(0, 255)),
+                                 static_cast<sf::Uint8>(RandRender::uniform_int(0, 255))};
 
         switch (entity->getType())
         {
@@ -220,7 +220,7 @@ void Renderer::drawCell(sf::Vector2i coords, CellType cell, const Map& map)
     if (cell == CellType::Empty)
         return;
 
-    Random::seed(std::hash<sf::Vector2i>{}(coords));
+    RandRender::seed(std::hash<sf::Vector2i>{}(coords));
 
     sf::Vector2f p = tile_size * static_cast<sf::Vector2f>(coords);
 
@@ -233,12 +233,12 @@ void Renderer::drawCell(sf::Vector2i coords, CellType cell, const Map& map)
 
     // Texture rectangles for floor are hardcoded for now
     const sf::Vector2f tiles_coord[] = {
-        {Random::uniform_int(0, 5) * 32.f, 128.f},
+        {RandRender::uniform_int(0, 5) * 32.f, 128.f},
         {0.f, 96.f}, {32.f, 96.f}, {0.f, 64.f}, {64.f, 96.f},
         {32.f, 64.f}, {64.f, 64.f}, {0.f, 32.f}, {96.f, 96.f},
         {96.f, 64.f}, {128.f, 64.f}, {32.f, 32.f}, {160.f, 64.f},
         {64.f, 32.f}, {96.f, 32.f},
-        {Random::uniform_int(0, 5) * 32.f, 0.f}
+        {RandRender::uniform_int(0, 5) * 32.f, 0.f}
     };
 
     sf::Vector2i next_tiles[] = {{0, -1}, {1, 0}, {0, 1}, {-1, 0}};
@@ -268,7 +268,7 @@ void Renderer::drawCell(sf::Vector2i coords, CellType cell, const Map& map)
             break;
 
         case CellType::Wall:
-            tile_nb = Random::uniform_int(0, 3);
+            tile_nb = RandRender::uniform_int(0, 3);
             v1.texCoords = {32.f * tile_nb, 160.f};
             v2.texCoords = {32.f * tile_nb, 191.f};
             v3.texCoords = {32.f * tile_nb + 31.f, 160.f};

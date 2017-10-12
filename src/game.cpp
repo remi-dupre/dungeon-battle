@@ -25,7 +25,7 @@ void Game::init(const std::map<Option, std::string>& options)
 
     // Seed the rng
     std::random_device r;
-    Random::seed(r());
+    Rand::seed(r());
 
     // Generate a map
     GenerationMode gen_options;
@@ -50,7 +50,7 @@ void Game::init(const std::map<Option, std::string>& options)
     auto entry_stairs = std::find_if(entities.begin(), entities.end(),
     [](const std::shared_ptr<Entity> e) -> bool
     {
-            return e->getType() == EntityType::Stairs;
+        return e->getType() == EntityType::Stairs && e->getInteraction() == Interaction::GoDown;
     });
 
     sf::Vector2i start_pos;

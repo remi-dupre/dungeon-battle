@@ -24,7 +24,7 @@ Pattern generate_rectangle(int size)
     assert(size > 0);
 
     int medium_width = std::sqrt(size);
-    float ratio = Random::uniform_float((2.f / 3.f), (4.f / 3.f));
+    float ratio = Rand::uniform_float((2.f / 3.f), (4.f / 3.f));
 
     int width = std::max(2, static_cast<int>(ratio * medium_width));
     int height = std::max(2, size / width);
@@ -86,7 +86,7 @@ void cavestyle_patch(Pattern& pattern, int nb_additions)
         // Select a cell to insert
         auto selected = surrounding.begin();
 
-        std::advance(selected, Random::uniform_int(0, surrounding.size()-1));
+        std::advance(selected, Rand::uniform_int(0, surrounding.size()-1));
         pattern.insert(*selected);
 
         // Refresh surrounding set of the pattern
@@ -113,10 +113,10 @@ Pattern generate_cave(int size)
 
 Pattern generate_banana(int avg_side)
 {
-    int x1 = Random::uniform_int(-avg_side/2, avg_side/2);
-    int y1 = Random::uniform_int(-avg_side/2, avg_side/2);
-    int x2 = Random::uniform_int(-avg_side/2, avg_side/2);
-    int y2 = Random::uniform_int(-avg_side/2, avg_side/2);
+    int x1 = Rand::uniform_int(-avg_side/2, avg_side/2);
+    int y1 = Rand::uniform_int(-avg_side/2, avg_side/2);
+    int x2 = Rand::uniform_int(-avg_side/2, avg_side/2);
+    int y2 = Rand::uniform_int(-avg_side/2, avg_side/2);
 
     auto path1 = generate_hallway({0, 0}, {x1, y1});
     auto path2 = generate_hallway({0, 0}, {x2, y2});
