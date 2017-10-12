@@ -32,7 +32,7 @@ std::vector<std::pair<size_t, size_t>> covering_paths(const std::vector<Room>& r
     {
         for (size_t j = 0 ; j < i ; j++)
         {
-            int dist = distance(rooms[i].position, rooms[i].cells, rooms[j].position, rooms[j].cells);
+            int dist = ntn_dist(rooms[i], rooms[j]);
             candidates.push(std::make_tuple(dist, i, j));
         }
     }
@@ -114,11 +114,13 @@ Level generate(const GenerationMode &mode)
         {
             case LevelType::Cave:
                 room.cells = generate_cave(room_size);
+                room.nodes = surrounding(room.cells);
                 break;
 
             case LevelType::Flat:
             default:
                 room.cells = generate_rectangle(room_size);
+                room.nodes = surrounding(room.cells);
                 break;
         }
 
@@ -135,10 +137,12 @@ Level generate(const GenerationMode &mode)
         // Create a pattern, placed at the first node position's
         rooms.push_back(Room());
         Room& path = rooms.back();
-        path.position = rooms[edge.first].position;
 
-        auto hall_start = rooms[edge.first].position;
-        auto hall_end = rooms[edge.second].position;
+        auto close_points = closest_nodes(rooms[edge.first], rooms[edge.second]);
+        auto hall_start = close_points.first + rooms[edge.first].position;
+        auto hall_end = close_points.second + rooms[edge.second].position;
+
+        path.position = hall_start;
 
         switch (mode.type)
         {

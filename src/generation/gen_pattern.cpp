@@ -37,12 +37,17 @@ Pattern generate_hallway(std::pair<int, int> cell1, std::pair<int, int> cell2)
     std::tie(x1, y1) = cell1;
     std::tie(x2, y2) = cell2;
 
-    int x=0, y=0;
+    int x = 0, y = 0;
     Pattern path;
     path.insert({0, 0});
 
     while (x1 + x != x2 || y1 + y != y2)
     {
+        path.insert({x, y});
+        path.insert({x+1, y});
+        path.insert({x, y+1});
+        path.insert({x+1, y+1});
+
         if (x1 + x < x2)
             x++;
         if (x1 + x > x2)
@@ -51,6 +56,7 @@ Pattern generate_hallway(std::pair<int, int> cell1, std::pair<int, int> cell2)
             y++;
         if (y1 + y > y2)
             y--;
+
         path.insert({x, y});
         path.insert({x+1, y});
         path.insert({x, y+1});

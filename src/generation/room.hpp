@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include <cassert>
 #include <limits>
 #include <tuple>
 
@@ -64,6 +65,15 @@ void separate_rooms(std::vector<Room>& rooms, int spacing);
  * \param A pair of the coordinates of the nodes.
  */
 std::pair<std::pair<int, int>, std::pair<int, int>> closest_nodes(const Room& room1, const Room& room2);
+
+/**
+ * \brief Calculates node to node distance of two rooms.
+ * \param room1 A room, where nodes are specified.
+ * \param room2 A room, where nodes are specified.
+ * \param The distance between the two closest nodes of the room.
+ */
+int ntn_dist(const Room& room1, const Room& room2);
+
 
 /**
  * \brief Creates monsters to place on the room.

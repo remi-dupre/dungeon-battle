@@ -59,25 +59,6 @@ Pattern surrounding(const Pattern& pattern)
     return frontier;
 }
 
-
-int distance(
-    std::pair<int, int> position1, const Pattern& pattern1,
-    std::pair<int, int> position2, const Pattern& pattern2)
-{
-    int dist = std::numeric_limits<int>::max();
-
-    return std::abs(position1.first - position2.first) + std::abs(position1.second - position2.second);
-    // for (auto cell1 : pattern1)
-    //     for (auto cell2 : pattern2)
-    //         dist = std::min(dist,
-    //               std::abs(cell1.first + position1.first - cell1.first - position1.first)
-    //             + std::abs(cell1.second + position1.second - cell1.second - position1.second)
-    //         );
-
-    return dist;
-}
-
-
 bool spaced(
     std::pair<int, int> position1, const Pattern& pattern1,
     std::pair<int, int> position2, const Pattern& pattern2,

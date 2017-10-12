@@ -2,7 +2,8 @@
 
 
 Room::Room() :
-    position({0, 0})
+    position({0, 0}),
+    nodes({{0, 0}})
 {}
 
 Room merged_rooms(const std::vector<Room>& rooms)
@@ -29,6 +30,9 @@ Room merged_rooms(const std::vector<Room>& rooms)
 
 std::pair<std::pair<int, int>, std::pair<int, int>> closest_nodes(const Room& room1, const Room& room2)
 {
+    assert(!room1.nodes.empty());
+    assert(!room2.nodes.empty());
+
     int best_dist = std::numeric_limits<int>::max();
     std::pair<int, int> best_cell1({0, 0});
     std::pair<int, int> best_cell2({0, 0});
@@ -37,7 +41,8 @@ std::pair<std::pair<int, int>, std::pair<int, int>> closest_nodes(const Room& ro
     {
         for (auto& cell2 : room2.nodes)
         {
-            int dist = std::abs(cell1.first - cell2.first) + std::abs(cell1.second - cell2.second);
+            std::pair<int, int> diff = room1.position + cell1 - cell2 - room2.position;
+            int dist = std::abs(diff.first) + std::abs(diff.second);
 
             if (dist < best_dist)
             {
@@ -49,6 +54,18 @@ std::pair<std::pair<int, int>, std::pair<int, int>> closest_nodes(const Room& ro
     }
 
     return std::make_pair(best_cell1, best_cell2);
+}
+
+int ntn_dist(const Room& room1, const Room& room2)
+{
+    assert(!room1.nodes.empty());
+    assert(!room2.nodes.empty());
+
+    std::pair<int, int> cell1, cell2;
+    std::tie(cell1, cell2) = closest_nodes(room1, room2);
+
+    std::pair<int, int> diff = room1.position + cell1 - cell2 - room2.position;
+    return std::abs(diff.first) + std::abs(diff.second);
 }
 
 void separate_rooms(std::vector<Room>& rooms, int spacing)

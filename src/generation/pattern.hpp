@@ -59,20 +59,6 @@ Pattern surrounding(const Pattern& pattern);
 
 
 /**
- * \brief Calculates the distance between two patterns
- * \param position1 Center position of the first room.
- * \param pattern1 Pattern of the first room.
- * \param position2 Center position of the second room.
- * \param pattern2 Pattern of the second room.
- * \return The minimum of |cell1 - cell2| for cell1 in pattern1, cell2 in pattern2.
- */
-int distance(
-    std::pair<int, int> position1, const Pattern& pattern1,
-    std::pair<int, int> position2, const Pattern& pattern2
-);
-
-
-/**
  * \brief Check if a minimum space is assured between two rooms.
  * \param position1 Center position of the first room.
  * \param pattern1 Pattern of the first room.
