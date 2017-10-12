@@ -48,6 +48,8 @@ void Renderer::drawEntities(const std::vector<std::shared_ptr<Entity>>& entities
 
     for (const auto& entity : entities)
     {
+        Random::seed(entity->getId());
+
         sf::Vector2f p = tile_size * static_cast<sf::Vector2f>(entity->getPosition());
         sf::Vector2f old_p = tile_size * static_cast<sf::Vector2f>(entity->getOldPosition());
 
