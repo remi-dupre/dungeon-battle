@@ -172,6 +172,16 @@ void Character::setStrength(unsigned int strength_)
     strength = strength_;
 }
 
+unsigned int Character::getDefense() const
+{
+    return defense;
+}
+
+void Character::setDefense(unsigned defense_)
+{
+    defense = defense_;
+}
+
 unsigned int Character::getSightRadius() const
 {
     return sightRadius;
