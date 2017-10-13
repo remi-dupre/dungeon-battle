@@ -213,3 +213,21 @@ void add_monsters(Room& room, float load)
         ));
     }
 }
+
+Room maze_room(int width, int height)
+{
+    Room room;
+    room.cells = generate_maze(width, height);
+
+    int max_x = pattern_max_x(room.cells);
+    int max_y = pattern_max_y(room.cells);
+
+    // Create relevant nodes
+    room.nodes = Pattern();
+
+    for (auto cell : room.cells)
+        if (cell.first == 0 || cell.second == 0 || cell.first == max_x || cell.second == max_y)
+            room.nodes.insert(cell);
+
+    return room;
+}

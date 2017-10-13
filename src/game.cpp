@@ -33,6 +33,7 @@ void Game::init(const std::map<Option, std::string>& options)
     gen_options.nb_rooms = 20;
     gen_options.room_margin = 2;
     gen_options.monster_load = 3.f;
+    gen_options.maze_density = 0.1f;
     gen_options.type = LevelType::Cave;
 
     // Base stats of Heros and Monsters

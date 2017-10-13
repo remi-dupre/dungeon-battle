@@ -33,6 +33,14 @@ Pattern generate_rectangle(int width, int height);
 Pattern generate_rectangle(int size);
 
 /**
+ * \brief Generate a maze. It is included in a rectangular shape.
+ * \param width The width of the maze. (must be odd)
+ * \param height The height of the maze. (must be odd)
+ * \return The shape of the maze, in a pattern.
+ */
+Pattern generate_maze(int width, int heignt);
+
+/**
  * \brief Contain a cave containing a fixed number of cells
  * \param size The number of cell the room contains
  * \return A set containing cells of the cave
