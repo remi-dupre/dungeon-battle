@@ -118,6 +118,17 @@ public:
     void setAttacking(bool attacking);
 
     /**
+     * \brief Return true if the entity is currently attacked
+     */
+    bool isAttacked() const;
+
+    /**
+     * \brief Set if the entity is currently attacked
+     */
+    void setAttacked(bool attacked);
+
+
+    /**
      * \brief Return the zIndex of the entity
      */
     int zIndex();
@@ -133,6 +144,7 @@ protected:
     sf::Vector2i old_position; ///< The position of the entity at the previous turn
     bool moving; ///< Tells whether the entity is currently moving or not
     bool attacking; ///< Tells whether the entity is currently attacking or not
+    bool attacked; ///< Tells whether the entity is currently attacked or not
 };
 
 

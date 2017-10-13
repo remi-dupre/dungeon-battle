@@ -82,6 +82,16 @@ bool Entity::isAttacking() const
     return attacking;
 }
 
+void Entity::setAttacked(bool attacked_)
+{
+    attacked = attacked_;
+}
+
+bool Entity::isAttacked() const
+{
+    return attacked;
+}
+
 int Entity::zIndex()
 {
     switch(type)
