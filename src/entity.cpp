@@ -126,6 +126,8 @@ Item::Item(const std::string& name_, const sf::Vector2i& position_) :
 
 
 
+
+
 Character::Character(EntityType type_,
                      Interaction interaction_,
                      sf::Vector2i position_,
@@ -140,7 +142,9 @@ Character::Character(EntityType type_,
     hp(hpMax_),
     strength(strength_),
     defense(0),
-    sightRadius(0)
+    sightRadius(0),
+    inventory(std::vector<Item>()),
+    inventorySize(-1)
 {}
 
 
@@ -191,7 +195,7 @@ void Character::addHp(int hp_)
 
 bool Character::isAlive()
 {
-    return (hp > 0);
+    return (getHp() > 0);
 }
 
 unsigned int Character::getStrength() const
@@ -239,6 +243,18 @@ void Character::addExperience(unsigned int experience_)
     experience += experience_;
     levelUp();
 }
+
+bool Character::roomInInventory()
+{
+    return (inventorySize > inventory.size());
+}
+
+void Character::pickUp(Item item)
+{
+    inventory.push_back(item);
+}
+
+
 
 bool has_hero(const std::vector<std::shared_ptr<Entity>>& entities){
     for(const auto& entity : entities)

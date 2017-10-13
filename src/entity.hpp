@@ -25,7 +25,7 @@ enum class EntityType
     Hero, ///< A hero
     Monster, ///< A monster
     Stairs, ///< A staircase
-    Item
+    Item ///< An item
 };
 
 
@@ -36,7 +36,9 @@ enum class Interaction
 {
     None, ///< None
     GoUp, ///< Go up
-    GoDown ///< Go down
+    GoDown, ///< Go down
+    PickUp, ///< Pick up
+    Use ///< Use
 };
 
 
@@ -153,17 +155,24 @@ protected:
 class Item : public Entity
 {
 public:
+
+    /**
+     * \brief Create an item
+     * \param name The name of the item
+     * \param position The position of the item
+     */
     Item(const std::string& name, const sf::Vector2i& position);
 
 protected:
-    std::string name;
-    int level;
-    int experience;
-    int hpMax;
-    int hp;
-    int strength;
-    int defense;
-    int sightRadius;
+
+    std::string name; ///< The name of the item
+    int level; ///< The level modifier of the item
+    int experience; ///< The experience modifier of the item
+    int hpMax; ///< The max hp modifier of the item
+    int hp; ///< The hp modifier of the item
+    int strength; ///< The strength modifier of the item
+    int defense; ///< The defense modifier of the item
+    int sightRadius; ///< sightRadius modifier of the item
 };
 
 /**
@@ -289,6 +298,17 @@ public:
      */
     void addExperience(unsigned int experience);
 
+    /**
+     * \brief Check if there is an empty inventory slot
+     */
+    bool roomInInventory();
+
+    /**
+     * \brief Add an item to the inventory, asserting roomInInventory()
+     * \param item The item to add
+     */
+    void pickUp(Item item);
+
 protected:
 
     unsigned int level; ///< The level of the character
@@ -299,6 +319,9 @@ protected:
     unsigned int strength; ///< The force of the character
     unsigned int defense; ///< The defense of the character
     unsigned int sightRadius; ///< The sight radius of the character (0 for infinity)
+
+    std::vector<Item> inventory; ///< The inventory of the character
+    unsigned int inventorySize; ///< The size of the inventory of the character
 };
 
 /**
