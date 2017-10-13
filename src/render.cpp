@@ -2,11 +2,16 @@
 
 
 Renderer::Renderer() :
+    seed(0),
     tile_size(32.f)
 {
     tileset.loadFromFile("data/tileset.png");
     charlie_tex.loadFromFile("data/character01.png");
     entities_tileset.loadFromFile("data/entities.png");
+
+    std::random_device r;
+    RandRender::seed(r());
+    seed = RandRender::uniform_int(std::numeric_limits<int>::min(), std::numeric_limits<int>::max());
 }
 
 void Renderer::setViewCenter(sf::Vector2f center)
@@ -47,7 +52,7 @@ void Renderer::drawEntities(const std::vector<std::shared_ptr<Entity>>& entities
 
     for (const auto& entity : entities)
     {
-        RandRender::seed(entity->getId());
+        RandRender::seed(entity->getId() + seed);
 
         sf::Vector2f p = tile_size * static_cast<sf::Vector2f>(entity->getPosition());
         sf::Vector2f old_p = tile_size * static_cast<sf::Vector2f>(entity->getOldPosition());
