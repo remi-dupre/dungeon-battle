@@ -173,16 +173,16 @@ bool Game::update_entity(std::shared_ptr<Entity> entity, Action action)
         case ActionType::Attack:
         {
             position += to_vector2i(action.direction);
-            
+
             for (auto& target : getEntitiesOnCell(position))
             {
                 EntityType target_type = target->getType();
 
                 if (target_type == EntityType::Hero || target_type == EntityType::Monster)
                 {
-                    Character& s = static_cast<Character&>(*entity);
-                    Character& t = static_cast<Character&>(*target);
-                    
+                    auto s = std::static_pointer_cast<Character>(entity);
+                    auto t = std::static_pointer_cast<Character>(target);
+
                     t.addHp(std::min(static_cast<int>(t.getDefense()) - static_cast<int>(s.getStrength()), -1));
 
                     return true;
