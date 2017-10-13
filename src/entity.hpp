@@ -23,7 +23,8 @@ enum class EntityType
     None, ///< Missing type
     Hero, ///< A hero
     Monster, ///< A monster
-    Stairs ///< A staircase
+    Stairs, ///< A staircase
+    Item
 };
 
 
@@ -147,6 +148,22 @@ protected:
     bool attacked; ///< Tells whether the entity is currently attacked or not
 };
 
+
+class Item : public Entity
+{
+public:
+    Item(const std::string& name, const sf::Vector2i& position);
+
+protected:
+    std::string name;
+    int level;
+    int experience;
+    int hpMax;
+    int hp;
+    int strength;
+    int defense;
+    int sightRadius;
+};
 
 /**
  * \brief Represents a living entity

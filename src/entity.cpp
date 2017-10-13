@@ -16,7 +16,8 @@ Entity::Entity(EntityType type_, Interaction interaction_, sf::Vector2i position
     position(position_),
     orientation(orientation_),
     moving(false),
-    attacking(false)
+    attacking(false),
+    attacked(false)
 {}
 
 
@@ -110,6 +111,21 @@ int Entity::zIndex()
 }
 
 
+
+Item::Item(const std::string& name_, const sf::Vector2i& position_) :
+    Entity(EntityType::Item, Interaction::None, position_, Direction::None),
+    name(name_),
+    level(0),
+    experience(0),
+    hpMax(0),
+    hp(0),
+    strength(0),
+    defense(0),
+    sightRadius(0)
+{}
+
+
+
 Character::Character(EntityType type_,
                      Interaction interaction_,
                      sf::Vector2i position_,
@@ -123,6 +139,7 @@ Character::Character(EntityType type_,
     hpMax(hpMax_),
     hp(hpMax_),
     strength(strength_),
+    defense(0),
     sightRadius(0)
 {}
 
