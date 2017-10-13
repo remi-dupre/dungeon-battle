@@ -20,7 +20,10 @@ Configuration::Configuration() :
     down_key(sf::Keyboard::Key::S),
     menu_key(sf::Keyboard::Key::Escape),
     interaction_key(sf::Keyboard::Key::E),
-    attack_key(sf::Keyboard::Key::Space)
+    attack_left_key(sf::Keyboard::Key::Left),
+    attack_right_key(sf::Keyboard::Key::Right),
+    attack_up_key(sf::Keyboard::Key::Up),
+    attack_down_key(sf::Keyboard::Key::Down)
 {}
 
 void Configuration::read(const std::string& filename)

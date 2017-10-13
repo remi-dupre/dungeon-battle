@@ -29,7 +29,10 @@ struct Configuration
     sf::Keyboard::Key down_key;        ///< Key pressed to go down, default value is sf::Keyboars::S
     sf::Keyboard::Key menu_key;        ///< Key pressed to display the menu, default value is sf::Keyboard::Escape
     sf::Keyboard::Key interaction_key; ///< Key pressed to interact with an entity, default value is sf::Keyboard::E
-    sf::Keyboard::Key attack_key;      ///< Key pressed to attack an entity, default value is sf::Keyboard::Space
+    sf::Keyboard::Key attack_left_key; ///< Key pressed to attack an entity, default value is sf::Keyboard::Left
+    sf::Keyboard::Key attack_right_key;///< Key pressed to attack an entity, default value is sf::Keyboard::Right
+    sf::Keyboard::Key attack_up_key;   ///< Key pressed to attack an entity, default value is sf::Keyboard::Up
+    sf::Keyboard::Key attack_down_key; ///< Key pressed to attack an entity, default value is sf::Keyboard::Down
 
     /**
      * \brief Default constructor

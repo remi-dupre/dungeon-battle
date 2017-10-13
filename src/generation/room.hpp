@@ -12,6 +12,7 @@
 #include "../entity.hpp"
 #include "../rand.hpp"
 
+#include "gen_pattern.hpp"
 #include "pattern.hpp"
 
 
@@ -82,3 +83,12 @@ int ntn_dist(const Room& room1, const Room& room2);
  * \return A vector containing monsters we want to add.
  */
 void add_monsters(Room& room, float load);
+
+
+/**
+ * \brief Generate a labyrinth room.
+ * \param width The width of the maze. (must be odd)
+ * \param height The height of the maze. (must be odd)
+ * \return A room containing a maze, with relevant nodes.
+ */
+Room maze_room(int width, int height);

@@ -31,6 +31,57 @@ Pattern generate_rectangle(int size)
     return generate_rectangle(width, height);
 }
 
+Pattern generate_maze(int width, int height)
+{
+    assert(width % 2 == 1);
+    assert(height % 2 == 1);
+
+    // Create a graph representing the maze
+    int maze_width = width / 2;
+    int maze_height = height / 2;
+    std::vector<std::pair<std::pair<int, int>, std::pair<int, int>>> maze_graph;
+    std::vector<std::vector<bool>> visited(maze_width, std::vector<bool>(maze_height, false));
+
+    // Run the maze, adding new nodes
+    std::function<void(int, int)> run = [maze_width, maze_height, &run, &maze_graph, &visited](int x, int y)
+    {
+        std::pair<int, int> pos = std::make_pair(x, y);
+        visited[x][y] = true;
+
+        std::vector<std::pair<int, int>> directions = {{0, +1}, {0, -1}, {+1, 0}, {-1, 0}};
+        std::random_shuffle(begin(directions), end(directions));
+
+        for (auto direction : directions)
+        {
+            auto new_pos = pos + direction;
+            if(new_pos.first >= 0 && new_pos.first < maze_width
+                && new_pos.second >= 0 && new_pos.second < maze_height
+                && !visited[new_pos.first][new_pos.second])
+            {
+                maze_graph.push_back({pos, new_pos});
+                run(new_pos.first, new_pos.second);
+            }
+        }
+    };
+
+    run(Rand::uniform_int(0, maze_width-1), Rand::uniform_int(0, maze_height-1));
+
+    // Build the cells of the graph
+    Pattern cells;
+    for (auto& link : maze_graph)
+    {
+        int x1, x2, y1, y2;
+        std::tie(x1, y1) = link.first;
+        std::tie(x2, y2) = link.second;
+
+        cells.insert({x1*2, y1*2});
+        cells.insert({x2*2, y2*2});
+        cells.insert({x1+x2, y1+y2});
+    }
+
+    return cells;
+}
+
 Pattern generate_hallway(std::pair<int, int> cell1, std::pair<int, int> cell2)
 {
     int x1, y1, x2, y2;

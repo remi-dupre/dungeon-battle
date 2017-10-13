@@ -49,6 +49,7 @@ struct GenerationMode
 
     float monster_load; ///< Number of monsters per 100 unit of space
 
+    float maze_density; ///< Proportion of rooms that are replaced with mazes
     LevelType type; ///< Kind of design for the rooms
 };
 

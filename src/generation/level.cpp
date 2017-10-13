@@ -110,6 +110,13 @@ Level generate(const GenerationMode &mode)
     {
         int room_size = Rand::uniform_int(mode.room_min_size, mode.room_max_size);
 
+        float dice = Rand::uniform_int(0, 9);
+        if (dice == 0) // generate a maze
+        {
+            room = maze_room(23, 23);
+            continue;
+        }
+
         switch (mode.type)
         {
             case LevelType::Cave:
@@ -119,6 +126,7 @@ Level generate(const GenerationMode &mode)
 
             case LevelType::Flat:
             default:
+                room.cells = generate_maze(23, 23);
                 room.cells = generate_rectangle(room_size);
                 room.nodes = surrounding(room.cells);
                 break;
