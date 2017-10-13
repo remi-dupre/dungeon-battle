@@ -138,6 +138,18 @@ void Game::update()
     entity_turn = next_turn;
     if (monster_acting) // No animation time for monsters if they do not move or attack
         next_move = 1.f / config.animation_speed;
+
+    auto it = std::remove_if(entities.begin(), entities.end(),
+        [](std::shared_ptr<Entity> e)
+        {
+            if (e->getType() == EntityType::Monster || e->getType() == EntityType::Hero)
+            {
+                auto e2 = std::static_pointer_cast<Character>(e);
+                return !e2->isAlive();
+            }
+            return false;
+        });
+    entities.erase(it, entities.end());
 }
 
 bool Game::update_entity(std::shared_ptr<Entity> entity, Action action)
@@ -183,7 +195,8 @@ bool Game::update_entity(std::shared_ptr<Entity> entity, Action action)
                     auto s = std::static_pointer_cast<Character>(entity);
                     auto t = std::static_pointer_cast<Character>(target);
 
-                    t->addHp(std::min(static_cast<int>(t->getDefense()) - static_cast<int>(s->getStrength()), -1));
+                    t->addHp(std::min(static_cast<int>(t->getDefense()) -
+                                      static_cast<int>(s->getStrength()), -1));
 
                     return true;
                 }
