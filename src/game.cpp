@@ -187,8 +187,6 @@ bool Game::update_entity(std::shared_ptr<Entity> entity, Action action)
 
                     return true;
                 }
-                else
-                    return false;
             }
 
             return true;
