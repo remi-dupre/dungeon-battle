@@ -17,6 +17,7 @@
 #include "entity.hpp"
 #include "map.hpp"
 #include "math.hpp"
+#include "rand.hpp"
 #include "utility.hpp"
 
 

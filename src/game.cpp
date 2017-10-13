@@ -148,36 +148,55 @@ bool Game::update_entity(std::shared_ptr<Entity> entity, Action action)
 
     switch (action.type)
     {
-    case ActionType::Move:
-    {
-        position += to_vector2i(action.direction);
-        if(map.cellAt(position) != CellType::Floor)
-            return false; // Wall -> don't move
+        case ActionType::Move:
+        {
+            position += to_vector2i(action.direction);
+            if(map.cellAt(position) != CellType::Floor)
+                return false; // Wall -> don't move
 
-        auto entities_on_target = getEntitiesOnCell(position);
-        auto entity_on_target = std::find_if(entities_on_target.begin(), entities_on_target.end(),
-            [](const std::shared_ptr<Entity> e) -> bool
+            auto entities_on_target = getEntitiesOnCell(position);
+            auto entity_on_target = std::find_if(entities_on_target.begin(), entities_on_target.end(),
+                [](const std::shared_ptr<Entity> e) -> bool
+                {
+                    EntityType t = e->getType();
+                    return t == EntityType::Hero || t == EntityType::Monster;
+                });
+
+            if (entity_on_target != entities_on_target.end())
+                return false; // Entity on target cell -> don't move
+
+            entity->setPosition(position);
+
+            return true;
+        } break;
+
+        case ActionType::Attack:
+        {
+            position += to_vector2i(action.direction);
+            
+            for (auto& target : getEntitiesOnCell(position))
             {
-                EntityType t = e->getType();
-                return t == EntityType::Hero || t == EntityType::Monster;
-            });
+                EntityType target_type = target->getType();
 
-        if (entity_on_target != entities_on_target.end())
-            return false; // Entity on target cell -> don't move
+                if (target_type == EntityType::Hero || target_type == EntityType::Monster)
+                {
+                    Character& s = static_cast<Character&>(*entity);
+                    Character& t = static_cast<Character&>(*target);
+                    
+                    t.addHp(std::min(static_cast<int>(t.getDefense()) - static_cast<int>(s.getStrength()), -1));
 
-        entity->setPosition(position);
+                    return true;
+                }
+                else
+                    return false;
+            }
 
-        return true;
-    } break;
+            return true;
+        } break;
 
-    case ActionType::Attack:
-    {
-        return true;
-    } break;
-
-    default:
-        break;
-    }
+        default:
+            break;
+        }
 
     return false;
 }

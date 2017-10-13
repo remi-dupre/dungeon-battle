@@ -82,6 +82,16 @@ bool Entity::isAttacking() const
     return attacking;
 }
 
+void Entity::setAttacked(bool attacked_)
+{
+    attacked = attacked_;
+}
+
+bool Entity::isAttacked() const
+{
+    return attacked;
+}
+
 int Entity::zIndex()
 {
     switch(type)
@@ -170,6 +180,16 @@ unsigned int Character::getStrength() const
 void Character::setStrength(unsigned int strength_)
 {
     strength = strength_;
+}
+
+unsigned int Character::getDefense() const
+{
+    return defense;
+}
+
+void Character::setDefense(unsigned defense_)
+{
+    defense = defense_;
 }
 
 unsigned int Character::getSightRadius() const

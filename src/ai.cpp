@@ -27,6 +27,19 @@ void thereisaobstacle(
 }
 
 
+Action just_moving(const Entity& entity, const Map& map)
+{
+   sf::Vector2i position = entity.getPosition();
+   std::vector<Action> allaction;
+   allaction.push_back(Action(ActionType::Move, Direction::Left));
+   allaction.push_back(Action(ActionType::Move, Direction::Right));
+   allaction.push_back(Action(ActionType::Move, Direction::Up));
+   allaction.push_back(Action(ActionType::Move, Direction::Down));
+   allaction.push_back(Action());
+   return allaction[Rand::uniform_int(0,4)];
+} 
+
+
 Action bfs_monster(const Character& monster, const std::vector<std::shared_ptr<Entity>>& entities, const Map& map)
 {
     // Get information on our monster.
@@ -44,7 +57,7 @@ Action bfs_monster(const Character& monster, const std::vector<std::shared_ptr<E
     int save_min_dist = math::distance_1(startposition,heropostion);
     Action save_action = Action();
     if (save_min_dist >= sight) // The monster is to far from the hero.
-        return Action(); //comment if you want infinite radius
+        return just_moving(monster,map); //comment if you want infinite radius
 
 
     // Initiation of the bolean matrix that save which cells are available and not already seen.
@@ -128,3 +141,4 @@ Action get_input_monster(const Character& entity, const std::vector<std::shared_
     assert(has_hero(entities));
     return bfs_monster(entity,entities,map);
 }
+
