@@ -172,7 +172,7 @@ void Character::addHp(int hp_)
     (static_cast<int>(hp) < -hp_) ? hp = 0 : hp = std::min(hp+hp_, hpMax);
 }
 
-void Character::isAlive()
+bool Character::isAlive()
 {
     return (hp > 0);
 }
