@@ -12,6 +12,12 @@ Renderer::Renderer() :
     std::random_device r;
     RandRender::seed(r());
     seed = RandRender::uniform_int(std::numeric_limits<int>::min(), std::numeric_limits<int>::max());
+
+    font.loadFromFile("data/DejaVuSans.ttf");
+    hero_life.setFont(font);
+    hero_life.setCharacterSize(20.f);
+    hero_life.setPosition(10.f, 10.f);
+    hero_life.setFillColor(sf::Color::White);
 }
 
 void Renderer::setViewCenter(sf::Vector2f center)
@@ -70,6 +76,10 @@ void Renderer::drawEntities(const std::vector<std::shared_ptr<Entity>>& entities
 
         if (entity->getType() == EntityType::Hero)
         {
+            auto hero = std::static_pointer_cast<Character>(entity);
+
+            hero_life.setString(std::to_string(hero->getHp()) + "/" + std::to_string(hero->getHpMax()));
+
             v1.position = {p.x - 1.f, p.y - 25.f};
             v2.position = {p.x - 1.f, p.y + tile_size - 8.f};
             v3.position = {p.x + tile_size - 1.f, p.y - 25.f};
@@ -218,6 +228,9 @@ void Renderer::display(sf::RenderTarget& target)
                 charlie.size(),
                 sf::PrimitiveType::Triangles,
                 charlie_rstates);
+
+    target.setView(target.getDefaultView());
+    target.draw(hero_life);
 }
 
 void Renderer::drawCell(sf::Vector2i coords, CellType cell, const Map& map)
