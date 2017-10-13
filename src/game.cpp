@@ -183,7 +183,7 @@ bool Game::update_entity(std::shared_ptr<Entity> entity, Action action)
                     auto s = std::static_pointer_cast<Character>(entity);
                     auto t = std::static_pointer_cast<Character>(target);
 
-                    t.addHp(std::min(static_cast<int>(t.getDefense()) - static_cast<int>(s.getStrength()), -1));
+                    t->addHp(std::min(static_cast<int>(t->getDefense()) - static_cast<int>(s->getStrength()), -1));
 
                     return true;
                 }
