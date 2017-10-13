@@ -36,7 +36,7 @@ inline Action get_input_hero(const Entity& entity, const Configuration& config)
     if (sf::Keyboard::isKeyPressed(config.down_key))
         return Action(ActionType::Move, Direction::Down);
     if (sf::Keyboard::isKeyPressed(config.interaction_key))
-        return Action(ActionType::Interact, entity.getOrientation());
+        return Action(ActionType::Interact, Direction::None);
     if (sf::Keyboard::isKeyPressed(config.attack_left_key))
         return Action(ActionType::Attack, Direction::Left);
     if (sf::Keyboard::isKeyPressed(config.attack_right_key))

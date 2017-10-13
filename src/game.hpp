@@ -122,9 +122,9 @@ private:
     Configuration config; ///< The configuration of the game
     Renderer renderer; ///< The renderer
 
-    Map map; ///< The map
+    Map* map; ///< The map
 
-    std::vector<std::shared_ptr<Entity>> entities; ///< The entities
+    std::vector<std::shared_ptr<Entity>>* entities; ///< The entities
 
     std::vector<Level> dungeon; ///< Save the different level of a dungeon
 

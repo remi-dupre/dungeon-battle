@@ -46,25 +46,25 @@ void Game::init(const std::map<Option, std::string>& options)
 
     dungeon.push_back(generate(gen_options));
 
-    map = std::move(dungeon[current_level].map);
-    entities = std::move(dungeon[current_level].entities);
+    map = &dungeon[0].map;
+    entities = &dungeon[0].entities;
 
-    auto entry_stairs = std::find_if(entities.begin(), entities.end(),
+    auto entry_stairs = std::find_if(entities->begin(), entities->end(),
     [](const std::shared_ptr<Entity> e) -> bool
     {
-        return e->getType() == EntityType::Stairs && e->getInteraction() == Interaction::GoDown;
+        return e->getType() == EntityType::Stairs && e->getInteraction() == Interaction::GoUp;
     });
 
     sf::Vector2i start_pos;
-    if (entry_stairs != entities.end())
+    if (entry_stairs != entities->end())
         start_pos = (*entry_stairs)->getPosition();
 
-    entities.push_back(std::make_shared<Character>(EntityType::Hero,
-                                                   Interaction::None,
-                                                   start_pos,
-                                                   Direction::Left,
-                                                   baseHeroHp,
-                                                   baseHeroForce));
+    entities->push_back(std::make_shared<Character>(EntityType::Hero,
+                                                    Interaction::None,
+                                                    start_pos,
+                                                    Direction::Left,
+                                                    baseHeroHp,
+                                                    baseHeroForce));
 
     entity_turn = EntityType::Hero;
     next_move = 0.f;
@@ -99,7 +99,7 @@ void Game::update()
     bool monster_acting = false;
     EntityType next_turn = EntityType::Hero;
 
-    for (auto& entity : entities)
+    for (auto& entity : *entities)
     {
         if (entity->getType() != entity_turn)
         {
@@ -108,7 +108,7 @@ void Game::update()
             continue;
         }
 
-        Action action = control::get_input(*entity, entities, map, config);
+        Action action = control::get_input(*entity, *entities, *map, config);
 
         bool action_done = update_entity(entity, action);
 
@@ -128,26 +128,69 @@ void Game::update()
                     {
                         if (target->getType() == EntityType::Stairs)
                         {
-                            if (target->getInteraction() == Interaction::GoDown)
+                            switch (target->getInteraction())
                             {
-                                if(current_level == dungeon.size()-1)
-                                {
-                                    // Generate a map
-                                    GenerationMode gen_options;
-                                    gen_options.room_min_size = 50;
-                                    gen_options.room_max_size = 300;
-                                    gen_options.nb_rooms = 20;
-                                    gen_options.room_margin = 2;
-                                    gen_options.monster_load = 3.f;
-                                    gen_options.maze_density = 0.1f;
-                                    gen_options.type = LevelType::Cave;
-                                    dungeon.push_back(generate(gen_options));
+                                case Interaction::GoDown: {
+                                    if (current_level == dungeon.size()-1)
+                                    {
+                                        // Generate a map
+                                        GenerationMode gen_options;
+                                        gen_options.room_min_size = 50;
+                                        gen_options.room_max_size = 300;
+                                        gen_options.nb_rooms = 20;
+                                        gen_options.room_margin = 2;
+                                        gen_options.monster_load = 3.f;
+                                        gen_options.maze_density = 0.1f;
+                                        gen_options.type = LevelType::Cave;
+                                        dungeon.push_back(generate(gen_options));
 
-                                }
-                                auto it = std::find_if(dungeon[current_level].entities.begin(),dungeon[current_level].entities.end(),
-                                    [](std::shared_ptr<Entity> e) -> bool {return e->getType() == EntityType::Hero;});
-                                current_level++;
-                                dungeon[current_level].entities.push_back(*it);
+                                    }
+
+                                    auto hero = std::find_if(dungeon[current_level].entities.begin(),dungeon[current_level].entities.end(),
+                                        [](std::shared_ptr<Entity> e) -> bool {
+                                            return e->getType() == EntityType::Hero;
+                                        });
+
+                                    current_level++;
+
+                                    dungeon[current_level].entities.push_back(*hero);
+                                    map = &dungeon[current_level].map;
+                                    entities = &dungeon[current_level].entities;
+
+                                    auto stairs = std::find_if(dungeon[current_level].entities.begin(), dungeon[current_level].entities.end(),
+                                        [](std::shared_ptr<Entity> e) -> bool {
+                                            return e->getType() == EntityType::Stairs && e->getInteraction() == Interaction::GoUp;
+                                        });
+                                    
+                                    (*hero)->setPosition((*stairs)->getPosition()); }
+
+                                    break;
+
+                                case Interaction::GoUp: {
+                                    if (current_level == 0)
+                                        break;
+
+                                    current_level--;
+
+                                    map = &dungeon[current_level].map;
+                                    entities = &dungeon[current_level].entities;
+                                
+                                    auto hero = std::find_if(dungeon[current_level].entities.begin(),dungeon[current_level].entities.end(),
+                                    [](std::shared_ptr<Entity> e) -> bool {
+                                        return e->getType() == EntityType::Hero;
+                                    });
+                                
+                                    auto stairs = std::find_if(dungeon[current_level].entities.begin(), dungeon[current_level].entities.end(),
+                                    [](std::shared_ptr<Entity> e) -> bool {
+                                        return e->getType() == EntityType::Stairs && e->getInteraction() == Interaction::GoDown;
+                                    });
+                                
+                                    (*hero)->setPosition((*stairs)->getPosition()); }
+                                    
+                                    break;
+                                
+                                default:
+                                    break;
                             }
                         }
                     }
@@ -172,7 +215,7 @@ void Game::update()
     if (monster_acting) // No animation time for monsters if they do not move or attack
         next_move = 1.f / config.animation_speed;
 
-    auto it = std::remove_if(entities.begin(), entities.end(),
+    auto it = std::remove_if(entities->begin(), entities->end(),
         [](std::shared_ptr<Entity> e)
         {
             if (e->getType() == EntityType::Monster || e->getType() == EntityType::Hero)
@@ -182,7 +225,8 @@ void Game::update()
             }
             return false;
         });
-    entities.erase(it, entities.end());
+
+    entities->erase(it, entities->end());
 }
 
 bool Game::update_entity(std::shared_ptr<Entity> entity, Action action)
@@ -196,7 +240,8 @@ bool Game::update_entity(std::shared_ptr<Entity> entity, Action action)
         case ActionType::Move:
         {
             position += to_vector2i(action.direction);
-            if(map.cellAt(position) != CellType::Floor)
+
+            if (map->cellAt(position) != CellType::Floor)
                 return false; // Wall -> don't move
 
             auto entities_on_target = getEntitiesOnCell(position);
@@ -241,6 +286,10 @@ bool Game::update_entity(std::shared_ptr<Entity> entity, Action action)
             return true;
         } break;
 
+        case ActionType::Interact:
+            return true;
+            break;
+
         default:
             break;
         }
@@ -251,7 +300,7 @@ bool Game::update_entity(std::shared_ptr<Entity> entity, Action action)
 void Game::display()
 {
     //Sort entities by zIndex and depth
-    std::sort(entities.begin(), entities.end(),
+    std::sort(entities->begin(), entities->end(),
         [](const std::shared_ptr<Entity>& e1, const std::shared_ptr<Entity>& e2)
         {
             return e1->zIndex() < e2->zIndex()
@@ -259,12 +308,12 @@ void Game::display()
         }
     );
 
-    auto hero = std::find_if(entities.begin(), entities.end(),
+    auto hero = std::find_if(entities->begin(), entities->end(),
         [](const std::shared_ptr<Entity>& e)
         {
             return e->getType() == EntityType::Hero;
         });
-    if (hero != entities.end())
+    if (hero != entities->end())
     {
         sf::Vector2f view_center = static_cast<sf::Vector2f>((*hero)->getPosition());
         if ((*hero)->isMoving())
@@ -276,8 +325,8 @@ void Game::display()
         renderer.setViewCenter(view_center);
     }
 
-    renderer.drawMap(map);
-    renderer.drawEntities(entities, std::max(next_move, 0.f) * config.animation_speed);
+    renderer.drawMap(*map);
+    renderer.drawEntities(*entities, std::max(next_move, 0.f) * config.animation_speed);
 
     window.clear();
     renderer.display(window);
@@ -286,7 +335,7 @@ void Game::display()
 
 const std::vector<std::shared_ptr<Entity>>& Game::getEntities() const
 {
-    return entities;
+    return *entities;
 }
 
 std::vector<std::shared_ptr<Entity>> Game::getEntitiesOnCell(int x, int y) const
@@ -300,7 +349,7 @@ std::vector<std::shared_ptr<Entity>> Game::getEntitiesOnCell(sf::Vector2i positi
 
     // Runs a copy on 'entities' outputed to 'entities_on_cell'
     std::copy_if(
-        std::begin(entities), std::end(entities),
+        std::begin(*entities), std::end(*entities),
         std::back_inserter(entities_on_cell),
         [&position](const std::shared_ptr<Entity>& e) -> bool {
             return e->getPosition() == position;
@@ -321,7 +370,7 @@ std::vector<std::shared_ptr<Entity>> Game::getEntitiesAroundCell(sf::Vector2i po
 
     // Runs a copy on 'entities' outputed to 'entities_on_cell'
     std::copy_if(
-        std::begin(entities), std::end(entities),
+        std::begin(*entities), std::end(*entities),
         std::back_inserter(entities_on_cell),
         [&position, d](const std::shared_ptr<Entity>& e) -> bool {
             sf::Vector2i p = e->getPosition();
