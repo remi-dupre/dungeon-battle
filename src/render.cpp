@@ -13,7 +13,7 @@ Renderer::Renderer() :
     RandRender::seed(r());
     seed = RandRender::uniform_int(std::numeric_limits<int>::min(), std::numeric_limits<int>::max());
 
-    font.loadFromFile("data/DejaVuSans.ttf");
+    font.loadFromFile("data/FSEX300.ttf");
     hero_life.setFont(font);
     hero_life.setCharacterSize(20.f);
     hero_life.setPosition(10.f, 10.f);
