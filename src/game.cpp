@@ -174,6 +174,9 @@ bool Game::update_entity(std::shared_ptr<Entity> entity, Action action)
         {
             position += to_vector2i(action.direction);
 
+            entity->setAttacking(true);
+            entity->setOrientation(action.direction);
+
             for (auto& target : getEntitiesOnCell(position))
             {
                 EntityType target_type = target->getType();
