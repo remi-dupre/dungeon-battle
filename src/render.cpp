@@ -17,7 +17,6 @@ Renderer::Renderer() :
     hero_life.setFont(font);
     hero_life.setCharacterSize(20.f);
     hero_life.setPosition(10.f, 10.f);
-    hero_life.setFillColor(sf::Color::White);
 }
 
 void Renderer::setViewCenter(sf::Vector2f center)
