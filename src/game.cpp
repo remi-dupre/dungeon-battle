@@ -1,11 +1,10 @@
-#include <cmath>
-#include <map>
-#include <string>
-
 #include "game.hpp"
 
 
-Game::Game() {}
+Game::Game() :
+    entity_turn(EntityType::Hero),
+    next_move(0.f)
+{}
 
 void Game::init(const std::map<Option, std::string>& options)
 {
@@ -156,13 +155,13 @@ bool Game::update_entity(std::shared_ptr<Entity> entity, Action action)
             return false; // Wall -> don't move
 
         auto entities_on_target = getEntitiesOnCell(position);
-        auto entity_on_target =
-            std::find_if(entities_on_target.begin(), entities_on_target.end(),
-                         [](const std::shared_ptr<Entity> e) -> bool
-                         {
-                             EntityType t = e->getType();
-                             return t == EntityType::Hero || t == EntityType::Monster;
-                         });
+        auto entity_on_target = std::find_if(entities_on_target.begin(), entities_on_target.end(),
+            [](const std::shared_ptr<Entity> e) -> bool
+            {
+                EntityType t = e->getType();
+                return t == EntityType::Hero || t == EntityType::Monster;
+            });
+
         if (entity_on_target != entities_on_target.end())
             return false; // Entity on target cell -> don't move
 
