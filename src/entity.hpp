@@ -216,6 +216,11 @@ public:
     void addHp(int hp);
 
     /**
+     * \brief Return the living status of the character
+     */
+    bool isAlive();
+
+    /**
      * \brief Return the strength of the character
      */
     unsigned int getStrength() const;
