@@ -123,8 +123,6 @@ Level generate(const GenerationMode &mode)
                 room.nodes = surrounding(room.cells);
                 break;
         }
-
-        add_monsters(room, mode.monster_load);
     }
 
     // Places rooms in a non-linear way
@@ -171,6 +169,10 @@ Level generate(const GenerationMode &mode)
         sf::Vector2i(0, 0),
         Direction::Left
     ));
+
+    // Add monsters
+    for (Room& room : rooms)
+        add_monsters(room, mode.monster_load);
 
 
     // Outputs result into the map

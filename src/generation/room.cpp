@@ -186,10 +186,15 @@ void add_monsters(Room& room, float load)
     float excess = (room.cells.size() * load / 100.f) - nb_monsters;
     nb_monsters += (Rand::uniform_int(0, 1) < excess) ? 1 : 0;
 
+    // Select forbidden cells
+    Pattern forbidden;
+    for (auto entity : room.entities)
+        forbidden.insert(std::make_pair(entity->getPosition().x, entity->getPosition().y));
+
     // Process cells we could place monsters on
     std::vector<std::pair<int, int>> candidates;
     for (auto& cell : room.cells)
-        if (room.cells.find(cell) != end(room.cells))
+        if (forbidden.find(cell) == end(forbidden))
             candidates.push_back(cell);
     nb_monsters = std::min(nb_monsters, candidates.size());
 
