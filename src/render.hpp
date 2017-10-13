@@ -94,4 +94,6 @@ private:
     std::vector<sf::Vertex> charlie;
     sf::Texture charlie_tex; ///< Texture of the characters
 
+    sf::Font font;
+    sf::Text hero_life; ///< Text of the life of the hero
 };
