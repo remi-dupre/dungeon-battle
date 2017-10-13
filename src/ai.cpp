@@ -18,7 +18,8 @@ void thereisaobstacle(
     for(std::shared_ptr<Entity> entity : entities)
     {
         sf::Vector2i position = entity->getPosition();
-        if((std::abs(position.x - startposition.x) <= sight)
+        if(((entity->getType() != EntityType::Stairs)
+            && std::abs(position.x - startposition.x) <= sight)
             && (std::abs(position.y-startposition.y)<= sight)){
             cell_seen(seen, position, startposition,sight);
         }
