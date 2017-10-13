@@ -80,6 +80,10 @@ private:
      */
     void drawCell(sf::Vector2i coords, CellType cell, const Map& map);
 
+    int seed; ///< Seed used for rendering tiles
+
+    sf::View view; ///< The current view of the rendering
+
     const float tile_size; ///< Size of the tiles on screen in pixels
     std::vector<sf::Vertex> map_vertices; ///< Vertex array used to render the map
     sf::Texture tileset; ///< Texture of the tiles
@@ -90,5 +94,6 @@ private:
     std::vector<sf::Vertex> charlie;
     sf::Texture charlie_tex; ///< Texture of the characters
 
-    sf::View view; ///< The current view of the rendering
+    sf::Font font;
+    sf::Text hero_life; ///< Text of the life of the hero
 };

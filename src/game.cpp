@@ -1,11 +1,10 @@
-#include <cmath>
-#include <map>
-#include <string>
-
 #include "game.hpp"
 
 
-Game::Game() {}
+Game::Game() :
+    entity_turn(EntityType::Hero),
+    next_move(0.f)
+{}
 
 void Game::init(const std::map<Option, std::string>& options)
 {
@@ -150,36 +149,53 @@ bool Game::update_entity(std::shared_ptr<Entity> entity, Action action)
 
     switch (action.type)
     {
-    case ActionType::Move:
-    {
-        position += to_vector2i(action.direction);
-        if(map.cellAt(position) != CellType::Floor)
-            return false; // Wall -> don't move
+        case ActionType::Move:
+        {
+            position += to_vector2i(action.direction);
+            if(map.cellAt(position) != CellType::Floor)
+                return false; // Wall -> don't move
 
-        auto entities_on_target = getEntitiesOnCell(position);
-        auto entity_on_target =
-            std::find_if(entities_on_target.begin(), entities_on_target.end(),
-                         [](const std::shared_ptr<Entity> e) -> bool
-                         {
-                             EntityType t = e->getType();
-                             return t == EntityType::Hero || t == EntityType::Monster;
-                         });
-        if (entity_on_target != entities_on_target.end())
-            return false; // Entity on target cell -> don't move
+            auto entities_on_target = getEntitiesOnCell(position);
+            auto entity_on_target = std::find_if(entities_on_target.begin(), entities_on_target.end(),
+                [](const std::shared_ptr<Entity> e) -> bool
+                {
+                    EntityType t = e->getType();
+                    return t == EntityType::Hero || t == EntityType::Monster;
+                });
 
-        entity->setPosition(position);
+            if (entity_on_target != entities_on_target.end())
+                return false; // Entity on target cell -> don't move
 
-        return true;
-    } break;
+            entity->setPosition(position);
 
-    case ActionType::Attack:
-    {
-        return true;
-    } break;
+            return true;
+        } break;
 
-    default:
-        break;
-    }
+        case ActionType::Attack:
+        {
+            position += to_vector2i(action.direction);
+
+            for (auto& target : getEntitiesOnCell(position))
+            {
+                EntityType target_type = target->getType();
+
+                if (target_type == EntityType::Hero || target_type == EntityType::Monster)
+                {
+                    auto s = std::static_pointer_cast<Character>(entity);
+                    auto t = std::static_pointer_cast<Character>(target);
+
+                    t->addHp(std::min(static_cast<int>(t->getDefense()) - static_cast<int>(s->getStrength()), -1));
+
+                    return true;
+                }
+            }
+
+            return true;
+        } break;
+
+        default:
+            break;
+        }
 
     return false;
 }

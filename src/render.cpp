@@ -2,11 +2,22 @@
 
 
 Renderer::Renderer() :
+    seed(0),
     tile_size(32.f)
 {
     tileset.loadFromFile("data/tileset.png");
     charlie_tex.loadFromFile("data/character01.png");
     entities_tileset.loadFromFile("data/entities.png");
+
+    std::random_device r;
+    RandRender::seed(r());
+    seed = RandRender::uniform_int(std::numeric_limits<int>::min(), std::numeric_limits<int>::max());
+
+    font.loadFromFile("data/FSEX300.ttf");
+    hero_life.setFont(font);
+    hero_life.setCharacterSize(20.f);
+    hero_life.setPosition(10.f, 10.f);
+    hero_life.setFillColor(sf::Color::White);
 }
 
 void Renderer::setViewCenter(sf::Vector2f center)
@@ -47,7 +58,7 @@ void Renderer::drawEntities(const std::vector<std::shared_ptr<Entity>>& entities
 
     for (const auto& entity : entities)
     {
-        RandRender::seed(entity->getId());
+        RandRender::seed(entity->getId() + seed);
 
         sf::Vector2f p = tile_size * static_cast<sf::Vector2f>(entity->getPosition());
         sf::Vector2f old_p = tile_size * static_cast<sf::Vector2f>(entity->getOldPosition());
@@ -65,6 +76,10 @@ void Renderer::drawEntities(const std::vector<std::shared_ptr<Entity>>& entities
 
         if (entity->getType() == EntityType::Hero)
         {
+            auto hero = std::static_pointer_cast<Character>(entity);
+
+            hero_life.setString(std::to_string(hero->getHp()) + "/" + std::to_string(hero->getHpMax()));
+
             v1.position = {p.x - 1.f, p.y - 25.f};
             v2.position = {p.x - 1.f, p.y + tile_size - 8.f};
             v3.position = {p.x + tile_size - 1.f, p.y - 25.f};
@@ -213,6 +228,9 @@ void Renderer::display(sf::RenderTarget& target)
                 charlie.size(),
                 sf::PrimitiveType::Triangles,
                 charlie_rstates);
+
+    target.setView(target.getDefaultView());
+    target.draw(hero_life);
 }
 
 void Renderer::drawCell(sf::Vector2i coords, CellType cell, const Map& map)

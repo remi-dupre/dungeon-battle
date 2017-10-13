@@ -118,6 +118,17 @@ public:
     void setAttacking(bool attacking);
 
     /**
+     * \brief Return true if the entity is currently attacked
+     */
+    bool isAttacked() const;
+
+    /**
+     * \brief Set if the entity is currently attacked
+     */
+    void setAttacked(bool attacked);
+
+
+    /**
      * \brief Return the zIndex of the entity
      */
     int zIndex();
@@ -133,6 +144,7 @@ protected:
     sf::Vector2i old_position; ///< The position of the entity at the previous turn
     bool moving; ///< Tells whether the entity is currently moving or not
     bool attacking; ///< Tells whether the entity is currently attacking or not
+    bool attacked; ///< Tells whether the entity is currently attacked or not
 };
 
 
@@ -204,15 +216,31 @@ public:
     void addHp(int hp);
 
     /**
-     * \brief Return the force of the character
+     * \brief Return the living status of the character
+     */
+    bool isAlive();
+
+    /**
+     * \brief Return the strength of the character
      */
     unsigned int getStrength() const;
 
     /**
-     * \brief Set the force of the character
-     * \param strength The force to set
+     * \brief Set the strength of the character
+     * \param strength The strength to set
      */
     void setStrength(unsigned int strength);
+
+    /**
+     * \brief Return the defense of the character
+     */
+    unsigned int getDefense() const;
+    
+    /**
+     * \brief Set the defense of the character
+     * \param defense The defense to set
+     */
+    void setDefense(unsigned int defense);
 
     /**
      * \brief Return the sight radius of the character
@@ -251,6 +279,7 @@ protected:
     unsigned int hpMax; ///< The max hp of the character
     unsigned int hp; ///< The hp of the character
     unsigned int strength; ///< The force of the character
+    unsigned int defense; ///< The defense of the character
     unsigned int sightRadius; ///< The sight radius of the character (0 for infinity)
 };
 

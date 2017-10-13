@@ -82,6 +82,16 @@ bool Entity::isAttacking() const
     return attacking;
 }
 
+void Entity::setAttacked(bool attacked_)
+{
+    attacked = attacked_;
+}
+
+bool Entity::isAttacked() const
+{
+    return attacked;
+}
+
 int Entity::zIndex()
 {
     switch(type)
@@ -159,7 +169,12 @@ void Character::setHp(unsigned int hp_)
 
 void Character::addHp(int hp_)
 {
-    (static_cast<int>(hp) < hp_) ? hp = 0 : hp = std::min(hp+hp_, hpMax);
+    (static_cast<int>(hp) < -hp_) ? hp = 0 : hp = std::min(hp+hp_, hpMax);
+}
+
+bool Character::isAlive()
+{
+    return (hp > 0);
 }
 
 unsigned int Character::getStrength() const
@@ -170,6 +185,16 @@ unsigned int Character::getStrength() const
 void Character::setStrength(unsigned int strength_)
 {
     strength = strength_;
+}
+
+unsigned int Character::getDefense() const
+{
+    return defense;
+}
+
+void Character::setDefense(unsigned defense_)
+{
+    defense = defense_;
 }
 
 unsigned int Character::getSightRadius() const
