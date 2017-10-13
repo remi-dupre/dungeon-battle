@@ -18,18 +18,23 @@ void thereisaobstacle(
     for(std::shared_ptr<Entity> entity : entities)
     {
         sf::Vector2i position = entity->getPosition();
-        if(((entity->getType() != EntityType::Stairs)
-            && std::abs(position.x - startposition.x) <= sight)
-            && (std::abs(position.y-startposition.y)<= sight)){
-            cell_seen(seen, position, startposition,sight);
+        if ((entity->getType() != EntityType::Stairs) 
+            && (entity->getType() != EntityType::None)) 
+        {
+            auto chara = std::static_pointer_cast<Character>(entity);
+            if(( chara->isAlive()) 
+                && (std::abs(position.x - startposition.x) <= sight)
+                && (std::abs(position.y-startposition.y)<= sight)) 
+            {
+                cell_seen(seen, position, startposition,sight);
+            }
         }
     }
 }
 
 
-Action just_moving(const Entity& entity, const Map& map)
+Action just_moving()
 {
-   sf::Vector2i position = entity.getPosition();
    std::vector<Action> allaction;
    allaction.push_back(Action(ActionType::Move, Direction::Left));
    allaction.push_back(Action(ActionType::Move, Direction::Right));
@@ -57,7 +62,7 @@ Action bfs_monster(const Character& monster, const std::vector<std::shared_ptr<E
     int save_min_dist = math::distance_1(startposition,heropostion);
     Action save_action = Action();
     if (save_min_dist >= sight) // The monster is to far from the hero.
-        return just_moving(monster,map); //comment if you want infinite radius
+        return just_moving(); //comment if you want infinite radius
 
 
     // Initiation of the bolean matrix that save which cells are available and not already seen.

@@ -26,6 +26,8 @@ void Game::init(const std::map<Option, std::string>& options)
     std::random_device r;
     Rand::seed(r());
 
+    current_level = 0;
+
     // Generate a map
     GenerationMode gen_options;
     gen_options.room_min_size = 50;
@@ -42,10 +44,10 @@ void Game::init(const std::map<Option, std::string>& options)
     unsigned int baseHeroForce = 1;
     unsigned int baseMonsterForce = 1;
 
-    Level level = generate(gen_options);
+    dungeon.push_back(generate(gen_options));
 
-    map = std::move(level.map);
-    entities = std::move(level.entities);
+    map = std::move(dungeon[current_level].map);
+    entities = std::move(dungeon[current_level].entities);
 
     auto entry_stairs = std::find_if(entities.begin(), entities.end(),
     [](const std::shared_ptr<Entity> e) -> bool
@@ -120,6 +122,36 @@ void Game::update()
             case ActionType::Attack:
                 entity->setAttacking(true);
                 break;
+            case ActionType::Interact:
+                {
+                    for(auto& target : getEntitiesOnCell(entity->getPosition()))
+                    {
+                        if (target->getType() == EntityType::Stairs)
+                        {
+                            if (target->getInteraction() == Interaction::GoDown)
+                            {
+                                if(current_level == dungeon.size()-1)
+                                {
+                                    // Generate a map
+                                    GenerationMode gen_options;
+                                    gen_options.room_min_size = 50;
+                                    gen_options.room_max_size = 300;
+                                    gen_options.nb_rooms = 20;
+                                    gen_options.room_margin = 2;
+                                    gen_options.monster_load = 3.f;
+                                    gen_options.maze_density = 0.1f;
+                                    gen_options.type = LevelType::Cave;
+                                    dungeon.push_back(generate(gen_options));
+
+                                }
+                                auto it = std::find_if(dungeon[current_level].entities.begin(),dungeon[current_level].entities.end(),
+                                    [](std::shared_ptr<Entity> e) -> bool {return e->getType() == EntityType::Hero;});
+                                current_level++;
+                                dungeon[current_level].entities.push_back(*it);
+                            }
+                        }
+                    }
+                }
             default:
                 break;
             }

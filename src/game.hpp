@@ -126,6 +126,10 @@ private:
 
     std::vector<std::shared_ptr<Entity>> entities; ///< The entities
 
+    std::vector<Level> dungeon; ///< Save the different level of a dungeon
+
+    std::size_t current_level; ///< The number of the curent level
+
     EntityType entity_turn;
     float next_move;
 };
