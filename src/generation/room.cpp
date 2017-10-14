@@ -79,6 +79,12 @@ void separate_rooms(std::vector<Room>& rooms, int spacing)
     for (size_t i_room = 0 ; i_room < nb_rooms ; i_room++)
         frontiers[i_room] = surrounding(rooms[i_room].cells);
 
+    // Preprocess an efficient structure to calculate intersections
+    std::vector<KDTree> dist_engines;
+    for (size_t i_room = 0 ; i_room < nb_rooms ; i_room++)
+        dist_engines.push_back(KDTree(frontiers[i_room]));
+
+
     bool go_on = true; // Set to true while we changed something
     while(go_on)
     {
@@ -93,11 +99,12 @@ void separate_rooms(std::vector<Room>& rooms, int spacing)
                 Room& room1 = rooms[i1];
                 Room& room2 = rooms[i2];
 
-                // Send them in a direction if they are not spaced enough.
-                bool well_spaced = superposed(room1.position, room1.cells, room2.position, room2.cells);
-                well_spaced     |= !spaced(room1.position, frontiers[i1], room2.position, frontiers[i2], spacing);
+                // Check if the two sets are close to each other
+                bool well_spaced = true;
+                for (auto& cell : frontiers[i2])
+                    well_spaced = well_spaced && !dist_engines[i1].closeTo(cell + rooms[i2].position - rooms[i1].position, 2);
 
-                if (well_spaced)
+                if (!well_spaced)
                 {
                     go_on = true;
 

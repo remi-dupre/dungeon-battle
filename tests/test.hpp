@@ -12,6 +12,8 @@
 #include "../src/generation/level.cpp"
 #include "../src/generation/gen_pattern.hpp"
 #include "../src/generation/gen_pattern.cpp"
+#include "../src/generation/space.hpp"
+#include "../src/generation/space.cpp"
 
 #include "../src/config.hpp"
 #include "../src/config.cpp"
