@@ -136,6 +136,24 @@ Level generate(const GenerationMode &mode)
     // Places rooms in a non-linear way
     separate_rooms(rooms, mode.room_margin);
 
+    // Add stairs in first and last map
+    rooms[0].entities.push_back(std::make_shared<Entity>(
+        EntityType::Stairs,
+        Interaction::GoDown,
+        sf::Vector2i(0, 0),
+        Direction::Right
+    ));
+    rooms[mode.nb_rooms-1].entities.push_back(std::make_shared<Entity>(
+        EntityType::Stairs,
+        Interaction::GoUp,
+        sf::Vector2i(0, 0),
+        Direction::Left
+    ));
+
+    // Add monsters
+    for (Room& room : rooms)
+        add_monsters(room, mode.monster_load);
+
     // Add ways between rooms
     auto edges = covering_paths(rooms);
     for (auto edge : edges)
@@ -163,24 +181,6 @@ Level generate(const GenerationMode &mode)
                 break;
         }
     }
-
-    // Add stairs in first and last map
-    rooms[0].entities.push_back(std::make_shared<Entity>(
-        EntityType::Stairs,
-        Interaction::GoDown,
-        sf::Vector2i(0, 0),
-        Direction::Right
-    ));
-    rooms[mode.nb_rooms-1].entities.push_back(std::make_shared<Entity>(
-        EntityType::Stairs,
-        Interaction::GoUp,
-        sf::Vector2i(0, 0),
-        Direction::Left
-    ));
-
-    // Add monsters
-    for (Room& room : rooms)
-        add_monsters(room, mode.monster_load);
 
 
     // Outputs result into the map

@@ -28,7 +28,7 @@ Room merged_rooms(const std::vector<Room>& rooms)
     return merged;
 }
 
-std::pair<std::pair<int, int>, std::pair<int, int>> closest_nodes(const Room& room1, const Room& room2)
+std::pair<Point, Point> closest_nodes(const Room& room1, const Room& room2)
 {
     assert(!room1.nodes.empty());
     assert(!room2.nodes.empty());
@@ -41,7 +41,7 @@ std::pair<std::pair<int, int>, std::pair<int, int>> closest_nodes(const Room& ro
     {
         for (const Point& cell2 : room2.nodes)
         {
-            std::pair<int, int> diff = room1.position + cell1 - cell2 - room2.position;
+            Point diff = room1.position + cell1 - cell2 - room2.position;
             int dist = std::abs(diff.first) + std::abs(diff.second);
 
             if (dist < best_dist)
@@ -61,7 +61,7 @@ int ntn_dist(const Room& room1, const Room& room2)
     assert(!room1.nodes.empty());
     assert(!room2.nodes.empty());
 
-    std::pair<int, int> cell1, cell2;
+    Point cell1, cell2;
     std::tie(cell1, cell2) = closest_nodes(room1, room2);
 
     std::pair<int, int> diff = room1.position + cell1 - cell2 - room2.position;
@@ -73,16 +73,10 @@ void separate_rooms(std::vector<Room>& rooms, int spacing)
     assert(spacing >= 0);
 
     size_t nb_rooms = rooms.size();
-
-    // Preprocess the surrounding of rooms to reduce distance calculations
-    std::vector<Pattern> frontiers(nb_rooms);
-    for (size_t i_room = 0 ; i_room < nb_rooms ; i_room++)
-        frontiers[i_room] = surrounding(rooms[i_room].cells);
-
     // Preprocess an efficient structure to calculate intersections
     std::vector<KDTree> dist_engines;
     for (size_t i_room = 0 ; i_room < nb_rooms ; i_room++)
-        dist_engines.push_back(KDTree(frontiers[i_room]));
+        dist_engines.push_back(KDTree(rooms[i_room].cells));
 
 
     bool go_on = true; // Set to true while we changed something
@@ -101,8 +95,8 @@ void separate_rooms(std::vector<Room>& rooms, int spacing)
 
                 // Check if the two sets are close to each other
                 bool well_spaced = true;
-                for (auto& cell : frontiers[i2])
-                    well_spaced = well_spaced && !dist_engines[i1].closeTo(cell + rooms[i2].position - rooms[i1].position, 2);
+                for (auto& cell : rooms[i2].cells)
+                    well_spaced = well_spaced && !dist_engines[i1].closeTo(cell + rooms[i2].position - rooms[i1].position, spacing);
 
                 if (!well_spaced)
                 {
