@@ -2,6 +2,9 @@
 
 
 Game::Game() :
+    map(nullptr),
+    entities(nullptr),
+    current_level(0),
     entity_turn(EntityType::Hero),
     next_move(0.f)
 {}
