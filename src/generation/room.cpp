@@ -12,7 +12,7 @@ Room merged_rooms(const std::vector<Room>& rooms)
 
     for (size_t i_room = 0 ; i_room < rooms.size() ; i_room++)
     {
-        for (auto& cell : rooms[i_room].cells)
+        for (const Point& cell : rooms[i_room].cells)
             merged.cells.insert(cell + rooms[i_room].position);
 
         for (auto entity : rooms[i_room].entities)
@@ -37,9 +37,9 @@ std::pair<std::pair<int, int>, std::pair<int, int>> closest_nodes(const Room& ro
     std::pair<int, int> best_cell1({0, 0});
     std::pair<int, int> best_cell2({0, 0});
 
-    for (auto& cell1 : room1.nodes)
+    for (const Point& cell1 : room1.nodes)
     {
-        for (auto& cell2 : room2.nodes)
+        for (const Point& cell2 : room2.nodes)
         {
             std::pair<int, int> diff = room1.position + cell1 - cell2 - room2.position;
             int dist = std::abs(diff.first) + std::abs(diff.second);
@@ -151,21 +151,21 @@ Room normalized_room(const Room& room)
 
     Room normalized;
 
-    for (auto& cell : room.cells)
+    for (const Point& cell : room.cells)
     {
         assert(cell.first  - min_x >= 0);
         assert(cell.second - min_y >= 0);
         normalized.cells.insert({cell.first - min_x, cell.second - min_y});
     }
 
-    for (auto& cell : room.nodes)
+    for (const Point& cell : room.nodes)
     {
         assert(cell.first  - min_x >= 0);
         assert(cell.second - min_y >= 0);
         normalized.nodes.insert({cell.first - min_x, cell.second - min_y});
     }
 
-    for (auto& entity : room.entities)
+    for (auto entity : room.entities)
     {
         auto pos = entity->getPosition();
         entity->setPosition({pos.x - min_x, pos.y - min_y});
@@ -193,7 +193,7 @@ void add_monsters(Room& room, float load)
 
     // Process cells we could place monsters on
     std::vector<std::pair<int, int>> candidates;
-    for (auto& cell : room.cells)
+    for (const Point& cell : room.cells)
         if (forbidden.find(cell) == end(forbidden))
             candidates.push_back(cell);
     nb_monsters = std::min(nb_monsters, candidates.size());
@@ -204,7 +204,7 @@ void add_monsters(Room& room, float load)
     for (size_t i_chosen = 0 ; i_chosen < nb_monsters ; i_chosen++)
     {
         // Selected cell of index indexes[i_chosen]
-        auto& cell = candidates[i_chosen];
+        Point& cell = candidates[i_chosen];
         room.entities.push_back(std::make_shared<Character>(
             EntityType::Monster,
             Interaction::None,
@@ -225,7 +225,7 @@ Room maze_room(int width, int height)
     // Create relevant nodes
     room.nodes = Pattern();
 
-    for (auto cell : room.cells)
+    for (const Point& cell : room.cells)
         if (cell.first == 0 || cell.second == 0 || cell.first == max_x || cell.second == max_y)
             room.nodes.insert(cell);
 

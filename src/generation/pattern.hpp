@@ -13,12 +13,13 @@
 #include "../entity.hpp"
 #include "../utility.hpp"
 
+#include "space.hpp"
 
 
 /**
  * \brief The set of cells contained in a pattern
  */
-typedef std::set<std::pair<int, int>> Pattern;
+typedef std::set<Point> Pattern;
 
 
 /**
@@ -68,8 +69,8 @@ Pattern surrounding(const Pattern& pattern);
  * \return Returns true if any pair of cells are spaced of at least distance.
  */
 bool spaced(
-    std::pair<int, int> position1, const Pattern& pattern1,
-    std::pair<int, int> position2, const Pattern& pattern2,
+    Point position1, const Pattern& pattern1,
+    Point position2, const Pattern& pattern2,
     int spacing
 );
 
@@ -82,8 +83,8 @@ bool spaced(
  * \return Returns true if the two patterns have a common cell.
  */
 bool superposed(
-    std::pair<int, int> position1, const Pattern& pattern1,
-    std::pair<int, int> position2, const Pattern& pattern2
+    Point position1, const Pattern& pattern1,
+    Point position2, const Pattern& pattern2
 );
 
 /**
@@ -95,6 +96,6 @@ bool superposed(
  * \warning The new pattern can still contain negative coordinates.
  */
 Pattern merged_patterns(
-    const std::vector<std::pair<int, int>>& positions,
+    const std::vector<Point>& positions,
     const std::vector<Pattern>& patterns
 );

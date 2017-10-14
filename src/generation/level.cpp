@@ -68,7 +68,7 @@ Map map_of_pattern(const Pattern& pattern)
     Map map(width, height);
 
     // Add cells of the pattern on the floor
-    for (auto &cell : pattern)
+    for (const Point& cell : pattern)
     {
         int x = cell.first;
         int y = cell.second;
@@ -144,9 +144,9 @@ Level generate(const GenerationMode &mode)
         rooms.push_back(Room());
         Room& path = rooms.back();
 
-        auto close_points = closest_nodes(rooms[edge.first], rooms[edge.second]);
-        auto hall_start = close_points.first + rooms[edge.first].position;
-        auto hall_end = close_points.second + rooms[edge.second].position;
+        std::pair<Point, Point> close_points = closest_nodes(rooms[edge.first], rooms[edge.second]);
+        Point hall_start = close_points.first + rooms[edge.first].position;
+        Point hall_end = close_points.second + rooms[edge.second].position;
 
         path.position = hall_start;
 

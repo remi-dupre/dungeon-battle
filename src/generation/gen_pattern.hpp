@@ -10,6 +10,7 @@
 
 #include "../rand.hpp"
 
+#include "space.hpp"
 #include "pattern.hpp"
 
 
@@ -57,7 +58,7 @@ Pattern generate_cave(int size);
  * \param cell2 Coordinates of second extremity of the path.
  * \return The pattern corresponding to a path linking cell1 to cell2 if the cell (0, 0) of the pattern is placed on cell1.
  */
-Pattern generate_hallway(std::pair<int, int> cell1, std::pair<int, int> cell2);
+Pattern generate_hallway(Point cell1, Point cell2);
 
 /**
  * \brief Add cells to a pattern so that it looks cave styled.

@@ -13,6 +13,7 @@
 #include "../rand.hpp"
 
 #include "gen_pattern.hpp"
+#include "space.hpp"
 #include "pattern.hpp"
 
 
@@ -21,7 +22,7 @@
  */
 struct Room
 {
-    std::pair<int, int> position; ///< Center position of the room.
+    Point position; ///< Center position of the room.
 
     Pattern cells; ///< Relative positions of the cells placed on the room.
     Pattern nodes; ///< Cells of the pattern that can be used to enter it.
@@ -65,7 +66,7 @@ void separate_rooms(std::vector<Room>& rooms, int spacing);
  * \param room2 A room, where nodes are specified.
  * \param A pair of the coordinates of the nodes.
  */
-std::pair<std::pair<int, int>, std::pair<int, int>> closest_nodes(const Room& room1, const Room& room2);
+std::pair<Point, Point> closest_nodes(const Room& room1, const Room& room2);
 
 /**
  * \brief Calculates node to node distance of two rooms.

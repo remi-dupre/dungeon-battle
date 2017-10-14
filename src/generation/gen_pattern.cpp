@@ -39,21 +39,21 @@ Pattern generate_maze(int width, int height)
     // Create a graph representing the maze
     int maze_width = width / 2;
     int maze_height = height / 2;
-    std::vector<std::pair<std::pair<int, int>, std::pair<int, int>>> maze_graph;
+    std::vector<std::pair<Point, Point>> maze_graph;
     std::vector<std::vector<bool>> visited(maze_width, std::vector<bool>(maze_height, false));
 
     // Run the maze, adding new nodes
     std::function<void(int, int)> run = [maze_width, maze_height, &run, &maze_graph, &visited](int x, int y)
     {
-        std::pair<int, int> pos = std::make_pair(x, y);
+        Point pos = std::make_pair(x, y);
         visited[x][y] = true;
 
-        std::vector<std::pair<int, int>> directions = {{0, +1}, {0, -1}, {+1, 0}, {-1, 0}};
+        std::vector<Point> directions = {{0, +1}, {0, -1}, {+1, 0}, {-1, 0}};
         std::random_shuffle(begin(directions), end(directions));
 
-        for (auto direction : directions)
+        for (Point direction : directions)
         {
-            auto new_pos = pos + direction;
+            Point new_pos = pos + direction;
             if(new_pos.first >= 0 && new_pos.first < maze_width
                 && new_pos.second >= 0 && new_pos.second < maze_height
                 && !visited[new_pos.first][new_pos.second])
@@ -68,7 +68,7 @@ Pattern generate_maze(int width, int height)
 
     // Build the cells of the graph
     Pattern cells;
-    for (auto& link : maze_graph)
+    for (auto link : maze_graph)
     {
         int x1, x2, y1, y2;
         std::tie(x1, y1) = link.first;
@@ -82,7 +82,7 @@ Pattern generate_maze(int width, int height)
     return cells;
 }
 
-Pattern generate_hallway(std::pair<int, int> cell1, std::pair<int, int> cell2)
+Pattern generate_hallway(Point cell1, Point cell2)
 {
     int x1, y1, x2, y2;
     std::tie(x1, y1) = cell1;
@@ -122,14 +122,14 @@ void cavestyle_patch(Pattern& pattern, int nb_additions)
     Pattern surrounding;
 
     // Function to add a new cell to surrounding, if it isn't already in the pattern.
-    auto addSurrounding = [&pattern, &surrounding](std::pair<int, int> cell)
+    auto addSurrounding = [&pattern, &surrounding](Point cell)
     {
         if (pattern.count(cell) == 0)
             surrounding.insert(cell);
     };
 
     // Add cells around the first ones
-    for (auto& cell : pattern)
+    for (Point cell : pattern)
     {
         addSurrounding(cell + std::make_pair(1, 0));
         addSurrounding(cell + std::make_pair(0, 1));
