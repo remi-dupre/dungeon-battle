@@ -163,6 +163,41 @@ public:
      */
     Item(const std::string& name, const sf::Vector2i& position);
 
+    /**
+     * \brief Return the level of the item
+     */
+    int getLevel() const;
+
+    /**
+     * \brief Return the experience of the item
+     */
+    int getExperience() const;
+
+    /**
+     * \brief Return the hp max of the item
+     */
+    int getHpMax() const;
+
+    /**
+     * \brief Return the hp of the item
+     */
+    int getHp() const;
+
+    /**
+     * \brief Return the strength of the item
+     */
+    int getStrength() const;
+
+    /**
+     * \brief Return the defense of the item
+     */
+    int getDefense() const;
+
+    /**
+     * \brief Return the sight radius of the item
+     */
+    int getSightRadius() const;
+
 protected:
 
     std::string name; ///< The name of the item
