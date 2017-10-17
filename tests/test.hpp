@@ -12,6 +12,8 @@
 #include "../src/generation/level.cpp"
 #include "../src/generation/gen_pattern.hpp"
 #include "../src/generation/gen_pattern.cpp"
+#include "../src/generation/space.hpp"
+#include "../src/generation/space.cpp"
 
 #include "../src/config.hpp"
 #include "../src/config.cpp"
@@ -126,6 +128,8 @@ public:
             gen_options.nb_rooms = Rand::uniform_int(MIN_ROOMS, MAX_ROOMS);
             gen_options.room_margin = Rand::uniform_int(MIN_MARGIN, MAX_MARGIN);
             gen_options.type = static_cast<LevelType>(Rand::uniform_int(0, 1));
+            gen_options.monster_load = 3.f;
+            gen_options.maze_density = 0.1f;
 
             TS_TRACE("nb_rooms : " + std::to_string(gen_options.nb_rooms));
             TS_TRACE("room_margin : " + std::to_string(gen_options.room_margin));

@@ -124,6 +124,40 @@ Item::Item(const std::string& name_, const sf::Vector2i& position_) :
     sightRadius(0)
 {}
 
+int Item::getLevel() const
+{
+    return level;
+}
+
+int Item::getExperience() const
+{
+    return experience;
+}
+
+int Item::getHpMax() const
+{
+    return hpMax;
+}
+
+int Item::getHp() const
+{
+    return hp;
+}
+
+int Item::getStrength() const
+{
+    return strength;
+}
+
+int Item::getDefense() const
+{
+    return defense;
+}
+
+int Item::getSightRadius() const
+{
+    return sightRadius;
+}
 
 
 
@@ -150,7 +184,12 @@ Character::Character(EntityType type_,
 
 unsigned int Character::getLevel() const
 {
-    return level;
+    unsigned int c = level;
+    for (const Item& item : inventory)
+    {
+        c += item.getLevel();
+    }
+    return c;
 }
 
 void Character::setLevel(unsigned int level_)
@@ -170,7 +209,12 @@ void Character::levelUp()
 
 unsigned int Character::getHpMax() const
 {
-    return hpMax;
+    unsigned int c = hpMax;
+    for (const Item& item : inventory)
+    {
+        c += item.getHpMax();
+    }
+    return c;
 }
 
 void Character::setHpMax(unsigned int hpMax_)
@@ -180,7 +224,12 @@ void Character::setHpMax(unsigned int hpMax_)
 
 unsigned int Character::getHp() const
 {
-    return hp;
+    unsigned int c = hp;
+    for (const Item& item : inventory)
+    {
+        c += item.getHp();
+    }
+    return c;
 }
 
 void Character::setHp(unsigned int hp_)
@@ -200,7 +249,12 @@ bool Character::isAlive()
 
 unsigned int Character::getStrength() const
 {
-    return strength;
+    unsigned int c = strength;
+    for (const Item& item : inventory)
+    {
+        c += item.getStrength();
+    }
+    return c;
 }
 
 void Character::setStrength(unsigned int strength_)
@@ -210,7 +264,12 @@ void Character::setStrength(unsigned int strength_)
 
 unsigned int Character::getDefense() const
 {
-    return defense;
+    unsigned int c = defense;
+    for (const Item& item : inventory)
+    {
+        c += item.getDefense();
+    }
+    return c;
 }
 
 void Character::setDefense(unsigned defense_)
@@ -220,7 +279,12 @@ void Character::setDefense(unsigned defense_)
 
 unsigned int Character::getSightRadius() const
 {
-    return sightRadius;
+    unsigned int c = sightRadius;
+    for (const Item& item : inventory)
+    {
+        c += item.getSightRadius();
+    }
+    return c;
 }
 
 void Character::setSightRadius(unsigned int sightRadius_)
