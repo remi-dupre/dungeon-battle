@@ -24,6 +24,8 @@ void Game::init(const std::map<Option, std::string>& options)
 
     if (!config.vsync) // Don't activate vertical synchronization and framerate limit at the same time
         window.setFramerateLimit(config.maxfps);
+    
+    config.readGame("data/game.ini");
 
     // Seed the rng
     std::random_device r;
@@ -31,23 +33,13 @@ void Game::init(const std::map<Option, std::string>& options)
 
     current_level = 0;
 
-    // Generate a map
-    GenerationMode gen_options;
-    gen_options.room_min_size = 50;
-    gen_options.room_max_size = 300;
-    gen_options.nb_rooms = 20;
-    gen_options.room_margin = 2;
-    gen_options.monster_load = 3.f;
-    gen_options.maze_density = 0.1f;
-    gen_options.type = LevelType::Cave;
-
     // Base stats of Heros and Monsters
     unsigned int baseHeroHp = 20;
     unsigned int baseMonsterHp = 5;
     unsigned int baseHeroForce = 1;
     unsigned int baseMonsterForce = 1;
 
-    dungeon.push_back(generate(gen_options));
+    dungeon.push_back(generate(config.gen_options));
 
     map = &dungeon[0].map;
     entities = &dungeon[0].entities;
@@ -135,19 +127,7 @@ void Game::update()
                             {
                                 case Interaction::GoDown: {
                                     if (current_level == dungeon.size()-1)
-                                    {
-                                        // Generate a map
-                                        GenerationMode gen_options;
-                                        gen_options.room_min_size = 50;
-                                        gen_options.room_max_size = 300;
-                                        gen_options.nb_rooms = 20;
-                                        gen_options.room_margin = 2;
-                                        gen_options.monster_load = 3.f;
-                                        gen_options.maze_density = 0.1f;
-                                        gen_options.type = LevelType::Cave;
-                                        dungeon.push_back(generate(gen_options));
-
-                                    }
+                                        dungeon.push_back(generate(config.gen_options));
 
                                     auto hero = std::find_if(dungeon[current_level].entities.begin(),dungeon[current_level].entities.end(),
                                         [](std::shared_ptr<Entity> e) -> bool {
