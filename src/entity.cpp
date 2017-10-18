@@ -110,18 +110,24 @@ int Entity::zIndex()
     }
 }
 
-
-
-Item::Item(const std::string& name_, const sf::Vector2i& position_) :
+Item::Item(const std::string& name_,
+        const sf::Vector2i& position_,
+        int level_,
+        int experience_,
+        int hpMax_,
+        int hp_,
+        int strength_,
+        int defense_,
+        int sightRadius_) :
     Entity(EntityType::Item, Interaction::None, position_, Direction::None),
     name(name_),
-    level(0),
-    experience(0),
-    hpMax(0),
-    hp(0),
-    strength(0),
-    defense(0),
-    sightRadius(0)
+    level(level_),
+    experience(experience_),
+    hpMax(hpMax_),
+    hp(hp_),
+    strength(strength_),
+    defense(defense_),
+    sightRadius(sightRadius_)
 {}
 
 int Item::getLevel() const

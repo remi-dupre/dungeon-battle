@@ -160,41 +160,56 @@ public:
      * \brief Create an item
      * \param name The name of the item
      * \param position The position of the item
+     * \param level The level modifier of the item 
+     * \param experience The experience modifier of the item
+     * \param hpMax The hp max modifier of the item
+     * \param hp The hp modifier of the item
+     * \param strength The strength modifier of the item
+     * \param defense The defense modifier of the item
+     * \param sighRadius The sight radius modifier of the item
      */
-    Item(const std::string& name, const sf::Vector2i& position);
+    Item(const std::string& name,
+        const sf::Vector2i& position,
+        int level,
+        int experience,
+        int hpMax,
+        int hp,
+        int strength,
+        int defense,
+        int sightRadius);
 
     /**
-     * \brief Return the level of the item
+     * \brief Return the level modifier of the item
      */
     int getLevel() const;
 
     /**
-     * \brief Return the experience of the item
+     * \brief Return the experience modifier of the item
      */
     int getExperience() const;
 
     /**
-     * \brief Return the hp max of the item
+     * \brief Return the hp max modifier of the item
      */
     int getHpMax() const;
 
     /**
-     * \brief Return the hp of the item
+     * \brief Return the hp modifier of the item
      */
     int getHp() const;
 
     /**
-     * \brief Return the strength of the item
+     * \brief Return the strength modifier of the item
      */
     int getStrength() const;
 
     /**
-     * \brief Return the defense of the item
+     * \brief Return the defense modifier of the item
      */
     int getDefense() const;
 
     /**
-     * \brief Return the sight radius of the item
+     * \brief Return the sight radius modifier of the item
      */
     int getSightRadius() const;
 
