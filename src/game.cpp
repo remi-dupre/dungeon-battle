@@ -35,9 +35,7 @@ void Game::init(const std::map<Option, std::string>& options)
 
     // Base stats of Heros and Monsters
     unsigned int baseHeroHp = 20;
-    unsigned int baseMonsterHp = 5;
     unsigned int baseHeroForce = 1;
-    unsigned int baseMonsterForce = 1;
 
     dungeon.push_back(generate(config.gen_options));
 
