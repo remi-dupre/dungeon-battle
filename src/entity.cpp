@@ -161,7 +161,6 @@ int Item::getSightRadius() const
 
 
 
-
 Character::Character(EntityType type_,
                      Interaction interaction_,
                      sf::Vector2i position_,
@@ -184,12 +183,14 @@ Character::Character(EntityType type_,
 
 unsigned int Character::getLevel() const
 {
-    unsigned int c = level;
+    int c = level;
+
     for (const Item& item : inventory)
     {
         c += item.getLevel();
     }
-    return c;
+
+    return static_cast<unsigned int>(std::max(c, 0));
 }
 
 void Character::setLevel(unsigned int level_)
@@ -209,12 +210,14 @@ void Character::levelUp()
 
 unsigned int Character::getHpMax() const
 {
-    unsigned int c = hpMax;
+    int c = hpMax;
+
     for (const Item& item : inventory)
     {
         c += item.getHpMax();
     }
-    return c;
+
+    return static_cast<unsigned int>(std::max(c, 0));
 }
 
 void Character::setHpMax(unsigned int hpMax_)
@@ -224,12 +227,14 @@ void Character::setHpMax(unsigned int hpMax_)
 
 unsigned int Character::getHp() const
 {
-    unsigned int c = hp;
+    int c = hp;
+
     for (const Item& item : inventory)
     {
         c += item.getHp();
     }
-    return c;
+
+    return static_cast<unsigned int>(std::max(c, 0));
 }
 
 void Character::setHp(unsigned int hp_)
@@ -249,12 +254,14 @@ bool Character::isAlive()
 
 unsigned int Character::getStrength() const
 {
-    unsigned int c = strength;
+    int c = strength;
+
     for (const Item& item : inventory)
     {
         c += item.getStrength();
     }
-    return c;
+
+    return static_cast<unsigned int>(std::max(c, 0));
 }
 
 void Character::setStrength(unsigned int strength_)
@@ -264,12 +271,14 @@ void Character::setStrength(unsigned int strength_)
 
 unsigned int Character::getDefense() const
 {
-    unsigned int c = defense;
+    int c = defense;
+
     for (const Item& item : inventory)
     {
         c += item.getDefense();
     }
-    return c;
+
+    return static_cast<unsigned int>(std::max(c, 0));
 }
 
 void Character::setDefense(unsigned defense_)
@@ -279,12 +288,14 @@ void Character::setDefense(unsigned defense_)
 
 unsigned int Character::getSightRadius() const
 {
-    unsigned int c = sightRadius;
+    int c = sightRadius;
+
     for (const Item& item : inventory)
     {
         c += item.getSightRadius();
     }
-    return c;
+
+    return static_cast<unsigned int>(std::max(c, 0));
 }
 
 void Character::setSightRadius(unsigned int sightRadius_)
@@ -320,7 +331,8 @@ void Character::pickUp(Item item)
 
 
 
-bool has_hero(const std::vector<std::shared_ptr<Entity>>& entities){
+bool has_hero(const std::vector<std::shared_ptr<Entity>>& entities)
+{
     for(const auto& entity : entities)
     {
         if(entity->getType() == EntityType::Hero)
@@ -328,18 +340,21 @@ bool has_hero(const std::vector<std::shared_ptr<Entity>>& entities){
             return true;
         }
     }
+
     return false;
 }
 
 
-sf::Vector2i get_hero_position(const std::vector<std::shared_ptr<Entity>>& entities){
+sf::Vector2i get_hero_position(const std::vector<std::shared_ptr<Entity>>& entities)
+{
     for(const auto& entity : entities)
     {
         if(entity->getType() == EntityType::Hero)
         {
             return entity->getPosition();
-        }
+        }   
     }
+
     assert(false);
     return {0, 0};
 }
