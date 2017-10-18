@@ -26,7 +26,7 @@ Configuration::Configuration() :
     gen_options()
 {}
 
-constexpr sf::Keyboard::Key string_to_key(const std::string& name)
+sf::Keyboard::Key string_to_key(const std::string& name)
 {
     if (name.length() == 1)
     {
@@ -59,6 +59,8 @@ constexpr sf::Keyboard::Key string_to_key(const std::string& name)
     {
         return sf::Keyboard::Key::Escape;
     }
+
+    return {};
 }
 
 void Configuration::read(const std::string& filename)
