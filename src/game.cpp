@@ -259,9 +259,11 @@ bool Game::update_entity(std::shared_ptr<Entity> entity, Action action)
 
                     t->addHp(std::min(static_cast<int>(t->getDefense()) -
                                       static_cast<int>(s->getStrength()), -1));
+                    s->awardExperience(*t);
 
                     return true;
                 }
+
             }
 
             return true;

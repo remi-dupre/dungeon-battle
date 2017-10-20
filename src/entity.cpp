@@ -184,7 +184,10 @@ Character::Character(EntityType type_,
     sightRadius(0),
     inventory(std::vector<Item>()),
     inventorySize(-1)
-{}
+{
+    if (type_ == EntityType::Monster)
+        experience = 5;
+}
 
 
 unsigned int Character::getLevel() const
@@ -210,6 +213,8 @@ void Character::levelUp()
     {
         experience -= experienceCurve(level);
         level++;
+        hpMax += 5;
+        hp = hpMax;
         levelUp();
     }
 }
@@ -253,7 +258,7 @@ void Character::addHp(int hp_)
     (static_cast<int>(hp) < -hp_) ? hp = 0 : hp = std::min(hp+hp_, hpMax);
 }
 
-bool Character::isAlive()
+bool Character::isAlive() const
 {
     return (getHp() > 0);
 }
@@ -323,6 +328,14 @@ void Character::addExperience(unsigned int experience_)
 {
     experience += experience_;
     levelUp();
+}
+
+void Character::awardExperience(const Character& target)
+{
+    if (!target.isAlive())
+    {
+        addExperience(target.getExperience());
+    }
 }
 
 bool Character::roomInInventory()

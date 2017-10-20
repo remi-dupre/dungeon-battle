@@ -295,7 +295,7 @@ public:
     /**
      * \brief Return the living status of the character
      */
-    bool isAlive();
+    bool isAlive() const;
 
     /**
      * \brief Return the strength of the character
@@ -347,6 +347,12 @@ public:
      * \param experience The experience to add
      */
     void addExperience(unsigned int experience);
+
+    /**
+     * \brief Award experience to the character for a killing blow
+     * \param target The slained character
+     */
+    void awardExperience(const Character& target);
 
     /**
      * \brief Check if there is an empty inventory slot
