@@ -82,8 +82,8 @@ void Renderer::drawEntities(const std::vector<std::shared_ptr<Entity>>& entities
             auto hero = std::static_pointer_cast<Character>(entity);
 
             hero_life.setString(std::to_string(hero->getHp()) + "/" + std::to_string(hero->getHpMax()));
-            hero_xp.setString(std::to_string(hero->getExperience()));
-
+            hero_xp.setString("XP: " + std::to_string(hero->getExperience()) +
+                              "\nLVL: " + std::to_string(hero->getLevel()));
             v1.position = {p.x - 1.f, p.y - 25.f};
             v2.position = {p.x - 1.f, p.y + tile_size - 8.f};
             v3.position = {p.x + tile_size - 1.f, p.y - 25.f};
