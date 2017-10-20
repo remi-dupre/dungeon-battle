@@ -96,4 +96,5 @@ private:
 
     sf::Font font;
     sf::Text hero_life; ///< Text of the life of the hero
+    sf::Text hero_xp;
 };
