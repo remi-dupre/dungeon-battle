@@ -57,12 +57,26 @@ public:
      */
     Entity(EntityType type, Interaction interaction, sf::Vector2i position, Direction orientation);
 
+    /**
+     * \brief Create an entity
+     * \param type The type of the entity
+     * \param position The position of the entity
+     * \param orientation The orientation of the entity
+     * \param controller_id The id of the controller
+     */
+    Entity(EntityType type, Interaction interaction, sf::Vector2i position, Direction orientation, unsigned int controller_id);
+
     virtual ~Entity() = default;
 
     /**
      * \brief Return the id of the entity
      */
     unsigned int getId() const;
+
+    /**
+     * \brief Return the id of the controller of the entity
+     */
+    unsigned int getControllerId() const;
 
     /**
      * \brief Return the type of the entity
@@ -140,6 +154,7 @@ public:
 protected:
 
     const unsigned int id; ///< The id of the entity
+    const unsigned int controller_id; ///< The id of the controller of the entity
     const EntityType type; ///< The type of the entity
     const Interaction interaction; ///< The result of the interaction with the entity
     sf::Vector2i position; ///< The position of the entity

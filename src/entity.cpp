@@ -11,6 +11,7 @@ unsigned int currentId = 0;
 
 Entity::Entity(EntityType type_, Interaction interaction_, sf::Vector2i position_, Direction orientation_) :
     id(++currentId),
+    controller_id(0),
     type(type_),
     interaction(interaction_),
     position(position_),
@@ -20,10 +21,26 @@ Entity::Entity(EntityType type_, Interaction interaction_, sf::Vector2i position
     attacked(false)
 {}
 
+Entity::Entity(EntityType type_, Interaction interaction_, sf::Vector2i position_, Direction orientation_, unsigned int controller_id_) :
+    id(++currentId),
+    controller_id(controller_id_),
+    type(type_),
+    interaction(interaction_),
+    position(position_),
+    orientation(orientation_),
+    moving(false),
+    attacking(false),
+    attacked(false)
+{}
 
 unsigned int Entity::getId() const
 {
     return id;
+}
+
+unsigned int Entity::getControllerId() const
+{
+    return controller_id;
 }
 
 EntityType Entity::getType() const
