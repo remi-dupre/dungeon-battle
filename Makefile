@@ -48,6 +48,7 @@ CHECK_DIR = check
 # Unit test paths
 SRC_DIR_TEST = tests
 SRC_TEST = $(SRC_DIR_TEST)/test_map.hpp \
+           $(SRC_DIR_TEST)/test_kdtree.hpp \
            $(SRC_DIR_TEST)/test_config.hpp
 
 OBJ_TEST = $(SRC_DIR_TEST)/test.cpp
@@ -57,7 +58,7 @@ TEST_EXEC = $(SRC_DIR_TEST)/test
 
 .PHONY: all release debug test doc cppcheck-html clean
 
-all: release doc cppcheck-html test
+all: release
 
 release: CFLAGS += -O3 -DNDEBUG
 release: $(EXEC)
