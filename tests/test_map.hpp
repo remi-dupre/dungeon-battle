@@ -4,7 +4,6 @@
 #include <string>
 #include <random>
 
-
 #include "../src/generation/pattern.hpp"
 #include "../src/generation/pattern.cpp"
 #include "../src/generation/room.hpp"

@@ -49,7 +49,8 @@ CHECK_DIR = check
 SRC_DIR_TEST = tests
 SRC_TEST = $(SRC_DIR_TEST)/test_map.hpp \
            $(SRC_DIR_TEST)/test_kdtree.hpp \
-           $(SRC_DIR_TEST)/test_config.hpp
+           $(SRC_DIR_TEST)/test_config.hpp \
+		   $(SRC_DIR_TEST)/test_pattern.hpp
 
 OBJ_TEST = $(SRC_DIR_TEST)/test.cpp
 
