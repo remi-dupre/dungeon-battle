@@ -45,7 +45,8 @@ inline Action get_input_hero(const Entity& entity, const Configuration& config)
         return Action(ActionType::Attack, Direction::Up);
     if (sf::Keyboard::isKeyPressed(config.attack_down_key))
         return Action(ActionType::Attack, Direction::Down);
-
+    if (sf::Keyboard::isKeyPressed(config.menu_key))
+        return Action(ActionType::Pause);
     return Action();
 }
 
