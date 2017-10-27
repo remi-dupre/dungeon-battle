@@ -17,6 +17,10 @@ Renderer::Renderer() :
     hero_life.setFont(font);
     hero_life.setCharacterSize(20.f);
     hero_life.setPosition(10.f, 10.f);
+    hero_xp.setFont(font);
+    hero_xp.setCharacterSize(20.f);
+    hero_xp.setPosition(10.f, 30.f);
+
 }
 
 void Renderer::setViewCenter(sf::Vector2f center)
@@ -78,7 +82,8 @@ void Renderer::drawEntities(const std::vector<std::shared_ptr<Entity>>& entities
             auto hero = std::static_pointer_cast<Character>(entity);
 
             hero_life.setString(std::to_string(hero->getHp()) + "/" + std::to_string(hero->getHpMax()));
-
+            hero_xp.setString("XP: " + std::to_string(hero->getExperience()) +
+                              "\nLVL: " + std::to_string(hero->getLevel()));
             v1.position = {p.x - 1.f, p.y - 25.f};
             v2.position = {p.x - 1.f, p.y + tile_size - 8.f};
             v3.position = {p.x + tile_size - 1.f, p.y - 25.f};
@@ -145,17 +150,17 @@ void Renderer::drawEntities(const std::vector<std::shared_ptr<Entity>>& entities
                 break;
 
             case EntityType::Stairs:
-                v1.texCoords = {64.f, 0.f};
-                v2.texCoords = {64.f, 31.f};
-                v3.texCoords = {95.f, 0.f};
-                v4.texCoords = {95.f, 31.f};
+                v1.texCoords = {32.f, 0.f};
+                v2.texCoords = {32.f, 31.f};
+                v3.texCoords = {63.f, 0.f};
+                v4.texCoords = {63.f, 31.f};
                break;
 
             case EntityType::Monster:
-                v1.texCoords = {32.f, frame * 32.f};
-                v2.texCoords = {32.f, frame * 32.f + 31.f};
-                v3.texCoords = {63.f, frame * 32.f};
-                v4.texCoords = {63.f, frame * 32.f + 31.f};
+                v1.texCoords = {0.f, frame * 32.f};
+                v2.texCoords = {0.f, frame * 32.f + 31.f};
+                v3.texCoords = {31.f, frame * 32.f};
+                v4.texCoords = {31.f, frame * 32.f + 31.f};
 
                 v1.color = slime_color;
                 v2.color = slime_color;
@@ -230,6 +235,7 @@ void Renderer::display(sf::RenderTarget& target)
 
     target.setView(target.getDefaultView());
     target.draw(hero_life);
+    target.draw(hero_xp);
 }
 
 void Renderer::drawCell(sf::Vector2i coords, CellType cell, const Map& map)

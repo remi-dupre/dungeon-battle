@@ -25,7 +25,7 @@ Action::Action(ActionType type_, Direction direction_) :
     direction(direction_)
 {}
 
-inline Action get_input_hero(const Entity& entity, const Configuration& config)
+inline Action get_input_hero(const Configuration& config)
 {
     if (sf::Keyboard::isKeyPressed(config.left_key))
         return Action(ActionType::Move, Direction::Left);
@@ -58,10 +58,11 @@ Action control::get_input(const Entity& entity,
     switch (entity.getType())
     {
         case EntityType::Hero:
-            return get_input_hero(entity, config);
-            break;
         case EntityType::Monster:
-            return get_input_monster(static_cast<const Character&>(entity), entities, map);
+            if (entity.getControllerId())
+                return get_input_hero(config);
+            else
+                return get_input_monster(static_cast<const Character&>(entity), entities, map);
             break;
         default:
             return Action();

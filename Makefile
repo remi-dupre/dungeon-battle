@@ -46,16 +46,21 @@ DOC_DIR = doc
 # Dir where to output cppcheck reports
 CHECK_DIR = check
 
+# Unit test paths
 SRC_DIR_TEST = tests
-SRC_TEST = $(SRC_DIR_TEST)/test_configuration.cpp \
-           $(SRC_DIR_TEST)/test_parse_arguments.cpp
-OBJ_TEST = $(SRC_TEST:$(SRC_DIR_TEST)/%.cpp=$(BUILD_DIR_TEST)/%.o)
-EXEC_TEST = $(SRC_TEST:$(SRC_DIR_TEST)/%.cpp=$(SRC_DIR_TEST)/%)
+SRC_TEST = $(SRC_DIR_TEST)/test_map.hpp \
+           $(SRC_DIR_TEST)/test_kdtree.hpp \
+           $(SRC_DIR_TEST)/test_config.hpp \
+           $(SRC_DIR_TEST)/test_pattern.hpp
+
+OBJ_TEST = $(SRC_DIR_TEST)/test.cpp
+
+TEST_EXEC = $(SRC_DIR_TEST)/test
 
 
 .PHONY: all release debug test doc cppcheck-html clean
 
-all: release doc cppcheck-html test
+all: release
 
 release: CFLAGS += -O3 -DNDEBUG
 release: $(EXEC)
@@ -66,15 +71,17 @@ debug: $(EXEC)
 rebuild: clean
 rebuild: release
 
-# Exectutes tests using cxxtest
-test: tests/test.cpp
-	@echo "=== Runing unit tests"
-	@$(CXX) -o tests/test tests/test.cpp $(CFLAGS) $(WFLAGS) && ./tests/test -v
-	@echo -e "\n=== Runing linter"
+lint:
 	cppcheck --enable=all --suppressions-list=.cppignore --inconclusive $(SRC_DIR) 1> /dev/null
 
-tests/test.cpp: tests/test.hpp
-	cxxtestgen --error-printer -o tests/test.cpp tests/test.hpp
+# Exectutes tests using cxxtest
+test: $(OBJ_TEST)
+	$(CXX) -o $(TEST_EXEC) $(OBJ_TEST) $(CFLAGS) $(WFLAGS)
+	$(TEST_EXEC) -v
+
+# Build the test cpp
+$(OBJ_TEST): $(SRC_TEST)
+	cxxtestgen --error-printer -o tests/test.cpp $(SRC_TEST)
 
 # Generate the documentation
 doc:
@@ -98,11 +105,6 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
 # Build executable from object files
 $(EXEC): $(OBJ)
 	$(CXX) -o $@ $^ $(DFLAGS) $(LFLAGS)
-
-# Build test object file from source file
-$(BUILD_DIR)/test_%.o: $(SRC_DIR_TEST)/test_%.cpp
-	@mkdir -p $(BUILD_DIR) $(BUILD_DIR)/generation
-	$(CXX) -o $@ -c $< $(CFLAGS) $(DFLAGS) $(WFLAGS)
 
 # Build and execute test
 $(SRC_DIR_TEST)/%: $(BUILD_DIR)/%.o

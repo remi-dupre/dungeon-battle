@@ -32,8 +32,8 @@ KDTree::KDTree(std::vector<Point>::iterator begin, std::vector<Point>::iterator 
                 return a.second < b.second;
         });
 
-        center = std::make_shared<Point>(*mid);
-        childs = std::make_shared<std::pair<KDTree, KDTree>>(std::make_pair(
+        center = std::make_unique<Point>(*mid);
+        childs = std::make_unique<std::pair<KDTree, KDTree>>(std::make_pair(
             KDTree(begin, mid, !vertically),
             KDTree(mid+1, end, !vertically)
         ));

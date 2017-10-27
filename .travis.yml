@@ -20,6 +20,8 @@ script:
  - docker exec -t artful bash -c "cd /travis;
    make doc";
  - docker exec -t artful bash -c "cd /travis;
+   make lint"
+ - docker exec -t artful bash -c "cd /travis;
    make cppcheck-html CHECK_DIR=doc/html/check";
  - docker exec -t artful bash -c "cd /travis;
    make debug"

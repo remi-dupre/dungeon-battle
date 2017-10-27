@@ -24,7 +24,7 @@ void Game::init(const std::map<Option, std::string>& options)
 
     if (!config.vsync) // Don't activate vertical synchronization and framerate limit at the same time
         window.setFramerateLimit(config.maxfps);
-    
+
     config.readGame("data/game.ini");
 
     // Seed the rng
@@ -57,7 +57,8 @@ void Game::init(const std::map<Option, std::string>& options)
                                                     start_pos,
                                                     Direction::Left,
                                                     baseHeroHp,
-                                                    baseHeroForce));
+                                                    baseHeroForce,
+                                                    1));
 
     entity_turn = EntityType::Hero;
     next_move = 0.f;
@@ -124,17 +125,19 @@ void Game::update()
                             switch (target->getInteraction())
                             {
                                 case Interaction::GoDown: {
-                                    if (current_level == dungeon.size()-1)
-                                        dungeon.push_back(generate(config.gen_options));
-
-                                    auto hero = std::find_if(dungeon[current_level].entities.begin(),dungeon[current_level].entities.end(),
+                                    auto hero = std::find_if(dungeon[current_level].entities.begin(), dungeon[current_level].entities.end(),
                                         [](std::shared_ptr<Entity> e) -> bool {
                                             return e->getType() == EntityType::Hero;
                                         });
 
+                                    if (current_level == dungeon.size()-1)
+                                    {
+                                        dungeon.push_back(generate(config.gen_options));
+                                        dungeon[current_level+1].entities.push_back(*hero);
+                                    }
+
                                     current_level++;
 
-                                    dungeon[current_level].entities.push_back(*hero);
                                     map = &dungeon[current_level].map;
                                     entities = &dungeon[current_level].entities;
 
@@ -259,9 +262,11 @@ bool Game::update_entity(std::shared_ptr<Entity> entity, Action action)
 
                     t->addHp(std::min(static_cast<int>(t->getDefense()) -
                                       static_cast<int>(s->getStrength()), -1));
+                    s->awardExperience(*t);
 
                     return true;
                 }
+
             }
 
             return true;
