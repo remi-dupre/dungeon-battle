@@ -57,7 +57,8 @@ void Game::init(const std::map<Option, std::string>& options)
                                                     start_pos,
                                                     Direction::Left,
                                                     baseHeroHp,
-                                                    baseHeroForce));
+                                                    baseHeroForce,
+                                                    1));
 
     entity_turn = EntityType::Hero;
     next_move = 0.f;

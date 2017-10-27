@@ -248,7 +248,7 @@ class Character : public Entity
 public:
 
     /**
-     * \brief Create a character
+     * \brief Create a character owned by the AI
      * \param type The type of the character
      * \param interaction The interaction with the entity
      * \param position The position of the character
@@ -262,6 +262,24 @@ public:
               Direction orientation,
               unsigned int hpMax,
               unsigned int strength);
+    
+    /**
+     * \brief Create a character
+     * \param type The type of the character
+     * \param interaction The interaction with the entity
+     * \param position The position of the character
+     * \param orientation The orientation of the character
+     * \param hpMax The maximum hp of the character
+     * \param strength The force of the character
+     * \param controller_id The owner of the character
+     */
+    Character(EntityType type,
+              Interaction interaction,
+              sf::Vector2i position,
+              Direction orientation,
+              unsigned int hpMax,
+              unsigned int strength,
+              unsigned int controller_id);
 
     /**
      * \brief Return the max hp of the character
