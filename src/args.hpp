@@ -16,6 +16,7 @@ enum class Option
 {
     Help, ///< Print help
     Config, ///< Change configuration file
+    NoPlayer ///< Game is played by an AI
 };
 
 /**

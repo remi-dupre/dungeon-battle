@@ -130,6 +130,9 @@ private:
 
     std::size_t current_level; ///< The number of the curent level
 
+    bool no_player; ///< True if there is no player (Test).
+    bool running; ///< True while the game is running.
+
     EntityType entity_turn;
     float next_move;
 };

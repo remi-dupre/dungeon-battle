@@ -78,3 +78,5 @@ float Random<T>::uniform_float(float a, float b)
 
 typedef Random<RandomType::Game> Rand;
 typedef Random<RandomType::Render> RandRender;
+
+

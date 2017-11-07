@@ -18,20 +18,19 @@ void thereisaobstacle(
     for(std::shared_ptr<Entity> entity : entities)
     {
         sf::Vector2i position = entity->getPosition();
-        if ((entity->getType() != EntityType::Stairs) 
-            && (entity->getType() != EntityType::None)) 
+        if ((entity->getType() == EntityType::Hero)
+            && (entity->getType() == EntityType::Monster))
         {
             auto chara = std::static_pointer_cast<Character>(entity);
-            if(( chara->isAlive()) 
+            if(( chara->isAlive())
                 && (std::abs(position.x - startposition.x) <= sight)
-                && (std::abs(position.y-startposition.y)<= sight)) 
+                && (std::abs(position.y-startposition.y)<= sight))
             {
                 cell_seen(seen, position, startposition,sight);
             }
         }
     }
 }
-
 
 Action just_moving()
 {
@@ -42,8 +41,22 @@ Action just_moving()
    allaction.push_back(Action(ActionType::Move, Direction::Down));
    allaction.push_back(Action());
    return allaction[Rand::uniform_int(0,4)];
-} 
+}
 
+Action randomaction(){
+std::vector<Action> allaction;
+   allaction.push_back(Action(ActionType::Attack, Direction::Left));
+   allaction.push_back(Action(ActionType::Attack, Direction::Right));
+   allaction.push_back(Action(ActionType::Attack, Direction::Up));
+   allaction.push_back(Action(ActionType::Attack, Direction::Down));
+   allaction.push_back(Action(ActionType::Move, Direction::Left));
+   allaction.push_back(Action(ActionType::Move, Direction::Right));
+   allaction.push_back(Action(ActionType::Move, Direction::Up));
+   allaction.push_back(Action(ActionType::Move, Direction::Down));
+   allaction.push_back(Action(ActionType::Interact);
+   allaction.push_back(Action());
+   return allaction[Rand::uniform_int(0,9)];
+}
 
 Action bfs_monster(const Character& monster, const std::vector<std::shared_ptr<Entity>>& entities, const Map& map)
 {
@@ -84,7 +97,7 @@ Action bfs_monster(const Character& monster, const std::vector<std::shared_ptr<E
         {{0,1}, Direction::Down}};
 
 
-
+    //Initialization of the BFS.
     //Adding the first cells in the queue.
     for(auto ori : dir)
     {
@@ -104,6 +117,7 @@ Action bfs_monster(const Character& monster, const std::vector<std::shared_ptr<E
         }
     }
 
+    //Main part of the BFS.
     // Dealing with all the cells in the queue.
     while(!next_cells.empty())
     {
@@ -118,21 +132,21 @@ Action bfs_monster(const Character& monster, const std::vector<std::shared_ptr<E
             save_min_dist = math::distance_1(curentposition,heropostion);
             save_action = ret;  // Then save it.
         }
-        
+
         // See it's closer cells
         for(auto ori : dir)
         {
             sf::Vector2i position = curentposition + ori;
             if (position == heropostion) // Have we fin the hero ?
                 // Then do the first move to go toward him.
-                return ret; 
+                return ret;
             //else if the path is valid.
-            if ((map.cellAt(position.x,position.y) == CellType::Floor) 
+            if ((map.cellAt(position.x,position.y) == CellType::Floor)
                 && (depth < sight)
                 && (!cell_seen(seen,position, startposition, sight)))
             {
                 //put it in the queue.
-                next_cells.push(std::make_tuple(position,depth+1,ret)); 
+                next_cells.push(std::make_tuple(position,depth+1,ret));
             }
         }
 
@@ -144,6 +158,15 @@ Action bfs_monster(const Character& monster, const std::vector<std::shared_ptr<E
 Action get_input_monster(const Character& entity, const std::vector<std::shared_ptr<Entity>>& entities, const Map& map)
 {
     assert(has_hero(entities));
-    return bfs_monster(entity,entities,map);
+    if (entity->getType() == EntityType::Hero)
+    {
+        return randomaction()
+    }
+    if (entity->getType() == EntityType::Monster)
+    {
+        return bfs_monster(entity,entities,map);
+    }
+    else{
+        TS_TRACE("Something different from a monster or a hero is trying to be guided by an AI."
+    }
 }
-

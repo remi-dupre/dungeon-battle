@@ -18,7 +18,8 @@ constexpr std::tuple<const char*, Option, bool> command_line_options[3] =
 {
     std::make_tuple("c", Option::Config, true),
     std::make_tuple("config", Option::Config, true),
-    std::make_tuple("help", Option::Help, false)
+    std::make_tuple("help", Option::Help, false),
+    std::make_tuple("noplayer", Option::Help, false)
 };
 
 

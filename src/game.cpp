@@ -17,13 +17,19 @@ void Game::init(const std::map<Option, std::string>& options)
     if (config.fullscreen)
         style |= sf::Style::Fullscreen;
 
-    window.create({config.width, config.height}, "Dungeon Battle", style);
+    no_player = options.count(Option::NoPlayer);
+    
+    if (no_player){}
+    else
+    {
+        window.create({config.width, config.height}, "Dungeon Battle", style);
 
-    window.setVerticalSyncEnabled(config.vsync);
-    window.setSize({config.scalefactor * config.width, config.scalefactor * config.height});
+        window.setVerticalSyncEnabled(config.vsync);
+        window.setSize({config.scalefactor * config.width, config.scalefactor * config.height});
 
-    if (!config.vsync) // Don't activate vertical synchronization and framerate limit at the same time
+        if (!config.vsync) // Don't activate vertical synchronization and framerate limit at the same time
         window.setFramerateLimit(config.maxfps);
+    }
 
     config.readGame("data/game.ini");
 
@@ -32,6 +38,7 @@ void Game::init(const std::map<Option, std::string>& options)
     Rand::seed(r());
 
     current_level = 0;
+    running = false;
 
     // Base stats of Heros and Monsters
     unsigned int baseHeroHp = 20;
@@ -58,7 +65,7 @@ void Game::init(const std::map<Option, std::string>& options)
                                                     Direction::Left,
                                                     baseHeroHp,
                                                     baseHeroForce,
-                                                    1));
+                                                    0 ? no_player : 1));
 
     entity_turn = EntityType::Hero;
     next_move = 0.f;
@@ -67,8 +74,9 @@ void Game::init(const std::map<Option, std::string>& options)
 void Game::run()
 {
     sf::Clock timer;
+    running = true;
 
-    while (window.isOpen())
+    while (window.isOpen() && running)
     {
         sf::Event event;
 
