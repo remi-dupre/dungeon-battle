@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include <cassert>
 #include <functional>
 #include <tuple>
 
@@ -80,4 +81,20 @@ namespace std
      * \param y A pair of int to remove from x.
      */
     void operator -=(std::pair<int, int>& x, const std::pair<int, int>& y);
+
+    /**
+     * \brief Get the quotient of a pair divided by a positive integer.
+     * \param x A pair of int.
+     * \param n A positive int.
+     * \return x / n, the vector obtained by processing coordinates divided by n.
+     */
+    std::pair<int, int> operator /(const std::pair<int, int>& x, int n);
+
+    /**
+     * \brief Get the postitive modulo of a pair.
+     * \param x A pair of int.
+     * \param n A positive int.
+     * \return x % n, the vector obtained by processing coordinates modulo n.
+     */
+    std::pair<int, int> operator %(const std::pair<int, int>& x, int n);
 }

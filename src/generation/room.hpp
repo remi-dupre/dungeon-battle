@@ -13,8 +13,8 @@
 #include "../rand.hpp"
 
 #include "gen_pattern.hpp"
-#include "space.hpp"
 #include "pattern.hpp"
+#include "space.hpp"
 
 
 /**

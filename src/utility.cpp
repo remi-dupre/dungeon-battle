@@ -34,3 +34,15 @@ void std::operator +=(std::pair<int, int>& x, const std::pair<int, int>& y) {
 void std::operator -=(std::pair<int, int>& x, const std::pair<int, int>& y) {
     x = x - y;
 }
+
+std::pair<int, int> std::operator %(const std::pair<int, int>& x, int n) {
+    assert(n > 0);
+
+    return std::make_pair((x.first % n + n) % n, (x.second % n + n) % n);
+}
+
+std::pair<int, int> std::operator /(const std::pair<int, int>& x, int n) {
+    assert(n > 0);
+
+    return std::make_pair(x.first / n, x.second / n);
+}

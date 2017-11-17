@@ -42,17 +42,18 @@ enum class LevelType
  */
 struct GenerationMode
 {
-    int nb_rooms; ///< number of rooms to create on the map
-    int room_min_size; ///< minimum number of cells contained on a room
-    int room_max_size; ///< maximum number of cells contained on a room
-    int room_margin; ///< minimum space added between two rooms
+    bool infinite;      ///< Wether the map should be generated dynamically
+    int nb_rooms;       ///< number of rooms to create on the map (ignored if the map is infinite)
+
+    int room_min_size;  ///< minimum number of cells contained on a room
+    int room_max_size;  ///< maximum number of cells contained on a room
+    int room_margin;    ///< minimum space added between two rooms
 
     float monster_load; ///< Number of monsters per 100 unit of space
 
     float maze_density; ///< Proportion of rooms that are replaced with mazes
-    LevelType type; ///< Kind of design for the rooms
+    LevelType type;     ///< Kind of design for the rooms
 };
-
 
 /**
  * \brief Gives a proposition of linkage between rooms.

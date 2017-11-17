@@ -5,37 +5,23 @@
 
 #pragma once
 
+#include <set>
+#include <tuple>
 #include <vector>
+
+#include "level.hpp"
+#include "room.hpp"
+#include "space.hpp"
 
 #include "../map.hpp"
 #include "../entity.hpp"
 
 
-/**
- * \brief Describe the general design of the level.
- */
-enum class LevelType
+///< Describe the role of a room
+enum class RoomType
 {
-    Flat, ///< Rectangular-shaped rooms
-    Cave ///< Cave shaped rooms
-};
-
-/**
- * \brief Parameters on how to generate the level
- */
-struct GenerationMode
-{
-    bool infinite; ///< Wether the map should be generated dynamically
-    int nb_rooms; ///< number of rooms to create on the map (ignored if the map is infinite)
-
-    int room_min_size; ///< minimum number of cells contained on a room
-    int room_max_size; ///< maximum number of cells contained on a room
-    int room_margin; ///< minimum space added between two rooms
-
-    float monster_load; ///< Number of monsters per 100 unit of space
-
-    float maze_density; ///< Proportion of rooms that are replaced with mazes
-    LevelType type; ///< Kind of design for the rooms
+    Regular, ///< A regular room
+    Hallway  ///< A hallway generated to link two room
 };
 
 /**
@@ -73,7 +59,28 @@ public:
      */
     std::vector<std::shared_ptr<Entity>> getChunkEntities(int x, int y);
 
+    /**
+     * \brief Generate some rooms centered on given chunck.
+     * \param x x-coordinate of the center chunk.
+     * \param y y-coordinate of the center chunk.
+     * \param n number of rooms to generate.
+     */
+    void addRooms(int x, int y, size_t n);
+
+
 private:
-    GenerationMode parameters; ///< Parameters for the generation
-    int seed; ///< Seed used for the generation of the map
+    ///< Parameters for the generation
+    GenerationMode parameters;
+
+    ///< Seed used for the generation of the map
+    int seed;
+
+    ///< Set of chunks that have already been requested
+    std::set<std::pair<int, int>> requested;
+
+    ///< List of rooms generated so far
+    std::vector<Room> rooms;
+
+    ///< Links we have between the rooms
+    std::vector<std::pair<size_t, size_t>> room_links;
 };
