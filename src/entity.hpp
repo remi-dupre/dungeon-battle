@@ -13,6 +13,7 @@
 
 #include <SFML/System/Vector2.hpp>
 
+#include "spells.hpp"
 #include "utility.hpp"
 
 
@@ -398,6 +399,13 @@ public:
      */
     void pickUp(Item item);
 
+
+    /**
+     * \brief Return the spells of the character
+     */
+    std::vector<Spell> getSpells();
+
+
 protected:
 
     unsigned int level; ///< The level of the character
@@ -411,6 +419,8 @@ protected:
 
     std::vector<Item> inventory; ///< The inventory of the character
     unsigned int inventorySize; ///< The size of the inventory of the character
+
+    std::vector<Spell> spells; ///< The spells of the character
 };
 
 /**

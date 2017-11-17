@@ -200,7 +200,8 @@ Character::Character(EntityType type_,
     defense(0),
     sightRadius(0),
     inventory(std::vector<Item>()),
-    inventorySize(-1)
+    inventorySize(-1),
+    spells(std::vector<Spell> ({Spell()}))
 {
     if (type_ == EntityType::Monster)
         experience = 5;
@@ -378,6 +379,11 @@ void Character::pickUp(Item item)
 }
 
 
+std::vector<Spell> Character::getSpells()
+{
+    return spells;
+}
+
 
 bool has_hero(const std::vector<std::shared_ptr<Entity>>& entities)
 {
@@ -406,3 +412,4 @@ sf::Vector2i get_hero_position(const std::vector<std::shared_ptr<Entity>>& entit
     assert(false);
     return {0, 0};
 }
+
