@@ -201,7 +201,7 @@ Character::Character(EntityType type_,
     defense(0),
     sightRadius(0),
     inventory(std::vector<Item>()),
-    inventorySize(-1),
+    inventorySize(0),
     spells(std::vector<Spell> ({Spell()}))
 {
     if (type_ == EntityType::Monster)
