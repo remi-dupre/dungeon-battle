@@ -11,6 +11,7 @@ unsigned int currentId = 0;
 
 Entity::Entity(EntityType type_, Interaction interaction_, sf::Vector2i position_, Direction orientation_) :
     id(++currentId),
+    controller_id(0),
     type(type_),
     interaction(interaction_),
     position(position_),
@@ -20,10 +21,26 @@ Entity::Entity(EntityType type_, Interaction interaction_, sf::Vector2i position
     attacked(false)
 {}
 
+Entity::Entity(EntityType type_, Interaction interaction_, sf::Vector2i position_, Direction orientation_, unsigned int controller_id_) :
+    id(++currentId),
+    controller_id(controller_id_),
+    type(type_),
+    interaction(interaction_),
+    position(position_),
+    orientation(orientation_),
+    moving(false),
+    attacking(false),
+    attacked(false)
+{}
 
 unsigned int Entity::getId() const
 {
     return id;
+}
+
+unsigned int Entity::getControllerId() const
+{
+    return controller_id;
 }
 
 EntityType Entity::getType() const
@@ -166,14 +183,14 @@ int Item::getSightRadius() const
 }
 
 
-
 Character::Character(EntityType type_,
-                     Interaction interaction_,
-                     sf::Vector2i position_,
-                     Direction orientation_,
-                     unsigned int hpMax_,
-                     unsigned int strength_) :
-    Entity(type_, interaction_, position_, orientation_),
+                    Interaction interaction_,
+                    sf::Vector2i position_,
+                    Direction orientation_,
+                    unsigned int hpMax_,
+                    unsigned int strength_,
+                    unsigned int controller_id_) :
+    Entity(type_, interaction_, position_, orientation_, controller_id_),
     level(1),
     experienceCurve([](unsigned int level) -> unsigned int {return 10*level;}),
     experience(0),
@@ -183,7 +200,20 @@ Character::Character(EntityType type_,
     defense(0),
     sightRadius(0),
     inventory(std::vector<Item>()),
-    inventorySize(-1)
+    inventorySize(-1),
+    spells(std::vector<Spell> ({Spell()}))
+{
+    if (type_ == EntityType::Monster)
+        experience = 5;
+}
+
+Character::Character(EntityType type_,
+                     Interaction interaction_,
+                     sf::Vector2i position_,
+                     Direction orientation_,
+                     unsigned int hpMax_,
+                     unsigned int strength_) :
+    Character(type_, interaction_, position_, orientation_, hpMax_, strength_, 0)
 {
     if (type_ == EntityType::Monster)
         experience = 5;
@@ -349,6 +379,11 @@ void Character::pickUp(Item item)
 }
 
 
+std::vector<Spell> Character::getSpells()
+{
+    return spells;
+}
+
 
 bool has_hero(const std::vector<std::shared_ptr<Entity>>& entities)
 {
@@ -377,3 +412,4 @@ sf::Vector2i get_hero_position(const std::vector<std::shared_ptr<Entity>>& entit
     assert(false);
     return {0, 0};
 }
+

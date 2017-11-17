@@ -37,20 +37,23 @@ CHECK_DIR = check
 # Unit test paths
 SRC_DIR_TEST = tests
 SRC_TEST = $(SRC_DIR_TEST)/test_map.hpp \
-           $(SRC_DIR_TEST)/test_config.hpp
+           $(SRC_DIR_TEST)/test_kdtree.hpp \
+           $(SRC_DIR_TEST)/test_config.hpp \
+           $(SRC_DIR_TEST)/test_pattern.hpp
 
 TEST_CPP = $(SRC_DIR_TEST)/test.cpp
 
 TEST_EXEC = $(SRC_DIR_TEST)/test
 
 .PHONY: all release debug test doc cppcheck-html clean
-all: release doc cppcheck-html test
+
+debug: DFLAGS += -ggdb
+debug: $(EXEC)
 
 release: CFLAGS += -O3 -DNDEBUG
 release: $(EXEC)
 
-debug: DFLAGS += -ggdb
-debug: $(EXEC)
+all: release doc cppcheck-html test
 
 ifeq (0, $(words $(findstring $(MAKECMDGOALS), $(NO_DEPS))))
         # Include dependency files, without errors if they do not exist

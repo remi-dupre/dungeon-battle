@@ -53,12 +53,12 @@ private:
 
     bool vertical_cut; ///< Wether the cut is vertical or horizontal.
 
-    std::shared_ptr<Point> center; ///< The point represented by the node, space is cut with a line passing through this point.
+    std::unique_ptr<Point> center; ///< The point represented by the node, space is cut with a line passing through this point.
 
     /**
      * \brief The two subtrees.
      * If the cut is vertical, the first one is on the left of *center, and the second one on its right.
      * If the cut is horizontal, the first one is on the top of *center, and the second one on its bottom.
      */
-    std::shared_ptr<std::pair<KDTree, KDTree>> childs; ///< The two subtrees.
+    std::unique_ptr<std::pair<KDTree, KDTree>> childs; ///< The two subtrees.
 };

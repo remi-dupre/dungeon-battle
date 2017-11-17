@@ -13,6 +13,7 @@
 
 #include <SFML/System/Vector2.hpp>
 
+#include "spells.hpp"
 #include "utility.hpp"
 
 
@@ -57,12 +58,26 @@ public:
      */
     Entity(EntityType type, Interaction interaction, sf::Vector2i position, Direction orientation);
 
+    /**
+     * \brief Create an entity
+     * \param type The type of the entity
+     * \param position The position of the entity
+     * \param orientation The orientation of the entity
+     * \param controller_id The id of the controller
+     */
+    Entity(EntityType type, Interaction interaction, sf::Vector2i position, Direction orientation, unsigned int controller_id);
+
     virtual ~Entity() = default;
 
     /**
      * \brief Return the id of the entity
      */
     unsigned int getId() const;
+
+    /**
+     * \brief Return the id of the controller of the entity
+     */
+    unsigned int getControllerId() const;
 
     /**
      * \brief Return the type of the entity
@@ -140,6 +155,7 @@ public:
 protected:
 
     const unsigned int id; ///< The id of the entity
+    const unsigned int controller_id; ///< The id of the controller of the entity
     const EntityType type; ///< The type of the entity
     const Interaction interaction; ///< The result of the interaction with the entity
     sf::Vector2i position; ///< The position of the entity
@@ -233,7 +249,7 @@ class Character : public Entity
 public:
 
     /**
-     * \brief Create a character
+     * \brief Create a character owned by the AI
      * \param type The type of the character
      * \param interaction The interaction with the entity
      * \param position The position of the character
@@ -247,6 +263,24 @@ public:
               Direction orientation,
               unsigned int hpMax,
               unsigned int strength);
+    
+    /**
+     * \brief Create a character
+     * \param type The type of the character
+     * \param interaction The interaction with the entity
+     * \param position The position of the character
+     * \param orientation The orientation of the character
+     * \param hpMax The maximum hp of the character
+     * \param strength The force of the character
+     * \param controller_id The owner of the character
+     */
+    Character(EntityType type,
+              Interaction interaction,
+              sf::Vector2i position,
+              Direction orientation,
+              unsigned int hpMax,
+              unsigned int strength,
+              unsigned int controller_id);
 
     /**
      * \brief Return the max hp of the character
@@ -365,6 +399,13 @@ public:
      */
     void pickUp(Item item);
 
+
+    /**
+     * \brief Return the spells of the character
+     */
+    std::vector<Spell> getSpells();
+
+
 protected:
 
     unsigned int level; ///< The level of the character
@@ -378,6 +419,8 @@ protected:
 
     std::vector<Item> inventory; ///< The inventory of the character
     unsigned int inventorySize; ///< The size of the inventory of the character
+
+    std::vector<Spell> spells; ///< The spells of the character
 };
 
 /**

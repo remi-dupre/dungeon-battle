@@ -1,4 +1,4 @@
-/**
+ /**
  * \file control.hpp
  * \brief Retrieve actions performed by entities.
  */
@@ -23,7 +23,8 @@ enum class ActionType
     None, ///< No action
     Move, ///< Move action
     Attack, ///< Attack action
-    Interact ///< Interact action
+    Interact, ///< Interact action
+    Pause ///< Pause and menu 
 };
 
 /**
