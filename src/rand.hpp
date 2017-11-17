@@ -11,7 +11,8 @@
 enum class RandomType
 {
     Game,
-    Render
+    Render,
+    Generation
 };
 
 /**
@@ -78,3 +79,4 @@ float Random<T>::uniform_float(float a, float b)
 
 typedef Random<RandomType::Game> Rand;
 typedef Random<RandomType::Render> RandRender;
+typedef Random<RandomType::Generation> RandGen;

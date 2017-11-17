@@ -3,6 +3,31 @@
 #include "map.hpp"
 
 
+/* Implementation of the class Chunk */
+
+Chunk::Chunk()
+{
+    cells.fill(CellType::Empty);
+}
+
+CellType& Chunk::cellAt(int x, int y)
+{
+    assert(x >= 0 && x < SIZE);
+    assert(y >= 0 && y < SIZE);
+
+    return cells[x + SIZE * y];
+}
+
+CellType Chunk::cellAt(int x, int y) const
+{
+    assert(x >= 0 && x < SIZE);
+    assert(y >= 0 && y < SIZE);
+
+    return cells[x + SIZE * y];
+}
+
+/* Implementation of the class Map */
+
 Map::Map() :
     Map(1, 1)
 {}

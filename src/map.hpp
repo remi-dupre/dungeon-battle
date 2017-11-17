@@ -6,6 +6,7 @@
 #pragma once
 
 #include <algorithm>
+#include <array>
 #include <fstream>
 #include <iostream>
 #include <iterator>
@@ -23,6 +24,42 @@ enum class CellType
     Empty, ///< A cell that can't contain anything
     Floor, ///< A cell you can walk on
     Wall ///< A physical separation
+};
+
+/**
+ * \brief Represents a section of the map.
+ */
+class Chunk
+{
+public:
+    constexpr static int SIZE = 32; ///< width and height of the chunks.
+
+    /**
+     * \brief Create a chunk full of empty cells.
+     */
+    Chunk();
+
+    /**
+     * \brief Get a read-write access to a cell by its coordinates
+     * \param x X coordinate of the cell
+     * \param y Y coordinate of the cell
+     * \return Reference to the cell
+     * `x` and `y` must be in the ranges `[0, SIZE)` and `[0, SIZE)`
+     */
+    CellType& cellAt(int x, int y);
+
+    /**
+     * \brief Get a read only access to a cell by its coordinates
+     * \param x X coordinate of the cell
+     * \param y Y coordinate of the cell
+     * \return The cell type of the cell
+     * `x` and `y` can be outside the ranges `[0, SIZE)` and `[0, SIZE)`
+     * in which case CellType::Empty is returned
+     */
+    CellType cellAt(int x, int y) const;
+
+private:
+    std::array<CellType, SIZE> cells; ///< The type of each cells in the chunk
 };
 
 /**

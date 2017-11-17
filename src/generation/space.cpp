@@ -1,5 +1,6 @@
 #include "space.hpp"
 
+
 int distance(Point a, Point b)
 {
     return std::abs(a.first - b.first) + std::abs(a.second - b.second);
