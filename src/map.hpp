@@ -10,10 +10,12 @@
 #include <fstream>
 #include <iostream>
 #include <iterator>
+#include <tuple>
+#include <map>
 #include <string>
-#include <vector>
 
 #include "entity.hpp"
+#include "utility.hpp"
 
 
 /**
@@ -76,6 +78,7 @@ public:
      * \brief Create an empty map
      */
     explicit Map();
+    Map(int x, int y);
 
     /**
      * \brief Default move constructor
@@ -83,11 +86,12 @@ public:
     Map(Map&&) = default;
 
     /**
-     * \brief Create a map full of empty cells
-     * \param width The width of the map
-     * \param height The height of the map
+     * \brief Set a chunk.
+     * \param x x-coordinate of the chunk.
+     * \param y y-coordinate of the chunk.
+     * \param chunk The chunk we want to add.
      */
-    explicit Map(int width, int height);
+    void set_chunk(int x, int y, const Chunk& chunk);
 
     /**
      * \brief Load the map from a file
@@ -100,6 +104,14 @@ public:
      * \param filename Path of the file
      */
     void saveToFile(const std::string& filename) const;
+
+    /**
+     * \brief Check wether a point is in the generated part of the map.
+     * \param x The x-coordinate of the cell we are interested in.
+     * \param y The y-coordinate of the cell we are interested in.
+     * \return true if a chunk containing the cell exists.
+     */
+    bool generated(int x, int y) const;
 
     /**
      * \brief Get the width of the map
@@ -116,7 +128,7 @@ public:
      * \param x X coordinate of the cell
      * \param y Y coordinate of the cell
      * \return Reference to the cell
-     * `x` and `y` must be in the ranges `[0, map.width)` and `[0, map.heigth)`
+     * \note The chunk must be specified.
      */
     CellType& cellAt(int x, int y);
 
@@ -124,7 +136,7 @@ public:
      * \brief Get a read-write access to a cell by its coordinates
      * \param coords Coordinates of the cell
      * \return Reference to the cell
-     * `x` and `y` must be in the ranges `[0, map.width)` and `[0, map.heigth)`
+     * \note The chunk must be specified.
      */
     CellType& cellAt(sf::Vector2i coords);
 
@@ -133,8 +145,7 @@ public:
      * \param x X coordinate of the cell
      * \param y Y coordinate of the cell
      * \return The cell type of the cell
-     * `x` and `y` can be outside the ranges `[0, map.width)` and `[0, map.heigth)`
-     * in which case CellType::Empty is returned
+     * \note If the chunk is not specified, returns CellType::Empty.
      */
     CellType cellAt(int x, int y) const;
 
@@ -142,8 +153,7 @@ public:
      * \brief Get a read only access to a cell by its coordinates
      * \param coords Coordinates of the cell
      * \return The cell type of the cell
-     * `x` and `y` can be outside the ranges `[0, map.width)` and `[0, map.heigth)`
-     * in which case CellType::Empty is returned
+     * \note If the chunk is not specified, returns CellType::Empty.
      */
     CellType cellAt(sf::Vector2i coords) const;
 
@@ -165,9 +175,9 @@ private:
     int height; ///< The height of the map
 
     /**
-     * \brief The type of each cell
+     * \brief The content of each chunks
      */
-    std::vector<CellType> cells;
+    std::map<std::pair<int, int>, Chunk> chunks;
 
     friend std::ostream& operator<<(std::ostream&, const Map&);
     friend std::istream& operator>>(std::istream&, Map&);

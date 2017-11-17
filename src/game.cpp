@@ -37,6 +37,9 @@ void Game::init(const std::map<Option, std::string>& options)
     unsigned int baseHeroHp = 20;
     unsigned int baseHeroForce = 1;
 
+    Generator generator(config.gen_options, 42);
+    generator.getChunkCells(2, 2);
+
     dungeon.push_back(generate(config.gen_options));
 
     map = &dungeon[0].map;

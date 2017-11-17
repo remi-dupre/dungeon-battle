@@ -29,17 +29,20 @@ CellType Chunk::cellAt(int x, int y) const
 /* Implementation of the class Map */
 
 Map::Map() :
-    Map(1, 1)
+    width(0), height(0)
 {}
 
 Map::Map(int width, int height) :
     // Copy redundant information about the shape
-    width(width), height(height),
-    // Fill the map with floors
-    cells(width * height, CellType::Empty)
+    width(width), height(height)
 {
     assert (width > 0);
     assert (height > 0);
+}
+
+void Map::set_chunk(int x, int y, const Chunk& chunk)
+{
+    chunks[{x, y}] = chunk;
 }
 
 bool Map::loadFromFile(const std::string& filename)
@@ -67,6 +70,12 @@ void Map::saveToFile(const std::string& filename) const
     return;
 }
 
+bool Map::generated(int x, int y) const
+{
+    std::pair<int, int> chunk_id = std::make_pair(x, y) / Chunk::SIZE;
+    return chunks.find(chunk_id) != end(chunks);
+}
+
 int Map::getWidth() const
 {
     return width;
@@ -79,12 +88,12 @@ int Map::getHeight() const
 
 CellType& Map::cellAt(int x, int y)
 {
-    assert(x < width);
-    assert(y < height);
-    assert(x >= 0);
-    assert(y >= 0);
+    assert(generated(x, y));
 
-    return cells[x + width * y];
+    std::pair<int, int> chunk_id = std::make_pair(x, y) / Chunk::SIZE;
+    std::pair<int, int> relt_pos = std::make_pair(x, y) % Chunk::SIZE;
+
+    return chunks[chunk_id].cellAt(relt_pos.first, relt_pos.second);
 }
 
 CellType& Map::cellAt(sf::Vector2i coords)
@@ -94,9 +103,17 @@ CellType& Map::cellAt(sf::Vector2i coords)
 
 CellType Map::cellAt(int x, int y) const
 {
-    if (x < 0 || y < 0 || x > width || y > height)
+    if (!generated(x, y))
+    {
         return CellType::Empty;
-    return cells[x + width * y];
+    }
+    else
+    {
+        std::pair<int, int> chunk_id = std::make_pair(x, y) / Chunk::SIZE;
+        std::pair<int, int> relt_pos = std::make_pair(x, y) % Chunk::SIZE;
+
+        return chunks.at(chunk_id).cellAt(relt_pos.first, relt_pos.second);
+    }
 }
 
 CellType Map::cellAt(sf::Vector2i coords) const
@@ -106,21 +123,21 @@ CellType Map::cellAt(sf::Vector2i coords) const
 
 bool Map::wallNext(int x, int y) const
 {
-    return wallNext({x, y});
-}
-
-bool Map::wallNext(sf::Vector2i coords) const
-{
     for (int i = -1; i <= 1; i++)
     {
         for (int j = -1; j <= 1; j++)
         {
-            if (cellAt(coords.x + i, coords.y + j) == CellType::Wall)
+            if (cellAt(x + i, y + j) == CellType::Wall)
                 return true;
         }
     }
 
     return false;
+}
+
+bool Map::wallNext(sf::Vector2i coords) const
+{
+    return wallNext(coords.x, coords.y);
 }
 
 std::ostream& operator<<(std::ostream& stream, const Map& map)
@@ -185,28 +202,28 @@ std::istream& operator>>(std::istream& stream, Map& map)
         return stream;
     }
 
-    map.cells.clear();
+    map.chunks.clear();
 
-    // Loads the map from the string representing it
-    std::transform(
-        std::begin(map_str), std::end(map_str),
-        std::back_inserter(map.cells),
-        [](const char& c) -> CellType
-        {
-            switch (c)
-            {
-                case '#':
-                    return CellType::Wall;
-                    break;
-                case '.':
-                    return CellType::Floor;
-                    break;
-                default:
-                    return CellType::Empty;
-                    break;
-            }
-        }
-    );
+    // // Loads the map from the string representing it
+    // std::transform(
+    //     std::begin(map_str), std::end(map_str),
+    //     std::back_inserter(map.chunks),
+    //     [](const char& c) -> CellType
+    //     {
+    //         switch (c)
+    //         {
+    //             case '#':
+    //                 return CellType::Wall;
+    //                 break;
+    //             case '.':
+    //                 return CellType::Floor;
+    //                 break;
+    //             default:
+    //                 return CellType::Empty;
+    //                 break;
+    //         }
+    //     }
+    // );
 
     map.width = width_;
     map.height = height_;
@@ -218,6 +235,6 @@ Map& Map::operator=(Map&& other)
 {
     width = other.width;
     height = other.height;
-    cells = std::move(other.cells);
+    chunks = std::move(other.chunks);
     return *this;
 }
