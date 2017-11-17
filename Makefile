@@ -14,23 +14,12 @@ WFLAGS = -Wall -Wextra
 LFLAGS = -lsfml-graphics -lsfml-window -lsfml-system -Wl,-rpath,.
 
 SRC_DIR = src
-SRC = $(SRC_DIR)/main.cpp \
-      $(SRC_DIR)/map.cpp \
-      $(SRC_DIR)/render.cpp \
-      $(SRC_DIR)/config.cpp \
-      $(SRC_DIR)/game.cpp \
-      $(SRC_DIR)/entity.cpp \
-      $(SRC_DIR)/args.cpp \
-      $(SRC_DIR)/control.cpp \
-      $(SRC_DIR)/ai.cpp \
-      $(SRC_DIR)/utility.cpp \
-      $(SRC_DIR)/generation/pattern.cpp \
-      $(SRC_DIR)/generation/room.cpp \
-      $(SRC_DIR)/generation/level.cpp \
-      $(SRC_DIR)/generation/gen_pattern.cpp \
-      $(SRC_DIR)/generation/space.cpp
+SRC = $(shell find src -type f -name '*.cpp') # List of files to compile
 
-# List of files to compile
+# Dependency files
+DEP_DIR = deps
+DEP_FILES = $(SRC:$(SRC_DIR)/%.cpp=$(DEP_DIR)/%.d)
+NO_DEPS = clean lint doc cppcheck-html $(TEST_EXEC)
 
 BUILD_DIR = build
 OBJ = $(SRC:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%.o)
@@ -50,13 +39,11 @@ SRC_DIR_TEST = tests
 SRC_TEST = $(SRC_DIR_TEST)/test_map.hpp \
            $(SRC_DIR_TEST)/test_config.hpp
 
-OBJ_TEST = $(SRC_DIR_TEST)/test.cpp
+TEST_CPP = $(SRC_DIR_TEST)/test.cpp
 
 TEST_EXEC = $(SRC_DIR_TEST)/test
 
-
 .PHONY: all release debug test doc cppcheck-html clean
-
 all: release doc cppcheck-html test
 
 release: CFLAGS += -O3 -DNDEBUG
@@ -65,20 +52,42 @@ release: $(EXEC)
 debug: DFLAGS += -ggdb
 debug: $(EXEC)
 
-rebuild: clean
-rebuild: release
+ifeq (0, $(words $(findstring $(MAKECMDGOALS), $(NO_DEPS))))
+        # Include dependency files, without errors if they do not exist
+        -include $(DEP_FILES)
+endif
+
+# Build executable from object files
+$(EXEC): $(OBJ)
+	$(CXX) -o $@ $^ $(DFLAGS) $(LFLAGS)
+
+# Build object file from source file
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp $(DEP_DIR)/%.d
+	@mkdir -p $(dir $@)
+	$(CXX) -o $@ -c $< $(CFLAGS) $(DFLAGS) $(WFLAGS)
+
+# Create dependency files
+$(DEP_DIR)/%.d: $(SRC_DIR)/%.cpp
+	@mkdir -p $(dir $@)
+	$(CXX) $(CXXFLAGS) -MM -MT '$(<:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%.o)' $< -MF $@
+
+# Build and execute test
+$(SRC_DIR_TEST)/%: $(BUILD_DIR)/%.o
+	$(CXX) -o $@ $< $(DFLAGS) $(LFLAGS)
+	@echo "Running the test: " $(@:$(SRC_DIR_TEST)/%=%)
+	@cd $(SRC_DIR_TEST) && ./$(@:$(SRC_DIR_TEST)/%=%)
 
 lint:
 	cppcheck --enable=all --suppressions-list=.cppignore --inconclusive $(SRC_DIR) 1> /dev/null
 
 # Exectutes tests using cxxtest
-test: $(OBJ_TEST)
-	$(CXX) -o $(TEST_EXEC) $(OBJ_TEST) $(CFLAGS) $(WFLAGS)
+tests: $(TEST_CPP)
+	$(CXX) -o $@ $< $(CFLAGS) $(WFLAGS)
 	$(TEST_EXEC) -v
 
 # Build the test cpp
-$(OBJ_TEST): $(SRC_TEST)
-	cxxtestgen --error-printer -o tests/test.cpp $(SRC_TEST)
+$(TEST_CPP): $(SRC_TEST)
+	cxxtestgen --error-printer -o tests/test.cpp $<
 
 # Generate the documentation
 doc:
@@ -90,31 +99,13 @@ cppcheck-html:
 	cppcheck-htmlreport --file=tmp_cppcheck.xml --report-dir=$(CHECK_DIR) --source-dir=.
 	@rm tmp_cppcheck.xml
 
-# Build object file from source file
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp $(SRC_DIR)/%.hpp
-	@mkdir -p $(BUILD_DIR) $(BUILD_DIR)/generation
-	$(CXX) -o $@ -c $< $(CFLAGS) $(DFLAGS) $(WFLAGS)
-
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
-	@mkdir -p $(BUILD_DIR) $(BUILD_DIR)/generation
-	$(CXX) -o $@ -c $< $(CFLAGS) $(DFLAGS) $(WFLAGS)
-
-# Build executable from object files
-$(EXEC): $(OBJ)
-	$(CXX) -o $@ $^ $(DFLAGS) $(LFLAGS)
-
-# Build and execute test
-$(SRC_DIR_TEST)/%: $(BUILD_DIR)/%.o
-	$(CXX) -o $@ $< $(DFLAGS) $(LFLAGS)
-	@echo "Running the test: " $(@:$(SRC_DIR_TEST)/%=%)
-	@cd $(SRC_DIR_TEST) && ./$(@:$(SRC_DIR_TEST)/%=%)
-
 # Clean the workspace
 clean:
 	rm -rf $(BUILD_DIR) $(BUILD_DIR)/generation
 	rm -rf $(DOC_DIR)
 	rm -rf $(EXEC_TEST)
 	rm -rf $(CHECK_DIR)
+	rm -rf $(DEP_DIR)
 	rm -rf tests/test.cpp tests/test
 	rm -rf dungeon-battle
 	rm -rf *~
