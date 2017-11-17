@@ -70,9 +70,14 @@ void Map::saveToFile(const std::string& filename) const
     return;
 }
 
-bool Map::generated(int x, int y) const
+bool Map::hasCell(int x, int y) const
 {
-    std::pair<int, int> chunk_id = std::make_pair(x, y) / Chunk::SIZE;
+    return hasChunk(x / Chunk::SIZE, y / Chunk::SIZE);
+}
+
+bool Map::hasChunk(int x, int y) const
+{
+    std::pair<int, int> chunk_id = std::make_pair(x, y);
     return chunks.find(chunk_id) != end(chunks);
 }
 
@@ -88,7 +93,7 @@ int Map::getHeight() const
 
 CellType& Map::cellAt(int x, int y)
 {
-    assert(generated(x, y));
+    assert(hasCell(x, y));
 
     std::pair<int, int> chunk_id = std::make_pair(x, y) / Chunk::SIZE;
     std::pair<int, int> relt_pos = std::make_pair(x, y) % Chunk::SIZE;
@@ -103,7 +108,7 @@ CellType& Map::cellAt(sf::Vector2i coords)
 
 CellType Map::cellAt(int x, int y) const
 {
-    if (!generated(x, y))
+    if (!hasCell(x, y))
     {
         return CellType::Empty;
     }

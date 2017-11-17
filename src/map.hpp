@@ -106,12 +106,20 @@ public:
     void saveToFile(const std::string& filename) const;
 
     /**
+     * \brief Check wether a chunk is in the generated part of the map.
+     * \param x The x-coordinate of the chunk we are interested in.
+     * \param y The y-coordinate of the chunk we are interested in.
+     * \return true if the chunk containing exists.
+     */
+    bool hasChunk(int x, int y) const;
+
+    /**
      * \brief Check wether a point is in the generated part of the map.
      * \param x The x-coordinate of the cell we are interested in.
      * \param y The y-coordinate of the cell we are interested in.
      * \return true if a chunk containing the cell exists.
      */
-    bool generated(int x, int y) const;
+    bool hasCell(int x, int y) const;
 
     /**
      * \brief Get the width of the map
