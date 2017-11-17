@@ -66,14 +66,3 @@ Pattern generate_hallway(Point cell1, Point cell2);
  * \param nb_additions The number of cells to add to the pattern.
  */
 void cavestyle_patch(Pattern& pattern, int nb_additions);
-
-/**
- * \brief Contain a cave containing a fixed number of cells
- * \param size The number of cell the room contains
- * \return A set containing cells of the cave
- *
- * The room will be randomized. It will be centered on coordinate (0, 0).
- * \note If the size is less than 1, the room will still be of size 1.
- * \warning Some coordinates will be negative.
- */
-Pattern generate_cave(int size);

@@ -9,6 +9,10 @@ DFLAGS =
 
 # Warning flags
 WFLAGS = -Wall -Wextra
+WFLAGS_EXTRA = -pedantic -Wcast-align -Wcast-qual -Wctor-dtor-privacy -Wdisabled-optimization \
+               -Wformat=2 -Winit-self -Wlogical-op -Wmissing-declarations -Wmissing-include-dirs \
+               -Wnoexcept -Wold-style-cast -Woverloaded-virtual -Wredundant-decls -Wshadow \
+               -Wsign-promo -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch-default -Wundef
 
 # Linker flags
 LFLAGS = -lsfml-graphics -lsfml-window -lsfml-system -Wl,-rpath,.
@@ -19,7 +23,7 @@ SRC = $(shell find src -type f -name '*.cpp') # List of files to compile
 # Dependency files
 DEP_DIR = deps
 DEP_FILES = $(SRC:$(SRC_DIR)/%.cpp=$(DEP_DIR)/%.d)
-NO_DEPS = clean lint doc cppcheck-html $(TEST_EXEC)
+NO_DEPS = clean lint doc cppcheck-html warning $(TEST_EXEC)
 
 BUILD_DIR = build
 OBJ = $(SRC:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%.o)
@@ -52,6 +56,10 @@ debug: $(EXEC)
 
 release: CFLAGS += -O3 -DNDEBUG
 release: $(EXEC)
+
+warning: WFLAGS += $(WFLAGS_EXTRA)
+warning: CFLAGS += -fsyntax-only
+warning: $(OBJ)
 
 all: release doc cppcheck-html test
 

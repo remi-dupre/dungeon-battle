@@ -39,7 +39,7 @@ void Renderer::drawMap(const Map& map)
         static_cast<sf::Vector2i>(math::ceil((view.getCenter() + 0.5f * view.getSize()) / tile_size));
 
     map_vertices.clear();
-    map_vertices.reserve((max_corner.x - min_corner.x) * (max_corner.y - min_corner.y) * 4);
+    map_vertices.reserve((max_corner.x - min_corner.x) * (max_corner.y - min_corner.y) * 4u);
 
     for (int x = std::max(min_corner.x, 0); x < std::min(max_corner.x, map_w); x++)
     {
