@@ -15,12 +15,10 @@ int main(int argc, char** argv)
     if (argc > 1)
     {
         int error = parse_arguments(options, argc, argv);
-
-        auto help = options.find(Option::Help);
-
         if (error) // Error while parsing argv
             return error;
 
+        auto help = options.find(Option::Help);
         if(help != options.end())
         {
             // TODO: Display help message

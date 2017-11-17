@@ -24,7 +24,7 @@ enum class ActionType
     Move, ///< Move action
     Attack, ///< Attack action
     Interact, ///< Interact action
-    Pause ///< Pause and menu 
+    Pause ///< Pause and menu
 };
 
 /**

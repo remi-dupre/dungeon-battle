@@ -7,6 +7,7 @@
 #include "entity.hpp"
 #include "utility.hpp"
 
+
 unsigned int currentId = 0;
 
 Entity::Entity(EntityType type_, Interaction interaction_, sf::Vector2i position_, Direction orientation_) :
@@ -192,7 +193,7 @@ Character::Character(EntityType type_,
                     unsigned int controller_id_) :
     Entity(type_, interaction_, position_, orientation_, controller_id_),
     level(1),
-    experienceCurve([](unsigned int level) -> unsigned int {return 10*level;}),
+    experienceCurve([](unsigned int lvl) -> unsigned int {return 10*lvl;}),
     experience(0),
     hpMax(hpMax_),
     hp(hpMax_),
@@ -406,10 +407,9 @@ sf::Vector2i get_hero_position(const std::vector<std::shared_ptr<Entity>>& entit
         if(entity->getType() == EntityType::Hero)
         {
             return entity->getPosition();
-        }   
+        }
     }
 
     assert(false);
     return {0, 0};
 }
-

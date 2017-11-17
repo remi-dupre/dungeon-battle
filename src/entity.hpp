@@ -176,7 +176,7 @@ public:
      * \brief Create an item
      * \param name The name of the item
      * \param position The position of the item
-     * \param level The level modifier of the item 
+     * \param level The level modifier of the item
      * \param experience The experience modifier of the item
      * \param hpMax The hp max modifier of the item
      * \param hp The hp modifier of the item
@@ -263,7 +263,7 @@ public:
               Direction orientation,
               unsigned int hpMax,
               unsigned int strength);
-    
+
     /**
      * \brief Create a character
      * \param type The type of the character
@@ -346,7 +346,7 @@ public:
      * \brief Return the defense of the character
      */
     unsigned int getDefense() const;
-    
+
     /**
      * \brief Set the defense of the character
      * \param defense The defense to set

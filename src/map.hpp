@@ -12,7 +12,7 @@
 #include <string>
 #include <vector>
 
-#include "entity.hpp"
+#include <SFML/System/Vector2.hpp>
 
 
 /**
