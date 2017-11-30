@@ -45,7 +45,7 @@ enum class Interaction
 /**
  * \brief Represents anything that is interactive
  */
-class Entity
+class Entity : public std::enable_shared_from_this<Entity>
 {
 public:
 
@@ -82,6 +82,12 @@ public:
      * \brief Return the type of the entity
      */
     EntityType getType() const;
+
+    /**
+     * \brief Return a pointer to a copy of this entity.
+     * \todo  A real implementation from someone who know cpp -- Rémi
+     */
+    std::shared_ptr<Entity> copy() const;
 
     /**
      * \brief Return the interaction with the entity
@@ -175,7 +181,7 @@ public:
      * \brief Create an item
      * \param name The name of the item
      * \param position The position of the item
-     * \param level The level modifier of the item 
+     * \param level The level modifier of the item
      * \param experience The experience modifier of the item
      * \param hpMax The hp max modifier of the item
      * \param hp The hp modifier of the item
@@ -262,7 +268,7 @@ public:
               Direction orientation,
               unsigned int hpMax,
               unsigned int strength);
-    
+
     /**
      * \brief Create a character
      * \param type The type of the character
@@ -345,7 +351,7 @@ public:
      * \brief Return the defense of the character
      */
     unsigned int getDefense() const;
-    
+
     /**
      * \brief Set the defense of the character
      * \param defense The defense to set

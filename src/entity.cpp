@@ -48,6 +48,42 @@ EntityType Entity::getType() const
     return type;
 }
 
+std::shared_ptr<Entity> Entity::copy() const
+{
+    std::shared_ptr<const Entity> shared = shared_from_this();
+
+    switch (type)
+    {
+        case EntityType::Hero: {
+            auto ext = std::static_pointer_cast<const Character>(shared);
+            auto copy = std::make_shared<Character>(*ext);
+            return std::static_pointer_cast<Entity>(copy);
+        } break;
+
+        case EntityType::Monster: {
+            auto ext = std::static_pointer_cast<const Character>(shared);
+            auto copy = std::make_shared<Character>(*ext);
+            return std::static_pointer_cast<Entity>(copy);
+        } break;
+
+        case EntityType::Stairs: {
+            auto ext = std::static_pointer_cast<const Entity>(shared);
+            return std::make_shared<Entity>(*ext);
+        } break;
+
+        case EntityType::Item: {
+            auto ext = std::static_pointer_cast<const Item>(shared);
+            auto copy = std::make_shared<Item>(*ext);
+            return std::static_pointer_cast<Entity>(copy);
+        } break;
+
+        case EntityType::None:
+            break;
+    }
+
+    return std::make_shared<Entity>(*shared);
+}
+
 Interaction Entity::getInteraction() const
 {
     return interaction;
@@ -400,7 +436,7 @@ sf::Vector2i get_hero_position(const std::vector<std::shared_ptr<Entity>>& entit
         if(entity->getType() == EntityType::Hero)
         {
             return entity->getPosition();
-        }   
+        }
     }
 
     assert(false);
