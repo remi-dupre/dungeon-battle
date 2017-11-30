@@ -37,10 +37,21 @@ void Game::init(const std::map<Option, std::string>& options)
     unsigned int baseHeroHp = 20;
     unsigned int baseHeroForce = 1;
 
-    Generator generator(config.gen_options, 42);
-    generator.getChunkCells(2, 2);
+    Generator generator(config.gen_options, r());
 
-    dungeon.push_back(generate(config.gen_options));
+    Level level;
+    dungeon.push_back(level);
+
+    for (int x = -10 ; x < 10 ; x++)
+    {
+        for (int y = -10 ; y < 10 ; y++)
+        {
+            dungeon[0].map.setChunk(x, y, generator.getChunkCells(x, y));
+
+            auto entities = generator.getChunkEntities(x, y);
+            dungeon[0].entities.insert(end(dungeon[0].entities), begin(entities), end(entities));
+        }
+    }
 
     map = &dungeon[0].map;
     entities = &dungeon[0].entities;
@@ -135,7 +146,7 @@ void Game::update()
 
                                     if (current_level == dungeon.size()-1)
                                     {
-                                        dungeon.push_back(generate(config.gen_options));
+                                        // dungeon.push_back(generate(config.gen_options));
                                         dungeon[current_level+1].entities.push_back(*hero);
                                     }
 

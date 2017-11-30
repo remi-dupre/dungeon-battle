@@ -11,11 +11,12 @@ Generator::Generator(const GenerationMode& parameters, int seed) :
 Chunk Generator::getChunkCells(int x, int y)
 {
     // Generate potential new rooms
-    if (parameters.infinite and requested.size() == 0) {
+    if (!parameters.infinite && requested.empty()) {
         // Need to generate the whole map
         addRooms(0, 0, parameters.nb_rooms);
     }
-    else {
+    else if (parameters.infinite) {
+        assert(false);
         // ...
     }
 
@@ -26,16 +27,55 @@ Chunk Generator::getChunkCells(int x, int y)
     {
         for (Point cell : room.cells)
         {
-            Point chunk_pos = cell / Chunk::SIZE;
-            Point relative_pos = cell % Chunk::SIZE;
+            cell += room.position;
 
-            if (chunk_pos.first == x and chunk_pos.second == y)
+            Point chunk_id = Chunk::sector(cell.first, cell.second);
+            Point relative_pos = Chunk::relative(cell.first, cell.second);
+
+            if (chunk_id == std::make_pair(x, y)) {
                 chunk.cellAt(relative_pos.first, relative_pos.second) = CellType::Floor;
+            }
         }
     }
 
     requested.insert(std::make_pair(x, y));
     return chunk;
+}
+#include <iostream>
+std::vector<std::shared_ptr<Entity>> Generator::getChunkEntities(int x, int y)
+{
+    // Generate potential new rooms
+    if (!parameters.infinite && requested.empty()) {
+        // Need to generate the whole map
+        addRooms(0, 0, parameters.nb_rooms);
+    }
+    else if (parameters.infinite) {
+        assert(false);
+        // ...
+    }
+
+    // Query on entities
+    std::vector<std::shared_ptr<Entity>> ret;
+    for (const Room& room : rooms)
+    {
+        for (std::shared_ptr<Entity> entity : room.entities)
+        {
+            Point cell = room.position + std::make_pair(entity->getPosition().x, entity->getPosition().y);
+            Point chunk_id = Chunk::sector(cell.first, cell.second);
+
+            if (chunk_id == std::make_pair(x, y)) {
+                std::cout << "-----" << std::endl;
+                std::cout << room.position.first << ' ' << room.position.second << std::endl;
+                std::cout << entity->getPosition().x << ' ' << entity->getPosition().y << std::endl;
+                std::cout << cell.first << ' ' << cell.second << std::endl;
+
+                ret.push_back(entity->copy());
+                ret.back()->setPosition({cell.first, cell.second});
+            }
+        }
+    }
+
+    return ret;
 }
 
 void Generator::addRooms(int x, int y, size_t n)
@@ -72,7 +112,7 @@ void Generator::addRooms(int x, int y, size_t n)
         }
 
         // Place the room at the center of given chunk
-        room.position = std::make_pair(x + Chunk::SIZE / 2, y + Chunk::SIZE / 2);
+        room.position = std::make_pair((2*x + 1) * Chunk::SIZE / 2, (2*y + 1) * Chunk::SIZE / 2);
     }
 
     // Places rooms in a non-linear way
@@ -101,8 +141,7 @@ void Generator::addRooms(int x, int y, size_t n)
     for (auto edge : room_links)
     {
         // Create a pattern, placed at the first node position's
-        rooms.push_back(Room());
-        Room& path = rooms.back();
+        Room path;
 
         std::pair<Point, Point> close_points = closest_nodes(rooms[edge.first], rooms[edge.second]);
         Point hall_start = close_points.first + rooms[edge.first].position;
@@ -122,5 +161,7 @@ void Generator::addRooms(int x, int y, size_t n)
                 path.cells = generate_hallway(hall_start, hall_end);
                 break;
         }
+
+        rooms.push_back(path);
     }
 }

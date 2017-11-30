@@ -60,8 +60,24 @@ public:
      */
     CellType cellAt(int x, int y) const;
 
+    /**
+     * \brief Get the coordinates of the chunk which contains a given cell.
+     * \param x X coordinate of the cell in the map
+     * \param y Y coordinate of the cell in the map
+     * \return A pair containing the coordinates of the chunk.
+     */
+    static std::pair<int, int> sector(int x, int y);
+
+    /**
+     * \brief Get the coordinates corresponding to a given cell, in its chunk.
+     * \param x X coordinate of the cell in the map
+     * \param y Y coordinate of the cell in the map
+     * \return A pair containing the coordinates of the chunk.
+     */
+    static std::pair<int, int> relative(int x, int y);
+
 private:
-    std::array<CellType, SIZE> cells; ///< The type of each cells in the chunk
+    std::array<CellType, SIZE*SIZE> cells; ///< The type of each cells in the chunk
 };
 
 /**
@@ -77,13 +93,7 @@ public:
     /**
      * \brief Create an empty map
      */
-    explicit Map();
-    Map(int x, int y);
-
-    /**
-     * \brief Default move constructor
-     */
-    Map(Map&&) = default;
+    Map();
 
     /**
      * \brief Set a chunk.
@@ -91,7 +101,7 @@ public:
      * \param y y-coordinate of the chunk.
      * \param chunk The chunk we want to add.
      */
-    void set_chunk(int x, int y, const Chunk& chunk);
+    void setChunk(int x, int y, const Chunk& chunk);
 
     /**
      * \brief Load the map from a file
@@ -120,16 +130,6 @@ public:
      * \return true if a chunk containing the cell exists.
      */
     bool hasCell(int x, int y) const;
-
-    /**
-     * \brief Get the width of the map
-     */
-    int getWidth() const;
-
-    /**
-     * \brief Get the heigth of the map
-     */
-    int getHeight() const;
 
     /**
      * \brief Get a read-write access to a cell by its coordinates
@@ -175,32 +175,9 @@ public:
      */
     bool wallNext(sf::Vector2i coords) const;
 
-    Map& operator=(Map&& other);
-
 private:
-
-    int width;  ///< The width of the map
-    int height; ///< The height of the map
-
     /**
      * \brief The content of each chunks
      */
     std::map<std::pair<int, int>, Chunk> chunks;
-
-    friend std::ostream& operator<<(std::ostream&, const Map&);
-    friend std::istream& operator>>(std::istream&, Map&);
 };
-
-/**
- * \brief `operator<<` overload for `Map`
- *
- * Overloads `operator<<` to output maps to streams
- */
-std::ostream& operator<<(std::ostream& stream, const Map& map);
-
-/**
- * \brief `operator>>` overload for `Map`
- *
- * Overloads `operator>>` to read maps from streams
- */
-std::istream& operator>>(std::istream& stream, Map& map);

@@ -129,8 +129,8 @@ void separate_rooms(std::vector<Room>& rooms, int spacing)
                     if (room1.position == room2.position)
                     {
                         // Moves room2 in a random direction.
-                        int delta_x = Rand::uniform_int(0, 1);
-                        int delta_y = Rand::uniform_int(0, 1);
+                        int delta_x = RandGen::uniform_int(0, 1);
+                        int delta_y = RandGen::uniform_int(0, 1);
                         direction[i1] += {2*delta_x-1, 2*delta_y-1};
                             go_on = true;
                     }
@@ -185,7 +185,7 @@ void add_monsters(Room& room, float load)
     // Adds load/100 * size monsters in mean
     size_t nb_monsters = std::floor(room.cells.size() * load / 100.f);
     float excess = (room.cells.size() * load / 100.f) - nb_monsters;
-    nb_monsters += (Rand::uniform_int(0, 1) < excess) ? 1 : 0;
+    nb_monsters += (RandGen::uniform_int(0, 1) < excess) ? 1 : 0;
 
     // Select forbidden cells
     Pattern forbidden;

@@ -65,7 +65,7 @@ Map map_of_pattern(const Pattern& pattern)
     // Add a 1-unit margin at top and right border
     int width = pattern_max_x(pattern) + 2;
     int height = pattern_max_y(pattern) + 2;
-    Map map(width, height);
+    Map map;
 
     // Add cells of the pattern on the floor
     for (const Point& cell : pattern)
@@ -108,9 +108,9 @@ Level generate(const GenerationMode &mode)
     // Create rooms of random size
     for (Room& room : rooms)
     {
-        int room_size = Rand::uniform_int(mode.room_min_size, mode.room_max_size);
+        int room_size = RandGen::uniform_int(mode.room_min_size, mode.room_max_size);
 
-        float dice = Rand::uniform_int(0, 9);
+        float dice = RandGen::uniform_int(0, 9);
         if (dice == 0) // generate a maze
         {
             room = maze_room(23, 23);

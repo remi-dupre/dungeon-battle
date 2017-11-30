@@ -155,6 +155,8 @@ void Configuration::readGame(const std::string& filename)
                 gen_options.room_max_size = std::stoi(value);
             else if (option_name == "nb_rooms")
                 gen_options.nb_rooms = std::stoi(value);
+            else if (option_name == "infinite")
+                gen_options.infinite = static_cast<bool>(std::stoi(value));
             else if (option_name ==  "room_margin")
                 gen_options.room_margin = std::stoi(value);
             else if (option_name ==  "monster_load")

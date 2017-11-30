@@ -26,21 +26,25 @@ CellType Chunk::cellAt(int x, int y) const
     return cells[x + SIZE * y];
 }
 
-/* Implementation of the class Map */
+std::pair<int, int> Chunk::sector(int x, int y) {
+    if (x < 0) x -= SIZE - 1;
+    if (y < 0) y -= SIZE - 1;
 
-Map::Map() :
-    width(0), height(0)
-{}
-
-Map::Map(int width, int height) :
-    // Copy redundant information about the shape
-    width(width), height(height)
-{
-    assert (width > 0);
-    assert (height > 0);
+    return std::make_pair(x, y) / SIZE;
 }
 
-void Map::set_chunk(int x, int y, const Chunk& chunk)
+std::pair<int, int> Chunk::relative(int x, int y) {
+    if (x < 0) x -= SIZE - 1;
+    if (y < 0) y -= SIZE - 1;
+
+    return std::make_pair(x, y) % SIZE;
+}
+
+/* Implementation of the class Map */
+
+Map::Map() {}
+
+void Map::setChunk(int x, int y, const Chunk& chunk)
 {
     chunks[{x, y}] = chunk;
 }
@@ -53,7 +57,7 @@ bool Map::loadFromFile(const std::string& filename)
     if (file.fail())
         return false;
 
-    file >> *this;
+    // file >> *this;
 
     return true;
 }
@@ -65,38 +69,31 @@ void Map::saveToFile(const std::string& filename) const
     if (!file.is_open())
         return;
 
-    file << *this;
+    // file << *this;
 
     return;
 }
 
 bool Map::hasCell(int x, int y) const
 {
-    return hasChunk(x / Chunk::SIZE, y / Chunk::SIZE);
+    std::pair<int, int> chunk_id = Chunk::sector(x, y);
+    return hasChunk(chunk_id.first, chunk_id.second);
 }
 
 bool Map::hasChunk(int x, int y) const
 {
-    std::pair<int, int> chunk_id = std::make_pair(x, y);
+    std::pair<int, int> chunk_id = {x, y};
     return chunks.find(chunk_id) != end(chunks);
-}
-
-int Map::getWidth() const
-{
-    return width;
-}
-
-int Map::getHeight() const
-{
-    return height;
 }
 
 CellType& Map::cellAt(int x, int y)
 {
-    assert(hasCell(x, y));
+    std::pair<int, int> chunk_id = Chunk::sector(x, y);
+    std::pair<int, int> relt_pos = Chunk::relative(x, y);
 
-    std::pair<int, int> chunk_id = std::make_pair(x, y) / Chunk::SIZE;
-    std::pair<int, int> relt_pos = std::make_pair(x, y) % Chunk::SIZE;
+    // Create a new chunk if needed
+    if (!hasCell(x, y))
+        chunks[chunk_id] = Chunk();
 
     return chunks[chunk_id].cellAt(relt_pos.first, relt_pos.second);
 }
@@ -114,8 +111,8 @@ CellType Map::cellAt(int x, int y) const
     }
     else
     {
-        std::pair<int, int> chunk_id = std::make_pair(x, y) / Chunk::SIZE;
-        std::pair<int, int> relt_pos = std::make_pair(x, y) % Chunk::SIZE;
+        std::pair<int, int> chunk_id = Chunk::sector(x, y);
+        std::pair<int, int> relt_pos = Chunk::relative(x, y);
 
         return chunks.at(chunk_id).cellAt(relt_pos.first, relt_pos.second);
     }
@@ -143,103 +140,4 @@ bool Map::wallNext(int x, int y) const
 bool Map::wallNext(sf::Vector2i coords) const
 {
     return wallNext(coords.x, coords.y);
-}
-
-std::ostream& operator<<(std::ostream& stream, const Map& map)
-{
-    stream << map.width << ' ' << map.height << std::endl;
-
-    for (int y = 0; y < map.height; y++)
-    {
-        for (int x = 0; x < map.width; x++)
-        {
-            switch (map.cellAt(x, y))
-            {
-                case CellType::Wall:
-                    stream << '#';
-                    break;
-                case CellType::Floor:
-                    stream << '.';
-                    break;
-                default:
-                    stream << ' ';
-                    break;
-            }
-        }
-
-        stream << std::endl;
-    }
-
-    return stream;
-}
-
-std::istream& operator>>(std::istream& stream, Map& map)
-{
-    unsigned int width_, height_;
-    stream >> width_ >> height_;
-
-    if (stream.fail() || height_ == 0 || width_ == 0)
-    {
-        std::cerr << "Bad map dimensions\n";
-        return stream;
-    }
-
-    // Ignore end of first line
-    stream.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
-    std::string map_str, line;
-    for (unsigned int line_count = 0; line_count < height_; line_count++)
-    {
-        std::getline(stream, line);
-
-        if (line.size() != width_)
-        {
-            std::cerr << "Bad map data\n";
-            return stream;
-        }
-
-        map_str.append(line);
-    }
-
-    if (stream.fail())
-    {
-        std::cerr << "Bad map data\n";
-        return stream;
-    }
-
-    map.chunks.clear();
-
-    // // Loads the map from the string representing it
-    // std::transform(
-    //     std::begin(map_str), std::end(map_str),
-    //     std::back_inserter(map.chunks),
-    //     [](const char& c) -> CellType
-    //     {
-    //         switch (c)
-    //         {
-    //             case '#':
-    //                 return CellType::Wall;
-    //                 break;
-    //             case '.':
-    //                 return CellType::Floor;
-    //                 break;
-    //             default:
-    //                 return CellType::Empty;
-    //                 break;
-    //         }
-    //     }
-    // );
-
-    map.width = width_;
-    map.height = height_;
-
-    return stream;
-}
-
-Map& Map::operator=(Map&& other)
-{
-    width = other.width;
-    height = other.height;
-    chunks = std::move(other.chunks);
-    return *this;
 }
