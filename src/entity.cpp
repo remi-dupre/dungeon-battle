@@ -7,6 +7,7 @@
 #include "entity.hpp"
 #include "utility.hpp"
 
+
 unsigned int currentId = 0;
 
 Entity::Entity(EntityType type_, Interaction interaction_, sf::Vector2i position_, Direction orientation_) :
@@ -192,7 +193,7 @@ Character::Character(EntityType type_,
                     unsigned int controller_id_) :
     Entity(type_, interaction_, position_, orientation_, controller_id_),
     level(1),
-    experienceCurve([](unsigned int level) -> unsigned int {return 10*level;}),
+    experienceCurve([](unsigned int lvl) -> unsigned int {return 10*lvl;}),
     experience(0),
     hpMax(hpMax_),
     hp(hpMax_),
@@ -200,7 +201,8 @@ Character::Character(EntityType type_,
     defense(0),
     sightRadius(0),
     inventory(std::vector<Item>()),
-    inventorySize(-1)
+    inventorySize(0),
+    spells(std::vector<Spell> ({Spell()}))
 {
     if (type_ == EntityType::Monster)
         experience = 5;
@@ -378,6 +380,11 @@ void Character::pickUp(Item item)
 }
 
 
+std::vector<Spell> Character::getSpells()
+{
+    return spells;
+}
+
 
 bool has_hero(const std::vector<std::shared_ptr<Entity>>& entities)
 {
@@ -400,7 +407,7 @@ sf::Vector2i get_hero_position(const std::vector<std::shared_ptr<Entity>>& entit
         if(entity->getType() == EntityType::Hero)
         {
             return entity->getPosition();
-        }   
+        }
     }
 
     assert(false);

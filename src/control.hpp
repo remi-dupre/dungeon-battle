@@ -24,7 +24,7 @@ enum class ActionType
     Move, ///< Move action
     Attack, ///< Attack action
     Interact, ///< Interact action
-    Pause ///< Pause and menu 
+    Pause ///< Pause and menu
 };
 
 /**
@@ -65,4 +65,4 @@ namespace control
                      const std::vector<std::shared_ptr<Entity>>& entities,
                      const Map& map,
                      const Configuration& config);
-};
+}

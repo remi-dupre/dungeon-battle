@@ -21,7 +21,7 @@ public:
     /**
      * \brief Menu default constructor.
      */
-    Menu(const Configuration& config);
+     explicit Menu(const Configuration& config);
 
     /**
      * \brief Looping while we are displaying the menu.

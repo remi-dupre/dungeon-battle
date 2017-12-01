@@ -7,9 +7,9 @@ Map::Map() :
     Map(1, 1)
 {}
 
-Map::Map(int width, int height) :
+Map::Map(int width_, int height_) :
     // Copy redundant information about the shape
-    width(width), height(height),
+    width(width_), height(height_),
     // Fill the map with floors
     cells(width * height, CellType::Empty)
 {
@@ -128,7 +128,7 @@ std::ostream& operator<<(std::ostream& stream, const Map& map)
 
 std::istream& operator>>(std::istream& stream, Map& map)
 {
-    unsigned int width_, height_;
+    int width_, height_;
     stream >> width_ >> height_;
 
     if (stream.fail() || height_ == 0 || width_ == 0)
@@ -141,7 +141,7 @@ std::istream& operator>>(std::istream& stream, Map& map)
     stream.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
     std::string map_str, line;
-    for (unsigned int line_count = 0; line_count < height_; line_count++)
+    for (int line_count = 0; line_count < height_; line_count++)
     {
         std::getline(stream, line);
 

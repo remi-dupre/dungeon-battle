@@ -93,17 +93,17 @@ void Configuration::read(const std::string& filename)
         try
         {
             if (option_name == "height")
-                height = std::stoi(value);
+                height = static_cast<unsigned int>(std::stoi(value));
             else if (option_name == "width")
-                width = std::stoi(value);
+                width = static_cast<unsigned int>(std::stoi(value));
             else if (option_name == "scalefactor")
-                scalefactor = std::stoi(value);
+                scalefactor = static_cast<unsigned int>(std::stoi(value));
             else if (option_name ==  "fullscreen")
                 fullscreen = std::stoi(value);
             else if (option_name ==  "vsync")
                 vsync = std::stoi(value);
             else if (option_name ==  "maxfps")
-                maxfps = std::stoi(value);
+                maxfps = static_cast<unsigned int>(std::stoi(value));
             else if (option_name ==  "animation_speed")
                 animation_speed = std::stof(value);
         }

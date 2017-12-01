@@ -159,15 +159,18 @@ void Game::update()
                                     map = &dungeon[current_level].map;
                                     entities = &dungeon[current_level].entities;
 
-                                    auto hero = std::find_if(dungeon[current_level].entities.begin(),dungeon[current_level].entities.end(),
-                                    [](std::shared_ptr<Entity> e) -> bool {
-                                        return e->getType() == EntityType::Hero;
-                                    });
+                                    auto hero = std::find_if(dungeon[current_level].entities.begin(),
+                                                             dungeon[current_level].entities.end(),
+                                        [](std::shared_ptr<Entity> e) -> bool {
+                                            return e->getType() == EntityType::Hero;
+                                        });
 
-                                    auto stairs = std::find_if(dungeon[current_level].entities.begin(), dungeon[current_level].entities.end(),
-                                    [](std::shared_ptr<Entity> e) -> bool {
-                                        return e->getType() == EntityType::Stairs && e->getInteraction() == Interaction::GoDown;
-                                    });
+                                    auto stairs = std::find_if(dungeon[current_level].entities.begin(),
+                                                               dungeon[current_level].entities.end(),
+                                        [](std::shared_ptr<Entity> e) -> bool {
+                                            return e->getType() == EntityType::Stairs &&
+                                                e->getInteraction() == Interaction::GoDown;
+                                        });
 
                                     (*hero)->setPosition((*stairs)->getPosition()); }
 

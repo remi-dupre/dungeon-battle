@@ -59,5 +59,3 @@ Action bfs_monster(const Character& monster, const std::vector<std::shared_ptr<E
  */
 
 Action get_input_monster(const Character& monster, const std::vector<std::shared_ptr<Entity>>& entities, const Map& map);
-
-

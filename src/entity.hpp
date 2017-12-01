@@ -13,6 +13,7 @@
 
 #include <SFML/System/Vector2.hpp>
 
+#include "spells.hpp"
 #include "utility.hpp"
 
 
@@ -175,7 +176,7 @@ public:
      * \brief Create an item
      * \param name The name of the item
      * \param position The position of the item
-     * \param level The level modifier of the item 
+     * \param level The level modifier of the item
      * \param experience The experience modifier of the item
      * \param hpMax The hp max modifier of the item
      * \param hp The hp modifier of the item
@@ -262,7 +263,7 @@ public:
               Direction orientation,
               unsigned int hpMax,
               unsigned int strength);
-    
+
     /**
      * \brief Create a character
      * \param type The type of the character
@@ -345,7 +346,7 @@ public:
      * \brief Return the defense of the character
      */
     unsigned int getDefense() const;
-    
+
     /**
      * \brief Set the defense of the character
      * \param defense The defense to set
@@ -398,6 +399,13 @@ public:
      */
     void pickUp(Item item);
 
+
+    /**
+     * \brief Return the spells of the character
+     */
+    std::vector<Spell> getSpells();
+
+
 protected:
 
     unsigned int level; ///< The level of the character
@@ -411,6 +419,8 @@ protected:
 
     std::vector<Item> inventory; ///< The inventory of the character
     unsigned int inventorySize; ///< The size of the inventory of the character
+
+    std::vector<Spell> spells; ///< The spells of the character
 };
 
 /**
