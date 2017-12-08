@@ -40,7 +40,6 @@ struct Room
  * \brief Translate a room to remove negative coordinates.
  * \param pattern A room that could have negative coordinates.
  * \return The newly aligned room.
- *
  * \note This will also align the room on top left : its position will be (0, 0).
  */
 Room normalized_room(const Room& room);

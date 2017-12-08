@@ -28,9 +28,9 @@ SRC = $(SRC_DIR)/main.cpp \
       $(SRC_DIR)/generation/room.cpp \
       $(SRC_DIR)/generation/level.cpp \
       $(SRC_DIR)/generation/gen_pattern.cpp \
-	  $(SRC_DIR)/generation/space.cpp \
-	  $(SRC_DIR)/generation/generator.cpp \
-	  $(SRC_DIR)/menu.cpp 
+      $(SRC_DIR)/generation/space.cpp \
+      $(SRC_DIR)/generation/generator.cpp \
+      $(SRC_DIR)/menu.cpp
 
 # List of files to compile
 

@@ -52,12 +52,18 @@ int pattern_max_y(const Pattern& pattern);
 
 
 /**
- * \brief Returns a pattern containing the surrounding of a pattern
+ * \brief Returns a pattern containing the frontier of a pattern : every internal cells in contact with the outside.
  * \param pattern A filled pattern.
  * \return A pattern only containing the frontier with the outside.
  */
-Pattern surrounding(const Pattern& pattern);
+Pattern frontier(const Pattern& pattern);
 
+/**
+ * \brief Returns a pattern containing every external cells in contact with the pattern (diagonals are included).
+ * \param pattern A filled pattern.
+ * \return A pattern only containing the frontier with the inside.
+ */
+Pattern surrounding(const Pattern& pattern);
 
 /**
  * \brief Check if a minimum space is assured between two rooms.

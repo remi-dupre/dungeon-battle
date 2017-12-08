@@ -42,7 +42,7 @@ int pattern_max_y(const Pattern& pattern)
 }
 
 
-Pattern surrounding(const Pattern& pattern)
+Pattern frontier(const Pattern& pattern)
 {
     Pattern frontier;
     for (const Point& cell : pattern)
@@ -57,6 +57,27 @@ Pattern surrounding(const Pattern& pattern)
             frontier.insert(cell);
     }
     return frontier;
+}
+
+Pattern surrounding(const Pattern& pattern)
+{
+    Pattern surrounding;
+
+    for (const Point& cell : pattern)
+    {
+        Point relat;
+
+        for (relat.first = -1 ; relat.first <= 1 ; relat.first++)
+        {
+            for (relat.second = -1 ; relat.second <= 1 ; relat.second ++)
+            {
+                if (pattern.find(cell + relat) == end(pattern))
+                    surrounding.insert(cell + relat);
+            }
+        }
+    }
+
+    return surrounding;
 }
 
 bool spaced(Point position1, const Pattern& pattern1, Point position2, const Pattern& pattern2, int spacing)

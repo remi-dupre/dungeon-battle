@@ -84,14 +84,14 @@ void Generator::addRooms(int x, int y, size_t n)
         {
             case LevelType::Cave:
                 room.cells = generate_cave(room_size);
-                room.nodes = surrounding(room.cells);
+                room.nodes = frontier(room.cells);
                 break;
 
             case LevelType::Flat:
             default:
                 room.cells = generate_maze(23, 23);
                 room.cells = generate_rectangle(room_size);
-                room.nodes = surrounding(room.cells);
+                room.nodes = frontier(room.cells);
                 break;
         }
 
@@ -155,6 +155,7 @@ void Generator::addRooms(int x, int y, size_t n)
 
 void Generator::registerRoom(size_t room)
 {
+    // Add floor everywhere we can
     for (Point cell : rooms[room].cells)
     {
         int x = (cell + rooms[room].position).first;
@@ -166,5 +167,20 @@ void Generator::registerRoom(size_t room)
         }
 
         cachedMap.cellAt(x, y) = CellType::Floor;
+    }
+
+    // Add walls on the surrounding : only where there is no floor yet
+    for (Point cell : surrounding(rooms[room].cells))
+    {
+        int x = (cell + rooms[room].position).first;
+        int y = (cell + rooms[room].position).second;
+
+        if (!cachedMap.hasCell(x, y)) {
+            auto cpos = Chunk::sector(x, y);
+            cachedMap.setChunk(cpos.first, cpos.second, Chunk());
+        }
+
+        if (cachedMap.cellAt(x, y) == CellType::Empty)
+            cachedMap.cellAt(x, y) = CellType::Wall;
     }
 }

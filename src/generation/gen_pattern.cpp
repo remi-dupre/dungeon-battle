@@ -119,13 +119,13 @@ Pattern generate_hallway(Point cell1, Point cell2)
 
 void cavestyle_patch(Pattern& pattern, int nb_additions)
 {
-    Pattern surrounding;
+    Pattern frontier;
 
-    // Function to add a new cell to surrounding, if it isn't already in the pattern.
-    auto addSurrounding = [&pattern, &surrounding](Point cell)
+    // Function to add a new cell to frontier, if it isn't already in the pattern.
+    auto addSurrounding = [&pattern, &frontier](Point cell)
     {
         if (pattern.count(cell) == 0)
-            surrounding.insert(cell);
+            frontier.insert(cell);
     };
 
     // Add cells around the first ones
@@ -141,19 +141,19 @@ void cavestyle_patch(Pattern& pattern, int nb_additions)
     for(int nb_cells = 0 ; nb_cells < nb_additions ; nb_cells++)
     {
         // Select a cell to insert
-        auto selected = surrounding.begin();
+        auto selected = frontier.begin();
 
-        std::advance(selected, RandGen::uniform_int(0, surrounding.size()-1));
+        std::advance(selected, RandGen::uniform_int(0, frontier.size()-1));
         pattern.insert(*selected);
 
-        // Refresh surrounding set of the pattern
+        // Refresh frontier set of the pattern
         addSurrounding((*selected) + std::make_pair(1, 0));
         addSurrounding((*selected) + std::make_pair(0, 1));
         addSurrounding((*selected) - std::make_pair(1, 0));
         addSurrounding((*selected) - std::make_pair(0, 1));
 
         // Can't select this cell anymore
-        surrounding.erase(selected);
+        frontier.erase(selected);
     }
 }
 

@@ -121,14 +121,14 @@ Level generate(const GenerationMode &mode)
         {
             case LevelType::Cave:
                 room.cells = generate_cave(room_size);
-                room.nodes = surrounding(room.cells);
+                room.nodes = frontier(room.cells);
                 break;
 
             case LevelType::Flat:
             default:
                 room.cells = generate_maze(23, 23);
                 room.cells = generate_rectangle(room_size);
-                room.nodes = surrounding(room.cells);
+                room.nodes = frontier(room.cells);
                 break;
         }
     }

@@ -10,6 +10,7 @@
 #include <vector>
 
 #include "level.hpp"
+#include "pattern.hpp"
 #include "room.hpp"
 #include "space.hpp"
 
