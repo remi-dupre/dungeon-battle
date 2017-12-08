@@ -1,9 +1,9 @@
+#include <cxxtest/TestSuite.h>
+
 #include <map>
 
 #include "../src/config.hpp"
-#include "../src/config.cpp"
 #include "../src/args.hpp"
-#include "../src/args.cpp"
 
 
 #pragma GCC diagnostic ignored "-Wpragmas"

@@ -92,8 +92,9 @@ CellType& Map::cellAt(int x, int y)
     std::pair<int, int> relt_pos = Chunk::relative(x, y);
 
     // Create a new chunk if needed
-    if (!hasCell(x, y))
-        chunks[chunk_id] = Chunk();
+    assert(hasCell(x, y));
+    // if (!hasCell(x, y))
+        // chunks[chunk_id] = Chunk();
 
     return chunks[chunk_id].cellAt(relt_pos.first, relt_pos.second);
 }

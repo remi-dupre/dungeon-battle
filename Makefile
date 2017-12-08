@@ -50,9 +50,13 @@ CHECK_DIR = check
 # Unit test paths
 SRC_DIR_TEST = tests
 SRC_TEST = $(SRC_DIR_TEST)/test_map.hpp \
-           $(SRC_DIR_TEST)/test_kdtree.hpp \
            $(SRC_DIR_TEST)/test_config.hpp \
+           $(SRC_DIR_TEST)/test_generation.hpp \
+           $(SRC_DIR_TEST)/test_kdtree.hpp \
            $(SRC_DIR_TEST)/test_pattern.hpp
+
+# Files the tests depend of
+DPND_TEST = $(filter-out $(SRC_DIR)/main.cpp,$(SRC))
 
 OBJ_TEST = $(SRC_DIR_TEST)/test.cpp
 
@@ -76,8 +80,9 @@ lint:
 	cppcheck --enable=all --suppressions-list=.cppignore --inconclusive $(SRC_DIR) 1> /dev/null
 
 # Exectutes tests using cxxtest
-test: $(OBJ_TEST)
-	$(CXX) -o $(TEST_EXEC) $(OBJ_TEST) $(CFLAGS) $(WFLAGS)
+test: $(OBJ_TEST) $(SRC)
+
+	$(CXX) -o $(TEST_EXEC) $(OBJ_TEST) $(DPND_TEST) $(CFLAGS) $(DFLAGS) $(WFLAGS) $(LFLAGS)
 	$(TEST_EXEC) -v
 
 # Build the test cpp

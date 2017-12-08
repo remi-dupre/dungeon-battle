@@ -5,8 +5,11 @@
 
 #pragma once
 
+#include <cstring>
+#include <iostream>
 #include <map>
 #include <string>
+#include <tuple>
 
 
 /**
@@ -29,3 +32,10 @@ enum class Option
  * stored in argv.
  */
 int parse_arguments(std::map<Option, std::string>& options, int argc, char** argv);
+
+
+template <typename T, int N>
+inline constexpr std::size_t array_length(T (&)[N])
+{
+    return N;
+}

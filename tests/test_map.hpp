@@ -1,90 +1,57 @@
 #include <cxxtest/TestSuite.h>
 
-#include <map>
-#include <string>
-#include <random>
-
-#include "../src/generation/pattern.hpp"
-#include "../src/generation/pattern.cpp"
-#include "../src/generation/room.hpp"
-#include "../src/generation/room.cpp"
-#include "../src/generation/level.hpp"
-#include "../src/generation/level.cpp"
-#include "../src/generation/gen_pattern.hpp"
-#include "../src/generation/gen_pattern.cpp"
-#include "../src/generation/space.hpp"
-#include "../src/generation/space.cpp"
-
 #include "../src/map.hpp"
-#include "../src/map.cpp"
-#include "../src/entity.hpp"
-#include "../src/entity.cpp"
-#include "../src/rand.hpp"
 #include "../src/utility.hpp"
-#include "../src/utility.cpp"
 
 
-// Number of maps to generate for a test
-constexpr int NB_MAP_TEST = 100;
-
-constexpr int MIN_ROOMS = 2;
-constexpr int MAX_ROOMS = 15;
-
-constexpr int MIN_MARGIN = 0;
-constexpr int MAX_MARGIN = 50;
-
-constexpr int ROOM_MIN_SIZE = 50;
-constexpr int ROOM_MAX_SIZE = 300;
-
-
-class GeneratorTester : public CxxTest::TestSuite
+class MapTester : public CxxTest::TestSuite
 {
 public:
-    /* Test that maps can be generated without any segfault
+    /* Test that we can access a chunk only after its creation.
      */
-    void testGeneration()
+    void testChunkExist()
     {
-        GenerationMode gen_options;
+        Map map;
 
-        for (int test = 0 ; test < NB_MAP_TEST ; test++)
-        {
-            TS_TRACE("Generating map " + std::to_string(test+1) + "/" + std::to_string(NB_MAP_TEST));
-            gen_options.room_min_size = ROOM_MIN_SIZE;
-            gen_options.room_max_size = ROOM_MAX_SIZE;
-            gen_options.nb_rooms = Rand::uniform_int(MIN_ROOMS, MAX_ROOMS);
-            gen_options.room_margin = Rand::uniform_int(MIN_MARGIN, MAX_MARGIN);
-            gen_options.type = static_cast<LevelType>(Rand::uniform_int(0, 1));
-            gen_options.monster_load = 3.f;
-            gen_options.maze_density = 0.1f;
+        // Check that the chunk (1337, 42) doesn't exist.
+        TS_ASSERT(!map.hasChunk(1337, 42));
+        // TS_ASSERT_THROWS_ANYTHING(map.chunkAt(1337, 42)); // seems assert doesn't throw an exception.
 
-            TS_TRACE("nb_rooms : " + std::to_string(gen_options.nb_rooms));
-            TS_TRACE("room_margin : " + std::to_string(gen_options.room_margin));
-            TS_TRACE("type : " + std::to_string(static_cast<int>(gen_options.type)));
+        // Check that it can be added and then accessed.
+        map.setChunk(1337, 42, Chunk());
 
-            std::random_device r;
-            int seed = r();
-            Rand::seed(seed);
-            TS_TRACE("Seed : " + std::to_string(seed));
+        TS_ASSERT(map.hasChunk(1337, 42));
+        map.chunkAt(1337, 42);
+    }
 
-            Level level = generate(gen_options);
-            Map map = std::move(level.map);
-            auto entities = std::move(level.entities);
+    /* Test that function to access a cell are ok.
+     */
+    void testCellExist()
+    {
+        Map map;
+
+        // Check that the cell doesn't exist at first.
+        TS_ASSERT(!map.hasCell(1337, 42));
+        // TS_ASSERT_EQUALS(map.cellAt(1337, 42), CellType::Empty);
+
+        // Check that we can correctly select it from the chunk.
+        auto chunk_pos = Chunk::sector(1337, 42);
+        auto relat_pos = Chunk::relative(1337, 42);
+
+        TS_ASSERT(!map.hasChunk(chunk_pos.first, chunk_pos.second));
+
+        // Create the chunk
+        map.setChunk(chunk_pos.first, chunk_pos.second, Chunk());
+
+        TS_ASSERT_EQUALS(map.cellAt(1337, 42), CellType::Empty);
+        TS_ASSERT(map.hasChunk(chunk_pos.first, chunk_pos.second));
+        TS_ASSERT(map.hasCell(1337, 42));
+
+        map.cellAt(1337, 42) = CellType::Floor;
+        TS_ASSERT_EQUALS(map.cellAt(1337, 42), CellType::Floor);
 
 
-            for (auto& entity : entities)
-            {
-                // Check that all the entitites are placed on a floor
-                TS_ASSERT(
-                    map.cellAt(entity->getPosition().x, entity->getPosition().y) == CellType::Floor
-                );
-
-                // Check that 2 entities are not stacked (for now, none can)
-                for (auto& entity2 : entities)
-                    TS_ASSERT(
-                           entity == entity2
-                        || entity->getPosition() != entity2->getPosition()
-                    );
-            }
-        }
+        auto chunk = map.chunkAt(chunk_pos.first, chunk_pos.second);
+        TS_ASSERT_EQUALS(chunk.cellAt(relat_pos.first, relat_pos.second), CellType::Floor);
     }
 };

@@ -1,17 +1,5 @@
-#include <cstring>
-#include <iostream>
-#include <map>
-#include <string>
-#include <tuple>
-
 #include "args.hpp"
 
-
-template <typename T, int N>
-inline constexpr std::size_t array_length(T (&)[N])
-{
-    return N;
-}
 
 // (option string, option action, reads a name)
 constexpr std::tuple<const char*, Option, bool> command_line_options[3] =
