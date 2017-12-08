@@ -166,6 +166,14 @@ public:
     CellType cellAt(sf::Vector2i coords) const;
 
     /**
+     * \brief Get a read only access to a chunk given its coordinates
+     * \param x X coordinate of the chunk
+     * \param y Y coordinate of the chunk
+     * \return A chunk.
+     */
+    Chunk chunkAt(int x, int y) const;
+
+    /**
      * \brief Check if there is a wall next to a cell
      */
     bool wallNext(int x, int y) const;

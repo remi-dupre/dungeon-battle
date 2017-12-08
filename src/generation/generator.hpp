@@ -59,14 +59,6 @@ public:
      */
     std::vector<std::shared_ptr<Entity>> getChunkEntities(int x, int y);
 
-    /**
-     * \brief Generate some rooms centered on given chunck.
-     * \param x x-coordinate of the center chunk.
-     * \param y y-coordinate of the center chunk.
-     * \param n number of rooms to generate.
-     */
-    void addRooms(int x, int y, size_t n);
-
 
 private:
     ///< Parameters for the generation
@@ -81,6 +73,21 @@ private:
     ///< List of rooms generated so far
     std::vector<Room> rooms;
 
-    ///< Links we have between the rooms
-    std::vector<std::pair<size_t, size_t>> room_links;
+    ///< A cached version of the map we generated so far.
+    Map cachedMap;
+
+    /**
+     * \brief Generate some rooms centered on given chunck.
+     * \param x x-coordinate of the center chunk.
+     * \param y y-coordinate of the center chunk.
+     * \param n number of rooms to generate.
+     */
+    void addRooms(int x, int y, size_t n);
+
+    /**
+     * \brief Specify that a room has been added to the map.
+     * \param room The index of the room in `rooms`
+     * This method must be called each time a room is added to the map.
+     */
+    void registerRoom(size_t room);
 };

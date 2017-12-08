@@ -20,28 +20,15 @@ Chunk Generator::getChunkCells(int x, int y)
         // ...
     }
 
+    requested.insert({x, y});
+
     // Filter interesting cells and entities
-    Chunk chunk;
-
-    for (const Room& room : rooms)
-    {
-        for (Point cell : room.cells)
-        {
-            cell += room.position;
-
-            Point chunk_id = Chunk::sector(cell.first, cell.second);
-            Point relative_pos = Chunk::relative(cell.first, cell.second);
-
-            if (chunk_id == std::make_pair(x, y)) {
-                chunk.cellAt(relative_pos.first, relative_pos.second) = CellType::Floor;
-            }
-        }
-    }
-
-    requested.insert(std::make_pair(x, y));
-    return chunk;
+    if (cachedMap.hasChunk(x, y))
+        return cachedMap.chunkAt(x, y);
+    else
+        return Chunk();
 }
-#include <iostream>
+
 std::vector<std::shared_ptr<Entity>> Generator::getChunkEntities(int x, int y)
 {
     // Generate potential new rooms
@@ -54,6 +41,8 @@ std::vector<std::shared_ptr<Entity>> Generator::getChunkEntities(int x, int y)
         // ...
     }
 
+    requested.insert({x, y});
+
     // Query on entities
     std::vector<std::shared_ptr<Entity>> ret;
     for (const Room& room : rooms)
@@ -64,11 +53,6 @@ std::vector<std::shared_ptr<Entity>> Generator::getChunkEntities(int x, int y)
             Point chunk_id = Chunk::sector(cell.first, cell.second);
 
             if (chunk_id == std::make_pair(x, y)) {
-                std::cout << "-----" << std::endl;
-                std::cout << room.position.first << ' ' << room.position.second << std::endl;
-                std::cout << entity->getPosition().x << ' ' << entity->getPosition().y << std::endl;
-                std::cout << cell.first << ' ' << cell.second << std::endl;
-
                 ret.push_back(entity->copy());
                 ret.back()->setPosition({cell.first, cell.second});
             }
@@ -137,7 +121,7 @@ void Generator::addRooms(int x, int y, size_t n)
         add_monsters(room, parameters.monster_load);
 
     // Add ways between rooms
-    room_links = covering_paths(rooms);
+    std::vector<std::pair<size_t, size_t>> room_links = covering_paths(rooms);
     for (auto edge : room_links)
     {
         // Create a pattern, placed at the first node position's
@@ -163,5 +147,24 @@ void Generator::addRooms(int x, int y, size_t n)
         }
 
         rooms.push_back(path);
+    }
+
+    for (size_t i = 0 ; i < rooms.size() ; i++)
+        registerRoom(i);
+}
+
+void Generator::registerRoom(size_t room)
+{
+    for (Point cell : rooms[room].cells)
+    {
+        int x = (cell + rooms[room].position).first;
+        int y = (cell + rooms[room].position).second;
+
+        if (!cachedMap.hasCell(x, y)) {
+            auto cpos = Chunk::sector(x, y);
+            cachedMap.setChunk(cpos.first, cpos.second, Chunk());
+        }
+
+        cachedMap.cellAt(x, y) = CellType::Floor;
     }
 }

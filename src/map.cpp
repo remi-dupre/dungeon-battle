@@ -123,6 +123,13 @@ CellType Map::cellAt(sf::Vector2i coords) const
     return cellAt(coords.x, coords.y);
 }
 
+Chunk Map::chunkAt(int x, int y) const
+{
+    assert(chunks.find({x, y}) != end(chunks));
+
+    return chunks.at({x, y});
+}
+
 bool Map::wallNext(int x, int y) const
 {
     for (int i = -1; i <= 1; i++)
