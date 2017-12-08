@@ -2,7 +2,7 @@
 CXX = g++
 
 # Compiler flags
-CFLAGS = -std=c++1y
+CFLAGS = -std=c++14
 
 # Debuguer flags
 DFLAGS =
@@ -60,6 +60,7 @@ release: $(EXEC)
 warning: WFLAGS += $(WFLAGS_EXTRA)
 warning: CFLAGS += -fsyntax-only
 warning: $(OBJ)
+warning: rm -r deps
 
 all: release doc cppcheck-html test
 
