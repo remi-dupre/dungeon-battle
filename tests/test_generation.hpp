@@ -6,12 +6,7 @@
 #include <string>
 #include <vector>
 
-#include "../src/generation/pattern.hpp"
 #include "../src/generation/generator.hpp"
-#include "../src/generation/room.hpp"
-#include "../src/generation/level.hpp"
-#include "../src/generation/gen_pattern.hpp"
-#include "../src/generation/space.hpp"
 
 #include "../src/map.hpp"
 #include "../src/entity.hpp"
