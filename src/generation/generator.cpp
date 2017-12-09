@@ -121,36 +121,118 @@ void Generator::addRooms(int x, int y, size_t n)
         add_monsters(room, parameters.monster_load);
 
     // Add ways between rooms
-    std::vector<std::pair<size_t, size_t>> room_links = covering_paths(rooms);
-    for (auto edge : room_links)
-    {
-        // Create a pattern, placed at the first node position's
-        Room path;
-
-        std::pair<Point, Point> close_points = closest_nodes(rooms[edge.first], rooms[edge.second]);
-        Point hall_start = close_points.first + rooms[edge.first].position;
-        Point hall_end = close_points.second + rooms[edge.second].position;
-
-        path.position = hall_start;
-
-        switch (parameters.type)
-        {
-            case LevelType::Cave:
-                path.cells = generate_hallway(hall_start, hall_end);
-                cavestyle_patch(path.cells, path.cells.size());
-                break;
-
-            case LevelType::Flat:
-            default:
-                path.cells = generate_hallway(hall_start, hall_end);
-                break;
-        }
-
-        rooms.push_back(path);
-    }
+    updateLinks();
 
     for (size_t i = 0 ; i < rooms.size() ; i++)
         registerRoom(i);
+}
+
+void Generator::updateLinks()
+{
+    size_t nb_rooms = rooms.size();
+
+    // Create a union-find representing connections
+    std::vector<size_t> size_uf(nb_rooms, 1);
+    std::vector<size_t> link_uf(nb_rooms);
+    for (size_t i = 0 ; i < nb_rooms ; i++)
+        link_uf[i] = i;
+
+    // Access function for the union find
+    std::function<size_t(size_t)> comp_repr = [&comp_repr, &link_uf] (size_t i_room) -> size_t
+    {
+        if (link_uf[i_room] == i_room)
+            return i_room;
+
+        size_t repr = comp_repr(link_uf[i_room]);
+        link_uf[i_room] = repr;
+        return repr;
+    };
+
+    // Function to merge two components of the union-find
+    auto comp_merge = [comp_repr, &link_uf, &size_uf](size_t a, size_t b)
+    {
+        if (comp_repr(a) != comp_repr(b))
+        {
+            size_uf[comp_repr(a)] = size_uf[comp_repr(a)] + size_uf[comp_repr(b)];
+            link_uf[comp_repr(b)] = comp_repr(a);
+        }
+    };
+
+    // Update the union find with current links
+    for (auto &link : room_links)
+        comp_merge(link.first, link.second);
+
+    // Create vertices (dist(i, j), i, j) in an increasing order if i and j are not in the same component yet
+    typedef std::tuple<int, size_t, size_t> Edge;
+    std::priority_queue<Edge, std::vector<Edge>, std::greater<Edge>> candidates;
+
+    for (size_t i = 0 ; i < nb_rooms ; i++)
+    {
+        for (size_t j = 0 ; j < i ; j++)
+        {
+            if (comp_repr(i) != comp_repr(j))
+            {
+                int dist = ntn_dist(rooms[i], rooms[j]);
+                candidates.push(std::make_tuple(dist, i, j));
+            }
+        }
+    }
+
+    // Force connexity of the level
+    while (size_uf[comp_repr(0)] < nb_rooms)
+    {
+        int dist;
+        size_t l, r;
+        std::tie(dist, l, r) = candidates.top();
+        candidates.pop();
+
+        // If these two rooms are not linked yet
+        if (comp_repr(l) != comp_repr(r))
+        {
+            // Add path between the two rooms
+            auto close_points = closest_nodes(rooms[l], rooms[r]);
+            Point hall_start = close_points.first + rooms[l].position;
+            Point hall_end = close_points.second + rooms[r].position;
+
+            Room path;
+            path.position = hall_start;
+            switch (parameters.type)
+            {
+                case LevelType::Cave:
+                    path.cells = generate_hallway(hall_start, hall_end);
+                    cavestyle_patch(path.cells, path.cells.size());
+                    path.nodes = frontier(path.cells);
+                    break;
+
+                case LevelType::Flat:
+                default:
+                    path.cells = generate_hallway(hall_start, hall_end);
+                    path.nodes = frontier(path.cells);
+                    break;
+            }
+            rooms.push_back(path);
+
+            room_links.insert({l, nb_rooms});
+            room_links.insert({nb_rooms, r});
+            registerRoom(nb_rooms);
+
+            // Update union-find
+            nb_rooms++;
+
+            link_uf.push_back(nb_rooms-1);
+            size_uf.push_back(1);
+
+            comp_merge(l, nb_rooms-1);
+            comp_merge(nb_rooms-1, r);
+
+            // Insert new possible distances to the new path
+            for (size_t i = 0 ; i < nb_rooms-1 ; i++)
+            {
+                int dist = ntn_dist(rooms[i], rooms[nb_rooms-1]);
+                candidates.push(std::make_tuple(dist, i, nb_rooms-1));
+            }
+        }
+    }
 }
 
 void Generator::registerRoom(size_t room)

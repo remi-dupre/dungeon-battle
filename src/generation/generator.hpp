@@ -5,11 +5,11 @@
 
 #pragma once
 
+#include <queue>
 #include <set>
 #include <tuple>
 #include <vector>
 
-#include "level.hpp"
 #include "pattern.hpp"
 #include "room.hpp"
 #include "space.hpp"
@@ -18,12 +18,42 @@
 #include "../entity.hpp"
 
 
-///< Describe the role of a room
-enum class RoomType
+/**
+ * \brief A level, with the map and the entities
+ */
+struct Level
 {
-    Regular, ///< A regular room
-    Hallway  ///< A hallway generated to link two room
+    Map map;
+    std::vector<std::shared_ptr<Entity>> entities;
 };
+
+/**
+ * \brief Describe the general design of the level.
+ */
+enum class LevelType
+{
+    Flat, ///< Rectangular-shaped rooms
+    Cave ///< Cave shaped rooms
+};
+
+/**
+ * \brief Parameters on how to generate the level
+ */
+struct GenerationMode
+{
+    bool infinite;      ///< Wether the map should be generated dynamically
+    int nb_rooms;       ///< number of rooms to create on the map (ignored if the map is infinite)
+
+    int room_min_size;  ///< minimum number of cells contained on a room
+    int room_max_size;  ///< maximum number of cells contained on a room
+    int room_margin;    ///< minimum space added between two rooms
+
+    float monster_load; ///< Number of monsters per 100 unit of space
+
+    float maze_density; ///< Proportion of rooms that are replaced with mazes
+    LevelType type;     ///< Kind of design for the rooms
+};
+
 
 /**
  * \brief An object that can generate chunks of the map.
@@ -77,6 +107,9 @@ private:
     ///< A cached version of the map we generated so far.
     Map cachedMap;
 
+    ///< Keep track of connections between rooms
+    std::set<std::pair<size_t, size_t>> room_links;
+
     /**
      * \brief Generate some rooms centered on given chunck.
      * \param x x-coordinate of the center chunk.
@@ -84,6 +117,12 @@ private:
      * \param n number of rooms to generate.
      */
     void addRooms(int x, int y, size_t n);
+
+    /**
+     * \brief Ensure connexity of the level.
+     * Update `room_links` and create new hallways between rooms.
+     */
+    void updateLinks();
 
     /**
      * \brief Specify that a room has been added to the map.

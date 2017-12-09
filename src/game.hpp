@@ -14,7 +14,6 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "generation/level.hpp"
 #include "generation/generator.hpp"
 
 #include "args.hpp"

@@ -9,7 +9,7 @@
 
 #include <SFML/Window.hpp>
 
-#include "generation/level.hpp"
+#include "generation/generator.hpp"
 
 
 /**
