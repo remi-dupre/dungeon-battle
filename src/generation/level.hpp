@@ -70,11 +70,3 @@ std::vector<std::pair<size_t, size_t>> covering_paths(const std::vector<Room>& r
  * \return A map where the pattern is surrounded by walls.
  */
 Map map_of_pattern(const Pattern& pattern);
-
-
-/**
- * \brief Generate an entire level
- * \param mode Parameters used to generate the map
- * \return A pair containing the map, and the entities places at the start of the level
- */
-Level generate(const GenerationMode &mode);

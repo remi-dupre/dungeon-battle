@@ -81,7 +81,6 @@ lint:
 
 # Exectutes tests using cxxtest
 test: $(OBJ_TEST) $(SRC)
-
 	$(CXX) -o $(TEST_EXEC) $(OBJ_TEST) $(DPND_TEST) $(CFLAGS) $(DFLAGS) $(WFLAGS) $(LFLAGS)
 	$(TEST_EXEC) -v
 
