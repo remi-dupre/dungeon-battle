@@ -11,16 +11,15 @@ Generator::Generator(const GenerationMode& parameters, int seed) :
 Chunk Generator::getChunkCells(int x, int y)
 {
     // Generate potential new rooms
-    if (!parameters.infinite && requested.empty()) {
+    if (!parameters.infinite && built.empty()) {
         // Need to generate the whole map
         addRooms(0, 0, parameters.nb_rooms);
+        built.insert({0, 0});
     }
     else if (parameters.infinite) {
-        assert(false);
-        // ...
+        // Only generate this chunk
+        generateRadius(x, y, 0);
     }
-
-    requested.insert({x, y});
 
     // Filter interesting cells and entities
     if (cachedMap.hasChunk(x, y))
@@ -32,16 +31,15 @@ Chunk Generator::getChunkCells(int x, int y)
 std::vector<std::shared_ptr<Entity>> Generator::getChunkEntities(int x, int y)
 {
     // Generate potential new rooms
-    if (!parameters.infinite && requested.empty()) {
+    if (!parameters.infinite && built.empty()) {
         // Need to generate the whole map
         addRooms(0, 0, parameters.nb_rooms);
+        built.insert({0, 0});
     }
     else if (parameters.infinite) {
-        assert(false);
-        // ...
+        // Only generate this chunk
+        generateRadius(x, y, 0);
     }
-
-    requested.insert({x, y});
 
     // Query on entities
     std::vector<std::shared_ptr<Entity>> ret;
@@ -62,69 +60,100 @@ std::vector<std::shared_ptr<Entity>> Generator::getChunkEntities(int x, int y)
     return ret;
 }
 
-void Generator::addRooms(int x, int y, size_t n)
+void Generator::generateRadius(int x, int y, int radius)
 {
-    // /!\ for now, only generate for finite maps
-    // List of rooms.
-    rooms = std::vector<Room>(n);
+    assert(radius >= 0);
+    assert(parameters.infinite);
+
+    for (int nx = x - radius ; nx <= x + radius ; nx++)
+    {
+        for (int ny = y - radius ; ny <= y + radius ; ny++)
+        {
+            if (built.find({nx, ny}) == end(built))
+            {
+                std::cout << rooms.size() << std::endl;
+                addRooms(nx, ny, 1);
+                built.insert({nx, ny});
+                build_order.push_back({nx, ny});
+            }
+        }
+    }
+}
+
+void Generator::addRooms(int x, int y, int n)
+{
+    assert(n >= 0);
 
     // Create rooms of random size
-    for (Room& room : rooms)
+    for (int i_room = 0 ; i_room < n ; i_room++)
     {
+        Room room;
+
         int room_size = RandGen::uniform_int(parameters.room_min_size, parameters.room_max_size);
 
         float dice = RandGen::uniform_int(0, 9);
         if (dice == 0) // generate a maze
         {
             room = maze_room(23, 23);
-            continue;
         }
-
-        switch (parameters.type)
+        else
         {
-            case LevelType::Cave:
-                room.cells = generate_cave(room_size);
-                room.nodes = frontier(room.cells);
-                break;
+            switch (parameters.type)
+            {
+                case LevelType::Cave:
+                    room.cells = generate_cave(room_size);
+                    room.nodes = frontier(room.cells);
+                    break;
 
-            case LevelType::Flat:
-            default:
-                room.cells = generate_maze(23, 23);
-                room.cells = generate_rectangle(room_size);
-                room.nodes = frontier(room.cells);
-                break;
+                case LevelType::Flat:
+                default:
+                    room.cells = generate_maze(23, 23);
+                    room.cells = generate_rectangle(room_size);
+                    room.nodes = frontier(room.cells);
+                    break;
+            }
         }
 
         // Place the room at the center of given chunk
         room.position = std::make_pair((2*x + 1) * Chunk::SIZE / 2, (2*y + 1) * Chunk::SIZE / 2);
+
+        // Add monsters on the room
+        add_monsters(room, parameters.monster_load);
+
+        rooms.push_back(room);
     }
 
     // Places rooms in a non-linear way
-    separate_rooms(rooms, parameters.room_margin);
+    separate_rooms(rooms, parameters.room_margin, rooms.size() - n, rooms.size());
 
-    // Add stairs in first and last map
-    rooms[0].entities.push_back(std::make_shared<Entity>(
-        EntityType::Stairs,
-        Interaction::GoDown,
-        sf::Vector2i(0, 0),
-        Direction::Right
-    ));
-    rooms[n-1].entities.push_back(std::make_shared<Entity>(
-        EntityType::Stairs,
-        Interaction::GoUp,
-        sf::Vector2i(0, 0),
-        Direction::Left
-    ));
+    // Copy rooms to the cached map
+    for (size_t i_room = rooms.size() - n ; i_room < rooms.size() ; i_room++)
+        registerRoom(i_room);
 
-    // Add monsters
-    for (Room& room : rooms)
-        add_monsters(room, parameters.monster_load);
+    if (built.empty())
+    {
+        // Add entrance in first map
+        rooms[0].entities.push_back(std::make_shared<Entity>(
+            EntityType::Stairs,
+            Interaction::GoUp,
+            sf::Vector2i(0, 0),
+            Direction::Right
+        ));
+    }
+
+    if (!parameters.infinite)
+    {
+        // Add exit in last map (differs with the map containing entrance)
+        rooms[n-1].entities.push_back(std::make_shared<Entity>(
+            EntityType::Stairs,
+            Interaction::GoDown,
+            sf::Vector2i(0, 0),
+            Direction::Left
+        ));
+    }
 
     // Add ways between rooms
     updateLinks();
-
-    for (size_t i = 0 ; i < rooms.size() ; i++)
-        registerRoom(i);
 }
 
 void Generator::updateLinks()
@@ -140,6 +169,8 @@ void Generator::updateLinks()
     // Access function for the union find
     std::function<size_t(size_t)> comp_repr = [&comp_repr, &link_uf] (size_t i_room) -> size_t
     {
+        assert(i_room < link_uf.size());
+
         if (link_uf[i_room] == i_room)
             return i_room;
 
@@ -151,6 +182,9 @@ void Generator::updateLinks()
     // Function to merge two components of the union-find
     auto comp_merge = [comp_repr, &link_uf, &size_uf](size_t a, size_t b)
     {
+        assert(a < link_uf.size());
+        assert(b < link_uf.size());
+
         if (comp_repr(a) != comp_repr(b))
         {
             size_uf[comp_repr(a)] = size_uf[comp_repr(a)] + size_uf[comp_repr(b)];
@@ -218,6 +252,7 @@ void Generator::updateLinks()
 
             // Update union-find
             nb_rooms++;
+            assert(nb_rooms == rooms.size());
 
             link_uf.push_back(nb_rooms-1);
             size_uf.push_back(1);

@@ -68,9 +68,10 @@ int ntn_dist(const Room& room1, const Room& room2)
     return std::abs(diff.first) + std::abs(diff.second);
 }
 
-void separate_rooms(std::vector<Room>& rooms, int spacing)
+void separate_rooms(std::vector<Room>& rooms, int spacing, int left, int right)
 {
     assert(spacing >= 0);
+    assert(left >= 0 && right >= 0);
 
     size_t nb_rooms = rooms.size();
     // Preprocess an efficient structure to calculate intersections
@@ -89,38 +90,52 @@ void separate_rooms(std::vector<Room>& rooms, int spacing)
         {
             for (size_t i2 = 0 ; i2 < i1 ; i2++)
             {
+                // Check wether we are allowed to move them
+                bool i1_can_move = left <= i1 && i1 < right;
+                bool i2_can_move = left <= i2 && i2 < right;
+
+                if (!i1_can_move && !i2_can_move)
+                    break;
+
                 // Takes a distinct pair of rooms.
                 Room& room1 = rooms[i1];
                 Room& room2 = rooms[i2];
 
                 // Check if the two sets are close to each other
-                bool well_spaced = true;
+                bool well_spaced =
+                       room2.cells.find(room1.position - room2.position) == end(room2.cells)
+                    && room1.cells.find(room2.position - room1.position) == end(room1.cells);
+
                 for (auto& cell : rooms[i2].cells)
-                    well_spaced = well_spaced && !dist_engines[i1].closeTo(cell + rooms[i2].position - rooms[i1].position, spacing);
+                {
+                    if (!well_spaced) break;
+
+                    well_spaced = well_spaced && !dist_engines[i1].closeTo(cell + room2.position - room1.position, spacing);
+                }
 
                 if (!well_spaced)
                 {
                     go_on = true;
 
-                    if (room1.position.first > room2.position.first)
+                    if (i1_can_move && room1.position.first > room2.position.first)
                     {
                         int shift = std::max(1.f, (room1.position.first - room2.position.first + spacing) / 3.f);
                         direction[i1] += {shift, 0};
                     }
 
-                    if (room1.position.second > room2.position.second)
+                    if (i1_can_move && room1.position.second > room2.position.second)
                     {
                         int shift = std::max(1.f, (room1.position.second - room2.position.second + spacing) / 3.f);
                         direction[i1] += {0, shift};
                     }
 
-                    if (room1.position.first < room2.position.first)
+                    if (i2_can_move && room1.position.first < room2.position.first)
                     {
                         int shift = std::max(1.f, (room2.position.first - room1.position.first + spacing) / 3.f);
                         direction[i2] += {shift, 0};
                     }
 
-                    if (room1.position.second < room2.position.second)
+                    if (i2_can_move && room1.position.second < room2.position.second)
                     {
                         int shift = std::max(1.f, (room2.position.second - room1.position.second + spacing) / 3.f);
                         direction[i2] += {0, shift};
@@ -129,10 +144,13 @@ void separate_rooms(std::vector<Room>& rooms, int spacing)
                     if (room1.position == room2.position)
                     {
                         // Moves room2 in a random direction.
-                        int delta_x = RandGen::uniform_int(0, 1);
-                        int delta_y = RandGen::uniform_int(0, 1);
-                        direction[i1] += {2*delta_x-1, 2*delta_y-1};
-                            go_on = true;
+                        int delta_x = RandGen::uniform_int(-2, 2);
+                        int delta_y = RandGen::uniform_int(-2, 2);
+
+                        if (i1_can_move)
+                        {
+                            direction[i1] += {delta_x, delta_y};
+                        }
                     }
                 }
             }

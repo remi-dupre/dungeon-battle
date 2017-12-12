@@ -1,6 +1,6 @@
 /**
- * \file generation/generator.hpp
- * \brief Define a class allowing to generate an entire level.
+ * \file   generation/generator.hpp
+ * \brief  Define a class allowing to generate an entire level.
  */
 
 #pragma once
@@ -56,7 +56,7 @@ struct GenerationMode
 
 
 /**
- * \brief An object that can generate chunks of the map.
+ * \brief  An object that can generate chunks of the map.
  *
  * The generator can answer to chunk requests :
  *  - given a coordinate (not necessary positive), get the map
@@ -66,29 +66,41 @@ class Generator
 {
 public:
     /**
-     * \brief Main constructor. Initialisation of parameters.
+     * \brief    Main constructor. Initialisation of parameters.
      *
-     * \param parameters The configuration of the map generation.
-     * \param seed The seed used for the generation.
-     * \warning Note that we may need to use the generator exacly with the same queries to get the same map.
+     * \param    parameters The configuration of the map generation.
+     * \param    seed The seed used for the generation.
+     * \warning  Note that we may need to use the generator exacly with the same queries to get the same map.
      */
     Generator(const GenerationMode& parameters, int seed);
 
     /**
-     * \brief Get the chunk of coordinates (x, y).
-     * \param x x-coordinate of the chunk.
-     * \param y y-coordinate of the chunk.
-     * \return The content of the queried chunk.
+     * \brief   Get the chunk of coordinates (x, y).
+     * \param   x x-coordinate of the chunk.
+     * \param   y y-coordinate of the chunk.
+     * \return  The content of the queried chunk.
      */
     Chunk getChunkCells(int x, int y);
 
     /**
      * \brief Get the enties initially placed on the chunk of coordinates (x, y).
-     * \param x x-coordinate of the chunk.
-     * \param y y-coordinate of the chunk.
-     * \return The list of the entities initially placed on the queried chunk.
+     * \param   x x-coordinate of the chunk.
+     * \param   y y-coordinate of the chunk.
+     * \return  The list of the entities initially placed on the queried chunk.
      */
     std::vector<std::shared_ptr<Entity>> getChunkEntities(int x, int y);
+
+    /**
+     * \brief  Indicate to generate around a chunk.
+     * \param  y       y-coordinate of the chunk.
+     * \param  x       x-coordinate of the chunk.
+     * \param  radius  The radius of a square of center {x, y}.
+     * \note   This function might only be used for infinite generation since the whole map is generated at creation for finite generation.
+     *
+     * It means that the generated square has a diagonal from {x-radius, y-radius} to {x+radius, y+radius}.
+     * It won't generate a chunk if it has already been generated.
+     */
+    void generateRadius(int x, int y, int radius);
 
 
 private:
@@ -98,8 +110,11 @@ private:
     ///< Seed used for the generation of the map
     int seed;
 
-    ///< Set of chunks that have already been requested
-    std::set<std::pair<int, int>> requested;
+    ///< Set of chunks that have already been built so far
+    std::set<std::pair<int, int>> built;
+
+    ///< Order in which chunks have been generated
+    std::vector<std::pair<int, int>> build_order;
 
     ///< List of rooms generated so far
     std::vector<Room> rooms;
@@ -111,22 +126,22 @@ private:
     std::set<std::pair<size_t, size_t>> room_links;
 
     /**
-     * \brief Generate some rooms centered on given chunck.
-     * \param x x-coordinate of the center chunk.
-     * \param y y-coordinate of the center chunk.
-     * \param n number of rooms to generate.
+     * \brief  Generate some rooms centered on given chunck.
+     * \param  x x-coordinate of the center chunk.
+     * \param  y y-coordinate of the center chunk.
+     * \param  n number of rooms to generate.
      */
-    void addRooms(int x, int y, size_t n);
+    void addRooms(int x, int y, int n);
 
     /**
-     * \brief Ensure connexity of the level.
-     * Update `room_links` and create new hallways between rooms.
+     * \brief  Ensure connexity of the level.
+     * Update room_links and create new hallways between rooms.
      */
     void updateLinks();
 
     /**
-     * \brief Specify that a room has been added to the map.
-     * \param room The index of the room in `rooms`
+     * \brief  Specify that a room has been added to the map.
+     * \param  room The index of the room in `rooms`
      * This method must be called each time a room is added to the map.
      */
     void registerRoom(size_t room);
