@@ -192,6 +192,7 @@ Character::Character(EntityType type_,
                     unsigned int strength_,
                     unsigned int controller_id_) :
     Entity(type_, interaction_, position_, orientation_, controller_id_),
+    classs(Class::Knight),
     level(1),
     experienceCurve([](unsigned int lvl) -> unsigned int {return 10*lvl;}),
     experience(0),

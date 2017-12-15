@@ -31,6 +31,16 @@ enum class EntityType
 
 
 /**
+ * \brief Static information about character type
+ */
+enum class Class
+{
+    Knight, ///< Standard hero type
+    Slime ///< Standard monster type
+};
+
+
+/**
  * \brief Static information about the interaction with the entity
  */
 enum class Interaction
@@ -408,6 +418,7 @@ public:
 
 protected:
 
+    Class classs; ///< The class of the character
     unsigned int level; ///< The level of the character
     std::function<unsigned int(unsigned int)> experienceCurve; ///< The experience curve of the character
     unsigned int experience; ///< The experience of the character
