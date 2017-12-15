@@ -23,7 +23,6 @@ SRC = $(shell find src -type f -name '*.cpp') # List of files to compile
 # Dependency files
 DEP_DIR = deps
 DEP_FILES = $(SRC:$(SRC_DIR)/%.cpp=$(DEP_DIR)/%.d)
-NO_DEPS = clean lint doc cppcheck-html warning $(TEST_EXEC)
 
 BUILD_DIR = build
 OBJ = $(SRC:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%.o)
@@ -50,6 +49,7 @@ TEST_CPP = $(SRC_DIR_TEST)/test.cpp
 TEST_EXEC = $(SRC_DIR_TEST)/test
 
 .PHONY: all release debug test doc cppcheck-html clean
+NO_DEPS = clean lint doc cppcheck-html warning $(TEST_EXEC)
 
 debug: DFLAGS += -ggdb
 debug: $(EXEC)
@@ -57,10 +57,9 @@ debug: $(EXEC)
 release: CFLAGS += -O3 -DNDEBUG
 release: $(EXEC)
 
-warning: WFLAGS += $(WFLAGS_EXTRA)
-warning: CFLAGS += -fsyntax-only
-warning: $(OBJ)
-warning: rm -r deps
+#warning: WFLAGS += $(WFLAGS_EXTRA)
+#warning: CFLAGS += -fsyntax-only
+#warning: $(OBJ)
 
 all: release doc cppcheck-html test
 
@@ -111,13 +110,16 @@ cppcheck-html:
 	cppcheck-htmlreport --file=tmp_cppcheck.xml --report-dir=$(CHECK_DIR) --source-dir=.
 	@rm tmp_cppcheck.xml
 
-# Clean the workspace
+# Clean the workspace, except executables and documentation
 clean:
 	rm -rf $(BUILD_DIR) $(BUILD_DIR)/generation
-	rm -rf $(DOC_DIR)
-	rm -rf $(EXEC_TEST)
 	rm -rf $(CHECK_DIR)
 	rm -rf $(DEP_DIR)
-	rm -rf tests/test.cpp tests/test
-	rm -rf dungeon-battle
+	rm -rf tests/test.cpp
 	rm -rf *~
+
+# Clean everything
+clean-all: clean
+	rm -rf dungeon-battle
+	rm -rf $(DOC_DIR)
+	rm -rf $(EXEC_TEST)
