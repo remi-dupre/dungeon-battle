@@ -122,13 +122,11 @@ private:
     Configuration config; ///< The configuration of the game
     Renderer renderer; ///< The renderer
 
-    Map* map; ///< The map
-
-    std::vector<std::shared_ptr<Entity>>* entities; ///< The entities
-
-    std::vector<Level> dungeon; ///< Save the different level of a dungeon
-
+    Map* map; ///< The current map
+    std::vector<std::shared_ptr<Entity>>* entities; ///< The current map entities
     std::size_t current_level; ///< The number of the curent level
+
+    std::vector<Level> dungeon; ///< The maps and entities of differents level of the dungeon
 
     EntityType entity_turn;
     float next_move;

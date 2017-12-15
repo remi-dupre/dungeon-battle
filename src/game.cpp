@@ -212,7 +212,6 @@ void Game::update()
             }
             return false;
         });
-
     entities->erase(it, entities->end());
 }
 

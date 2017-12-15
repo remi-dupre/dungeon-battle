@@ -233,7 +233,9 @@ void Renderer::display(sf::RenderTarget& target)
                 sf::PrimitiveType::Triangles,
                 charlie_rstates);
 
-    target.setView(target.getDefaultView());
+    view.setCenter(static_cast<float>(Configuration::default_configuration.width) / 2.f,
+                   static_cast<float>(Configuration::default_configuration.height) / 2.f);
+    target.setView(view);
     target.draw(hero_life);
     target.draw(hero_xp);
 }
