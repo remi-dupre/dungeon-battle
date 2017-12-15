@@ -192,6 +192,7 @@ Character::Character(EntityType type_,
                     unsigned int strength_,
                     unsigned int controller_id_) :
     Entity(type_, interaction_, position_, orientation_, controller_id_),
+    classs(Class::Knight),
     level(1),
     experienceCurve([](unsigned int lvl) -> unsigned int {return 10*lvl;}),
     experience(0),
@@ -205,7 +206,10 @@ Character::Character(EntityType type_,
     spells(std::vector<Spell> ({Spell()}))
 {
     if (type_ == EntityType::Monster)
+    {
         experience = 5;
+        classs = Class::Slime;
+    }
 }
 
 Character::Character(EntityType type_,
@@ -217,7 +221,10 @@ Character::Character(EntityType type_,
     Character(type_, interaction_, position_, orientation_, hpMax_, strength_, 0)
 {
     if (type_ == EntityType::Monster)
+    {
         experience = 5;
+        classs = Class::Slime;
+    }
 }
 
 
