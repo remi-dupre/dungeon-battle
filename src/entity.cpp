@@ -206,7 +206,10 @@ Character::Character(EntityType type_,
     spells(std::vector<Spell> ({Spell()}))
 {
     if (type_ == EntityType::Monster)
+    {
         experience = 5;
+        classs = Class::Slime;
+    }
 }
 
 Character::Character(EntityType type_,
@@ -218,7 +221,10 @@ Character::Character(EntityType type_,
     Character(type_, interaction_, position_, orientation_, hpMax_, strength_, 0)
 {
     if (type_ == EntityType::Monster)
+    {
         experience = 5;
+        classs = Class::Slime;
+    }
 }
 
 
