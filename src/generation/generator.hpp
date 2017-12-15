@@ -18,6 +18,10 @@
 #include "../entity.hpp"
 
 
+// Number of chunks that will be generated on border of requested chunks
+constexpr int GEN_BORDER = 2;
+
+
 /**
  * \brief A level, with the map and the entities
  */
@@ -109,6 +113,9 @@ private:
 
     ///< Seed used for the generation of the map
     int seed;
+
+    ///< Set of chunk we don't wan't to modify anymore
+    std::set<std::pair<int, int>> locked;
 
     ///< Set of chunks that have already been built so far
     std::set<std::pair<int, int>> built;

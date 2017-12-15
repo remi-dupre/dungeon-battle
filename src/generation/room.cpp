@@ -68,10 +68,10 @@ int ntn_dist(const Room& room1, const Room& room2)
     return std::abs(diff.first) + std::abs(diff.second);
 }
 
-void separate_rooms(std::vector<Room>& rooms, int spacing, int left, int right)
+void separate_rooms(std::vector<Room>& rooms, int spacing, size_t left, size_t right)
 {
     assert(spacing >= 0);
-    assert(left >= 0 && right >= 0);
+    assert(left < rooms.size() && right <= rooms.size());
 
     size_t nb_rooms = rooms.size();
     // Preprocess an efficient structure to calculate intersections

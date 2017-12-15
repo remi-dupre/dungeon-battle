@@ -65,9 +65,12 @@ void Generator::generateRadius(int x, int y, int radius)
     assert(radius >= 0);
     assert(parameters.infinite);
 
-    for (int nx = x - radius ; nx <= x + radius ; nx++)
+    // Radius of generated chunks
+    int gen_radius = radius + GEN_BORDER;
+
+    for (int nx = x - gen_radius ; nx <= x + gen_radius ; nx++)
     {
-        for (int ny = y - radius ; ny <= y + radius ; ny++)
+        for (int ny = y - gen_radius ; ny <= y + gen_radius ; ny++)
         {
             if (built.find({nx, ny}) == end(built))
             {
@@ -78,6 +81,11 @@ void Generator::generateRadius(int x, int y, int radius)
             }
         }
     }
+
+    // Register some chunk being requested
+    for (int nx = x - radius ; nx <= x + radius ; nx++)
+        for (int ny = y - radius ; ny <= y + radius ; ny++)
+            locked.insert({nx, ny});
 }
 
 void Generator::addRooms(int x, int y, int n)

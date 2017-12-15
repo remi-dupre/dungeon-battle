@@ -59,7 +59,7 @@ Room merged_rooms(const std::vector<Room>& rooms);
  * \param  left       Index of the first room we are allowed to move.
  * \param  right      Index of the first room we are not allowed to move.
  */
-void separate_rooms(std::vector<Room>& rooms, int spacing, int left, int right);
+void separate_rooms(std::vector<Room>& rooms, int spacing, size_t left, size_t right);
 
 /**
  * \brief Find a pair of closest nodes between two rooms.
