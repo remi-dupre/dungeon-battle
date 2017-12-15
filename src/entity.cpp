@@ -227,6 +227,10 @@ Character::Character(EntityType type_,
     }
 }
 
+Class Character::getClass() const
+{
+    return classs;
+}
 
 unsigned int Character::getLevel() const
 {
