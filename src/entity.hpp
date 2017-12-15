@@ -293,6 +293,11 @@ public:
               unsigned int controller_id);
 
     /**
+     * \brief Return the class of the character
+     */
+    Class getClass() const;
+
+    /**
      * \brief Return the max hp of the character
      */
     unsigned int getLevel() const;
