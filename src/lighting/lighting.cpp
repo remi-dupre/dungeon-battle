@@ -13,27 +13,32 @@ double from_y_to_x(double a,double b,double c,double d,double y){
     return (y-d)*(a-c)/(b-d) + c;
 }
 
-vector<sf::Vector2i> cell_on_the_way(sf::Vector2i pos1, sf::Vector2i pos2, vector<vector<int>> map){
-    vector<sf::Vector2i> list_cell;
+bool can_be_seen(sf::Vector2i pos1, sf::Vector2i pos2, vector<vector<int>> map){
+    //cout << "I'm in can be seen" << endl;
+
+    int pos_min_x = min(pos1.x,pos2.x);
+    int pos_max_x = max(pos1.x,pos2.x);
+    int pos_min_y = min(pos1.y,pos2.y);
+    int pos_max_y = max(pos1.y,pos2.y);
+
+
     if (pos1.x == pos2.x){
-        for(int j = pos1.y; j <= pos2.y; j++){
+        //cout << "I'm in pos1.x == pos2.x \n";
+        for(int j = pos_min_y; j <= pos_max_y; j++){
             int i = pos1.x;
-            if (map[i][j] == 0) break;
-            sf::Vector2i cell_ij;
-            cell_ij.x = i; cell_ij.y = j;
-            list_cell.push_back(cell_ij);
+            if (map[i][j] == 0) break; //Cell visible.
+            last_y = j;
         }
-        return list_cell;
+        return pos_max_y ==last_y;
     }
     if (pos1.y == pos2.y){
-        for(int i = pos1.x; i <= pos2.x; i++){
+        //cout << "I'm in pos1.y == pos2.y \n";
+        for(int i = pos_min_x; i <= pos_max_x; i++){
             int j = pos1.y;
             if (map[i][j] == 0) break;
-            sf::Vector2i cell_ij;
-            cell_ij.x = i; cell_ij.y = j;
-            list_cell.push_back(cell_ij);
+            last_x = i;
         }
-        return list_cell;
+        return pos_max_x == last_x;
     }
 
     auto f_x = [pos1,pos2](double x){
@@ -45,34 +50,49 @@ vector<sf::Vector2i> cell_on_the_way(sf::Vector2i pos1, sf::Vector2i pos2, vecto
     (double) pos2.x + 0.5, (double) pos2.y + 0.5,y);
     };
 
-    cout << (f_x((double) pos1.x + 0.5)) << endl;
-    cout << (f_y((double) pos1.y + 0.5)) << endl;
-    cout << (f_x((double) pos2.x + 0.5)) << endl;
-    cout << (f_y((double) pos2.y + 0.5)) << endl;
 
-    int pos_min_x = min(pos1.x,pos2.x);
-    int pos_max_x = max(pos1.x,pos2.x);
+    int last_x = pos_min_x;
+    int last_y = pos_min_y;
     for(int i = pos_min_x+1; i <= pos_max_x; i++){
         int j = floor(f_x(i));
-        if (map[i][j] == 0) break;
-        sf::Vector2i cell_ij;
-        cell_ij.x = i; cell_ij.y = j;
-        list_cell.push_back(cell_ij);
+        //cout << i << " f_x(i) " << f_x(i) << " " << j << endl;
+        //cout << "map[i][j] " << map[i][j] << " map[i-1][j+1] " << map[i-1][j+1] << endl;
+        if (f_x(i) != j && map[i][j] == 0) {
+            cout << "f_x(i) != j \n";
+            last_x = -1;
+            break;
+        }
+        if (f_x(i) == j
+        && map[i][j] == 0
+        && i+1 < map.size()
+        && j-1 > 0
+        && map[i+1][j-1] == 0){ //ATENTION OUT OUT OF BAND
+            cout << "wrong config f_y \n";
+            last_x = -1;
+            break;
+        }
+        last_x = i;
     }
 
-    int pos_min_y = min(pos1.y,pos2.y);
-    int pos_max_y = max(pos1.y,pos2.y);
     for(int j = pos_min_y+1; j <= pos_max_y; j++){
         int i = floor(f_y(j));
-        cout << j << endl;
-        cout << i << " " << f_y(j) << endl;
-        if (map[i][j-1] == 0) break;
-        sf::Vector2i cell_ij;
-        cell_ij.x = i; cell_ij.y = j;
-        list_cell.push_back(cell_ij);
+        cout << j << " f_y(j) " << f_y(j) << " " << i << endl;
+        if (f_y(j) != i && map[i][j] == 0) {
+            last_y = -1;
+            break;
+        }
+        if (f_y(j) == i
+        && map[i][j] == 0
+        && j+1 < map[0].size()
+        && i-1 > 0
+        && map[i-1][j+1]){ //ATENTION OUT OF BAND
+            cout << "wrong config f_y \n";
+            last_y = -1;
+            break;
+        }
+        last_y = j;
     }
-    return list_cell;
-
+    return (pos_max_y == last_y)&&(pos_max_x == last_x);
 }
 
 
@@ -102,11 +122,14 @@ int main(){
         }
     }
     // Launching the computation.
+    //cout << "done for the map \n";
     sf::Vector2i pos1,pos2;
-    pos1.x = 0; pos1.y = 0;
-    pos2.x = 1; pos2.y = 2;
-    vector<sf::Vector2i> list_cell = cell_on_the_way(pos1,pos2,map);
-    for(int i = 0; i < list_cell.size() ; i++)
-        cout << list_cell[i].x << " " << list_cell[i].y << endl;
+    int N;
+    cin  >> N;
+    for(int i = 0; i < N; i++){
+        cin >> pos1.x >> pos1.y;
+        cin >> pos2.x >> pos2.y;
+        cout << can_be_seen(pos1,pos2,map) << endl;
+    }
     return 0;
 }
