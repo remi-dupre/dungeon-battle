@@ -171,13 +171,13 @@ std::istream& operator>>(std::istream& stream, Map& map)
             switch (c)
             {
                 case '#':
-                    return CellType::Wall;
+                    //return CellType::Wall;
                     break;
                 case '.':
-                    return CellType::Floor;
+                    //return CellType::Floor;
                     break;
                 default:
-                    return CellType::Empty;
+                    //return CellType::Empty;
                     break;
             }
         }
