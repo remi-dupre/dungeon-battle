@@ -92,7 +92,7 @@ $(SRC_DIR_TEST)/%: $(BUILD_DIR)/%.o
 lint:
 	cppcheck -q --enable=all --suppressions-list=.cppignore --inconclusive $(SRC_DIR) 1> /dev/null
 	@# Return exit code 1 if there are errors
-cppcheck --error-exitcode=2 --suppressions-list=.cppignore --inconclusive $(SRC_DIR) 1> /dev/null 2> /dev/null
+	cppcheck --error-exitcode=2 --suppressions-list=.cppignore --inconclusive $(SRC_DIR) 1> /dev/null 2> /dev/null
 
 # Exectutes tests using cxxtest
 tests: $(TEST_CPP)
