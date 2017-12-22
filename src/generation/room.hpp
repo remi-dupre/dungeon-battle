@@ -20,37 +20,92 @@
 /**
  * \brief  Represent a single generated room.
  */
-struct Room
+class Room
 {
+public:
+    /**
+     * \brief  Copy a room.
+     */
+    Room(const Room&) = default;
+
+    /**
+     * \brief  Default constructor place a room at (0, 0).
+     */
+    Room(const Pattern& cells);
+
+    /**
+     * \brief   Get room's position.
+     * \return  The central position of the room.
+     */
+    Point getPosition() const;
+
+     /**
+      * \brief  Set room's position.
+      * \param  position  The new position of the center of the room.
+      */
+    void setPosition(const Point& nposition);
+
+    /**
+     * \brief    Get the set of cells of the room.
+     * \return   The set of cells of the room, relatively to its position.
+     * \warning  This will make a copy of all cells of the structure.
+     */
+    Pattern getCells() const;
+
+    /**
+     * \brief   Get the size of the room.
+     * \return  The number of cells in the room.
+     */
+    int size() const;
+
+    /**
+     * \brief   Check if the room contains the given cell.
+     * \param   cell  A cell we want to check (position on the map).
+     * \return  true if cell is a cell of the map that is in this room.
+     */
+    bool hasCell(const Point& cell) const;
+
+    /**
+     * \brief   Get a set of points that can be used to enter the room.
+     * \return  The set of nodes entering the room, relatively to its position.
+     */
+    Pattern getNodes() const;
+
+    /**
+     * \brief   Override room's nodes.
+     */
+    void setNodes(const Pattern& nnodes);
+
+    /**
+     * \brief   Get the set of entities placed in the room.
+     * \return  A vector of pointer of entities.
+     */
+    std::vector<std::shared_ptr<Entity>> getEntities() const;
+
+    /**
+     * \brief  Add an entity on the map.
+     */
+    void addEntity(std::shared_ptr<Entity> entity);
+
+    /**
+     * \brief   Check wether two rooms are at least spaced of a given distance.
+     * \param   room1    The first room we want to compare.
+     * \param   room2    The second room we want to compare.
+     * \param   spacing  The spacing we want between the two rooms.
+     * \return  true if each cell of the first room are at least at distance spacing from cells of room2.
+     */
+    friend bool spaced(const Room& room1, const Room& room2, int spacing);
+
+private:
     Point position; ///< Center position of the room.
 
     Pattern cells; ///< Relative positions of the cells placed on the room.
     Pattern nodes; ///< Cells of the pattern that can be used to enter it.
 
+    KDTree treeCells; ///< Alternative representation of cells
+
     std::vector<std::shared_ptr<Entity>> entities; ///< Entities placed on the room.
-
-    /**
-     * \brief Default constructor : empty room in (0, 0).
-     */
-    Room();
 };
-
-
-/**
- * \brief   Translate a room to remove negative coordinates.
- * \param   pattern  A room that could have negative coordinates.
- * \return  The newly aligned room.
- * \note    This will also align the room on top left : its position will be (0, 0).
- */
-Room normalized_room(const Room& room);
-
-/**
- * \brief    Return a room as the union of all the rooms.
- * \param    rooms  The list of rooms.
- * \return   A room, containing all the entities, and all the cells.
- * \warning  This operation erases all the nodes.
- */
-Room merged_rooms(const std::vector<Room>& rooms);
 
 /**
  * \brief  Modify rooms with index within a range repositioning to add spacing between them.

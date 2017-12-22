@@ -30,6 +30,12 @@ class KDTree
 {
 public:
     /**
+     * \brief  Default copy of a kd-tree.
+     * \param  ctree  The tree we need to copy.
+     */
+    KDTree(const KDTree& ctree);
+
+    /**
      * \brief Construct a kd-tree representing an array of points.
      * \param points The set containing all points we will add
      */
@@ -42,6 +48,11 @@ public:
      * \return true if there is a point of the set closer than 'distance'.
      */
     bool closeTo(Point point, int space) const;
+
+    /**
+     * \brief  Default copy of a kd-tree.
+     */
+    KDTree& operator=(const KDTree& ctree);
 
 private:
     /**

@@ -45,9 +45,9 @@ std::vector<std::shared_ptr<Entity>> Generator::getChunkEntities(int x, int y)
     std::vector<std::shared_ptr<Entity>> ret;
     for (const Room& room : rooms)
     {
-        for (std::shared_ptr<Entity> entity : room.entities)
+        for (std::shared_ptr<Entity> entity : room.getEntities())
         {
-            Point cell = room.position + std::make_pair(entity->getPosition().x, entity->getPosition().y);
+            Point cell = room.getPosition() + std::make_pair(entity->getPosition().x, entity->getPosition().y);
             Point chunk_id = Chunk::sector(cell.first, cell.second);
 
             if (chunk_id == std::make_pair(x, y)) {
@@ -95,7 +95,8 @@ void Generator::addRooms(int x, int y, int n)
     // Create rooms of random size
     for (int i_room = 0 ; i_room < n ; i_room++)
     {
-        Room room;
+        Room room{Pattern()};
+        Pattern cells;
 
         int room_size = RandGen::uniform_int(parameters.room_min_size, parameters.room_max_size);
 
@@ -106,24 +107,24 @@ void Generator::addRooms(int x, int y, int n)
         }
         else
         {
+
             switch (parameters.type)
             {
                 case LevelType::Cave:
-                    room.cells = generate_cave(room_size);
-                    room.nodes = frontier(room.cells);
+                    cells = generate_cave(room_size);
                     break;
 
                 case LevelType::Flat:
                 default:
-                    room.cells = generate_maze(23, 23);
-                    room.cells = generate_rectangle(room_size);
-                    room.nodes = frontier(room.cells);
+                    cells = generate_rectangle(room_size);
                     break;
             }
+
+            room = Room(cells);
         }
 
         // Place the room at the center of given chunk
-        room.position = std::make_pair((2*x + 1) * Chunk::SIZE / 2, (2*y + 1) * Chunk::SIZE / 2);
+        room.setPosition({(2*x + 1) * Chunk::SIZE / 2, (2*y + 1) * Chunk::SIZE / 2});
 
         // Add monsters on the room
         add_monsters(room, parameters.monster_load);
@@ -141,7 +142,7 @@ void Generator::addRooms(int x, int y, int n)
     if (built.empty())
     {
         // Add entrance in first map
-        rooms[0].entities.push_back(std::make_shared<Entity>(
+        rooms[0].addEntity(std::make_shared<Entity>(
             EntityType::Stairs,
             Interaction::GoUp,
             sf::Vector2i(0, 0),
@@ -152,7 +153,7 @@ void Generator::addRooms(int x, int y, int n)
     if (!parameters.infinite)
     {
         // Add exit in last map (differs with the map containing entrance)
-        rooms[n-1].entities.push_back(std::make_shared<Entity>(
+            rooms[n-1].addEntity(std::make_shared<Entity>(
             EntityType::Stairs,
             Interaction::GoDown,
             sf::Vector2i(0, 0),
@@ -233,25 +234,23 @@ void Generator::updateLinks()
         {
             // Add path between the two rooms
             auto close_points = closest_nodes(rooms[l], rooms[r]);
-            Point hall_start = close_points.first + rooms[l].position;
-            Point hall_end = close_points.second + rooms[r].position;
+            Point hall_start = close_points.first + rooms[l].getPosition();
+            Point hall_end = close_points.second + rooms[r].getPosition();
 
-            Room path;
-            path.position = hall_start;
+            Pattern path_cells;
             switch (parameters.type)
             {
                 case LevelType::Cave:
-                    path.cells = generate_hallway(hall_start, hall_end);
-                    cavestyle_patch(path.cells, path.cells.size());
-                    path.nodes = frontier(path.cells);
+                    path_cells = generate_hallway(hall_start, hall_end);
+                    cavestyle_patch(path_cells, path_cells.size());
                     break;
 
                 case LevelType::Flat:
                 default:
-                    path.cells = generate_hallway(hall_start, hall_end);
-                    path.nodes = frontier(path.cells);
+                    path_cells = generate_hallway(hall_start, hall_end);
                     break;
             }
+            Room path(path_cells);
             rooms.push_back(path);
 
             room_links.insert({l, nb_rooms});
@@ -281,10 +280,10 @@ void Generator::updateLinks()
 void Generator::registerRoom(size_t room)
 {
     // Add floor everywhere we can
-    for (Point cell : rooms[room].cells)
+    for (Point cell : rooms[room].getCells())
     {
-        int x = (cell + rooms[room].position).first;
-        int y = (cell + rooms[room].position).second;
+        int x = (cell + rooms[room].getPosition()).first;
+        int y = (cell + rooms[room].getPosition()).second;
 
         if (!cachedMap.hasCell(x, y)) {
             auto cpos = Chunk::sector(x, y);
@@ -295,10 +294,10 @@ void Generator::registerRoom(size_t room)
     }
 
     // Add walls on the surrounding : only where there is no floor yet
-    for (Point cell : surrounding(rooms[room].cells))
+    for (Point cell : surrounding(rooms[room].getCells()))
     {
-        int x = (cell + rooms[room].position).first;
-        int y = (cell + rooms[room].position).second;
+        int x = (cell + rooms[room].getPosition()).first;
+        int y = (cell + rooms[room].getPosition()).second;
 
         if (!cachedMap.hasCell(x, y)) {
             auto cpos = Chunk::sector(x, y);

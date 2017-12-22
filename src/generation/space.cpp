@@ -6,11 +6,23 @@ int distance(Point a, Point b)
     return std::abs(a.first - b.first) + std::abs(a.second - b.second);
 }
 
+
+KDTree::KDTree(const KDTree& ctree)
+{
+    vertical_cut = ctree.vertical_cut;
+
+    if (ctree.center)
+        center = std::make_unique<Point>(*ctree.center);
+
+    if (ctree.childs)
+        childs = std::make_unique<std::pair<KDTree, KDTree>>(std::make_pair(ctree.childs->first, ctree.childs->second));
+}
+
 KDTree::KDTree(const std::set<Point>& points)
 {
     std::vector<Point> copy;
     std::copy(std::begin(points), std::end(points), std::back_inserter(copy));
-    *this = KDTree(std::begin(copy), std::end(copy), true);
+    KDTree(std::begin(copy), std::end(copy), true);
 }
 
 KDTree::KDTree(std::vector<Point>::iterator begin, std::vector<Point>::iterator end, bool vertically) :
@@ -76,4 +88,17 @@ bool KDTree::closeTo(Point point, int space) const
         else
             return childs->second.closeTo(point, space) || childs->first.closeTo(point, space);
     }
+}
+
+KDTree& KDTree::operator=(const KDTree& ctree)
+{
+    vertical_cut = ctree.vertical_cut;
+
+    if (ctree.center)
+        center = std::make_unique<Point>(*ctree.center);
+
+    if (ctree.childs)
+        childs = std::make_unique<std::pair<KDTree, KDTree>>(std::make_pair(ctree.childs->first, ctree.childs->second));
+
+    return *this;
 }
