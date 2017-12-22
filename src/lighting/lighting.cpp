@@ -14,8 +14,6 @@ double from_y_to_x(double a,double b,double c,double d,double y){
 }
 
 bool can_be_seen(sf::Vector2i pos1, sf::Vector2i pos2, vector<vector<int>> map){
-    //cout << "I'm in can be seen" << endl;
-
     int pos_min_x = min(pos1.x,pos2.x);
     int pos_max_x = max(pos1.x,pos2.x);
     int pos_min_y = min(pos1.y,pos2.y);
@@ -23,7 +21,7 @@ bool can_be_seen(sf::Vector2i pos1, sf::Vector2i pos2, vector<vector<int>> map){
 
 
     if (pos1.x == pos2.x){
-        //cout << "I'm in pos1.x == pos2.x \n";
+        int last_y = pos_min_y;
         for(int j = pos_min_y; j <= pos_max_y; j++){
             int i = pos1.x;
             if (map[i][j] == 0) break; //Cell visible.
@@ -32,7 +30,7 @@ bool can_be_seen(sf::Vector2i pos1, sf::Vector2i pos2, vector<vector<int>> map){
         return pos_max_y ==last_y;
     }
     if (pos1.y == pos2.y){
-        //cout << "I'm in pos1.y == pos2.y \n";
+        int last_x = pos_min_x;
         for(int i = pos_min_x; i <= pos_max_x; i++){
             int j = pos1.y;
             if (map[i][j] == 0) break;
@@ -52,46 +50,41 @@ bool can_be_seen(sf::Vector2i pos1, sf::Vector2i pos2, vector<vector<int>> map){
 
 
     int last_x = pos_min_x;
-    int last_y = pos_min_y;
+    int prev_y = pos_max_y;
+
     for(int i = pos_min_x+1; i <= pos_max_x; i++){
         int j = floor(f_x(i));
-        //cout << i << " f_x(i) " << f_x(i) << " " << j << endl;
-        //cout << "map[i][j] " << map[i][j] << " map[i-1][j+1] " << map[i-1][j+1] << endl;
-        if (f_x(i) != j && map[i][j] == 0) {
-            cout << "f_x(i) != j \n";
-            last_x = -1;
-            break;
-        }
-        if (f_x(i) == j
-        && map[i][j] == 0
-        && i+1 < map.size()
-        && j-1 > 0
-        && map[i+1][j-1] == 0){ //ATENTION OUT OUT OF BAND
-            cout << "wrong config f_y \n";
-            last_x = -1;
-            break;
+        if (map[i][j] == 0) {
+            cout << "obscure " << i << " "<< j << "f_x(i) " << f_x(i) << endl;
+            cout << prev_y << " " << i << " " << j-1 << endl;
+            if (f_x(i) != j) break;
+            if (prev_y < j) break;
+            else if (map[i][j-1] == 0) break;
+            //cout << "Didn't break ! \n";
+
         }
         last_x = i;
+        prev_y = j;
     }
+
+    int last_y = pos_min_y;
+    int prev_x = pos_max_x;
+
 
     for(int j = pos_min_y+1; j <= pos_max_y; j++){
         int i = floor(f_y(j));
-        cout << j << " f_y(j) " << f_y(j) << " " << i << endl;
-        if (f_y(j) != i && map[i][j] == 0) {
-            last_y = -1;
-            break;
-        }
-        if (f_y(j) == i
-        && map[i][j] == 0
-        && j+1 < map[0].size()
-        && i-1 > 0
-        && map[i-1][j+1]){ //ATENTION OUT OF BAND
-            cout << "wrong config f_y \n";
-            last_y = -1;
-            break;
+        if (map[i][j] == 0) {
+            //cout << "obscure " << i << " "<< j << "f_y(j) " << f_y(j) << endl;
+            //cout << prev_x << " " << i-1 << " " << j << endl;
+            if(f_y(j) != i) break;
+            if (prev_x > i) break;
+            else if (map[i-1][j] == 0) break;
+            //cout << "Didn't break ! \n";
         }
         last_y = j;
+        prev_x = i;
     }
+
     return (pos_max_y == last_y)&&(pos_max_x == last_x);
 }
 
