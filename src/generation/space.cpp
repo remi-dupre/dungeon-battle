@@ -15,14 +15,14 @@ KDTree::KDTree(const KDTree& ctree)
         center = std::make_unique<Point>(*ctree.center);
 
     if (ctree.childs)
-        childs = std::make_unique<std::pair<KDTree, KDTree>>(std::make_pair(ctree.childs->first, ctree.childs->second));
+        childs = std::make_unique<std::pair<KDTree, KDTree>>(ctree.childs->first, ctree.childs->second);
 }
 
 KDTree::KDTree(const std::set<Point>& points)
 {
     std::vector<Point> copy;
     std::copy(std::begin(points), std::end(points), std::back_inserter(copy));
-    KDTree(std::begin(copy), std::end(copy), true);
+    *this = KDTree(std::begin(copy), std::end(copy), true);
 }
 
 KDTree::KDTree(std::vector<Point>::iterator begin, std::vector<Point>::iterator end, bool vertically) :
@@ -46,10 +46,10 @@ KDTree::KDTree(std::vector<Point>::iterator begin, std::vector<Point>::iterator 
         });
 
         center = std::make_unique<Point>(*mid);
-        childs = std::make_unique<std::pair<KDTree, KDTree>>(std::make_pair(
+        childs = std::make_unique<std::pair<KDTree, KDTree>>(
             KDTree(begin, mid, !vertically),
             KDTree(mid+1, end, !vertically)
-        ));
+        );
     }
 }
 
@@ -98,7 +98,7 @@ KDTree& KDTree::operator=(const KDTree& ctree)
         center = std::make_unique<Point>(*ctree.center);
 
     if (ctree.childs)
-        childs = std::make_unique<std::pair<KDTree, KDTree>>(std::make_pair(ctree.childs->first, ctree.childs->second));
+        childs = std::make_unique<std::pair<KDTree, KDTree>>(ctree.childs->first, ctree.childs->second);
 
     return *this;
 }

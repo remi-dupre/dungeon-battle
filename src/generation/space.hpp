@@ -62,6 +62,7 @@ private:
      */
     KDTree(std::vector<Point>::iterator begin, std::vector<Point>::iterator end, bool vertically);
 
+
     bool vertical_cut; ///< Wether the cut is vertical or horizontal.
 
     std::unique_ptr<Point> center; ///< The point represented by the node, space is cut with a line passing through this point.
