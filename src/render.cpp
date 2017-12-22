@@ -1,3 +1,4 @@
+#include "lighting.hpp"
 #include "render.hpp"
 
 
@@ -6,12 +7,12 @@ Renderer::Renderer() :
     tile_size(32.f)
 {
     tileset.loadFromFile("data/tileset.png");
+
     charlie_tex.loadFromFile("data/character01.png");
     entities_tileset.loadFromFile("data/entities.png");
 
-    std::random_device r;
-    RandRender::seed(r());
-    seed = RandRender::uniform_int(std::numeric_limits<int>::min(), std::numeric_limits<int>::max());
+    // Initialize the seed of the renderer
+    seed = Rand::uniform_int(std::numeric_limits<int>::min(), std::numeric_limits<int>::max());
 
     font.loadFromFile("data/FSEX300.ttf");
     hero_life.setFont(font);
@@ -20,7 +21,6 @@ Renderer::Renderer() :
     hero_xp.setFont(font);
     hero_xp.setCharacterSize(20.f);
     hero_xp.setPosition(10.f, 30.f);
-
 }
 
 void Renderer::setViewCenter(sf::Vector2f center)
@@ -37,6 +37,7 @@ void Renderer::drawMap(const Map& map)
         static_cast<sf::Vector2i>(math::floor((view.getCenter() - 0.5f * view.getSize()) / tile_size));
     sf::Vector2i max_corner =
         static_cast<sf::Vector2i>(math::ceil((view.getCenter() + 0.5f * view.getSize()) / tile_size));
+    sf::Vector2i hero_pos = (max_corner + min_corner) / 2;
 
     map_vertices.clear();
     map_vertices.reserve((max_corner.x - min_corner.x) * (max_corner.y - min_corner.y) * 4u);
@@ -45,9 +46,11 @@ void Renderer::drawMap(const Map& map)
     {
         for (int y = std::max(min_corner.y, 0); y < std::min(max_corner.y, map_h); y++)
         {
-            CellType cell = map.cellAt(x, y);
-
-            drawCell({x, y}, cell, map);
+            if (can_be_seen(hero_pos, {x, y}, map))
+            {
+                CellType cell = map.cellAt(x, y);
+                drawCell({x, y}, cell, map);
+            }
         }
     }
 }
@@ -73,7 +76,7 @@ void Renderer::drawEntities(const std::vector<std::shared_ptr<Entity>>& entities
             p += frame_time * (old_p - p);
         // Set the correct frame is the entity is doing something
         if (entity->isMoving() || entity->isAttacking())
-            frame = std::floor(frame_time * 3.999f);
+            frame = std::fmod(std::floor(frame_time * 4.f), 4.f);
 
         sf::Vertex v1, v2, v3, v4;
 

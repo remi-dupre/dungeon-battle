@@ -89,8 +89,8 @@ private:
     std::vector<sf::Vertex> map_vertices; ///< Vertex array used to render the map
     sf::Texture tileset; ///< Texture of the tiles
 
-    //std::vector<sf::Sprite> entities_sprites;
-    //std::map<, sf::Texture> entities_textures;
+    std::vector<sf::Sprite> entities_sprites;
+    std::map<Class, sf::Texture> entities_textures;
 
     std::vector<sf::Vertex> entities_vertices; ///< Vertex array used to render entities
     sf::Texture entities_tileset; ///< Texture of the characters

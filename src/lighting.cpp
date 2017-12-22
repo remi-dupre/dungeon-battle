@@ -19,7 +19,7 @@ bool can_be_seen(sf::Vector2i pos1, sf::Vector2i pos2, const Map& map){
         int last_y = pos_min_y;
         for(int j = pos_min_y; j <= pos_max_y; j++){
             int i = pos1.x;
-            if (map.cellAt(i,j)==CellType::Floor) break;
+            if (map.cellAt(i,j) != CellType::Floor) break;
             last_y = j;
         }
         return pos_max_y ==last_y;
@@ -28,7 +28,7 @@ bool can_be_seen(sf::Vector2i pos1, sf::Vector2i pos2, const Map& map){
         int last_x = pos_min_x;
         for(int i = pos_min_x; i <= pos_max_x; i++){
             int j = pos1.y;
-            if (map.cellAt(i,j)==CellType::Floor) break;
+            if (map.cellAt(i,j) != CellType::Floor) break;
             last_x = i;
         }
         return pos_max_x == last_x;
@@ -48,7 +48,7 @@ bool can_be_seen(sf::Vector2i pos1, sf::Vector2i pos2, const Map& map){
 
     for(int i = pos_min_x+1; i <= pos_max_x; i++){
         int j = std::floor(f_x(i));
-        if (map.cellAt(i,j)==CellType::Floor) break;
+        if (map.cellAt(i,j) != CellType::Floor) break;
         last_x = i;
     }
 
@@ -56,7 +56,7 @@ bool can_be_seen(sf::Vector2i pos1, sf::Vector2i pos2, const Map& map){
 
     for(int j = pos_min_y+1; j <= pos_max_y; j++){
         int i = std::floor(f_y(j));
-        if (map.cellAt(i,j)==CellType::Floor) break;
+        if (map.cellAt(i,j) != CellType::Floor) break;
         last_y = j;
     }
 
