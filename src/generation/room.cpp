@@ -61,7 +61,7 @@ bool spaced(const Room& room1, const Room& room2, int spacing)
         return spaced(room2, room1, spacing);
 
     for (const Point& cell : room1.cells)
-        if (room2.treeCells.closeTo(room2.position + cell - room1.position, spacing - 1))
+        if (room2.treeCells.closeTo(cell + room1.position - room2.position, spacing - 1))
             return false;
 
     return true;
