@@ -162,7 +162,7 @@ void Generator::addRooms(int x, int y, int n)
     }
 
     // Add ways between rooms
-    updateLinks();
+    // updateLinks();
 }
 
 void Generator::updateLinks()

@@ -57,11 +57,11 @@ void Room::addEntity(std::shared_ptr<Entity> entity)
 
 bool spaced(const Room& room1, const Room& room2, int spacing)
 {
-    if (room1.cells.size() > room2.cells.size())
+    if (room1.size() > room2.size())
         return spaced(room2, room1, spacing);
 
     for (const Point& cell : room1.cells)
-        if (room2.treeCells.closeTo(cell, spacing - 1))
+        if (room2.treeCells.closeTo(room2.position + cell - room1.position, spacing - 1))
             return false;
 
     return true;
@@ -137,19 +137,7 @@ void separate_rooms(std::vector<Room>& rooms, int spacing, size_t left, size_t r
                 Room& room1 = rooms[i1];
                 Room& room2 = rooms[i2];
 
-                // Check if the two sets are close to each other
-                bool well_spaced =
-                       room2.hasCell(room1.getPosition())
-                    && room1.hasCell(room2.getPosition());
-
-                for (auto& cell : rooms[i2].getCells())
-                {
-                    if (!well_spaced) break;
-
-                    well_spaced = well_spaced && spaced(rooms[i1], rooms[i2], spacing);
-                }
-
-                if (!well_spaced)
+                if (!spaced(room1, room2, spacing))
                 {
                     go_on = true;
 
@@ -192,7 +180,6 @@ void separate_rooms(std::vector<Room>& rooms, int spacing, size_t left, size_t r
             }
         }
 
-// std::cout << rooms[0].getPosition().first << ':' << rooms[0].getPosition().second << " & "<< rooms[nb_rooms-1].getPosition().first << ':' << rooms[nb_rooms-1].getPosition().second <<  std::endl;
         // Apply the position modifiers
         for (size_t i_room = 0 ; i_room < nb_rooms ; i_room++)
             rooms[i_room].setPosition(rooms[i_room].getPosition() + direction[i_room]);

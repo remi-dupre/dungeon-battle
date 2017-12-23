@@ -6,14 +6,14 @@
 
 
 // Minimum / Maximum values of our integers
-constexpr int MIN_VAL = std::numeric_limits<int>::min() / 4;
-constexpr int MAX_VAL = std::numeric_limits<int>::max() / 4;
+constexpr int MIN_VAL = -100;
+constexpr int MAX_VAL = 100;
 
 // Number of tests to execute
 constexpr int NB_SETS = 100;
 
 // Size of the random set for the test
-constexpr int SIZE_SET = 100;
+constexpr int SIZE_SET = 1000;
 
 
 class KDTreeTester : public CxxTest::TestSuite
