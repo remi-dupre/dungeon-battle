@@ -43,8 +43,7 @@ deploy:
     on:
       branch: master
 
-  - name: Package release
-    provider: releases
+  - provider: releases
     api_key: $GITHUB_TOKEN
     file: packages/dungeon-battle.deb
     skip_cleanup: true
