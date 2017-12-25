@@ -69,6 +69,13 @@ make release
 
 If the flag DPACKAGE is set, the program will be compiled to find its ressources in /usr/var/dungeon-battle
 
+## Publication
+
+To publish the release, you need to add a tag on current commit:
+```bash
+git tag -a v1.4 -m "short title for version 1.4"
+```
+
 # Documentation
 
 An automatically generated documentation can be found on [github pages](https://remi-dupre.github.io/dungeon-battle/index.html).

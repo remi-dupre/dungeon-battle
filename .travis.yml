@@ -16,6 +16,9 @@ install:
  - docker exec -t artful bash -c "apt-get install -y --no-install-recommends doxygen"
  - docker exec -t artful bash -c "apt-get install -y --no-install-recommends cxxtest cppcheck"
 
+before_deploy:
+  - make package
+
 script:
  - docker exec -t artful bash -c "cd /travis;
    make doc";
@@ -29,10 +32,18 @@ script:
    make test"
 
 deploy:
-  name: Travis Documentation Generation
-  provider: pages
-  local_dir: doc/html
-  skip_cleanup: true
-  github_token: $GITHUB_TOKEN
-  on:
-    branch: master
+  - name: Travis Documentation Generation
+    provider: pages
+    local_dir: doc/html
+    skip_cleanup: true
+    github_token: $GITHUB_TOKEN
+    on:
+      branch: master
+
+  - name: Package release
+    provider: releases
+    api_key: $GITHUB_TOKEN
+    file: packages/dungeon-battle.deb
+    skip_cleanup: true
+    on:
+      tags: true
