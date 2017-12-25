@@ -42,12 +42,14 @@ void Game::init(const std::map<Option, std::string>& options)
     Level level;
     dungeon.push_back(level);
 
-    if (config.gen_options.infinite)
-        generator.generateRadius(0, 0, 1);
+    int RADIUS = 10;
 
-    for (int x = -1 ; x < 1 ; x++)
+    if (config.gen_options.infinite)
+        generator.generateRadius(0, 0, RADIUS);
+
+    for (int x = -RADIUS ; x < RADIUS ; x++)
     {
-        for (int y = -1 ; y < 1 ; y++)
+        for (int y = -RADIUS ; y < RADIUS ; y++)
         {
             dungeon[0].map.setChunk(x, y, generator.getChunkCells(x, y));
 

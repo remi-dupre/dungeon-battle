@@ -84,34 +84,29 @@ Pattern generate_maze(int width, int height)
 
 Pattern generate_hallway(Point cell1, Point cell2)
 {
-    int x1, y1, x2, y2;
-    std::tie(x1, y1) = cell1;
-    std::tie(x2, y2) = cell2;
-
-    int x = 0, y = 0;
     Pattern path;
-    path.insert({0, 0});
+    Point x = {0, 0};
 
-    while (x1 + x != x2 || y1 + y != y2)
+    std::set<Point> shape({
+        {0, 0}, {0, 1}, {1, 0}, {1, 1}
+    });
+
+    for (const Point& relative : shape)
+        path.insert(x + relative);
+
+    while (cell1 + x != cell2)
     {
-        path.insert({x, y});
-        path.insert({x+1, y});
-        path.insert({x, y+1});
-        path.insert({x+1, y+1});
+        if (cell1.first + x.first < cell2.first)
+            x.first++;
+        if (cell1.first + x.first > cell2.first)
+            x.first--;
+        if (cell1.second + x.second < cell2.second)
+            x.second++;
+        if (cell1.second + x.second > cell2.second)
+            x.second--;
 
-        if (x1 + x < x2)
-            x++;
-        if (x1 + x > x2)
-            x--;
-        if (y1 + y < y2)
-            y++;
-        if (y1 + y > y2)
-            y--;
-
-        path.insert({x, y});
-        path.insert({x+1, y});
-        path.insert({x, y+1});
-        path.insert({x+1, y+1});
+        for (const Point& relative : shape)
+            path.insert(x + relative);
     }
 
     return path;
