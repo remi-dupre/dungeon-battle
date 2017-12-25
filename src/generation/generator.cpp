@@ -162,7 +162,7 @@ void Generator::addRooms(int x, int y, int n)
     }
 
     // Add ways between rooms
-    // updateLinks();
+    updateLinks();
 }
 
 void Generator::updateLinks()
@@ -250,7 +250,9 @@ void Generator::updateLinks()
                     path_cells = generate_hallway(hall_start, hall_end);
                     break;
             }
+
             Room path(path_cells);
+            path.setPosition(hall_start);
             rooms.push_back(path);
 
             room_links.insert({l, nb_rooms});
