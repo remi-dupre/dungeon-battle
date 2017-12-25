@@ -113,24 +113,22 @@ cppcheck-html:
 	@rm tmp_cppcheck.xml
 
 # Create debian package
-.ONESHELL:
 package: CFLAGS += -s -DPACKAGE
 package: release
-	cd packages
 	@# Build debian package
-	@mkdir -p for-debian/usr/share/doc/dungeon-battle
+	@mkdir -p packages/for-debian/usr/share/doc/dungeon-battle
 	cp -r DEBIAN for-debian
-	gzip --best -nc changelog > for-debian/usr/share/doc/dungeon-battle/changelog.gz
-	cp copyright for-debian/usr/share/doc/dungeon-battle
+	gzip --best -nc packages/changelog > packages/for-debian/usr/share/doc/dungeon-battle/changelog.gz
+	cp packages/copyright packages/for-debian/usr/share/doc/dungeon-battle
 	@# Add binaries
-	@mkdir -p for-debian/usr/games
-	strip ../dungeon-battle
-	cp ../dungeon-battle for-debian/usr/games
+	@mkdir -p packages/for-debian/usr/games
+	strip dungeon-battle
+	cp dungeon-battle packages/for-debian/usr/games
 	@# Add datas
-	@mkdir -p for-debian/usr/share/dungeon-battle
-	cp -r ../data/* for-debian/usr/share/dungeon-battle
+	@mkdir -p packages/for-debian/usr/share/dungeon-battle
+	cp -r data/* packages/for-debian/usr/share/dungeon-battle
 	@# Build package
-	dpkg-deb --build for-debian dungeon-battle.deb
+	dpkg-deb --build packages/for-debian packages/dungeon-battle.deb
 
 # Clean the workspace, except executables and documentation
 clean:
