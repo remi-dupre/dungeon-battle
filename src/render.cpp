@@ -6,15 +6,24 @@ Renderer::Renderer() :
     seed(0),
     tile_size(32.f)
 {
-    tileset.loadFromFile("data/tileset.png");
+    #ifdef PACKAGE
+        tileset.loadFromFile("/usr/share/dungeon-battle/tileset.png");
 
-    charlie_tex.loadFromFile("data/character01.png");
-    entities_tileset.loadFromFile("data/entities.png");
+        charlie_tex.loadFromFile("/usr/share/dungeon-battle/character01.png");
+        entities_tileset.loadFromFile("/usr/share/dungeon-battle/entities.png");
+
+        font.loadFromFile("/usr/share/dungeon-battle/FSEX300.ttf");
+    #else
+        tileset.loadFromFile("data/tileset.png");
+
+        charlie_tex.loadFromFile("data/character01.png");
+        entities_tileset.loadFromFile("data/entities.png");
+
+        font.loadFromFile("data/FSEX300.ttf");
+    #endif
 
     // Initialize the seed of the renderer
     seed = Rand::uniform_int(std::numeric_limits<int>::min(), std::numeric_limits<int>::max());
-
-    font.loadFromFile("data/FSEX300.ttf");
     hero_life.setFont(font);
     hero_life.setCharacterSize(20.f);
     hero_life.setPosition(10.f, 10.f);

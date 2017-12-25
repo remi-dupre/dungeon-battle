@@ -15,7 +15,7 @@ WFLAGS_EXTRA = -pedantic -Wcast-align -Wcast-qual -Wctor-dtor-privacy -Wdisabled
                -Wsign-promo -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch-default -Wundef
 
 # Linker flags
-LFLAGS = -lsfml-graphics -lsfml-window -lsfml-system -Wl,-rpath,.
+LFLAGS = -lsfml-graphics -lsfml-window -lsfml-system
 
 SRC_DIR = src
 SRC = $(shell find src -type f -name '*.cpp') # List of files to compile
@@ -112,16 +112,38 @@ cppcheck-html:
 	cppcheck-htmlreport --file=tmp_cppcheck.xml --report-dir=$(CHECK_DIR) --source-dir=.
 	@rm tmp_cppcheck.xml
 
+# Create debian package
+.ONESHELL:
+package: CFLAGS += -s -DPACKAGE
+package: release
+	cd packages
+	@# Build debian package
+	@mkdir -p for-debian/usr/share/doc/dungeon-battle
+	cp -r DEBIAN for-debian
+	gzip --best -nc changelog > for-debian/usr/share/doc/dungeon-battle/changelog.gz
+	cp copyright for-debian/usr/share/doc/dungeon-battle
+	@# Add binaries
+	@mkdir -p for-debian/usr/games
+	strip ../dungeon-battle
+	cp ../dungeon-battle for-debian/usr/games
+	@# Add datas
+	@mkdir -p for-debian/usr/share/dungeon-battle
+	cp -r ../data/* for-debian/usr/share/dungeon-battle
+	@# Build package
+	dpkg-deb --build for-debian dungeon-battle.deb
+
 # Clean the workspace, except executables and documentation
 clean:
 	rm -rf $(BUILD_DIR) $(BUILD_DIR)/generation
 	rm -rf $(CHECK_DIR)
 	rm -rf $(DEP_DIR)
+	rm -rf packages/for-debian
 	rm -rf tests/test.cpp
 	rm -rf *~
 
 # Clean everything
 clean-all: clean
 	rm -rf dungeon-battle
+	rm -rf packages/dungeon-battle.deb
 	rm -rf $(DOC_DIR)
 	rm -rf $(EXEC_TEST)

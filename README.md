@@ -39,22 +39,24 @@ apt-get install make
 
 ### Optional dependencies
 Documentation is generated with **doxygen** and is required to `make doc`:
-
 ```bash
 apt-get install doxygen
 ```
 
 Some extra tests can be done by running `make test` and it requires **cppcheck** and **cxxgen**:
-
 ```bash
 apt-get install cppcheck cxxgen
 ```
 
 To execute the tests use `make test`:
-
 ```bash
 make test     # Build tester and runs it
 tests/test -v # Run the test again with extra informations
+```
+
+If you want to build packages using `make package` you will need **gzip** and **dpkg**:
+```bash
+apt-get install gzip dpkg
 ```
 
 ## Compilation
@@ -64,6 +66,8 @@ In order to compile the project, assuming you have all the dependencies mentione
 ```bash
 make release
 ```
+
+If the flag DPACKAGE is set, the program will be compiled to find its ressources in /usr/var/dungeon-battle
 
 # Documentation
 

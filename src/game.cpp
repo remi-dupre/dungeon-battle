@@ -25,7 +25,11 @@ void Game::init(const std::map<Option, std::string>& options)
     if (!config.vsync) // Don't activate vertical synchronization and framerate limit at the same time
         window.setFramerateLimit(config.maxfps);
 
-    config.readGame("data/game.ini");
+    #ifdef PACKAGE
+        config.readGame("/usr/share/dungeon-battle/game.ini");
+    #else
+        config.readGame("data/game.ini");
+    #endif
 
     // Seed the rng
     std::random_device r;
