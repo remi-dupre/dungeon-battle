@@ -17,7 +17,10 @@ install:
  - docker exec -t artful bash -c "apt-get install -y --no-install-recommends cxxtest cppcheck"
 
 before_deploy:
-  - make package
+  - docker exec -t artful bash -c "cd /travis;
+    make clean"
+  - docker exec -t artful bash -c "cd /travis;
+    make package"
 
 script:
  - docker exec -t artful bash -c "cd /travis;
