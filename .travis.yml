@@ -17,22 +17,16 @@ install:
  - docker exec -t artful bash -c "apt-get install -y --no-install-recommends cxxtest cppcheck"
 
 before_deploy:
-  - docker exec -t artful bash -c "cd /travis;
-    make clean"
-  - docker exec -t artful bash -c "cd /travis;
-    make package"
+  - docker exec -t artful bash -c "apt-get install -y --no-install-recommends fakeroot"
+  - docker exec -t artful bash -c "cd /travis; make clean"
+  - docker exec -t artful bash -c "cd /travis; make package"
 
 script:
- - docker exec -t artful bash -c "cd /travis;
-   make doc";
- - docker exec -t artful bash -c "cd /travis;
-   make lint"
- - docker exec -t artful bash -c "cd /travis;
-   make cppcheck-html CHECK_DIR=doc/html/check";
- - docker exec -t artful bash -c "cd /travis;
-   make debug"
- - docker exec -t artful bash -c "cd /travis;
-   make test"
+ - docker exec -t artful bash -c "cd /travis; make doc";
+ - docker exec -t artful bash -c "cd /travis; make lint"
+ - docker exec -t artful bash -c "cd /travis; make cppcheck-html CHECK_DIR=doc/html/check";
+ - docker exec -t artful bash -c "cd /travis; make debug"
+ - docker exec -t artful bash -c "cd /travis; make test"
 
 deploy:
   - name: Travis Documentation Generation

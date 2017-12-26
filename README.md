@@ -54,9 +54,9 @@ make test     # Build tester and runs it
 tests/test -v # Run the test again with extra informations
 ```
 
-If you want to build packages using `make package` you will need **gzip** and **dpkg**:
+If you want to build packages using `make package` you will need **gzip**, **dpkg** and **fakeroot**:
 ```bash
-apt-get install gzip dpkg
+apt-get install gzip dpkg fakeroot
 ```
 
 ## Compilation
