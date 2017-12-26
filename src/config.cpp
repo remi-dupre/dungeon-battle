@@ -6,23 +6,6 @@
 
 // Default configuration
 Configuration::Configuration() :
-    width(800),
-    height(600),
-    scalefactor(1),
-    fullscreen(false),
-    vsync(true),
-    maxfps(60),
-    animation_speed(3.f),
-    left_key(sf::Keyboard::Key::Q),
-    right_key(sf::Keyboard::Key::D),
-    up_key(sf::Keyboard::Key::Z),
-    down_key(sf::Keyboard::Key::S),
-    menu_key(sf::Keyboard::Key::Escape),
-    interaction_key(sf::Keyboard::Key::E),
-    attack_left_key(sf::Keyboard::Key::Left),
-    attack_right_key(sf::Keyboard::Key::Right),
-    attack_up_key(sf::Keyboard::Key::Up),
-    attack_down_key(sf::Keyboard::Key::Down),
     gen_options()
 {}
 
@@ -59,8 +42,12 @@ sf::Keyboard::Key string_to_key(const std::string& name)
     {
         return sf::Keyboard::Key::Escape;
     }
+    else if (name == "Return" || name == "return" || name == "Enter" || name == "enter")
+    {
+        return sf::Keyboard::Key::Return;
+    }
 
-    return {};
+    return sf::Keyboard::Key::Unknown;
 }
 
 void Configuration::read(const std::string& filename)
@@ -180,14 +167,14 @@ void Configuration::readGame(const std::string& filename)
 std::ostream& operator<<(std::ostream& stream, const Configuration& config)
 {
     return stream <<
-        "[Video]" << std::endl <<
-        "width=" << config.width << std::endl <<
-        "height=" << config.height << std::endl <<
-        "scalefactor=" << config.scalefactor << std::endl <<
-        "fullscreen=" << config.fullscreen << std::endl <<
-        "vsync=" << config.vsync << std::endl <<
-        "maxfps=" << config.maxfps << std::endl <<
-        "animation_speed=" << config.animation_speed << std::endl;
+        "[Video]"                                    << "\n" <<
+        "width="           << config.width           << "\n" <<
+        "height="          << config.height          << "\n" <<
+        "scalefactor="     << config.scalefactor     << "\n" <<
+        "fullscreen="      << config.fullscreen      << "\n" <<
+        "vsync="           << config.vsync           << "\n" <<
+        "maxfps="          << config.maxfps          << "\n" <<
+        "animation_speed=" << config.animation_speed << "\n";
 }
 
 void Configuration::write(const std::string& filename) const
