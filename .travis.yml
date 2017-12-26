@@ -45,7 +45,9 @@ deploy:
 
   - provider: releases
     api_key: $GITHUB_TOKEN
-    file: packages/dungeon-battle.deb
+    file:
+     - packages/dungeon-battle.deb
+     - packages/dungeon-battle.tar.gz
     skip_cleanup: true
     on:
       tags: true
