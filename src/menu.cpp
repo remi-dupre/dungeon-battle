@@ -1,24 +1,50 @@
 #include "menu.hpp"
 
+#include "control.hpp"
 
-Menu::Menu(const Configuration& config_) :
-    current_line(0),
-    chosen_character(0)
+
+bool MainMenu::update()
 {
-    sf::Uint32 style = sf::Style::Close | sf::Style::Resize;
-    if (config_.fullscreen)
-        style |= sf::Style::Fullscreen;
+    return false;
+}
 
-    window.create({config_.width, config_.height}, "Dungeon Battle", style);
-    window.setVerticalSyncEnabled(config_.vsync);
-    window.setSize({config_.scalefactor * config_.width, config_.scalefactor * config_.height});
+void MainMenu::handle_key(sf::Keyboard::Key key, const Configuration& config)
+{
 
 }
 
-void Menu::run()
+std::shared_ptr<Menu> MainMenu::next_menu()
 {
-    while (true)
-    {
+    return nullptr;
+}
 
-    }
+void MainMenu::render(sf::RenderTarget& target)
+{
+
+}
+
+
+bool PauseMenu::update()
+{
+    if (next != Next::Nothing)
+        return true;
+    return false;
+}
+
+void PauseMenu::handle_key(sf::Keyboard::Key key, const Configuration& config)
+{
+    if (key == config.menu_key)
+        next = Next::Resume;
+}
+
+std::shared_ptr<Menu> PauseMenu::next_menu()
+{
+    if (next == Next::Resume)
+        return nullptr;
+    return nullptr;
+}
+
+void PauseMenu::render(sf::RenderTarget& target)
+{
+
 }

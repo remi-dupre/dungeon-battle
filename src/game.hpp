@@ -20,6 +20,7 @@
 #include "config.hpp"
 #include "control.hpp"
 #include "map.hpp"
+#include "menu.hpp"
 #include "rand.hpp"
 #include "render.hpp"
 #include "utility.hpp"
@@ -121,6 +122,8 @@ private:
     sf::RenderWindow window; ///< The render window of the game
     Configuration config; ///< The configuration of the game
     Renderer renderer; ///< The renderer
+
+    std::shared_ptr<Menu> menu;
 
     Map* map; ///< The current map
     std::vector<std::shared_ptr<Entity>>* entities; ///< The current map entities

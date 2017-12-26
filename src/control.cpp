@@ -50,34 +50,6 @@ inline Action get_input_hero(const Configuration& config)
     return Action();
 }
 
-Action control::get_menu_input(const Configuration& config)
-{
-    // Move in the Menu entries
-    if (sf::Keyboard::isKeyPressed(config.left_key) ||
-        sf::Keyboard::isKeyPressed(config.attack_left_key))
-        return Action(ActionType::Move, Direction::Left);
-    if (sf::Keyboard::isKeyPressed(config.right_key) ||
-        sf::Keyboard::isKeyPressed(config.attack_right_key))
-        return Action(ActionType::Move, Direction::Right);
-    if (sf::Keyboard::isKeyPressed(config.up_key) ||
-        sf::Keyboard::isKeyPressed(config.attack_up_key))
-        return Action(ActionType::Move, Direction::Up);
-    if (sf::Keyboard::isKeyPressed(config.down_key) ||
-        sf::Keyboard::isKeyPressed(config.attack_down_key))
-        return Action(ActionType::Move, Direction::Down);
-
-    // Select Menu entry
-    if (sf::Keyboard::isKeyPressed(config.interaction_key) ||
-        sf::Keyboard::isKeyPressed(sf::Keyboard::Return))
-        return Action(ActionType::Interact, Direction::None);
-
-    // Return in previous Menu
-    if (sf::Keyboard::isKeyPressed(config.menu_key))
-        return Action(ActionType::Pause);
-
-    return Action(); // Nothing
-}
-
 Action control::get_input(const Entity& entity,
                           const std::vector<std::shared_ptr<Entity>>& entities,
                           const Map &map,

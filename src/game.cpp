@@ -25,6 +25,8 @@ void Game::init(const std::map<Option, std::string>& options)
     if (!config.vsync) // Don't activate vertical synchronization and framerate limit at the same time
         window.setFramerateLimit(config.maxfps);
 
+    menu = nullptr;
+
     config.readGame("data/game.ini");
 
     // Seed the rng
@@ -71,20 +73,44 @@ void Game::run()
     while (window.isOpen())
     {
         sf::Event event;
-
         while (window.pollEvent(event))
         {
             if (event.type == sf::Event::Closed)
                 window.close();
+
+            if (event.type == sf::Event::KeyPressed)
+            {
+                if (menu)
+                    menu->handle_key(event.key.code, config);
+            }
         }
 
         next_move -= timer.restart().asSeconds();
-        if (next_move <= 0.f)
+
+        if (menu)
         {
-            update();
+            if (menu->update())
+                menu = menu->next_menu();
+        }
+        else if (next_move <= 0.f)
+        {
+            update(); // Update Game iff there is no Menu
         }
 
-        display();
+        window.clear();
+
+        if (!menu)
+        {
+            display();
+        }
+        else
+        {
+            if (menu->display_game())
+                display();
+            menu->render(window);
+        }
+
+        window.display();
     }
 }
 
@@ -103,6 +129,11 @@ void Game::update()
         }
 
         Action action = control::get_input(*entity, *entities, *map, config);
+
+        if (action.type == ActionType::Pause)
+        {
+            menu = std::make_shared<PauseMenu>();
+        }
 
         bool action_done = update_entity(entity, action);
 
@@ -202,6 +233,7 @@ void Game::update()
     if (monster_acting) // No animation time for monsters if they do not move or attack
         next_move = 1.f / config.animation_speed;
 
+    // Remove dead entities
     auto it = std::remove_if(entities->begin(), entities->end(),
         [](std::shared_ptr<Entity> e)
         {
@@ -316,9 +348,7 @@ void Game::display()
     renderer.drawMap(*map);
     renderer.drawEntities(*entities, std::max(next_move, 0.f) * config.animation_speed);
 
-    window.clear();
     renderer.display(window);
-    window.display();
 }
 
 const std::vector<std::shared_ptr<Entity>>& Game::getEntities() const
