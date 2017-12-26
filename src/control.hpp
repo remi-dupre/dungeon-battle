@@ -58,6 +58,8 @@ struct Action
 
 namespace control
 {
+    Action get_menu_input(const Configuration& config);
+
     /**
      * \brief Return an action performed by an entity
      */
