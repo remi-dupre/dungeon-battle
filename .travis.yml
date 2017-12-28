@@ -16,23 +16,32 @@ install:
  - docker exec -t artful bash -c "apt-get install -y --no-install-recommends doxygen"
  - docker exec -t artful bash -c "apt-get install -y --no-install-recommends cxxtest cppcheck"
 
+before_deploy:
+  - docker exec -t artful bash -c "apt-get install -y --no-install-recommends fakeroot"
+  - docker exec -t artful bash -c "cd /travis; make clean"
+  - docker exec -t artful bash -c "cd /travis; make package"
+
 script:
- - docker exec -t artful bash -c "cd /travis;
-   make doc";
- - docker exec -t artful bash -c "cd /travis;
-   make lint"
- - docker exec -t artful bash -c "cd /travis;
-   make cppcheck-html CHECK_DIR=doc/html/check";
- - docker exec -t artful bash -c "cd /travis;
-   make debug"
- - docker exec -t artful bash -c "cd /travis;
-   make test"
+ - docker exec -t artful bash -c "cd /travis; make doc";
+ - docker exec -t artful bash -c "cd /travis; make lint"
+ - docker exec -t artful bash -c "cd /travis; make cppcheck-html CHECK_DIR=doc/html/check";
+ - docker exec -t artful bash -c "cd /travis; make debug"
+ - docker exec -t artful bash -c "cd /travis; make test"
 
 deploy:
-  name: Travis Documentation Generation
-  provider: pages
-  local_dir: doc/html
-  skip_cleanup: true
-  github_token: $GITHUB_TOKEN
-  on:
-    branch: master
+  - name: Travis Documentation Generation
+    provider: pages
+    local_dir: doc/html
+    skip_cleanup: true
+    github_token: $GITHUB_TOKEN
+    on:
+      branch: master
+
+  - provider: releases
+    api_key: $GITHUB_TOKEN
+    file:
+     - packages/dungeon-battle.deb
+     - packages/dungeon-battle.tar.gz
+    skip_cleanup: true
+    on:
+      tags: true

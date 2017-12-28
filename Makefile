@@ -15,7 +15,7 @@ WFLAGS_EXTRA = -pedantic -Wcast-align -Wcast-qual -Wctor-dtor-privacy -Wdisabled
                -Wsign-promo -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch-default -Wundef
 
 # Linker flags
-LFLAGS = -lsfml-graphics -lsfml-window -lsfml-system -Wl,-rpath,.
+LFLAGS = -lsfml-graphics -lsfml-window -lsfml-system
 
 SRC_DIR = src
 SRC = $(shell find src -type f -name '*.cpp') # List of files to compile
@@ -48,7 +48,7 @@ TEST_CPP = $(SRC_DIR_TEST)/test.cpp
 
 TEST_EXEC = $(SRC_DIR_TEST)/test
 
-.PHONY: all release debug test doc cppcheck-html clean
+.PHONY: all release debug test doc cppcheck-html clean package package-deb package-tar
 NO_DEPS = clean lint doc cppcheck-html warning $(TEST_EXEC)
 
 debug: DFLAGS += -ggdb
@@ -112,16 +112,62 @@ cppcheck-html:
 	cppcheck-htmlreport --file=tmp_cppcheck.xml --report-dir=$(CHECK_DIR) --source-dir=.
 	@rm tmp_cppcheck.xml
 
+# Create all packages
+.NOTPARALLEL:
+package: package-deb package-tar
+
+# Create debian package
+.ONESHELL:
+package-deb: CFLAGS += -s -DPACKAGE
+package-deb:
+	$(MAKE) clean
+	$(MAKE) release
+
+	cd packages
+	mkdir -p for-debian/usr/share/doc/dungeon-battle
+	cp -r DEBIAN for-debian
+	gzip --best -nc changelog > for-debian/usr/share/doc/dungeon-battle/changelog.gz
+	cp copyright for-debian/usr/share/doc/dungeon-battle
+
+	mkdir -p for-debian/usr/games
+	strip ../dungeon-battle
+	cp ../dungeon-battle for-debian/usr/games
+
+	mkdir -p for-debian/usr/share/dungeon-battle
+	cp -r ../data/* for-debian/usr/share/dungeon-battle
+
+	fakeroot dpkg-deb --build for-debian dungeon-battle.deb
+
+# Create portable version
+.ONESHELL:
+package-tar:
+	$(MAKE) clean
+	$(MAKE) release
+
+	cd packages
+	mkdir -p for-tar
+	cp changelog for-tar
+	cp copyright for-tar
+
+	strip ../dungeon-battle
+	cp ../dungeon-battle for-tar
+	cp -r ../data for-tar
+
+	tar -czf dungeon-battle.tar.gz for-tar --transform s/for-tar/dungeon-battle/
+
+
 # Clean the workspace, except executables and documentation
 clean:
 	rm -rf $(BUILD_DIR) $(BUILD_DIR)/generation
 	rm -rf $(CHECK_DIR)
 	rm -rf $(DEP_DIR)
+	rm -rf packages/for-debian packages/for-tar
 	rm -rf tests/test.cpp
 	rm -rf *~
 
 # Clean everything
 clean-all: clean
 	rm -rf dungeon-battle
+	rm -rf packages/dungeon-battle.deb packages/dungeon-battle.tar.gz
 	rm -rf $(DOC_DIR)
 	rm -rf $(EXEC_TEST)

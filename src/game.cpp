@@ -28,7 +28,11 @@ void Game::init(const std::map<Option, std::string>& options)
 
     menu = nullptr;
 
-    config.readGame("data/game.ini");
+    #ifdef PACKAGE
+        config.readGame("/usr/share/dungeon-battle/game.ini");
+    #else
+        config.readGame("data/game.ini");
+    #endif
 
     // Seed the rng
     std::random_device r;

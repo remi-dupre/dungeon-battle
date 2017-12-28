@@ -1,0 +1,15 @@
+Package: dungeon-battle
+Version: 0.1
+Section: games
+Priority: optional
+Architecture: amd64
+Depends: make, g++ (>= 5.0), libc6, libsfml-dev
+Maintainer: Rémi Dupré <remi.dupre@crans.org>
+Description: 2D rogue-like game.
+ This rogue-like was build as a school project at the ENS of Cachan.
+ Authors:
+     Jean-Baptiste Daval
+     Rémi Dupré
+     Garance Gourdel
+     Benjamin Graillot
+     Lucas Gréaux
