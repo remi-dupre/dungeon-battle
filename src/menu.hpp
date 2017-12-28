@@ -23,7 +23,7 @@ public:
     explicit Menu() = default;
 
     virtual bool update() = 0;
-    virtual void handle_key(sf::Keyboard::Key key, const Configuration& config) = 0;
+    virtual bool handle_key(sf::Keyboard::Key key, const Configuration& config) = 0;
     virtual std::shared_ptr<Menu> next_menu() = 0;
     virtual void render(sf::RenderTarget& target) = 0;
 
@@ -40,7 +40,7 @@ public:
     explicit MainMenu() = default;
 
     virtual bool update() override final;
-    virtual void handle_key(sf::Keyboard::Key key, const Configuration& config) override final;
+    virtual bool handle_key(sf::Keyboard::Key key, const Configuration& config) override final;
     virtual std::shared_ptr<Menu> next_menu() override final;
     virtual void render(sf::RenderTarget& target) override final;
 
@@ -60,7 +60,7 @@ public:
     explicit PauseMenu() = default;
 
     virtual bool update() override final;
-    virtual void handle_key(sf::Keyboard::Key key, const Configuration& config) override final;
+    virtual bool handle_key(sf::Keyboard::Key key, const Configuration& config) override final;
     virtual std::shared_ptr<Menu> next_menu() override final;
     virtual void render(sf::RenderTarget& target) override final;
 
@@ -68,6 +68,8 @@ public:
     {
         return true;
     };
+
+    int item = 0;
 
 private:
 
@@ -78,5 +80,4 @@ private:
         Quit
     };
     Next next = Next::Nothing;
-
 };

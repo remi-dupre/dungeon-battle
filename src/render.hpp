@@ -13,6 +13,7 @@
 #include "config.hpp"
 #include "map.hpp"
 #include "math.hpp"
+#include "menu.hpp"
 #include "rand.hpp"
 #include "utility.hpp"
 
@@ -60,6 +61,14 @@ public:
     void drawEntities(const std::vector<std::shared_ptr<Entity>>& entities, float frame_time);
 
     /**
+     * \brief Draw a menu
+     * \param menu The menu to draw
+     *
+     * This function draws a menu
+     */
+    void drawMenu(std::shared_ptr<const Menu> menu);
+
+    /**
      * \brief Display on the window the objects drawn before
      * \param target The RenderTarget to draw on
      *
@@ -100,4 +109,6 @@ private:
     sf::Font font;      ///< Font used to render texts in the game
     sf::Text hero_life; ///< Display the life of the hero
     sf::Text hero_xp;   ///< Display the XP of the hero
+
+    std::vector<sf::Text> menu_texts;
 };

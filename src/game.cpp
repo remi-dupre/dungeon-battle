@@ -18,6 +18,7 @@ void Game::init(const std::map<Option, std::string>& options)
         style |= sf::Style::Fullscreen;
 
     window.create({config.width, config.height}, "Dungeon Battle", style);
+    window.setKeyRepeatEnabled(false);
 
     window.setVerticalSyncEnabled(config.vsync);
     window.setSize({config.scalefactor * config.width, config.scalefactor * config.height});
@@ -81,7 +82,8 @@ void Game::run()
             if (event.type == sf::Event::KeyPressed)
             {
                 if (menu)
-                    menu->handle_key(event.key.code, config);
+                    if (menu->handle_key(event.key.code, config))
+                        window.close();
             }
         }
 
@@ -107,7 +109,7 @@ void Game::run()
         {
             if (menu->display_game())
                 display();
-            menu->render(window);
+            renderer.drawMenu(std::const_pointer_cast<const Menu>(menu));
         }
 
         window.display();

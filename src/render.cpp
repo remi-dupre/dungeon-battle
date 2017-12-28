@@ -187,6 +187,47 @@ void Renderer::drawEntities(const std::vector<std::shared_ptr<Entity>>& entities
     }
 }
 
+void Renderer::drawMenu(std::shared_ptr<const Menu> menu)
+{
+    menu_texts.clear();
+
+    if (menu == nullptr)
+        return;
+
+    auto p = std::dynamic_pointer_cast<const PauseMenu>(menu);
+    if (p != nullptr)
+    {
+        sf::Text resume;
+        resume.setFont(font);
+        resume.setString("Resume");
+        resume.setCharacterSize(20);
+        resume.setFillColor(sf::Color::White);
+        if (p->item == 0)
+        {
+            resume.setCharacterSize(25);
+            resume.setFillColor(sf::Color::Yellow);
+        }
+        resume.setPosition({Configuration::default_configuration.width / 2.f
+                    - resume.getLocalBounds().width / 2.f, 280.f});
+
+        sf::Text quit;
+        quit.setFont(font);
+        quit.setString("(Save) (TODO) & Quit");
+        quit.setCharacterSize(20);
+        quit.setFillColor(sf::Color::White);
+        if (p->item == 1)
+        {
+            quit.setCharacterSize(25);
+            quit.setFillColor(sf::Color::Yellow);
+        }
+        quit.setPosition({Configuration::default_configuration.width / 2.f
+                    - quit.getLocalBounds().width / 2.f, 320.f});
+
+        menu_texts.push_back(resume);
+        menu_texts.push_back(quit);
+    }
+}
+
 void Renderer::display(sf::RenderTarget& target)
 {
     // Keep aspect ratio
@@ -241,6 +282,10 @@ void Renderer::display(sf::RenderTarget& target)
     target.setView(view);
     target.draw(hero_life);
     target.draw(hero_xp);
+
+    for (const auto& t : menu_texts)
+        target.draw(t);
+    menu_texts.clear();
 }
 
 void Renderer::drawCell(sf::Vector2i coords, CellType cell, const Map& map)

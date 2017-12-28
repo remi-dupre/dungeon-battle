@@ -8,7 +8,7 @@ bool MainMenu::update()
     return false;
 }
 
-void MainMenu::handle_key(sf::Keyboard::Key key, const Configuration& config)
+bool MainMenu::handle_key(sf::Keyboard::Key key, const Configuration& config)
 {
 
 }
@@ -31,10 +31,28 @@ bool PauseMenu::update()
     return false;
 }
 
-void PauseMenu::handle_key(sf::Keyboard::Key key, const Configuration& config)
+bool PauseMenu::handle_key(sf::Keyboard::Key key, const Configuration& config)
 {
     if (key == config.menu_key)
         next = Next::Resume;
+
+    if (key == config.down_key || key == config.attack_down_key)
+        item = (item + 1) % 2;
+    if (key == config.up_key || key == config.attack_up_key)
+        item = (item + 1) % 2;
+
+    if (key == config.select_key || key == config.interaction_key)
+    {
+        if (item == 0)
+            next = Next::Resume;
+        if (item == 1)
+        {
+            next = Next::Quit;
+            return true;
+        }
+    }
+
+    return false;
 }
 
 std::shared_ptr<Menu> PauseMenu::next_menu()
