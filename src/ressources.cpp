@@ -7,7 +7,7 @@
 
 std::map<Textures, sf::Texture> RessourceManager::textures;
 sf::Font RessourceManager::font;
-std::map<Class, EntityAnimationData> RessourceManager::animations;
+std::map<EntitySprite, EntityAnimationData> RessourceManager::animations;
 
 #ifdef PACKAGE
 const std::string RessourceManager::ressource_path_prefix = "/usr/share/dungeon-battle/"s;
@@ -16,7 +16,7 @@ const std::string RessourceManager::ressource_path_prefix = ""s;
 #endif
 
 
-TextureRect EntityAnimationData::getFrame(Direction dir, float frame_ratio)
+sf::IntRect EntityAnimationData::getFrame(Direction dir, float frame_ratio)
 {
     const auto& frames = animation[dir];
     return frames[std::fmod(std::floor(frames.size() * frame_ratio), frames.size())];
@@ -40,29 +40,29 @@ bool RessourceManager::loadTextures()
     if (!tileset.loadFromFile(ressource_path_prefix + "data/tileset.png"))
         return false;
 
-    sf::Texture& scenery = textures[Textures::Scenery];
-    if (!scenery.loadFromFile(ressource_path_prefix + "data/entities.png"))
-        return false;
+    // sf::Texture& scenery = textures[Textures::Scenery];
+    // if (!scenery.loadFromFile(ressource_path_prefix + "data/entities.png"))
+    //     return false;
 
-    sf::Texture& character01 = textures[Textures::Character01];
+    sf::Texture& character01 = textures[Textures::Knight];
     if (!character01.loadFromFile(ressource_path_prefix + "data/character01.png"))
         return false;
 
-    sf::Texture& character02 = textures[Textures::Character02];
+    sf::Texture& character02 = textures[Textures::Rogue];
     if (!character02.loadFromFile(ressource_path_prefix + "data/character01.png"))
         return false;
 
-    sf::Texture& character03 = textures[Textures::Character03];
+    sf::Texture& character03 = textures[Textures::Wizard];
     if (!character03.loadFromFile(ressource_path_prefix + "data/character01.png"))
         return false;
 
-    sf::Texture& character04 = textures[Textures::Character04];
-    if (!character04.loadFromFile(ressource_path_prefix + "data/character01.png"))
-        return false;
+    // sf::Texture& character04 = textures[Textures::Character04];
+    // if (!character04.loadFromFile(ressource_path_prefix + "data/character01.png"))
+    //     return false;
 
-    sf::Texture& character05 = textures[Textures::Character05];
-    if (!character05.loadFromFile(ressource_path_prefix + "data/character01.png"))
-        return false;
+    // sf::Texture& character05 = textures[Textures::Character05];
+    // if (!character05.loadFromFile(ressource_path_prefix + "data/character01.png"))
+    //     return false;
 
     sf::Texture& slime = textures[Textures::Slime];
     if (!slime.loadFromFile(ressource_path_prefix + "data/entities.png"))
@@ -79,19 +79,18 @@ bool RessourceManager::loadFont()
     return true;
 }
 
-void compute_animation(TextureRect sprite_rect, sf::Vector2f start, int nb_frames,
-                       std::vector<TextureRect>& frames)
+void compute_animation(sf::Vector2i sprite_size, sf::Vector2i frame_start, int nb_frames,
+                       std::vector<sf::IntRect>& frames)
 {
-    sf::Vector2f sprite_size = sprite_rect.end - sprite_rect.start;
-
     for (int i = 0; i < nb_frames; ++i)
     {
-        TextureRect frame;
-        frame.start = start;
-        frame.end = start + sprite_size - sf::Vector2f(1.f, 1.f);
+        sf::IntRect frame;
+        frame.left = frame_start.x;
+        frame.top = frame_start.y;
+        frame.width = sprite_size.x;
+        frame.height = sprite_size.y;
 
-        frame.start.x += sprite_size.x * i;
-        frame.end.x += sprite_size.x * i;
+        frame.left += sprite_size.x * i;
         frames.push_back(frame);
     }
 }
@@ -99,7 +98,7 @@ void compute_animation(TextureRect sprite_rect, sf::Vector2f start, int nb_frame
 bool RessourceManager::loadAnimations()
 {
     std::ifstream animations_file(ressource_path_prefix + "data/animations");
-    std::string character_type_str;
+    std::string entity_type_str;
 
     if (!animations_file.is_open())
         return false;
@@ -108,44 +107,49 @@ bool RessourceManager::loadAnimations()
 
     while (!animations_file.eof())
     {
-        animations_file >> character_type_str;
-        Class character_type;
-        if (character_type_str == "Slime")
-            character_type = Class::Slime;
-        else if (character_type_str == "Knight")
-            character_type = Class::Knight;
-        else if (character_type_str == "Rogue")
-            character_type = Class::Rogue;
-        else if (character_type_str == "Wizard")
-            character_type = Class::Wizard;
+        animations_file >> entity_type_str;
+        EntitySprite entity_type;
+        if (entity_type_str == "Slime")
+            entity_type = EntitySprite::Slime;
+        else if (entity_type_str == "Knight")
+            entity_type = EntitySprite::Knight;
+        else if (entity_type_str == "Rogue")
+            entity_type = EntitySprite::Rogue;
+        else if (entity_type_str == "Wizard")
+            entity_type = EntitySprite::Wizard;
+        else if (entity_type_str == "StairsUp")
+            entity_type = EntitySprite::StairsUp;
+        else if (entity_type_str == "StairsDown")
+            entity_type = EntitySprite::StairsDown;
 
         EntityAnimationData animation_data;
 
-        animations_file >> animation_data.sprite_rect.start.x;
-        animations_file >> animation_data.sprite_rect.start.y;
-        animations_file >> animation_data.sprite_rect.end.x;
-        animations_file >> animation_data.sprite_rect.end.y;
+        animations_file >> animation_data.sprite_rect.left;
+        animations_file >> animation_data.sprite_rect.top;
+        animations_file >> animation_data.sprite_rect.width;
+        animations_file >> animation_data.sprite_rect.height;
 
-        sf::Vector2f start;
+        sf::Vector2i start;
         int nb_frames;
 
+
         animations_file >> start.x >> start.y >> nb_frames;
-        compute_animation(animation_data.sprite_rect, start, nb_frames,
+        compute_animation(vec::size(animation_data.sprite_rect), start, nb_frames,
                           animation_data.animation[Direction::Down]);
 
         animations_file >> start.x >> start.y >> nb_frames;
-        compute_animation(animation_data.sprite_rect, start, nb_frames,
+        compute_animation(vec::size(animation_data.sprite_rect), start, nb_frames,
                           animation_data.animation[Direction::Left]);
 
         animations_file >> start.x >> start.y >> nb_frames;
-        compute_animation(animation_data.sprite_rect, start, nb_frames,
+        compute_animation(vec::size(animation_data.sprite_rect), start, nb_frames,
                           animation_data.animation[Direction::Right]);
 
         animations_file >> start.x >> start.y >> nb_frames;
-        compute_animation(animation_data.sprite_rect, start, nb_frames,
+        compute_animation(vec::size(animation_data.sprite_rect), start, nb_frames,
                           animation_data.animation[Direction::Up]);
 
-        animations[character_type] = animation_data;
+        animations[entity_type] = animation_data;
 
         if (!animations_file)
             return false;
@@ -157,12 +161,9 @@ bool RessourceManager::loadAnimations()
 }
 
 
-const sf::Texture* RessourceManager::getTexture(Textures texture_type)
+sf::Texture& RessourceManager::getTexture(Textures texture_type)
 {
-    auto it = textures.find(texture_type);
-    if (it == textures.end())
-        return nullptr;
-    return &(it->second);
+    return textures[texture_type];
 }
 
 sf::Font& RessourceManager::getFont()
@@ -170,12 +171,12 @@ sf::Font& RessourceManager::getFont()
     return font;
 }
 
-TextureRect& RessourceManager::getSpriteRect(Class character_type)
+sf::IntRect RessourceManager::getSpriteRect(EntitySprite entity_type)
 {
-    return animations[character_type].sprite_rect;
+    return animations[entity_type].sprite_rect;
 }
 
-EntityAnimationData& RessourceManager::getAnimation(Class character_type)
+EntityAnimationData& RessourceManager::getAnimation(EntitySprite entity_type)
 {
-    return animations[character_type];
+    return animations[entity_type];
 }

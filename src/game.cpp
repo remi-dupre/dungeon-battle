@@ -8,7 +8,8 @@ Game::Game() :
     entities(nullptr),
     current_level(0),
     entity_turn(EntityType::Hero),
-    next_move(0.f)
+    next_move(0.f),
+    move_time(1.f)
 {}
 
 void Game::init(const std::map<Option, std::string>& options)
@@ -32,11 +33,13 @@ void Game::init(const std::map<Option, std::string>& options)
 
     menu = nullptr;
 
-    #ifdef PACKAGE
-        config.readGame("/usr/share/dungeon-battle/game.ini");
-    #else
-        config.readGame("data/game.ini");
-    #endif
+#ifdef PACKAGE
+    config.readGame("/usr/share/dungeon-battle/game.ini");
+#else
+    config.readGame("data/game.ini");
+#endif
+
+    move_time = 1.f / config.animation_speed;
 
     // Seed the rng
     std::random_device r;
@@ -241,7 +244,7 @@ void Game::update()
 
     entity_turn = next_turn;
     if (monster_acting) // No animation time for monsters if they do not move or attack
-        next_move = 1.f / config.animation_speed;
+        next_move = move_time;
 
     // Remove dead entities
     auto it = std::remove_if(entities->begin(), entities->end(),
@@ -348,7 +351,7 @@ void Game::display()
         sf::Vector2f view_center = static_cast<sf::Vector2f>((*hero)->getPosition());
         if ((*hero)->isMoving())
         {
-            float frac = std::max(next_move, 0.f) * config.animation_speed;
+            float frac = std::max(next_move, 0.f) / move_time;
             view_center += frac * (static_cast<sf::Vector2f>((*hero)->getOldPosition())
                                    - static_cast<sf::Vector2f>((*hero)->getPosition()));
         }
@@ -356,7 +359,7 @@ void Game::display()
     }
 
     renderer.drawMap(*map);
-    renderer.drawEntities(*entities, std::max(next_move, 0.f) * config.animation_speed);
+    renderer.drawEntities(*entities, 1.f - std::max(next_move, 0.f) / move_time);
 
     renderer.display(window);
 }

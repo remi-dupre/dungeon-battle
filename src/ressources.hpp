@@ -5,7 +5,7 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "entity.hpp"
+#include "utility.hpp"
 
 
 using namespace std::literals::string_literals;
@@ -15,13 +15,27 @@ enum class Textures
     Tileset,
     Scenery,
 
-    Character01,
-    Character02,
-    Character03,
+    Knight,
+    Rogue,
+    Wizard,
     Character04,
     Character05,
 
-    Slime
+    Slime = Scenery
+};
+
+enum class EntitySprite
+{
+    StairsUp,
+    StairsDown,
+
+    Knight,
+    Rogue,
+    Wizard,
+
+    Slime,
+
+    None
 };
 
 struct TextureRect
@@ -36,10 +50,10 @@ struct EntityAnimationData
 {
     EntityAnimationData() = default;
 
-    TextureRect getFrame(Direction dir, float frame_ratio);
+    sf::IntRect getFrame(Direction dir, float frame_ratio);
 
-    TextureRect sprite_rect;
-    std::map<Direction, std::vector<TextureRect>> animation;
+    sf::IntRect sprite_rect;
+    std::map<Direction, std::vector<sf::IntRect>> animation;
 };
 
 class RessourceManager
@@ -48,11 +62,11 @@ public:
 
     static bool loadRessources();
 
-    static const sf::Texture* getTexture(Textures texture_type);
+    static sf::Texture& getTexture(Textures texture_type);
     static sf::Font& getFont();
 
-    static TextureRect& getSpriteRect(Class character_type);
-    static EntityAnimationData& getAnimation(Class character_type);
+    static sf::IntRect getSpriteRect(EntitySprite character_type);
+    static EntityAnimationData& getAnimation(EntitySprite character_type);
 
 private:
 
@@ -64,7 +78,22 @@ private:
     static std::map<Textures, sf::Texture> textures;
     static sf::Font font;
 
-    static std::map<Class, EntityAnimationData> animations;
+    static std::map<EntitySprite, EntityAnimationData> animations;
 
     static const std::string ressource_path_prefix;
 };
+
+namespace vec
+{
+    template <typename T>
+    sf::Vector2<T> position(sf::Rect<T> a)
+    {
+        return {a.left, a.top};
+    };
+
+    template <typename T>
+    sf::Vector2<T> size(sf::Rect<T> a)
+    {
+        return {a.width, a.height};
+    };
+}

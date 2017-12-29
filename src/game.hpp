@@ -133,4 +133,5 @@ private:
 
     EntityType entity_turn;
     float next_move;
+    float move_time;
 };

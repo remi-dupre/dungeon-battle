@@ -89,24 +89,24 @@ private:
      */
     void drawCell(sf::Vector2i coords, CellType cell, const Map& map);
 
-    int seed; ///< Seed used for rendering tiles
+    unsigned int seed; ///< Seed used for rendering tiles
 
     sf::View view; ///< The current view of the rendering
 
-    const float tile_size; ///< Size of the tiles on screen in pixels
+    static constexpr float tile_size = 32.f; ///< Size of the tiles on screen in pixels
 
     std::vector<sf::Vertex> map_vertices; ///< Vertex array used to render the map
-    sf::Texture tileset; ///< Texture of the tiles
+    //sf::Texture tileset; ///< Texture of the tiles
 
     std::vector<sf::Sprite> entities_sprites;
-    std::map<Class, sf::Texture> entities_textures;
+    //std::map<Class, sf::Texture> entities_textures;
 
-    std::vector<sf::Vertex> entities_vertices; ///< Vertex array used to render entities
-    sf::Texture entities_tileset; ///< Texture of the characters
-    std::vector<sf::Vertex> charlie;
-    sf::Texture charlie_tex; ///< Texture of the characters
+    // std::vector<sf::Vertex> entities_vertices; ///< Vertex array used to render entities
+    // sf::Texture entities_tileset; ///< Texture of the characters
+    // std::vector<sf::Vertex> charlie;
+    // sf::Texture charlie_tex; ///< Texture of the characters
 
-    sf::Font font;      ///< Font used to render texts in the game
+    //sf::Font font;      ///< Font used to render texts in the game
     sf::Text hero_life; ///< Display the life of the hero
     sf::Text hero_xp;   ///< Display the XP of the hero
 
