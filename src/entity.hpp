@@ -22,11 +22,11 @@
  */
 enum class EntityType
 {
-    None, ///< Missing type
-    Hero, ///< A hero
+    None,    ///< Missing type
+    Hero,    ///< A hero
     Monster, ///< A monster
-    Stairs, ///< A staircase
-    Item ///< An item
+    Stairs,  ///< A staircase
+    Item     ///< An item
 };
 
 
@@ -35,8 +35,10 @@ enum class EntityType
  */
 enum class Class
 {
-    Knight, ///< Standard hero type
-    Slime ///< Standard monster type
+    Knight, ///< Knight class for hero
+    Rogue,  ///< Rogue class for hero
+    Wizard, ///< Wizard class for hero
+    Slime   ///< Slime monster
 };
 
 
@@ -45,11 +47,11 @@ enum class Class
  */
 enum class Interaction
 {
-    None, ///< None
-    GoUp, ///< Go up
+    None,   ///< None
+    GoUp,   ///< Go up
     GoDown, ///< Go down
     PickUp, ///< Pick up
-    Use ///< Use
+    Use     ///< Use
 };
 
 
@@ -164,17 +166,18 @@ public:
 
 protected:
 
-    const unsigned int id; ///< The id of the entity
+    const unsigned int id;            ///< The id of the entity
     const unsigned int controller_id; ///< The id of the controller of the entity
-    const EntityType type; ///< The type of the entity
-    const Interaction interaction; ///< The result of the interaction with the entity
+    const EntityType type;            ///< The type of the entity
+    const Interaction interaction;    ///< The result of the interaction with the entity
+
     sf::Vector2i position; ///< The position of the entity
+    sf::Vector2i old_position; ///< The position of the entity at the previous turn
     Direction orientation; ///< The orientation of the entity
 
-    sf::Vector2i old_position; ///< The position of the entity at the previous turn
-    bool moving; ///< Tells whether the entity is currently moving or not
+    bool moving;    ///< Tells whether the entity is currently moving or not
     bool attacking; ///< Tells whether the entity is currently attacking or not
-    bool attacked; ///< Tells whether the entity is currently attacked or not
+    bool attacked;  ///< Tells whether the entity is currently attacked or not
 };
 
 

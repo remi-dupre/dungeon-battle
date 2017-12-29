@@ -1,5 +1,7 @@
 #include "game.hpp"
 
+#include "ressources.hpp"
+
 
 Game::Game() :
     map(nullptr),
@@ -25,6 +27,8 @@ void Game::init(const std::map<Option, std::string>& options)
 
     if (!config.vsync) // Don't activate vertical synchronization and framerate limit at the same time
         window.setFramerateLimit(config.maxfps);
+
+    RessourceManager::loadRessources();
 
     menu = nullptr;
 
