@@ -108,7 +108,7 @@ bool RessourceManager::loadAnimations()
     while (!animations_file.eof())
     {
         animations_file >> entity_type_str;
-        EntitySprite entity_type;
+        EntitySprite entity_type = EntitySprite::None;
         if (entity_type_str == "Slime")
             entity_type = EntitySprite::Slime;
         else if (entity_type_str == "Knight")

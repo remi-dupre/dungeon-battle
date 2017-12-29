@@ -179,11 +179,11 @@ void Renderer::drawMenu(std::shared_ptr<const Menu> menu)
         resume.setFont(RessourceManager::getFont());
         resume.setString("Resume");
         resume.setCharacterSize(20);
-        resume.setFillColor(sf::Color::White);
+        resume.setColor(sf::Color::White);
         if (p->item == 0)
         {
             resume.setCharacterSize(25);
-            resume.setFillColor(sf::Color::Yellow);
+            resume.setColor(sf::Color::Yellow);
         }
         resume.setPosition({Configuration::default_configuration.width / 2.f
                     - resume.getLocalBounds().width / 2.f, 280.f});
@@ -192,11 +192,11 @@ void Renderer::drawMenu(std::shared_ptr<const Menu> menu)
         quit.setFont(RessourceManager::getFont());
         quit.setString("(Save) (TODO) & Quit");
         quit.setCharacterSize(20);
-        quit.setFillColor(sf::Color::White);
+        quit.setColor(sf::Color::White);
         if (p->item == 1)
         {
             quit.setCharacterSize(25);
-            quit.setFillColor(sf::Color::Yellow);
+            quit.setColor(sf::Color::Yellow);
         }
         quit.setPosition({Configuration::default_configuration.width / 2.f
                     - quit.getLocalBounds().width / 2.f, 320.f});
