@@ -26,7 +26,7 @@ script:
  - docker exec -t artful bash -c "cd /travis; make lint"
  - docker exec -t artful bash -c "cd /travis; make cppcheck-html CHECK_DIR=doc/html/check";
  - docker exec -t artful bash -c "cd /travis; make debug"
- - docker exec -t artful bash -c "cd /travis; make test"
+ - docker exec -t artful bash -c "cd /travis; make tests"
 
 deploy:
   - name: Travis Documentation Generation
