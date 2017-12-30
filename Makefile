@@ -95,7 +95,7 @@ lint:
 
 # Exectutes tests using cxxtest
 tests: $(TEST_CPP)
-	$(CXX) -o $@ $< $(CFLAGS) $(WFLAGS)
+	$(CXX) -o $(TEST_EXEC) $< $(CFLAGS) $(WFLAGS)
 	$(TEST_EXEC) -v
 
 # Build the test cpp
