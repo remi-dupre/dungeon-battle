@@ -15,6 +15,7 @@ doc/
 tests/*
 !tests/*.hpp
 !tests/*.ini
+!tests/data/
 
 data_tmp/*
 

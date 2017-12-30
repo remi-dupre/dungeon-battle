@@ -8,7 +8,8 @@ class RessourcesTester : public CxxTest::TestSuite
 public:
     void testAnimationsLoading()
     {
-        RessourceManager::loadRessources("tests/data/");
+        RessourceManager::setRessourcesPath("tests/data/");
+        RessourceManager::loadAnimations();
 
         auto animation = RessourceManager::getAnimation(EntitySprite::Slime);
 

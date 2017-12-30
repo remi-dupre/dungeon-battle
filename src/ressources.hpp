@@ -62,6 +62,15 @@ public:
 
     static bool loadRessources(const std::string& ressources_path);
 
+    static bool loadTextures();
+    static bool loadFont();
+
+    static bool loadAnimations();
+
+    static void setRessourcesPath(const std::string& ressources_path_)
+    { ressources_path = ressources_path_; };
+
+
     static sf::Texture& getTexture(Textures texture_type);
     static sf::Font& getFont();
 
@@ -72,12 +81,6 @@ private:
 
     static std::string ressources_path;
 
-    static bool loadTextures();
-    static bool loadFont();
-
-    static bool loadAnimations();
-
-private:
     static std::map<Textures, sf::Texture> textures;
     static std::map<EntitySprite, EntityAnimationData> animations;
     static sf::Font font;
