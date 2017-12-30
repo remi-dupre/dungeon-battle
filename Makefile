@@ -18,7 +18,7 @@ WFLAGS_EXTRA = -pedantic -Wcast-align -Wcast-qual -Wctor-dtor-privacy -Wdisabled
 LFLAGS = -lsfml-graphics -lsfml-window -lsfml-system
 
 SRC_DIR = src
-SRC = $(shell find src -type f -name '*.cpp') # List of files to compile
+SRC = $(shell find $(SRC_DIR) -type f -name '*.cpp') # List of files to compile
 
 # Dependency files
 DEP_DIR = deps
@@ -39,13 +39,8 @@ CHECK_DIR = check
 
 # Unit test paths
 SRC_DIR_TEST = tests
-SRC_TEST = $(SRC_DIR_TEST)/test_map.hpp \
-           $(SRC_DIR_TEST)/test_kdtree.hpp \
-           $(SRC_DIR_TEST)/test_config.hpp \
-           $(SRC_DIR_TEST)/test_pattern.hpp
-
+SRC_TEST = $(shell find $(SRC_DIR_TEST) -type f -name 'test_*.hpp') # List of files to compile
 TEST_CPP = $(SRC_DIR_TEST)/test.cpp
-
 TEST_EXEC = $(SRC_DIR_TEST)/test
 
 .PHONY: all release debug test doc cppcheck-html clean package package-deb package-tar
@@ -82,25 +77,19 @@ $(DEP_DIR)/%.d: $(SRC_DIR)/%.cpp
 	@mkdir -p $(dir $@)
 	$(CXX) $(CFLAGS) -MM -MT '$(<:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%.o)' $< -MF $@
 
-# Build and execute test
-#$(SRC_DIR_TEST)/%: $(BUILD_DIR)/%.o
-#	$(CXX) -o $@ $< $(DFLAGS) $(LFLAGS)
-#	@echo "Running the test: " $(@:$(SRC_DIR_TEST)/%=%)
-#	@cd $(SRC_DIR_TEST) && ./$(@:$(SRC_DIR_TEST)/%=%)
-
 lint:
 	cppcheck -q --enable=all --suppressions-list=.cppignore --inconclusive $(SRC_DIR) 1> /dev/null
 	@# Return exit code 1 if there are errors
 	cppcheck --error-exitcode=2 --suppressions-list=.cppignore --inconclusive $(SRC_DIR) 1> /dev/null 2> /dev/null
 
-# Exectutes tests using cxxtest
-tests: $(TEST_CPP)
-	$(CXX) -o $(TEST_EXEC) $< $(CFLAGS) $(WFLAGS)
+# Executes tests using cxxtest
+tests: $(TEST_CPP) $(filter-out $(BUILD_DIR)/main.o,$(OBJ))
+	$(CXX) -o $(TEST_EXEC) $^ $(CFLAGS) $(WFLAGS) $(LFLAGS)
 	$(TEST_EXEC) -v
 
 # Build the test cpp
 $(TEST_CPP): $(SRC_TEST)
-	cxxtestgen --error-printer -o tests/test.cpp $<
+	cxxtestgen --error-printer -o tests/test.cpp $^
 
 # Generate the documentation
 doc:
