@@ -5,15 +5,11 @@
 #include <string>
 
 
-std::map<Textures, sf::Texture> RessourceManager::textures;
-sf::Font RessourceManager::font;
-std::map<EntitySprite, EntityAnimationData> RessourceManager::animations;
+std::string RessourceManager::ressources_path = "data/"s;
 
-#ifdef PACKAGE
-const std::string RessourceManager::ressource_path_prefix = "/usr/share/dungeon-battle/"s;
-#else
-const std::string RessourceManager::ressource_path_prefix = ""s;
-#endif
+std::map<Textures, sf::Texture> RessourceManager::textures;
+std::map<EntitySprite, EntityAnimationData> RessourceManager::animations;
+sf::Font RessourceManager::font;
 
 
 sf::IntRect EntityAnimationData::getFrame(Direction dir, float frame_ratio)
@@ -22,50 +18,51 @@ sf::IntRect EntityAnimationData::getFrame(Direction dir, float frame_ratio)
     return frames[std::fmod(std::floor(frames.size() * frame_ratio), frames.size())];
 }
 
-bool RessourceManager::loadRessources()
+bool RessourceManager::loadRessources(const std::string& ressources_path_)
 {
-    if (!loadTextures())
-        return false;
-    if (!loadFont())
-        return false;
-    if (!loadAnimations())
-        return false;
+    ressources_path = ressources_path_;
 
-    return true;
+    bool ok = true;
+
+    ok &= loadTextures();
+    ok &= loadFont();
+    ok &= loadAnimations();
+
+    return ok;
 }
 
 bool RessourceManager::loadTextures()
 {
     sf::Texture& tileset = textures[Textures::Tileset];
-    if (!tileset.loadFromFile(ressource_path_prefix + "data/tileset.png"))
+    if (!tileset.loadFromFile(ressources_path + "tileset.png"))
         return false;
 
     // sf::Texture& scenery = textures[Textures::Scenery];
-    // if (!scenery.loadFromFile(ressource_path_prefix + "data/entities.png"))
+    // if (!scenery.loadFromFile(ressources_path + "entities.png"))
     //     return false;
 
     sf::Texture& character01 = textures[Textures::Knight];
-    if (!character01.loadFromFile(ressource_path_prefix + "data/character01.png"))
+    if (!character01.loadFromFile(ressources_path + "character01.png"))
         return false;
 
     sf::Texture& character02 = textures[Textures::Rogue];
-    if (!character02.loadFromFile(ressource_path_prefix + "data/character01.png"))
+    if (!character02.loadFromFile(ressources_path + "character01.png"))
         return false;
 
     sf::Texture& character03 = textures[Textures::Wizard];
-    if (!character03.loadFromFile(ressource_path_prefix + "data/character01.png"))
+    if (!character03.loadFromFile(ressources_path + "character01.png"))
         return false;
 
     // sf::Texture& character04 = textures[Textures::Character04];
-    // if (!character04.loadFromFile(ressource_path_prefix + "data/character01.png"))
+    // if (!character04.loadFromFile(ressources_path + "character01.png"))
     //     return false;
 
     // sf::Texture& character05 = textures[Textures::Character05];
-    // if (!character05.loadFromFile(ressource_path_prefix + "data/character01.png"))
+    // if (!character05.loadFromFile(ressources_path + "character01.png"))
     //     return false;
 
     sf::Texture& slime = textures[Textures::Slime];
-    if (!slime.loadFromFile(ressource_path_prefix + "data/entities.png"))
+    if (!slime.loadFromFile(ressources_path + "entities.png"))
         return false;
 
     return true;
@@ -73,7 +70,7 @@ bool RessourceManager::loadTextures()
 
 bool RessourceManager::loadFont()
 {
-    if (!font.loadFromFile(ressource_path_prefix + "data/FSEX300.ttf"))
+    if (!font.loadFromFile(ressources_path + "FSEX300.ttf"))
         return false;
 
     return true;
@@ -97,7 +94,7 @@ void compute_animation(sf::Vector2i sprite_size, sf::Vector2i frame_start, int n
 
 bool RessourceManager::loadAnimations()
 {
-    std::ifstream animations_file(ressource_path_prefix + "data/animations");
+    std::ifstream animations_file(ressources_path + "animations");
     std::string entity_type_str;
 
     if (!animations_file.is_open())

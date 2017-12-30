@@ -60,7 +60,7 @@ class RessourceManager
 {
 public:
 
-    static bool loadRessources();
+    static bool loadRessources(const std::string& ressources_path);
 
     static sf::Texture& getTexture(Textures texture_type);
     static sf::Font& getFont();
@@ -70,17 +70,17 @@ public:
 
 private:
 
+    static std::string ressources_path;
+
     static bool loadTextures();
     static bool loadFont();
 
     static bool loadAnimations();
 
+private:
     static std::map<Textures, sf::Texture> textures;
-    static sf::Font font;
-
     static std::map<EntitySprite, EntityAnimationData> animations;
-
-    static const std::string ressource_path_prefix;
+    static sf::Font font;
 };
 
 namespace vec

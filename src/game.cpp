@@ -29,7 +29,11 @@ void Game::init(const std::map<Option, std::string>& options)
     if (!config.vsync) // Don't activate vertical synchronization and framerate limit at the same time
         window.setFramerateLimit(config.maxfps);
 
-    RessourceManager::loadRessources();
+#ifdef PACKAGE
+    RessourceManager::loadRessources("/usr/share/dungeon-battle/data/");
+#else
+    RessourceManager::loadRessources("data/");
+#endif
 
     menu = nullptr;
 
