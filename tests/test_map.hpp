@@ -5,23 +5,12 @@
 #include <random>
 
 #include "../src/generation/pattern.hpp"
-#include "../src/generation/pattern.cpp"
 #include "../src/generation/room.hpp"
-#include "../src/generation/room.cpp"
 #include "../src/generation/level.hpp"
-#include "../src/generation/level.cpp"
 #include "../src/generation/gen_pattern.hpp"
-#include "../src/generation/gen_pattern.cpp"
 #include "../src/generation/space.hpp"
-#include "../src/generation/space.cpp"
 
 #include "../src/map.hpp"
-#include "../src/map.cpp"
-#include "../src/entity.hpp"
-#include "../src/entity.cpp"
-#include "../src/rand.hpp"
-#include "../src/utility.hpp"
-#include "../src/utility.cpp"
 
 
 // Number of maps to generate for a test
