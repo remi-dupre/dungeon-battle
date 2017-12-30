@@ -1,8 +1,16 @@
 .ONESHELL:
 
+package:
+	$(MAKE) -f Make_package package-deb
+	$(MAKE) -f Make_package package-tar
+
 # Create debian package
 package-deb: CFLAGS += -s -DPACKAGE
 package-deb:
+	$(MAKE) clean-all
+	$(MAKE) release
+
+	cd packages
 	mkdir -p for-debian/usr/share/doc/dungeon-battle
 	cp -r DEBIAN for-debian
 	gzip --best -nc changelog > for-debian/usr/share/doc/dungeon-battle/changelog.gz
@@ -19,6 +27,10 @@ package-deb:
 
 # Create portable version
 package-tar:
+	$(MAKE) clean-all
+	$(MAKE) release
+
+	cd packages
 	mkdir -p for-tar
 	cp changelog for-tar
 	cp copyright for-tar

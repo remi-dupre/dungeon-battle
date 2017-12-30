@@ -117,13 +117,7 @@ doc:
 
 # Create all packages
 package:
-	$(MAKE) clean-all
-	$(MAKE) release
-	$(MAKE) -C packages package-deb
-
-	$(MAKE) clean-all
-	$(MAKE) release
-	$(MAKE) -C packages package-tar
+	$(MAKE) -f Make_package package
 
 # Clean the workspace, except executables and documentation
 clean:
