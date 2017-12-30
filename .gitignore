@@ -16,4 +16,8 @@ tests/*
 !tests/*.hpp
 !tests/*.ini
 
+data_tmp/*
+
 map.map
+
+.dir-locals.el
