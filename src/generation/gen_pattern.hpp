@@ -39,7 +39,7 @@ Pattern generate_rectangle(int size);
  * \param height The height of the maze. (must be odd)
  * \return The shape of the maze, in a pattern.
  */
-Pattern generate_maze(int width, int heignt);
+Pattern generate_maze(int width, int height);
 
 /**
  * \brief Contain a cave containing a fixed number of cells

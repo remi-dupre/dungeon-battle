@@ -136,8 +136,8 @@ Action bfs_monster(const Character& monster, const std::vector<std::shared_ptr<E
     return save_action;
 }
 
-Action get_input_monster(const Character& entity, const std::vector<std::shared_ptr<Entity>>& entities, const Map& map)
+Action get_input_monster(const Character& monster, const std::vector<std::shared_ptr<Entity>>& entities, const Map& map)
 {
     assert(has_hero(entities));
-    return bfs_monster(entity,entities,map);
+    return bfs_monster(monster, entities, map);
 }

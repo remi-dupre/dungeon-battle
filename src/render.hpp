@@ -58,7 +58,7 @@ public:
      *
      * This function draws the entities
      */
-    void drawEntities(const std::vector<std::shared_ptr<Entity>>& entities, float frame_time);
+    void drawEntities(const std::vector<std::shared_ptr<Entity>>& entities, float frame_progress);
 
     /**
      * \brief Draw a menu

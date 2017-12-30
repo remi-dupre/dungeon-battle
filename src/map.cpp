@@ -180,6 +180,7 @@ std::istream& operator>>(std::istream& stream, Map& map)
                     //return CellType::Empty;
                     break;
             }
+            return CellType::Empty;
         }
     );
 

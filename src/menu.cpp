@@ -10,7 +10,7 @@ bool MainMenu::update()
 
 bool MainMenu::handle_key(sf::Keyboard::Key key, const Configuration& config)
 {
-
+    return false;
 }
 
 std::shared_ptr<Menu> MainMenu::next_menu()

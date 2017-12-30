@@ -65,8 +65,8 @@ public:
     static sf::Texture& getTexture(Textures texture_type);
     static sf::Font& getFont();
 
-    static sf::IntRect getSpriteRect(EntitySprite character_type);
-    static EntityAnimationData& getAnimation(EntitySprite character_type);
+    static sf::IntRect getSpriteRect(EntitySprite entity_type);
+    static EntityAnimationData& getAnimation(EntitySprite entity_type);
 
 private:
 
@@ -89,11 +89,11 @@ namespace vec
     sf::Vector2<T> position(sf::Rect<T> a)
     {
         return {a.left, a.top};
-    };
+    }
 
     template <typename T>
     sf::Vector2<T> size(sf::Rect<T> a)
     {
         return {a.width, a.height};
-    };
+    }
 }
