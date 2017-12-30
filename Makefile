@@ -55,7 +55,7 @@ debug: $(EXEC)
 release: CFLAGS += -O3 -DNDEBUG
 release: $(EXEC)
 
-all: release doc cppcheck-html test
+all: release doc cppcheck-html tests
 
 warnings: CFLAGS += -fsyntax-only
 warnings: WFLAGS += $(WFLAGS_EXTRA)
@@ -88,7 +88,7 @@ $(DEP_DIR)/%.d: $(SRC_DIR)/%.cpp
 
 # Generate tests with cxxtest
 $(TEST_CPP): $(SRC_TEST)
-	cxxtestgen --error-printer -o tests/test.cpp $^
+	cxxtestgen --error-printer -o $@ $^
 
 # Compile test without executing them
 tests-compile: $(TEST_CPP) $(filter-out $(BUILD_DIR)/main.o,$(OBJ))
