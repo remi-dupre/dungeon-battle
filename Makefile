@@ -1,3 +1,6 @@
+# ==================================================================================================
+# Variables
+
 # C++ compiler name
 CXX = g++
 
@@ -46,8 +49,20 @@ DOC_DIR = doc
 # Dir where to output cppcheck reports
 CHECK_DIR = check
 
-.PHONY: all release debug tests-compile tests clean clean-all warnings lint cppcheck-html doc package package-deb package-tar
+# ==================================================================================================
+# Configuration
+
+.PHONY: all release debug tests-compile tests clean clean-all warnings \
+	lint cppcheck-html doc package package-deb package-tar
+
+# Include dependency files, without errors if they do not exist
 NO_DEPS = clean clean-all warnings lint cppcheck-html doc package package-deb package-tar $(TEST_EXEC)
+ifeq (0, $(words $(findstring $(MAKECMDGOALS), $(NO_DEPS))))
+        -include $(DEP_FILES)
+endif
+
+# ==================================================================================================
+# Main targets
 
 debug: DFLAGS += -ggdb
 debug: $(EXEC)
@@ -57,14 +72,8 @@ release: $(EXEC)
 
 all: release doc cppcheck-html tests
 
-warnings: CFLAGS += -fsyntax-only
-warnings: WFLAGS += $(WFLAGS_EXTRA)
-warnings: $(WARNINGS)
-
-# Include dependency files, without errors if they do not exist
-ifeq (0, $(words $(findstring $(MAKECMDGOALS), $(NO_DEPS))))
-        -include $(DEP_FILES)
-endif
+# ==================================================================================================
+# Main rules
 
 # Build executable from object files
 $(EXEC): $(OBJ)
@@ -75,30 +84,41 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp $(DEP_DIR)/%.d
 	@mkdir -p $(dir $@)
 	$(CXX) -o $@ -c $< $(CFLAGS) $(DFLAGS) $(WFLAGS)
 
-# Output warnings
-$(BUILD_DIR)/%.w: $(SRC_DIR)/%.cpp
-	@mkdir -p $(dir $@)
-	$(CXX) -c $< $(CFLAGS) $(WFLAGS)
-
 # Create dependency files
 $(DEP_DIR)/%.d: $(SRC_DIR)/%.cpp
 	@mkdir -p $(dir $@)
 	$(CXX) $(CFLAGS) -MM -MT '$(<:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%.o)' $< -MF $@
 
+# ==================================================================================================
+# Warnings target, output all g++ warnings without compiling
+warnings: CFLAGS += -fsyntax-only
+warnings: WFLAGS += $(WFLAGS_EXTRA)
+warnings: $(WARNINGS)
 
-# Generate tests with cxxtest
-$(TEST_CPP): $(SRC_TEST)
-	cxxtestgen --error-printer -o $@ $^
+# Output warnings
+$(BUILD_DIR)/%.w: $(SRC_DIR)/%.cpp
+	@mkdir -p $(dir $@)
+	$(CXX) -c $< $(CFLAGS) $(WFLAGS)
 
-# Compile test without executing them
-tests-compile: $(TEST_CPP) $(filter-out $(BUILD_DIR)/main.o,$(OBJ))
-	$(CXX) -o $(TEST_EXEC) $^ $(CFLAGS) $(WFLAGS) $(LFLAGS)
+# ==================================================================================================
+# Tests
 
 # Compile and execute tests using cxxtest
 tests: tests-compile
 	$(TEST_EXEC) -v
 
-# Static analysis of the code, cause make to fail if an error is found
+# Compile test without executing them
+tests-compile: $(TEST_CPP) $(filter-out $(BUILD_DIR)/main.o,$(OBJ))
+	$(CXX) -o $(TEST_EXEC) $^ $(CFLAGS) $(WFLAGS) $(LFLAGS)
+
+# Generate tests with cxxtest
+$(TEST_CPP): $(SRC_TEST)
+	cxxtestgen --error-printer -o $@ $^
+
+# ==================================================================================================
+# Static analysis of the code
+
+# Target that cause Make to fail if an error is found
 lint:
 	cppcheck -q --enable=all --suppressions-list=.cppignore --inconclusive $(SRC_DIR) 1> /dev/null
 	@# Return exit code 1 if there are errors
@@ -110,11 +130,12 @@ cppcheck-html:
 	cppcheck-htmlreport --file=tmp_cppcheck.xml --report-dir=$(CHECK_DIR) --source-dir=.
 	@rm tmp_cppcheck.xml
 
+# ==================================================================================================
 # Generate the documentation
 doc:
 	doxygen .doxygen.conf
 
-
+# ==================================================================================================
 # Create all packages
 package:
 	$(MAKE) clean
@@ -125,10 +146,10 @@ package:
 	$(MAKE) release
 	$(MAKE) -C packages package-tar
 
-# Clean the workspace, except executables and documentation
+# ==================================================================================================
+# Clean intermediate files (not final results like executables, documentation, packages,...)
 clean:
 	rm -rf $(BUILD_DIR) $(BUILD_DIR)/generation
-	rm -rf $(CHECK_DIR)
 	rm -rf $(DEP_DIR)
 	rm -rf packages/for-debian packages/for-tar
 	rm -rf tests/test.cpp
@@ -139,4 +160,5 @@ clean-all: clean
 	rm -rf dungeon-battle
 	rm -rf packages/dungeon-battle.deb packages/dungeon-battle.tar.gz
 	rm -rf $(DOC_DIR)
+	rm -rf $(CHECK_DIR)
 	rm -rf $(TEST_EXEC)
