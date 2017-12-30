@@ -6,22 +6,6 @@
 Renderer::Renderer() :
     seed(0)
 {
-    // #ifdef PACKAGE
-    //     tileset.loadFromFile("/usr/share/dungeon-battle/tileset.png");
-
-    //     charlie_tex.loadFromFile("/usr/share/dungeon-battle/character01.png");
-    //     entities_tileset.loadFromFile("/usr/share/dungeon-battle/entities.png");
-
-    //     font.loadFromFile("/usr/share/dungeon-battle/FSEX300.ttf");
-    // #else
-    //     tileset.loadFromFile("data/tileset.png");
-
-    //     charlie_tex.loadFromFile("data/character01.png");
-    //     entities_tileset.loadFromFile("data/entities.png");
-
-    //     font.loadFromFile("data/FSEX300.ttf");
-    // #endif
-
     // Initialize the seed of the renderer
     seed = static_cast<unsigned int>
         (Rand::uniform_int(std::numeric_limits<int>::min(), std::numeric_limits<int>::max()));
