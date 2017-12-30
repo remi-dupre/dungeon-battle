@@ -28,6 +28,9 @@ DEP_FILES = $(SRC:$(SRC_DIR)/%.cpp=$(DEP_DIR)/%.d)
 BUILD_DIR = build
 OBJ = $(SRC:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%.o)
 
+# Dummy warning files
+WARNINGS = $(SRC:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%.w)
+
 # Unit test paths
 SRC_DIR_TEST = tests
 SRC_TEST = $(shell find $(SRC_DIR_TEST) -type f -name 'test_*.hpp') # Test files
@@ -43,8 +46,8 @@ DOC_DIR = doc
 # Dir where to output cppcheck reports
 CHECK_DIR = check
 
-.PHONY: all release debug tests-compile tests doc cppcheck-html clean clean-all package package-deb package-tar
-NO_DEPS = clean clean-all lint doc cppcheck-html warning $(TEST_EXEC)
+.PHONY: all release debug tests-compile tests clean clean-all warnings lint cppcheck-html doc package package-deb package-tar
+NO_DEPS = clean clean-all warnings lint cppcheck-html doc package package-deb package-tar $(TEST_EXEC)
 
 debug: DFLAGS += -ggdb
 debug: $(EXEC)
@@ -53,6 +56,10 @@ release: CFLAGS += -O3 -DNDEBUG
 release: $(EXEC)
 
 all: release doc cppcheck-html test
+
+warnings: CFLAGS += -fsyntax-only
+warnings: WFLAGS += $(WFLAGS_EXTRA)
+warnings: $(WARNINGS)
 
 # Include dependency files, without errors if they do not exist
 ifeq (0, $(words $(findstring $(MAKECMDGOALS), $(NO_DEPS))))
@@ -67,6 +74,11 @@ $(EXEC): $(OBJ)
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp $(DEP_DIR)/%.d
 	@mkdir -p $(dir $@)
 	$(CXX) -o $@ -c $< $(CFLAGS) $(DFLAGS) $(WFLAGS)
+
+# Output warnings
+$(BUILD_DIR)/%.w: $(SRC_DIR)/%.cpp
+	@mkdir -p $(dir $@)
+	$(CXX) -c $< $(CFLAGS) $(WFLAGS)
 
 # Create dependency files
 $(DEP_DIR)/%.d: $(SRC_DIR)/%.cpp
@@ -94,7 +106,7 @@ lint:
 
 # Generate linter's report
 cppcheck-html:
-	cppcheck --enable=all --suppressions-list=.cppignore --inconclusive --xml $(SRC_DIR) 2> tmp_cppcheck.xml
+	cppcheck --enable=all --suppressions-list=.cppignore --inconclusive --xml --xml-version=2 $(SRC_DIR) 2> tmp_cppcheck.xml
 	cppcheck-htmlreport --file=tmp_cppcheck.xml --report-dir=$(CHECK_DIR) --source-dir=.
 	@rm tmp_cppcheck.xml
 
@@ -104,11 +116,12 @@ doc:
 
 
 # Create all packages
-.NOTPARALLEL:
-package: package-deb package-tar
+package:
+	$(MAKE) package-deb
+	$(MAKE) package-tar
 
 # Create debian package
-.ONESHELL:
+#.ONESHELL:
 package-deb: CFLAGS += -s -DPACKAGE
 package-deb:
 	$(MAKE) clean-all
@@ -130,7 +143,7 @@ package-deb:
 	fakeroot dpkg-deb --build for-debian dungeon-battle.deb
 
 # Create portable version
-.ONESHELL:
+#.ONESHELL:
 package-tar:
 	$(MAKE) clean-all
 	$(MAKE) release
