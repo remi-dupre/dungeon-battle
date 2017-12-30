@@ -83,10 +83,10 @@ $(DEP_DIR)/%.d: $(SRC_DIR)/%.cpp
 	$(CXX) $(CFLAGS) -MM -MT '$(<:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%.o)' $< -MF $@
 
 # Build and execute test
-$(SRC_DIR_TEST)/%: $(BUILD_DIR)/%.o
-	$(CXX) -o $@ $< $(DFLAGS) $(LFLAGS)
-	@echo "Running the test: " $(@:$(SRC_DIR_TEST)/%=%)
-	@cd $(SRC_DIR_TEST) && ./$(@:$(SRC_DIR_TEST)/%=%)
+#$(SRC_DIR_TEST)/%: $(BUILD_DIR)/%.o
+#	$(CXX) -o $@ $< $(DFLAGS) $(LFLAGS)
+#	@echo "Running the test: " $(@:$(SRC_DIR_TEST)/%=%)
+#	@cd $(SRC_DIR_TEST) && ./$(@:$(SRC_DIR_TEST)/%=%)
 
 lint:
 	cppcheck -q --enable=all --suppressions-list=.cppignore --inconclusive $(SRC_DIR) 1> /dev/null
