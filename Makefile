@@ -13,23 +13,29 @@ WFLAGS_EXTRA = -pedantic -Wcast-align -Wcast-qual -Wctor-dtor-privacy -Wdisabled
                -Wformat=2 -Winit-self -Wlogical-op -Wmissing-declarations -Wmissing-include-dirs \
                -Wnoexcept -Wold-style-cast -Woverloaded-virtual -Wredundant-decls -Wshadow \
                -Wsign-promo -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch-default -Wundef
-
 # Linker flags
 LFLAGS = -lsfml-graphics -lsfml-window -lsfml-system
 
+# Source files
 SRC_DIR = src
-SRC = $(shell find $(SRC_DIR) -type f -name '*.cpp') # List of files to compile
+SRC = $(shell find $(SRC_DIR) -type f -name '*.cpp')
 
 # Dependency files
 DEP_DIR = deps
 DEP_FILES = $(SRC:$(SRC_DIR)/%.cpp=$(DEP_DIR)/%.d)
 
+# Object files
 BUILD_DIR = build
 OBJ = $(SRC:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%.o)
-# List of object files in build/
 
-EXEC = dungeon-battle
+# Unit test paths
+SRC_DIR_TEST = tests
+SRC_TEST = $(shell find $(SRC_DIR_TEST) -type f -name 'test_*.hpp') # Test files
+TEST_CPP = $(SRC_DIR_TEST)/tests.cpp
+TEST_EXEC = $(SRC_DIR_TEST)/tests
+
 # Executable name
+EXEC = dungeon-battle
 
 # Documentation directory
 DOC_DIR = doc
@@ -37,14 +43,8 @@ DOC_DIR = doc
 # Dir where to output cppcheck reports
 CHECK_DIR = check
 
-# Unit test paths
-SRC_DIR_TEST = tests
-SRC_TEST = $(shell find $(SRC_DIR_TEST) -type f -name 'test_*.hpp') # List of files to compile
-TEST_CPP = $(SRC_DIR_TEST)/test.cpp
-TEST_EXEC = $(SRC_DIR_TEST)/test
-
-.PHONY: all release debug test doc cppcheck-html clean package package-deb package-tar
-NO_DEPS = clean lint doc cppcheck-html warning $(TEST_EXEC)
+.PHONY: all release debug tests-compile tests doc cppcheck-html clean clean-all package package-deb package-tar
+NO_DEPS = clean clean-all lint doc cppcheck-html warning $(TEST_EXEC)
 
 debug: DFLAGS += -ggdb
 debug: $(EXEC)
@@ -52,14 +52,10 @@ debug: $(EXEC)
 release: CFLAGS += -O3 -DNDEBUG
 release: $(EXEC)
 
-#warning: WFLAGS += $(WFLAGS_EXTRA)
-#warning: CFLAGS += -fsyntax-only
-#warning: $(OBJ)
-
 all: release doc cppcheck-html test
 
+# Include dependency files, without errors if they do not exist
 ifeq (0, $(words $(findstring $(MAKECMDGOALS), $(NO_DEPS))))
-        # Include dependency files, without errors if they do not exist
         -include $(DEP_FILES)
 endif
 
@@ -77,29 +73,35 @@ $(DEP_DIR)/%.d: $(SRC_DIR)/%.cpp
 	@mkdir -p $(dir $@)
 	$(CXX) $(CFLAGS) -MM -MT '$(<:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%.o)' $< -MF $@
 
+
+# Generate tests with cxxtest
+$(TEST_CPP): $(SRC_TEST)
+	cxxtestgen --error-printer -o tests/test.cpp $^
+
+# Compile test without executing them
+tests-compile: $(TEST_CPP) $(filter-out $(BUILD_DIR)/main.o,$(OBJ))
+	$(CXX) -o $(TEST_EXEC) $^ $(CFLAGS) $(WFLAGS) $(LFLAGS)
+
+# Compile and execute tests using cxxtest
+tests: tests-compile
+	$(TEST_EXEC) -v
+
+# Static analysis of the code, cause make to fail if an error is found
 lint:
 	cppcheck -q --enable=all --suppressions-list=.cppignore --inconclusive $(SRC_DIR) 1> /dev/null
 	@# Return exit code 1 if there are errors
 	cppcheck --error-exitcode=2 --suppressions-list=.cppignore --inconclusive $(SRC_DIR) 1> /dev/null 2> /dev/null
-
-# Executes tests using cxxtest
-tests: $(TEST_CPP) $(filter-out $(BUILD_DIR)/main.o,$(OBJ))
-	$(CXX) -o $(TEST_EXEC) $^ $(CFLAGS) $(WFLAGS) $(LFLAGS)
-	$(TEST_EXEC) -v
-
-# Build the test cpp
-$(TEST_CPP): $(SRC_TEST)
-	cxxtestgen --error-printer -o tests/test.cpp $^
-
-# Generate the documentation
-doc:
-	doxygen .doxygen.conf
 
 # Generate linter's report
 cppcheck-html:
 	cppcheck --enable=all --suppressions-list=.cppignore --inconclusive --xml $(SRC_DIR) 2> tmp_cppcheck.xml
 	cppcheck-htmlreport --file=tmp_cppcheck.xml --report-dir=$(CHECK_DIR) --source-dir=.
 	@rm tmp_cppcheck.xml
+
+# Generate the documentation
+doc:
+	doxygen .doxygen.conf
+
 
 # Create all packages
 .NOTPARALLEL:
@@ -109,7 +111,7 @@ package: package-deb package-tar
 .ONESHELL:
 package-deb: CFLAGS += -s -DPACKAGE
 package-deb:
-	$(MAKE) clean
+	$(MAKE) clean-all
 	$(MAKE) release
 
 	cd packages
@@ -130,7 +132,7 @@ package-deb:
 # Create portable version
 .ONESHELL:
 package-tar:
-	$(MAKE) clean
+	$(MAKE) clean-all
 	$(MAKE) release
 
 	cd packages
