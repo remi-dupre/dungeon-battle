@@ -170,4 +170,4 @@ clean-all: clean
 	rm -rf dungeon-battle
 	rm -rf packages/dungeon-battle.deb packages/dungeon-battle.tar.gz
 	rm -rf $(DOC_DIR)
-	rm -rf $(EXEC_TEST)
+	rm -rf $(TEST_EXEC)
