@@ -64,6 +64,9 @@ debug: $(EXEC)
 release: CFLAGS += -O3 -DNDEBUG
 release: $(EXEC)
 
+profiling: CFLAGS += -O3 -DNDEBUG
+profiling: debug
+
 all: release doc cppcheck-html tests
 
 # ==================================================================================================
