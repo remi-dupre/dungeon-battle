@@ -86,6 +86,11 @@ void Game::run()
 {
     sf::Clock timer;
 
+#ifndef NDEBUG
+    float time = 0.f;
+    int frames = 0;
+#endif
+
     while (window.isOpen())
     {
         sf::Event event;
@@ -102,7 +107,8 @@ void Game::run()
             }
         }
 
-        next_move -= timer.restart().asSeconds();
+        float elapsedTime = timer.restart().asSeconds();
+        next_move -= elapsedTime;
 
         if (menu)
         {
@@ -128,6 +134,18 @@ void Game::run()
         }
 
         window.display();
+
+#ifndef NDEBUG
+        frames++;
+        time += elapsedTime;
+        if (time >= 1.f)
+        {
+            std::cout << frames << "fps" << std::endl;
+            frames = 0;
+            time = 0.f;
+        }
+#endif
+
     }
 }
 
