@@ -11,6 +11,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "config.hpp"
+#include "exploration.hpp"
 #include "map.hpp"
 #include "math.hpp"
 #include "menu.hpp"
@@ -50,7 +51,7 @@ public:
      *
      * This function draws the map.
      */
-    void drawMap(const Map& map);
+    void drawMap(const Map& map, MapExploration& map_exploration);
 
     /**
      * \brief Draw the entities
@@ -87,7 +88,7 @@ private:
      * This function adds the vertices of a cell to the vertex array
      * to draw it later
      */
-    void drawCell(sf::Vector2i coords, CellType cell, const Map& map);
+    void drawCell(sf::Vector2i coords, CellType cell, const Map& map, MapExploration& map_exploration);
 
     unsigned int seed; ///< Seed used for rendering tiles
 

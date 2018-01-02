@@ -19,6 +19,7 @@
 #include "args.hpp"
 #include "config.hpp"
 #include "control.hpp"
+#include "exploration.hpp"
 #include "map.hpp"
 #include "menu.hpp"
 #include "rand.hpp"
@@ -128,6 +129,8 @@ private:
     Map* map; ///< The current map
     std::vector<std::shared_ptr<Entity>>* entities; ///< The current map entities
     std::size_t current_level; ///< The number of the curent level
+
+    MapExploration map_exploration;
 
     std::vector<Level> dungeon; ///< The maps and entities of differents level of the dungeon
 

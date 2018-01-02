@@ -8,7 +8,6 @@
 #include <cmath>
 
 #include <SFML/System/Vector2.hpp>
-#include <SFML/System/Vector3.hpp>
 
 
 /**
@@ -34,17 +33,6 @@ namespace math
     constexpr T dot(const sf::Vector2<T> a, const sf::Vector2<T> b);
 
     /**
-     * \brief Compute the dot product of two 3D vectors
-     * \param a The first 3D vector
-     * \param b The second 3D vector
-     * \return The dot product of *a* and *b*
-     *
-     * This function computes the dot product of two `sf::Vector3`.
-     */
-    template <typename T>
-    constexpr T dot(const sf::Vector3<T> a, const sf::Vector3<T> b);
-
-    /**
      * \brief Compute the Hadamard product of two 2D vectors
      * \param a A 2D vector
      * \param b A 2D vector
@@ -54,17 +42,6 @@ namespace math
      */
     template <typename T>
     constexpr sf::Vector2<T> hadamard(const sf::Vector2<T> a, const sf::Vector2<T> b);
-
-    /**
-     * \brief Compute the Hadamard product of two 3D vectors
-     * \param a A 3D vector
-     * \param b A 3D vector
-     * \return The Hadamard product of *a* and *b*
-     *
-     * This function computes the Hadamard product of two `sf::Vector3`.
-     */
-    template <typename T>
-    constexpr sf::Vector3<T> hadamard(const sf::Vector3<T> a, const sf::Vector2<T> b);
 
     /**
      * \brief Compute the cross product of two 2D vectors
@@ -78,17 +55,6 @@ namespace math
     constexpr T cross(const sf::Vector2<T> a, const sf::Vector2<T> b);
 
     /**
-     * \brief Compute the cross product of two 3D vectors
-     * \param a A 3D vector
-     * \param b A 3D vector
-     * \return The cross product of *a* and *b*
-     *
-     * This function computes the cross product of two `sf::Vector3`.
-     */
-    template <typename T>
-    constexpr sf::Vector3<T> cross(const sf::Vector3<T> a, const sf::Vector2<T> b);
-
-    /**
      * \brief Compute the distance between two 2D vectors
      * \param a The first 2D vector
      * \param b The second 2D vector
@@ -98,17 +64,6 @@ namespace math
      */
     template <typename T>
     constexpr T distance(const sf::Vector2<T> a, const sf::Vector2<T> b);
-
-    /**
-     * \brief Compute the distance between two 3D vectors
-     * \param a The first 3D vector
-     * \param b The second 3D vector
-     * \return The distance between *a* and *b*
-     *
-     * This function computes the distance between two `sf::Vector3`.
-     */
-    template <typename T>
-    constexpr T distance(const sf::Vector3<T> a, const sf::Vector3<T> b);
 
     /**
      * \brief Compute the length squared of a vector
@@ -121,16 +76,6 @@ namespace math
     constexpr T length_sqr(const sf::Vector2<T> a);
 
     /**
-     * \brief Compute the length squared of a vector
-     * \param a A 3D vector
-     * \return The length squared of *a*
-     *
-     * This function computes the length squared of a `sf::Vector3`.
-     */
-    template <typename T>
-    constexpr T length_sqr(const sf::Vector3<T> a);
-
-    /**
      * \brief Compute the length of a vector
      * \param a A 2D vector
      * \return The length of *a*
@@ -141,16 +86,6 @@ namespace math
     constexpr T length(const sf::Vector2<T> a);
 
     /**
-     * \brief Compute the length of a vector
-     * \param a A 3D vector
-     * \return The length of *a*
-     *
-     * This function computes the length of a `sf::Vector3`.
-     */
-    template <typename T>
-    constexpr T length(const sf::Vector3<T> a);
-
-    /**
      * \brief Normalize a 2D vector
      * \param a A 2D vector
      * \return The *a* vector normalized
@@ -159,16 +94,6 @@ namespace math
      */
     template <typename T>
     constexpr sf::Vector2<T> normalize(const sf::Vector2<T> a);
-
-    /**
-     * \brief Normalize a 3D vector
-     * \param a A 3D vector
-     * \return The *a* vector normalized
-     *
-     * This function normalizes a `sf::vector3`.
-     */
-    template <typename T>
-    constexpr sf::Vector3<T> normalize(const sf::Vector3<T> a);
 
     /**
      * \brief Round the coordinates of a 2D vector
@@ -187,10 +112,26 @@ namespace math
     constexpr sf::Vector2<T> ceil(const sf::Vector2<T> a);
 
     /**
+     * \brief Divide the coordinates of a 2D int vector with rounding down
+     * \param a A 2D vector
+     * \param b An integer
+     * \return The vector with coordinates divided
+     */
+    sf::Vector2i divide_floor(sf::Vector2i a, int b);
+
+    /**
+     * \brief Compute the remainder of vector division
+     * \param a A 2D vector
+     * \param b An integer
+     * \return The remainder of vector
+     */
+    sf::Vector2i remainder(sf::Vector2i a, int b);
+
+    /**
      * \brief Compute the distance un norm 1 between two 2D vectors
      * \param a The first 2D vector
      * \param b The second 2D vector
-     * \return The distance un norm 1 between *a* and *b*
+     * \return The distance in norm 1 between *a* and *b*
      *
      * This function computes the distance between two `sf::Vector2`.
      */

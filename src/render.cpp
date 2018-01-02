@@ -23,16 +23,15 @@ void Renderer::setViewCenter(sf::Vector2f center)
     view.setCenter(tile_size * center);
 }
 
-void Renderer::drawMap(const Map& map)
+void Renderer::drawMap(const Map& map, MapExploration& map_exploration)
 {
-    int map_w = map.getWidth();
-    int map_h = map.getHeight();
-
     sf::Vector2i min_corner = static_cast<sf::Vector2i>
         (math::floor((view.getCenter() - 0.5f * view.getSize()) / tile_size));
     sf::Vector2i max_corner = static_cast<sf::Vector2i>
         (math::ceil((view.getCenter() + 0.5f * view.getSize()) / tile_size));
-    sf::Vector2i hero_pos = (max_corner + min_corner) / 2;
+
+    int map_w = map.getWidth();
+    int map_h = map.getHeight();
 
     map_vertices.clear();
     map_vertices.reserve((max_corner.x - min_corner.x) * (max_corner.y - min_corner.y) * 4u);
@@ -41,16 +40,11 @@ void Renderer::drawMap(const Map& map)
     {
         for (int y = std::max(min_corner.y, 0); y < std::min(max_corner.y, map_h); y++)
         {
-            if (can_be_seen(hero_pos, {x, y}, map))
-            {
-                CellType cell = map.cellAt(x, y);
-                drawCell({x, y}, cell, map);
-            }
+            CellType cell = map.cellAt(x, y);
+            drawCell({x, y}, cell, map, map_exploration);
         }
     }
 }
-
-#include <iostream>
 
 void Renderer::drawEntities(const std::vector<std::shared_ptr<Entity>>& entities, float frame_progress)
 {
@@ -241,10 +235,23 @@ void Renderer::display(sf::RenderTarget& target)
     menu_texts.clear();
 }
 
-void Renderer::drawCell(sf::Vector2i coords, CellType cell, const Map& map)
+void Renderer::drawCell(sf::Vector2i coords, CellType cell, const Map& map, MapExploration& map_exploration)
 {
     if (cell == CellType::Empty)
         return;
+
+    sf::Vector2i min_corner = static_cast<sf::Vector2i>
+        (math::floor((view.getCenter() - 0.5f * view.getSize()) / tile_size));
+    sf::Vector2i max_corner = static_cast<sf::Vector2i>
+        (math::ceil((view.getCenter() + 0.5f * view.getSize()) / tile_size));
+    sf::Vector2i hero_pos = (max_corner + min_corner) / 2;
+
+    bool cell_visible = can_be_seen(hero_pos, coords, map);
+    if (!cell_visible && !map_exploration.isExplored(coords))
+        return;
+
+    if (cell_visible)
+        map_exploration.setExplored(coords);
 
     RandRender::seed(std::hash<sf::Vector2i>{}(coords));
 
@@ -305,6 +312,14 @@ void Renderer::drawCell(sf::Vector2i coords, CellType cell, const Map& map)
             [[fallthrough]];
         default:
             return; // Don't draw empty/unkonwn cells
+    }
+
+    if (!cell_visible && map_exploration.isExplored(coords))
+    {
+        v1.color = {100, 100, 100};
+        v2.color = {100, 100, 100};
+        v3.color = {100, 100, 100};
+        v4.color = {100, 100, 100};
     }
 
     map_vertices.push_back(v1);

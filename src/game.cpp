@@ -362,7 +362,7 @@ void Game::display()
         renderer.setViewCenter(view_center);
     }
 
-    renderer.drawMap(*map);
+    renderer.drawMap(*map, map_exploration);
     renderer.drawEntities(*entities, 1.f - std::max(next_move, 0.f) / move_time);
 
     renderer.display(window);
