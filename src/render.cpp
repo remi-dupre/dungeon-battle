@@ -10,6 +10,19 @@ Renderer::Renderer() :
     seed = static_cast<unsigned int>
         (Rand::uniform_int(std::numeric_limits<int>::min(), std::numeric_limits<int>::max()));
 
+    view.setSize({static_cast<float>(Configuration::default_configuration.width),
+                static_cast<float>(Configuration::default_configuration.height)});
+
+
+    // Max number of vertices at the same time
+    unsigned int n_tiles = 6 * (Configuration::default_configuration.width + tile_size)
+                             * (Configuration::default_configuration.height + tile_size)
+                             / (tile_size * tile_size);
+
+    map_vertices_bg.reserve(2 * n_tiles);
+    map_vertices_fg.reserve(n_tiles);
+    entities_sprites.reserve(1000);
+
     hero_life.setFont(RessourceManager::getFont());
     hero_life.setCharacterSize(20.f);
     hero_life.setPosition(10.f, 10.f);
@@ -25,6 +38,9 @@ void Renderer::setViewCenter(sf::Vector2f center)
 
 void Renderer::drawMap(const Map& map, MapExploration& map_exploration)
 {
+    map_vertices_bg.clear();
+    map_vertices_fg.clear();
+
     sf::Vector2i min_corner = static_cast<sf::Vector2i>
         (math::floor((view.getCenter() - 0.5f * view.getSize()) / tile_size));
     sf::Vector2i max_corner = static_cast<sf::Vector2i>
@@ -32,9 +48,6 @@ void Renderer::drawMap(const Map& map, MapExploration& map_exploration)
 
     int map_w = map.getWidth();
     int map_h = map.getHeight();
-
-    map_vertices.clear();
-    map_vertices.reserve((max_corner.x - min_corner.x) * (max_corner.y - min_corner.y) * 4u);
 
     for (int x = std::max(min_corner.x, 0); x < std::min(max_corner.x, map_w); x++)
     {
@@ -51,8 +64,15 @@ void Renderer::drawEntities(const std::vector<std::shared_ptr<Entity>>& entities
     entities_sprites.clear();
     entities_sprites.reserve(entities.size());
 
+    sf::FloatRect viewport = {math::floor((view.getCenter() - 0.5f * view.getSize()) / tile_size),
+                              math::ceil((view.getCenter() + 0.5f * view.getSize()) / tile_size)};
+
     for (const auto& entity : entities)
     {
+
+        if (!viewport.contains(static_cast<sf::Vector2f>(entity->getPosition())))
+            continue;
+
         RandRender::seed(entity->getId() + seed);
 
         sf::Sprite entity_sprite;
@@ -209,20 +229,23 @@ void Renderer::display(sf::RenderTarget& target)
         x_offset = (screen_x - x) / screen_x;
     }
 
-    view.setSize({static_cast<float>(Configuration::default_configuration.width),
-                static_cast<float>(Configuration::default_configuration.height)});
     view.setViewport({x_offset / 2.f, y_offset / 2.f, 1.f - x_offset, 1.f - y_offset});
 
     target.setView(view);
 
     sf::RenderStates map_rstates(&RessourceManager::getTexture(Textures::Tileset));
-    target.draw(map_vertices.data(),
-                map_vertices.size(),
+    target.draw(map_vertices_bg.data(),
+                map_vertices_bg.size(),
                 sf::PrimitiveType::Triangles,
                 map_rstates);
 
     for (const auto& sprite : entities_sprites)
         target.draw(sprite);
+
+    target.draw(map_vertices_fg.data(),
+                map_vertices_fg.size(),
+                sf::PrimitiveType::Triangles,
+                map_rstates);
 
     view.setCenter(static_cast<float>(Configuration::default_configuration.width) / 2.f,
                    static_cast<float>(Configuration::default_configuration.height) / 2.f);
@@ -259,6 +282,14 @@ void Renderer::drawCell(sf::Vector2i coords, CellType cell, const Map& map, MapE
 
     sf::Vertex v1, v2, v3, v4;
 
+    if (!cell_visible && map_exploration.isExplored(coords))
+    {
+        v1.color = {100, 100, 100};
+        v2.color = {100, 100, 100};
+        v3.color = {100, 100, 100};
+        v4.color = {100, 100, 100};
+    }
+
     v1.position = p;
     v2.position = {p.x, p.y + tile_size};
     v3.position = {p.x + tile_size, p.y};
@@ -287,46 +318,41 @@ void Renderer::drawCell(sf::Vector2i coords, CellType cell, const Map& map, MapE
 
     assert(0 <= tile_index && tile_index < 16);
 
-    int tile_nb;
-
     sf::Vector2f t = tiles_coord[tile_index];
 
-    switch (cell)
+    v1.texCoords = t;
+    v2.texCoords = {t.x, t.y + 31.f};
+    v3.texCoords = {t.x + 31.f, t.y};
+    v4.texCoords = {t.x + 31.f, t.y + 31.f};
+
+    map_vertices_bg.push_back(v1);
+    map_vertices_bg.push_back(v2);
+    map_vertices_bg.push_back(v4);
+
+    map_vertices_bg.push_back(v1);
+    map_vertices_bg.push_back(v3);
+    map_vertices_bg.push_back(v4);
+
+    if (cell != CellType::Wall)
+        return;
+
+    bool wall = false;
+    for (int i = 0; i < 4; i++)
     {
-        case CellType::Floor:
-            v1.texCoords = t;
-            v2.texCoords = {t.x, t.y + 31.f};
-            v3.texCoords = {t.x + 31.f, t.y};
-            v4.texCoords = {t.x + 31.f, t.y + 31.f};
-            break;
-
-        case CellType::Wall:
-            tile_nb = RandRender::uniform_int(0, 3);
-            v1.texCoords = {32.f * tile_nb, 160.f};
-            v2.texCoords = {32.f * tile_nb, 191.f};
-            v3.texCoords = {32.f * tile_nb + 31.f, 160.f};
-            v4.texCoords = {32.f * tile_nb + 31.f, 191.f};
-            break;
-
-        case CellType::Empty:
-            [[fallthrough]];
-        default:
-            return; // Don't draw empty/unkonwn cells
+        wall |= (map.cellAt(coords + next_tiles[i]) == CellType::Wall);
     }
 
-    if (!cell_visible && map_exploration.isExplored(coords))
-    {
-        v1.color = {100, 100, 100};
-        v2.color = {100, 100, 100};
-        v3.color = {100, 100, 100};
-        v4.color = {100, 100, 100};
-    }
+    int tile_nb = RandRender::uniform_int(0, 3);
+    v1.texCoords = {32.f * tile_nb, 160.f};
+    v2.texCoords = {32.f * tile_nb, 191.f};
+    v3.texCoords = {32.f * tile_nb + 31.f, 160.f};
+    v4.texCoords = {32.f * tile_nb + 31.f, 191.f};
 
-    map_vertices.push_back(v1);
-    map_vertices.push_back(v2);
-    map_vertices.push_back(v4);
+    map_vertices_bg.push_back(v1);
+    map_vertices_bg.push_back(v2);
+    map_vertices_bg.push_back(v4);
 
-    map_vertices.push_back(v1);
-    map_vertices.push_back(v3);
-    map_vertices.push_back(v4);
+    map_vertices_bg.push_back(v1);
+    map_vertices_bg.push_back(v3);
+    map_vertices_bg.push_back(v4);
 }
