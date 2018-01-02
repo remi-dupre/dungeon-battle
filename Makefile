@@ -55,12 +55,6 @@ CHECK_DIR = check
 .PHONY: all release debug tests-compile tests clean clean-all warnings \
 	lint cppcheck-html doc package package-deb package-tar
 
-# Include dependency files, without errors if they do not exist
-NO_DEPS = clean clean-all warnings lint cppcheck-html doc package package-deb package-tar $(TEST_EXEC)
-ifeq (0, $(words $(findstring $(MAKECMDGOALS), $(NO_DEPS))))
-        -include $(DEP_FILES)
-endif
-
 # ==================================================================================================
 # Main targets
 
@@ -88,6 +82,12 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp $(DEP_DIR)/%.d
 $(DEP_DIR)/%.d: $(SRC_DIR)/%.cpp
 	@mkdir -p $(dir $@)
 	$(CXX) $(CFLAGS) -MM -MT '$(<:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%.o)' $< -MF $@
+
+# Include dependency files, without errors if they do not exist
+NO_DEPS = clean clean-all warnings lint cppcheck-html doc package package-deb package-tar $(TEST_EXEC)
+ifeq (0, $(words $(findstring $(MAKECMDGOALS), $(NO_DEPS))))
+        -include $(DEP_FILES)
+endif
 
 # ==================================================================================================
 # Warnings target, output all g++ warnings without compiling
