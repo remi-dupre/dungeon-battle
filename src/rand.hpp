@@ -56,11 +56,11 @@ public:
 
 private:
 
-    static std::mt19937 random_engine; ///< The internal random engine
+    static std::minstd_rand random_engine; ///< The internal random engine
 };
 
 template <RandomType T>
-std::mt19937 Random<T>::random_engine;
+std::minstd_rand Random<T>::random_engine;
 
 template <RandomType T>
 int Random<T>::uniform_int(int a, int b)
