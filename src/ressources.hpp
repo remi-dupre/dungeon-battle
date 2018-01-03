@@ -5,6 +5,7 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "map.hpp"
 #include "utility.hpp"
 
 
@@ -71,6 +72,8 @@ public:
     { ressources_path = ressources_path_; };
 
 
+    static sf::Vector2f getTileTextureCoords(CellType cell_type, Direction neighborhood);
+
     static sf::Texture& getTexture(Textures texture_type);
     static sf::Font& getFont();
 
@@ -80,6 +83,9 @@ public:
 private:
 
     static std::string ressources_path;
+
+    static const sf::Vector2f ground_texture_coords[];
+    static const sf::Vector2f wall_texture_coords[];
 
     static std::map<Textures, sf::Texture> textures;
     static std::map<EntitySprite, EntityAnimationData> animations;

@@ -90,9 +90,8 @@ bool Map::wallNext(sf::Vector2i coords) const
     {
         for (int j = -1; j <= 1; j++)
         {
-            if (i != 0 && j != 0)
-                if (cellAt(coords.x + i, coords.y + j) == CellType::Wall)
-                    return true;
+            if (cellAt(coords.x + i, coords.y + j) == CellType::Wall)
+                return true;
         }
     }
 

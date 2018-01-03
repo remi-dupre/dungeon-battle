@@ -16,14 +16,22 @@
  */
 enum class Direction
 {
-    None, ///< No specific direction
-    Left, ///< Left
-    Right, ///< Right
-    Up, ///< Up
-    Down ///< Down
+    None  = 0,      ///< No specific direction
+    Up    = 1 << 0, ///< Up
+    Right = 1 << 1, ///< Right
+    Down  = 1 << 2, ///< Down
+    Left  = 1 << 3  ///< Left
 };
 
+Direction operator|(Direction a, Direction b);
+Direction operator&(Direction a, Direction b);
+Direction operator|=(Direction& a, Direction b);
+Direction operator&=(Direction& a, Direction b);
+bool has_direction(Direction a, Direction b);
+
 sf::Vector2i to_vector2i(Direction direction);
+
+constexpr Direction directions[] = {Direction::Left, Direction::Up, Direction::Right, Direction::Down};
 
 namespace std
 {

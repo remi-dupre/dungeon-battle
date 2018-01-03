@@ -4,8 +4,36 @@
 #include <fstream>
 #include <string>
 
+#include "rand.hpp"
+
 
 std::string RessourceManager::ressources_path = "data/"s;
+
+const sf::Vector2f RessourceManager::ground_texture_coords[] = {
+    {0.f  , 0.f }, {0.f , 96.f}, {32.f , 96.f}, {0.f , 64.f},
+    {64.f , 96.f}, {32.f, 64.f}, {64.f , 64.f}, {0.f , 32.f},
+    {96.f , 96.f}, {96.f, 64.f}, {128.f, 64.f}, {32.f, 32.f},
+    {160.f, 64.f}, {64.f, 32.f}, {96.f , 32.f}, {0.f , 0.f }
+};
+
+const sf::Vector2f RessourceManager::wall_texture_coords[] = {
+    {320.f, 96.f  }, // None
+    {320.f, 0.f  }, // Up
+    {224.f, 0.f  }, // Right
+    {224.f, 96.f }, // Up Right
+    {320.f, 32.f }, // Down
+    {224.f, 32.f }, // Up Down
+    {224.f, 128.f}, // Down Right
+    {288.f, 32.f }, // Up Down Right
+    {192.f, 0.f  }, // Left
+    {192.f, 96.f }, // Up Left
+    {256.f, 96.f }, // Right Left
+    {256.f, 0.f  }, // Up Right Left
+    {192.f, 128.f}, // Down Left
+    {192.f, 32.f }, // Up Down Left
+    {256.f, 128.f}, // Down Right Left
+    {288.f, 96.f }  // Up Down Right Left
+};
 
 std::map<Textures, sf::Texture> RessourceManager::textures;
 std::map<EntitySprite, EntityAnimationData> RessourceManager::animations;
@@ -157,6 +185,27 @@ bool RessourceManager::loadAnimations()
     return true;
 }
 
+sf::Vector2f RessourceManager::getTileTextureCoords(CellType cell_type, Direction neighborhood)
+{
+    if (cell_type == CellType::Floor)
+    {
+        if (neighborhood == Direction::None)
+            return {RandRender::uniform_int(0, 5) * 32.f, 128.f};
+        if (has_direction(neighborhood, Direction::Down) &&
+            has_direction(neighborhood, Direction::Up) &&
+            has_direction(neighborhood, Direction::Left) &&
+            has_direction(neighborhood, Direction::Right))
+            return {RandRender::uniform_int(0, 5) * 32.f, 0.f};
+
+        return ground_texture_coords[static_cast<int>(neighborhood)];
+    }
+    else if (cell_type == CellType::Wall)
+    {
+        return wall_texture_coords[static_cast<int>(neighborhood)];
+    }
+
+    return static_cast<sf::Vector2f>(textures[Textures::Tileset].getSize());
+}
 
 sf::Texture& RessourceManager::getTexture(Textures texture_type)
 {

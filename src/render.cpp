@@ -3,6 +3,9 @@
 #include "lighting.hpp"
 #include "ressources.hpp"
 
+#pragma GCC diagnostic ignored "-Wdeprecated"
+
+
 Renderer::Renderer() :
     seed(0)
 {
@@ -15,13 +18,13 @@ Renderer::Renderer() :
 
 
     // Max number of vertices at the same time
-    unsigned int n_tiles = 6 * (Configuration::default_configuration.width + tile_size)
-                             * (Configuration::default_configuration.height + tile_size)
-                             / (tile_size * tile_size);
+    unsigned int n_tiles = (Configuration::default_configuration.width + tile_size)
+                         * (Configuration::default_configuration.height + tile_size)
+                         / (tile_size * tile_size);
 
-    map_vertices_bg.reserve(2 * n_tiles);
-    map_vertices_fg.reserve(n_tiles);
-    entities_sprites.reserve(1000);
+    map_vertices_bg.reserve(2 * 6 * n_tiles);
+    map_vertices_fg.reserve(6 * n_tiles);
+    entities_sprites.reserve(2 * n_tiles);
 
     hero_life.setFont(RessourceManager::getFont());
     hero_life.setCharacterSize(20.f);
@@ -41,9 +44,9 @@ void Renderer::drawMap(const Map& map, MapExploration& map_exploration)
     map_vertices_bg.clear();
     map_vertices_fg.clear();
 
-    sf::Vector2i min_corner = static_cast<sf::Vector2i>
+    sf::Vector2i min_corner = sf::Vector2i(-1, -1) + static_cast<sf::Vector2i>
         (math::floor((view.getCenter() - 0.5f * view.getSize()) / tile_size));
-    sf::Vector2i max_corner = static_cast<sf::Vector2i>
+    sf::Vector2i max_corner = sf::Vector2i(1, 1) + static_cast<sf::Vector2i>
         (math::ceil((view.getCenter() + 0.5f * view.getSize()) / tile_size));
 
     int map_w = map.getWidth();
@@ -272,58 +275,43 @@ void Renderer::drawCell(sf::Vector2i coords, CellType cell, const Map& map, MapE
     bool cell_visible = can_be_seen(hero_pos, coords, map);
     if (!cell_visible && !map_exploration.isExplored(coords))
         return;
-
     if (cell_visible)
         map_exploration.setExplored(coords);
 
     RandRender::seed(std::hash<sf::Vector2i>{}(coords));
 
-    sf::Vector2f p = tile_size * static_cast<sf::Vector2f>(coords);
+    sf::Vector2f pos = tile_size * static_cast<sf::Vector2f>(coords);
+
+    Direction floor_neighborhood = Direction::None;
+    if (map.wallNext(coords))
+    {
+        floor_neighborhood = Direction::Down | Direction::Up | Direction::Left | Direction::Right;
+    }
+    else
+    {
+        for (Direction dir : directions)
+        {
+            if (map.wallNext(coords + to_vector2i(dir)))
+                floor_neighborhood |= dir;
+        }
+    }
+
+    sf::Vector2f tex_coords = RessourceManager::getTileTextureCoords(CellType::Floor, floor_neighborhood);
+
+    sf::Color cell_color = sf::Color::White;
+    if (!cell_visible && map_exploration.isExplored(coords))
+        cell_color = {100, 100, 100};
 
     sf::Vertex v1, v2, v3, v4;
+    v1 = v2 = v3 = v4 = {pos, cell_color, tex_coords};
 
-    if (!cell_visible && map_exploration.isExplored(coords))
-    {
-        v1.color = {100, 100, 100};
-        v2.color = {100, 100, 100};
-        v3.color = {100, 100, 100};
-        v4.color = {100, 100, 100};
-    }
+    v2.position.y += tile_size;
+    v3.position.x += tile_size;
+    v4.position += {tile_size, tile_size};
 
-    v1.position = p;
-    v2.position = {p.x, p.y + tile_size};
-    v3.position = {p.x + tile_size, p.y};
-    v4.position = {p.x + tile_size, p.y + tile_size};
-
-    // Texture rectangles for floor are hardcoded for now
-    const sf::Vector2f tiles_coord[] = {
-        {RandRender::uniform_int(0, 5) * 32.f, 128.f},
-        {0.f, 96.f}, {32.f, 96.f}, {0.f, 64.f}, {64.f, 96.f},
-        {32.f, 64.f}, {64.f, 64.f}, {0.f, 32.f}, {96.f, 96.f},
-        {96.f, 64.f}, {128.f, 64.f}, {32.f, 32.f}, {160.f, 64.f},
-        {64.f, 32.f}, {96.f, 32.f},
-        {RandRender::uniform_int(0, 5) * 32.f, 0.f}
-    };
-
-    sf::Vector2i next_tiles[] = {{0, -1}, {1, 0}, {0, 1}, {-1, 0}};
-    int tile_index = 0;
-
-    for (int i = 0; i < 4; i++)
-    {
-        if (map.wallNext(coords + next_tiles[i]))
-            tile_index |= 1 << i;
-    }
-    if (map.wallNext(coords))
-        tile_index = 15;
-
-    assert(0 <= tile_index && tile_index < 16);
-
-    sf::Vector2f t = tiles_coord[tile_index];
-
-    v1.texCoords = t;
-    v2.texCoords = {t.x, t.y + 31.f};
-    v3.texCoords = {t.x + 31.f, t.y};
-    v4.texCoords = {t.x + 31.f, t.y + 31.f};
+    v2.texCoords.y += tile_size;
+    v3.texCoords.x += tile_size;
+    v4.texCoords += {tile_size, tile_size};
 
     map_vertices_bg.push_back(v1);
     map_vertices_bg.push_back(v2);
@@ -332,21 +320,32 @@ void Renderer::drawCell(sf::Vector2i coords, CellType cell, const Map& map, MapE
     map_vertices_bg.push_back(v1);
     map_vertices_bg.push_back(v3);
     map_vertices_bg.push_back(v4);
+
 
     if (cell != CellType::Wall)
         return;
 
-    bool wall = false;
-    for (int i = 0; i < 4; i++)
+    Direction neighborhood = Direction::None;
+    for (Direction dir : directions)
     {
-        wall |= (map.cellAt(coords + next_tiles[i]) == CellType::Wall);
+        if (map.cellAt(coords + to_vector2i(dir)) == CellType::Floor)
+            neighborhood |= dir;
     }
 
-    int tile_nb = RandRender::uniform_int(0, 3);
-    v1.texCoords = {32.f * tile_nb, 160.f};
-    v2.texCoords = {32.f * tile_nb, 191.f};
-    v3.texCoords = {32.f * tile_nb + 31.f, 160.f};
-    v4.texCoords = {32.f * tile_nb + 31.f, 191.f};
+    // Lower part of walls
+    sf::Vector2f wall_tex_coords =
+        RessourceManager::getTileTextureCoords(CellType::Empty, Direction::None);
+    if (map.cellAt(coords + sf::Vector2i(0, 1)) == CellType::Empty)
+        wall_tex_coords = RessourceManager::getTileTextureCoords(CellType::Wall, Direction::None)
+            + sf::Vector2f(0.f, tile_size);
+    if (has_direction(neighborhood, Direction::Down))
+        wall_tex_coords = RessourceManager::getTileTextureCoords(CellType::Wall, neighborhood)
+            + sf::Vector2f(0.f, tile_size);
+
+    v1.texCoords = v2.texCoords = v3.texCoords = v4.texCoords = wall_tex_coords;
+    v2.texCoords.y += tile_size;
+    v3.texCoords.x += tile_size;
+    v4.texCoords += {tile_size, tile_size};
 
     map_vertices_bg.push_back(v1);
     map_vertices_bg.push_back(v2);
@@ -355,4 +354,73 @@ void Renderer::drawCell(sf::Vector2i coords, CellType cell, const Map& map, MapE
     map_vertices_bg.push_back(v1);
     map_vertices_bg.push_back(v3);
     map_vertices_bg.push_back(v4);
+
+    // Upper part of walls
+    wall_tex_coords = RessourceManager::getTileTextureCoords(CellType::Wall, neighborhood);
+
+    v1.position.y -= tile_size;
+    v2.position.y -= tile_size;
+    v3.position.y -= tile_size;
+    v4.position.y -= tile_size;
+
+    v1.texCoords = v2.texCoords = v3.texCoords = v4.texCoords = wall_tex_coords;
+    v2.texCoords.y += tile_size;
+    v3.texCoords.x += tile_size;
+    v4.texCoords += {tile_size, tile_size};
+
+    map_vertices_fg.push_back(v1);
+    map_vertices_fg.push_back(v2);
+    map_vertices_fg.push_back(v4);
+
+    map_vertices_fg.push_back(v1);
+    map_vertices_fg.push_back(v3);
+    map_vertices_fg.push_back(v4);
+
+
+    // Corners of walls
+    for (int i = 0; i < 4; ++i)
+    {
+        Direction dir1 = directions[i], dir2 = directions[(i+1) & 3],
+            dir_corner = dir1 | dir2;
+        if (map.cellAt(coords + to_vector2i(dir1)) != CellType::Floor &&
+            map.cellAt(coords + to_vector2i(dir2)) != CellType::Floor)
+        {
+            CellType corner_cell = map.cellAt(coords + to_vector2i(dir_corner));
+
+            sf::Vector2f offset = {0.f, 0.f};
+            float height = 0.f;
+
+            if (has_direction(dir_corner, Direction::Right))
+                offset.x += tile_size / 2.f;
+            if (has_direction(dir_corner, Direction::Down))
+            {
+                offset.y += tile_size / 2.f;
+                if (corner_cell == CellType::Floor)
+                    height = tile_size;
+            }
+
+            v1.position = v2.position = v3.position = v4.position =
+                pos + offset - sf::Vector2f(0.f, tile_size);
+            v2.position.y += tile_size / 2.f + height;
+            v3.position.x += tile_size / 2.f;
+            v4.position += {tile_size / 2.f, tile_size / 2.f + height};
+
+            sf::Vector2f corner_tex_coords = {256.f, 32.f};
+            if (corner_cell != CellType::Floor)
+                corner_tex_coords = {320.f, 128.f};
+
+            v1.texCoords = v2.texCoords = v3.texCoords = v4.texCoords = corner_tex_coords + offset;
+            v2.texCoords.y += tile_size / 2.f + height;
+            v3.texCoords.x += tile_size / 2.f;
+            v4.texCoords += {tile_size / 2.f, tile_size / 2.f + height};
+
+            map_vertices_fg.push_back(v1);
+            map_vertices_fg.push_back(v2);
+            map_vertices_fg.push_back(v4);
+
+            map_vertices_fg.push_back(v1);
+            map_vertices_fg.push_back(v3);
+            map_vertices_fg.push_back(v4);
+        }
+    }
 }

@@ -1,22 +1,44 @@
 #include "utility.hpp"
 
+Direction operator|(Direction a, Direction b)
+{
+    return static_cast<Direction>(static_cast<int>(a) | static_cast<int>(b));
+}
+
+Direction operator&(Direction a, Direction b)
+{
+    return static_cast<Direction>(static_cast<int>(a) & static_cast<int>(b));
+}
+
+Direction operator|=(Direction& a, Direction b)
+{
+    return a = a | b;
+}
+
+Direction operator&=(Direction& a, Direction b)
+{
+    return a = a & b;
+}
+
+bool has_direction(Direction a, Direction b)
+{
+    return static_cast<int>(a & b) != 0;
+}
+
 sf::Vector2i to_vector2i(Direction direction)
 {
-    switch (direction)
-    {
-    case Direction::Up:
-        return {0, -1};
-    case Direction::Down:
-        return {0, 1};
-    case Direction::Left:
-        return {-1, 0};
-    case Direction::Right:
-        return {1, 0};
-    default:
-        break;
-    }
+    sf::Vector2i result = {0, 0};
 
-    return {0, 0};
+    if (has_direction(direction, Direction::Down))
+        result.y += 1;
+    if (has_direction(direction, Direction::Up))
+        result.y -= 1;
+    if (has_direction(direction, Direction::Right))
+        result.x += 1;
+    if (has_direction(direction, Direction::Left))
+        result.x -= 1;
+
+    return result;
 }
 
 std::pair<int, int> std::operator +(const std::pair<int, int>& x, const std::pair<int, int>& y) {

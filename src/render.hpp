@@ -85,8 +85,8 @@ private:
      * \param coords The coordinates of the cell
      * \param cell The type of the cell
      *
-     * This function adds the vertices of a cell to the vertex array
-     * to draw it later
+     * This function adds the vertices of a cell to
+     * the vertex array to draw it later
      */
     void drawCell(sf::Vector2i coords, CellType cell, const Map& map, MapExploration& map_exploration);
 
