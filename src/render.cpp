@@ -273,10 +273,18 @@ void Renderer::drawCell(sf::Vector2i coords, CellType cell, const Map& map, MapE
     sf::Vector2i hero_pos = (max_corner + min_corner) / 2;
 
     bool cell_visible = can_be_seen(hero_pos, coords, map);
-    if (!cell_visible && !map_exploration.isExplored(coords))
-        return;
     if (cell_visible)
         map_exploration.setExplored(coords);
+
+    bool next_explored = map_exploration.isExplored(coords + to_vector2i(Direction::Up)) ||
+                         map_exploration.isExplored(coords + to_vector2i(Direction::Down)) ||
+                         map_exploration.isExplored(coords + to_vector2i(Direction::Left)) ||
+                         map_exploration.isExplored(coords + to_vector2i(Direction::Right));
+    bool wall_visible = cell_visible || (next_explored && cell == CellType::Wall);
+    bool cell_explored = map_exploration.isExplored(coords);
+
+    if (!wall_visible && !cell_explored)
+        return;
 
     RandRender::seed(std::hash<sf::Vector2i>{}(coords));
 
@@ -299,7 +307,7 @@ void Renderer::drawCell(sf::Vector2i coords, CellType cell, const Map& map, MapE
     sf::Vector2f tex_coords = RessourceManager::getTileTextureCoords(CellType::Floor, floor_neighborhood);
 
     sf::Color cell_color = sf::Color::White;
-    if (!cell_visible && map_exploration.isExplored(coords))
+    if (!wall_visible && cell_explored)
         cell_color = {100, 100, 100};
 
     sf::Vertex v1, v2, v3, v4;
@@ -313,14 +321,16 @@ void Renderer::drawCell(sf::Vector2i coords, CellType cell, const Map& map, MapE
     v3.texCoords.x += tile_size;
     v4.texCoords += {tile_size, tile_size};
 
-    map_vertices_bg.push_back(v1);
-    map_vertices_bg.push_back(v2);
-    map_vertices_bg.push_back(v4);
+    if (cell_visible || cell_explored)
+    {
+        map_vertices_bg.push_back(v1);
+        map_vertices_bg.push_back(v2);
+        map_vertices_bg.push_back(v4);
 
-    map_vertices_bg.push_back(v1);
-    map_vertices_bg.push_back(v3);
-    map_vertices_bg.push_back(v4);
-
+        map_vertices_bg.push_back(v1);
+        map_vertices_bg.push_back(v3);
+        map_vertices_bg.push_back(v4);
+    }
 
     if (cell != CellType::Wall)
         return;
