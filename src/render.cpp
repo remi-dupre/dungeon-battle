@@ -3,7 +3,7 @@
 #include "lighting.hpp"
 #include "ressources.hpp"
 
-#pragma GCC diagnostic ignored "-Wdeprecated"
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 
 
 Renderer::Renderer() :
@@ -273,16 +273,19 @@ void Renderer::drawCell(sf::Vector2i coords, CellType cell, const Map& map, MapE
     sf::Vector2i hero_pos = (max_corner + min_corner) / 2;
 
     bool cell_visible = can_be_seen(hero_pos, coords, map);
-    if (cell_visible)
-        map_exploration.setExplored(coords);
-
     bool next_explored = map_exploration.isExplored(coords + to_vector2i(Direction::Up)) ||
                          map_exploration.isExplored(coords + to_vector2i(Direction::Down)) ||
                          map_exploration.isExplored(coords + to_vector2i(Direction::Left)) ||
                          map_exploration.isExplored(coords + to_vector2i(Direction::Right));
+    bool next_visible = can_be_seen(hero_pos, coords + to_vector2i(Direction::Up), map) ||
+                        can_be_seen(hero_pos, coords + to_vector2i(Direction::Down), map) ||
+                        can_be_seen(hero_pos, coords + to_vector2i(Direction::Left), map) ||
+                        can_be_seen(hero_pos, coords + to_vector2i(Direction::Right), map);
     bool wall_visible = cell_visible || (next_explored && cell == CellType::Wall);
     bool cell_explored = map_exploration.isExplored(coords);
 
+    if (wall_visible)
+        map_exploration.setExplored(coords);
     if (!wall_visible && !cell_explored)
         return;
 
@@ -307,7 +310,7 @@ void Renderer::drawCell(sf::Vector2i coords, CellType cell, const Map& map, MapE
     sf::Vector2f tex_coords = RessourceManager::getTileTextureCoords(CellType::Floor, floor_neighborhood);
 
     sf::Color cell_color = sf::Color::White;
-    if (!wall_visible && cell_explored)
+    if (!(cell_visible || (cell == CellType::Wall && next_visible)) && cell_explored)
         cell_color = {100, 100, 100};
 
     sf::Vertex v1, v2, v3, v4;
@@ -338,14 +341,17 @@ void Renderer::drawCell(sf::Vector2i coords, CellType cell, const Map& map, MapE
     Direction neighborhood = Direction::None;
     for (Direction dir : directions)
     {
-        if (map.cellAt(coords + to_vector2i(dir)) == CellType::Floor)
+        if ((map.cellAt(coords + to_vector2i(dir)) == CellType::Floor &&
+            map_exploration.isExplored(coords + to_vector2i(dir))) ||
+            (!map_exploration.isExplored(coords + to_vector2i(dir)) && next_explored && !wall_visible))
             neighborhood |= dir;
     }
 
     // Lower part of walls
     sf::Vector2f wall_tex_coords =
         RessourceManager::getTileTextureCoords(CellType::Empty, Direction::None);
-    if (map.cellAt(coords + sf::Vector2i(0, 1)) == CellType::Empty)
+    if (map.cellAt(coords + sf::Vector2i(0, 1)) == CellType::Empty ||
+        !map_exploration.isExplored(coords + sf::Vector2i(0, 1)))
         wall_tex_coords = RessourceManager::getTileTextureCoords(CellType::Wall, Direction::None)
             + sf::Vector2f(0.f, tile_size);
     if (has_direction(neighborhood, Direction::Down))
@@ -392,8 +398,10 @@ void Renderer::drawCell(sf::Vector2i coords, CellType cell, const Map& map, MapE
     {
         Direction dir1 = directions[i], dir2 = directions[(i+1) & 3],
             dir_corner = dir1 | dir2;
-        if (map.cellAt(coords + to_vector2i(dir1)) != CellType::Floor &&
-            map.cellAt(coords + to_vector2i(dir2)) != CellType::Floor)
+        if ((map.cellAt(coords + to_vector2i(dir1)) != CellType::Floor ||
+             !map_exploration.isExplored(coords + to_vector2i(dir1))) &&
+            (map.cellAt(coords + to_vector2i(dir2)) != CellType::Floor ||
+             !map_exploration.isExplored(coords + to_vector2i(dir2))))
         {
             CellType corner_cell = map.cellAt(coords + to_vector2i(dir_corner));
 
@@ -416,7 +424,8 @@ void Renderer::drawCell(sf::Vector2i coords, CellType cell, const Map& map, MapE
             v4.position += {tile_size / 2.f, tile_size / 2.f + height};
 
             sf::Vector2f corner_tex_coords = {256.f, 32.f};
-            if (corner_cell != CellType::Floor)
+            if (corner_cell != CellType::Floor ||
+                !map_exploration.isExplored(coords + to_vector2i(dir_corner)))
                 corner_tex_coords = {320.f, 128.f};
 
             v1.texCoords = v2.texCoords = v3.texCoords = v4.texCoords = corner_tex_coords + offset;
