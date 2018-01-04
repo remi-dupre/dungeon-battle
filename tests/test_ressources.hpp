@@ -3,7 +3,6 @@
 
 class RessourcesTester : public CxxTest::TestSuite
 {
-    friend RessourceManager;
 
 public:
     void testAnimationsLoading()
@@ -12,6 +11,8 @@ public:
         RessourceManager::loadAnimations();
 
         auto animation = RessourceManager::getAnimation(EntitySprite::Slime);
+
+        TS_TRACE("Testing loading animations...");
 
         TS_ASSERT_EQUALS(animation.sprite_rect.left, 1);
         TS_ASSERT_EQUALS(animation.sprite_rect.top, 2);
