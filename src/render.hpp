@@ -39,9 +39,9 @@ public:
     Renderer(const Renderer&) = delete;
 
     /**
-     * \brief Set the view center
+     * \brief Center the view on an entity
      */
-    void setViewCenter(sf::Vector2f center);
+    void setViewPos(std::shared_ptr<Entity> entity);
 
     /**
      * \brief Draw the map
@@ -51,7 +51,7 @@ public:
      *
      * This function draws the map.
      */
-    void drawMap(const Map& map, MapExploration& map_exploration);
+    void drawMap(const Map& map, MapExploration& map_exploration, float frame_progress);
 
     /**
      * \brief Draw the entities
@@ -76,7 +76,7 @@ public:
      * This function display the objects drawn before
      * on the given RenderTarget.
      */
-    void display(sf::RenderTarget& target);
+    void display(sf::RenderTarget& target, float frame_progress);
 
 private:
 
@@ -90,11 +90,16 @@ private:
      */
     void drawCell(sf::Vector2i coords, CellType cell, const Map& map, MapExploration& map_exploration);
 
+    const float tile_size = 32.f; ///< Size of the tiles on screen in pixels
+
     unsigned int seed; ///< Seed used for rendering tiles
 
-    sf::View view; ///< The current view of the rendering
+    float time_since_last_frame = 0.f;
 
-    static constexpr float tile_size = 32.f; ///< Size of the tiles on screen in pixels
+    sf::View view; ///< The current view of the rendering
+    std::shared_ptr<Entity> entity_center_view;
+
+    sf::Vector2i world_view_size;
 
     std::vector<sf::Vertex> map_vertices_bg; ///< Vertex array used to render the background
     std::vector<sf::Vertex> map_vertices_fg; ///< Vertex array used to render the foreground

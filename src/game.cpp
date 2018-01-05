@@ -107,8 +107,8 @@ void Game::run()
             }
         }
 
-        float elapsedTime = timer.restart().asSeconds();
-        next_move -= elapsedTime;
+        float elapsed_time = timer.restart().asSeconds();
+        next_move -= elapsed_time;
 
         if (menu)
         {
@@ -137,7 +137,7 @@ void Game::run()
 
 #ifndef NDEBUG
         frames++;
-        time += elapsedTime;
+        time += elapsed_time;
         if (time >= 1.f)
         {
             std::cout << frames << "fps" << std::endl;
@@ -354,6 +354,8 @@ bool Game::update_entity(std::shared_ptr<Entity> entity, Action action)
 
 void Game::display()
 {
+    float frame_progress = 1.f - std::max(next_move, 0.f) / move_time;
+
     //Sort entities by zIndex and depth
     std::sort(entities->begin(), entities->end(),
         [](const std::shared_ptr<Entity>& e1, const std::shared_ptr<Entity>& e2)
@@ -363,27 +365,21 @@ void Game::display()
         }
     );
 
+    // Find hero and center view
     auto hero = std::find_if(entities->begin(), entities->end(),
         [](const std::shared_ptr<Entity>& e)
         {
             return e->getType() == EntityType::Hero;
         });
+
     if (hero != entities->end())
-    {
-        sf::Vector2f view_center = static_cast<sf::Vector2f>((*hero)->getPosition());
-        if ((*hero)->isMoving())
-        {
-            float frac = std::max(next_move, 0.f) / move_time;
-            view_center += frac * (static_cast<sf::Vector2f>((*hero)->getOldPosition())
-                                   - static_cast<sf::Vector2f>((*hero)->getPosition()));
-        }
-        renderer.setViewCenter(view_center);
-    }
+        renderer.setViewPos(*hero);
 
-    renderer.drawMap(*map, map_exploration);
-    renderer.drawEntities(*entities, 1.f - std::max(next_move, 0.f) / move_time);
+    // Draw map & entities
+    renderer.drawMap(*map, map_exploration, frame_progress);
+    renderer.drawEntities(*entities, frame_progress);
 
-    renderer.display(window);
+    renderer.display(window, frame_progress);
 }
 
 const std::vector<std::shared_ptr<Entity>>& Game::getEntities() const
