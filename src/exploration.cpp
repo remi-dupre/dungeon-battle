@@ -1,3 +1,5 @@
+#include <fstream>
+
 #include "exploration.hpp"
 
 #include "math.hpp"
@@ -22,15 +24,12 @@ void MapExploration::setExplored(sf::Vector2i position, bool explored)
     sf::Vector2u chunk_pos = static_cast<sf::Vector2<unsigned int>>
         (math::remainder(position, chunk_size));
 
-    auto result = indices.emplace(chunk, next_indice);
+    auto result = indices.emplace(chunk, chunks.size());
     auto it = result.first;
     bool insertion = result.second;
 
     if (insertion)
-    {
-        next_indice++;
         chunks.emplace_back();
-    }
 
     chunks[it->second][chunk_pos.x + chunk_size * chunk_pos.y] = explored;
 }
