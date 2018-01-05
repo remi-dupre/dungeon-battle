@@ -272,7 +272,7 @@ void Renderer::drawCell(sf::Vector2i coords, CellType cell, const Map& map, MapE
                         can_be_seen(hero_pos, coords + to_vector2i(Direction::Down), map) ||
                         can_be_seen(hero_pos, coords + to_vector2i(Direction::Left), map) ||
                         can_be_seen(hero_pos, coords + to_vector2i(Direction::Right), map);
-    bool wall_visible = cell_visible || (next_explored && cell == CellType::Wall);
+    bool wall_visible = cell_visible || (next_visible && cell == CellType::Wall);
     bool cell_explored = map_exploration.isExplored(coords);
 
     if (wall_visible)
