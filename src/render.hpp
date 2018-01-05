@@ -39,27 +39,18 @@ public:
     Renderer(const Renderer&) = delete;
 
     /**
-     * \brief Center the view on an entity
+     * \brief Draw the current game state
+     * \param map The map
+     * \param map_exploration The current state of exploration of the map
+     * \param entities The vector of entities
+     * \param frame_progress The current frame progress
+     * \param center_entity The entity to center the view on
      */
-    void setViewPos(std::shared_ptr<Entity> entity);
-
-    /**
-     * \brief Draw the map
-     * \param map The map to draw
-     * \warning In order to draw correctly the map,
-     * this function MUST be called AFTER `setViewCenter`
-     *
-     * This function draws the map.
-     */
-    void drawMap(const Map& map, MapExploration& map_exploration, float frame_progress);
-
-    /**
-     * \brief Draw the entities
-     * \param entities A vector of entities to draw
-     *
-     * This function draws the entities
-     */
-    void drawEntities(const std::vector<std::shared_ptr<Entity>>& entities, float frame_progress);
+    void drawGame(const Map& map,
+                  MapExploration& map_exploration,
+                  const std::vector<std::shared_ptr<Entity>>& entities,
+                  std::shared_ptr<Entity> center_entity,
+                  float frame_progress);
 
     /**
      * \brief Draw a menu
@@ -79,6 +70,14 @@ public:
     void display(sf::RenderTarget& target, float frame_progress);
 
 private:
+
+    /**
+     * \brief Draw an entity
+     * \param entity The entity to draw
+     * \param cell_explored Whether the entity is on explored cell or not
+     * \param frame_progress The current frame_progress
+     */
+    void drawEntity(std::shared_ptr<Entity> entity, bool cell_explored, float frame_progress);
 
     /**
      * \brief Draw a single cell

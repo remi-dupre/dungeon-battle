@@ -372,12 +372,10 @@ void Game::display()
             return e->getType() == EntityType::Hero;
         });
 
-    if (hero != entities->end())
-        renderer.setViewPos(*hero);
+    if (hero == entities->end())
+        hero = entities->begin(); // Center on random entity if hero not found for now
 
-    // Draw map & entities
-    renderer.drawMap(*map, map_exploration, frame_progress);
-    renderer.drawEntities(*entities, frame_progress);
+    renderer.drawGame(*map, map_exploration, *entities, *hero, frame_progress);
 
     renderer.display(window, frame_progress);
 }

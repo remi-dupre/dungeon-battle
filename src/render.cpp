@@ -7,7 +7,8 @@
 
 
 Renderer::Renderer() :
-    seed(0)
+    seed(0),
+    entity_center_view(nullptr)
 {
     // Initialize the seed of the renderer
     seed = static_cast<unsigned int>
@@ -35,130 +36,142 @@ Renderer::Renderer() :
     hero_xp.setPosition(10.f, 30.f);
 }
 
-void Renderer::setViewPos(std::shared_ptr<Entity> entity)
-{
-    entity_center_view = entity;
-}
-
-void Renderer::drawMap(const Map& map, MapExploration& map_exploration, float)
+void Renderer::drawGame(const Map& map,
+                        MapExploration& map_exploration,
+                        const std::vector<std::shared_ptr<Entity>>& entities,
+                        std::shared_ptr<Entity> center_entity,
+                        float frame_progress)
 {
     map_vertices_bg.clear();
     map_vertices_fg.clear();
+    entities_sprites.clear();
 
-    sf::Vector2i min_corner = entity_center_view->getPosition() - world_view_size / 2;
-    sf::Vector2i max_corner = entity_center_view->getPosition() + world_view_size / 2;
+    entity_center_view = center_entity;
 
-    for (int x = min_corner.x; x < max_corner.x; x++)
+    // Draw the map
+    sf::IntRect viewport = {entity_center_view->getPosition() - world_view_size / 2, world_view_size};
+
+    for (int x = viewport.left; x < viewport.left + viewport.width; x++)
     {
-        for (int y = min_corner.y; y < max_corner.y; y++)
+        for (int y = viewport.top; y < viewport.top + viewport.height; y++)
         {
             CellType cell = map.cellAt(x, y);
             drawCell({x, y}, cell, map, map_exploration);
         }
     }
-}
 
-void Renderer::drawEntities(const std::vector<std::shared_ptr<Entity>>& entities, float frame_progress)
-{
-    entities_sprites.clear();
-    entities_sprites.reserve(entities.size());
-
-    sf::IntRect viewport = {entity_center_view->getPosition() - world_view_size / 2,
-                            entity_center_view->getPosition() - world_view_size / 2};
-
+    // Draw the entities
     for (const auto& entity : entities)
     {
         // Entity not on screen
         if (!viewport.contains(entity->getPosition()))
             continue;
 
-        RandRender::seed(entity->getId() + seed);
+        bool entity_visible =
+            can_be_seen(entity->getPosition(), entity_center_view->getPosition(), map) ||
+            (entity->isMoving() &&
+                can_be_seen(entity->getOldPosition(), entity_center_view->getPosition(), map));
+        bool entity_drawn = entity_visible ||
+            (entity->getType() != EntityType::Monster &&
+                map_exploration.isExplored(entity->getPosition()));
+        if (!entity_drawn)
+            continue;
 
-        entities_sprites.emplace_back();
-        sf::Sprite& entity_sprite = entities_sprites.back();
+        drawEntity(entity, entity_visible, frame_progress);
+    }
+}
 
-        Textures texture_type = Textures::Tileset;
-        EntitySprite entity_type = EntitySprite::None;
-        sf::Color color = sf::Color::White;
+void Renderer::drawEntity(std::shared_ptr<Entity> entity,
+                          bool cell_visible, float frame_progress)
+{
+    RandRender::seed(entity->getId() + seed);
 
-        switch (entity->getType())
+    entities_sprites.emplace_back();
+    sf::Sprite& entity_sprite = entities_sprites.back();
+
+    Textures texture_type = Textures::Tileset;
+    EntitySprite entity_type = EntitySprite::None;
+    sf::Color color = sf::Color::White;
+
+    switch (entity->getType())
+    {
+    case EntityType::Stairs:
+        texture_type = Textures::Scenery;
+        if (entity->getInteraction() == Interaction::GoDown)
+            entity_type = EntitySprite::StairsDown;
+        if (entity->getInteraction() == Interaction::GoUp)
+            entity_type = EntitySprite::StairsUp;
+        break;
+
+    case EntityType::Hero: {
+        auto hero = std::static_pointer_cast<Character>(entity);
+        hero_life.setString(std::to_string(hero->getHp()) + "/" +
+                            std::to_string(hero->getHpMax()));
+        hero_xp.setString("XP: " + std::to_string(hero->getExperience()) +
+                          "\nLVL: " + std::to_string(hero->getLevel()));
+    } [[fallthrough]];
+    case EntityType::Monster: {
+        auto character = std::static_pointer_cast<Character>(entity);
+        switch (character->getClass())
         {
-        case EntityType::Stairs:
-            texture_type = Textures::Scenery;
-            if (entity->getInteraction() == Interaction::GoDown)
-                entity_type = EntitySprite::StairsDown;
-            if (entity->getInteraction() == Interaction::GoUp)
-                entity_type = EntitySprite::StairsUp;
+        case Class::Slime:
+            texture_type = Textures::Slime;
+            entity_type = EntitySprite::Slime;
+            color.r = static_cast<sf::Uint8>(RandRender::uniform_int(0, 255));
+            color.g = static_cast<sf::Uint8>(RandRender::uniform_int(0, 255));
+            color.b = static_cast<sf::Uint8>(RandRender::uniform_int(0, 255));
             break;
 
-        case EntityType::Hero: {
-            auto hero = std::static_pointer_cast<Character>(entity);
-            hero_life.setString(std::to_string(hero->getHp()) + "/" +
-                                std::to_string(hero->getHpMax()));
-            hero_xp.setString("XP: " + std::to_string(hero->getExperience()) +
-                              "\nLVL: " + std::to_string(hero->getLevel()));
-        } [[fallthrough]];
-        case EntityType::Monster: {
-            auto character = std::static_pointer_cast<Character>(entity);
-            switch (character->getClass())
-            {
-            case Class::Slime:
-                texture_type = Textures::Slime;
-                entity_type = EntitySprite::Slime;
-                color.r = static_cast<sf::Uint8>(RandRender::uniform_int(0, 255));
-                color.g = static_cast<sf::Uint8>(RandRender::uniform_int(0, 255));
-                color.b = static_cast<sf::Uint8>(RandRender::uniform_int(0, 255));
-                break;
-
-            case Class::Knight:
-                texture_type = Textures::Knight;
-                entity_type = EntitySprite::Knight;
-                break;
-
-            case Class::Rogue:
-                texture_type = Textures::Rogue;
-                entity_type = EntitySprite::Rogue;
-                break;
-
-            case Class::Wizard:
-                texture_type = Textures::Wizard;
-                entity_type = EntitySprite::Wizard;
-                break;
-            default:
-                break;
-            }
+        case Class::Knight:
+            texture_type = Textures::Knight;
+            entity_type = EntitySprite::Knight;
             break;
-        }
-        case EntityType::None:
-            [[fallthrough]];
+
+        case Class::Rogue:
+            texture_type = Textures::Rogue;
+            entity_type = EntitySprite::Rogue;
+            break;
+
+        case Class::Wizard:
+            texture_type = Textures::Wizard;
+            entity_type = EntitySprite::Wizard;
+            break;
         default:
             break;
         }
-
-        entity_sprite.setTexture(RessourceManager::getTexture(texture_type)); // Texture
-
-        // Animation
-        float entity_frame_progress = 1.f;
-        if (entity->isMoving() || entity->isAttacking())
-            entity_frame_progress = frame_progress;
-
-        EntityAnimationData& animation = RessourceManager::getAnimation(entity_type);
-        entity_sprite.setTextureRect(animation.getFrame(entity->getOrientation(), entity_frame_progress));
-
-        // Origin
-        entity_sprite.setOrigin(-static_cast<sf::Vector2f>(vec::position(animation.sprite_rect)));
-
-        //Position
-        sf::Vector2f pos = tile_size * static_cast<sf::Vector2f>(entity->getPosition());
-        sf::Vector2f old_pos = tile_size * static_cast<sf::Vector2f>(entity->getOldPosition());
-
-        if (entity->isMoving())
-            pos = (pos - old_pos) * 0.5f * (1.f - std::cos(math::pi<float> * frame_progress)) + old_pos;
-        entity_sprite.setPosition(pos);
-
-        // Color
-        entity_sprite.setColor(color);
+        break;
     }
+    case EntityType::None:
+        [[fallthrough]];
+    default:
+        break;
+    }
+
+    entity_sprite.setTexture(RessourceManager::getTexture(texture_type)); // Texture
+
+    // Animation
+    float entity_frame_progress = 1.f;
+    if (entity->isMoving() || entity->isAttacking())
+        entity_frame_progress = frame_progress;
+
+    EntityAnimationData& animation = RessourceManager::getAnimation(entity_type);
+    entity_sprite.setTextureRect(animation.getFrame(entity->getOrientation(), entity_frame_progress));
+
+    // Origin
+    entity_sprite.setOrigin(-static_cast<sf::Vector2f>(vec::position(animation.sprite_rect)));
+
+    //Position
+    sf::Vector2f pos = tile_size * static_cast<sf::Vector2f>(entity->getPosition());
+    sf::Vector2f old_pos = tile_size * static_cast<sf::Vector2f>(entity->getOldPosition());
+
+    if (entity->isMoving())
+        pos = (pos - old_pos) * 0.5f * (1.f - std::cos(math::pi<float> * frame_progress)) + old_pos;
+    entity_sprite.setPosition(pos);
+
+    // Color
+    if (!cell_visible)
+        color *= {100, 100, 100};
+    entity_sprite.setColor(color);
 }
 
 void Renderer::drawMenu(std::shared_ptr<const Menu> menu)
@@ -264,10 +277,6 @@ void Renderer::drawCell(sf::Vector2i coords, CellType cell, const Map& map, MapE
 
     sf::Vector2i hero_pos = entity_center_view->getPosition();
     bool cell_visible = can_be_seen(hero_pos, coords, map);
-    bool next_explored = map_exploration.isExplored(coords + to_vector2i(Direction::Up)) ||
-                         map_exploration.isExplored(coords + to_vector2i(Direction::Down)) ||
-                         map_exploration.isExplored(coords + to_vector2i(Direction::Left)) ||
-                         map_exploration.isExplored(coords + to_vector2i(Direction::Right));
     bool next_visible = can_be_seen(hero_pos, coords + to_vector2i(Direction::Up), map) ||
                         can_be_seen(hero_pos, coords + to_vector2i(Direction::Down), map) ||
                         can_be_seen(hero_pos, coords + to_vector2i(Direction::Left), map) ||
