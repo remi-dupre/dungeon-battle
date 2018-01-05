@@ -251,13 +251,15 @@ void Game::update()
             default:
                 break;
             }
+
+
         }
 
         if (action.type != ActionType::None)
         {
             monster_acting = true;
 
-            if (entity->getType() == EntityType::Hero)
+            if (entity->getType() == EntityType::Hero && action.type != ActionType::Interact)
             {
                 next_turn = EntityType::Monster;
             }
@@ -373,7 +375,7 @@ void Game::display()
         });
 
     if (hero == entities->end())
-        hero = entities->begin(); // Center on random entity if hero not found for now
+        hero = entities->begin(); // Center on random (first) entity if hero not found
 
     renderer.drawGame(*map, map_exploration, *entities, *hero, frame_progress);
 
