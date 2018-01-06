@@ -35,7 +35,7 @@ void Game::init(const std::map<Option, std::string>& options)
     RessourceManager::loadRessources("data/");
 #endif
 
-    menu = nullptr;
+    menu = std::make_shared<MainMenu>();
 
 #ifdef PACKAGE
     config.readGame("/usr/share/dungeon-battle/game.ini");
@@ -93,6 +93,7 @@ void Game::run()
         {
             if (event.type == sf::Event::Closed)
                 window.close();
+
             if (menu)
                 menu->handleInput(event, config);
             else if (event.type == sf::Event::KeyPressed &&

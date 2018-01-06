@@ -12,7 +12,7 @@ class MainMenu : public Menu
 {
 public:
 
-    explicit MainMenu() = default;
+    explicit MainMenu();
 
     virtual void update() override final;
     virtual void handleInput(const sf::Event& event, const Configuration& config) override final;
