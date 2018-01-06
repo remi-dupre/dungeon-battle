@@ -120,6 +120,10 @@ private:
      */
     bool update_entity(std::shared_ptr<Entity> entity, Action action);
 
+    void newGame(const std::string& save_path, Class hero_class);
+    void loadGame(const std::string& save_path);
+    void saveGame(const std::string& save_path);
+
     sf::RenderWindow window; ///< The render window of the game
     Configuration config; ///< The configuration of the game
     Renderer renderer; ///< The renderer

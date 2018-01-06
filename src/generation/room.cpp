@@ -210,7 +210,8 @@ void add_monsters(Room& room, float load)
             EntityType::Monster,
             Interaction::None,
             sf::Vector2i(cell.first, cell.second),
-            Direction::Left, 3, 1
+            Direction::Left,
+            Class::Slime, 3, 1
         ));
     }
 }

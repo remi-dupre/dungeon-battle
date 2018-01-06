@@ -274,6 +274,7 @@ public:
               Interaction interaction,
               sf::Vector2i position,
               Direction orientation,
+              Class character_class,
               unsigned int hpMax,
               unsigned int strength);
 
@@ -291,6 +292,7 @@ public:
               Interaction interaction,
               sf::Vector2i position,
               Direction orientation,
+              Class character_class,
               unsigned int hpMax,
               unsigned int strength,
               unsigned int controller_id);
@@ -426,7 +428,7 @@ public:
 
 protected:
 
-    Class classs; ///< The class of the character
+    Class character_class; ///< The class of the character
     unsigned int level; ///< The level of the character
     std::function<unsigned int(unsigned int)> experienceCurve; ///< The experience curve of the character
     unsigned int experience; ///< The experience of the character

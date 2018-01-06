@@ -30,17 +30,15 @@ void Game::init(const std::map<Option, std::string>& options)
         window.setFramerateLimit(config.maxfps);
 
 #ifdef PACKAGE
-    RessourceManager::loadRessources("/usr/share/dungeon-battle/data/");
-#else
-    RessourceManager::loadRessources("data/");
-#endif
-
-    menu = std::make_shared<MainMenu>();
-
-#ifdef PACKAGE
     config.readGame("/usr/share/dungeon-battle/game.ini");
 #else
     config.readGame("data/game.ini");
+#endif
+
+#ifdef PACKAGE
+    RessourceManager::loadRessources("/usr/share/dungeon-battle/data/");
+#else
+    RessourceManager::loadRessources("data/");
 #endif
 
     move_time = 1.f / config.animation_speed;
@@ -48,6 +46,13 @@ void Game::init(const std::map<Option, std::string>& options)
     // Seed the rng
     std::random_device r;
     Rand::seed(r());
+
+    menu = std::make_shared<MainMenu>();
+}
+
+void Game::newGame(const std::string& save_path, Class hero_class)
+{
+    dungeon.clear();
 
     current_level = 0;
 
@@ -74,12 +79,23 @@ void Game::init(const std::map<Option, std::string>& options)
                                                     Interaction::None,
                                                     start_pos,
                                                     Direction::Left,
+                                                    hero_class,
                                                     baseHeroHp,
                                                     baseHeroForce,
                                                     1));
 
     entity_turn = EntityType::Hero;
     next_move = 0.f;
+}
+
+void Game::loadGame(const std::string& save_path)
+{
+
+}
+
+void Game::saveGame(const std::string& save_path)
+{
+
 }
 
 void Game::run()
@@ -126,16 +142,36 @@ void Game::run()
         if (menu)
             menu_ev = menu->menuEvent();
 
-        if (menu_ev.type == MenuEvent::Quit)
+        switch (menu_ev.type)
+        {
+        case MenuEvent::Quit:
             window.close();
-        if (menu_ev.type == MenuEvent::Resume)
+            break;
+
+        case MenuEvent::Resume:
             menu = nullptr;
-        if (menu_ev.type == MenuEvent::LoadGame)
-            ; //loadGame(menu_ev.save_path, menu_ev.new_game);
-        if (menu_ev.type == MenuEvent::SaveGame)
-            ; //saveGame(menu_ev.save_path);
-        if (menu_ev.type == MenuEvent::NextMenu)
+            break;
+
+        case MenuEvent::NextMenu:
             menu = menu_ev.next_menu;
+            break;
+
+        case MenuEvent::NewGame:
+            newGame(menu_ev.save_path, menu_ev.hero_class);
+            menu = nullptr;
+            break;
+
+        case MenuEvent::LoadGame:
+            loadGame(menu_ev.save_path);
+            break;
+
+        case MenuEvent::SaveGame:
+            saveGame(menu_ev.save_path);
+            break;
+
+        default:
+            break;
+        }
     }
 }
 

@@ -19,12 +19,13 @@ struct MenuEvent
         Nothing,
         Quit,
         Resume,
+        NewGame,
         LoadGame,
         SaveGame,
         NextMenu
     } type = Nothing;
     std::string save_path = "";
-    bool new_game = true;
+    Class hero_class = Class::Knight;
     std::shared_ptr<Menu> next_menu = nullptr;
 };
 

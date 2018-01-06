@@ -61,39 +61,41 @@ bool RessourceManager::loadRessources(const std::string& ressources_path_)
 
 bool RessourceManager::loadTextures()
 {
+    bool ok = true;
+
     sf::Texture& tileset = textures[Textures::Tileset];
     if (!tileset.loadFromFile(ressources_path + "tileset.png"))
-        return false;
+        ok = false;
 
     // sf::Texture& scenery = textures[Textures::Scenery];
     // if (!scenery.loadFromFile(ressources_path + "entities.png"))
-    //     return false;
+    //     ok = false;
 
     sf::Texture& character01 = textures[Textures::Knight];
     if (!character01.loadFromFile(ressources_path + "character01.png"))
-        return false;
+        ok = false;
 
     sf::Texture& character02 = textures[Textures::Rogue];
-    if (!character02.loadFromFile(ressources_path + "character01.png"))
-        return false;
+    if (!character02.loadFromFile(ressources_path + "character02.png"))
+        ok = false;
 
     sf::Texture& character03 = textures[Textures::Wizard];
-    if (!character03.loadFromFile(ressources_path + "character01.png"))
-        return false;
+    if (!character03.loadFromFile(ressources_path + "character03.png"))
+        ok = false;
 
     // sf::Texture& character04 = textures[Textures::Character04];
     // if (!character04.loadFromFile(ressources_path + "character01.png"))
-    //     return false;
+    //     ok = false;
 
     // sf::Texture& character05 = textures[Textures::Character05];
     // if (!character05.loadFromFile(ressources_path + "character01.png"))
-    //     return false;
+    //     ok = false;
 
     sf::Texture& slime = textures[Textures::Slime];
     if (!slime.loadFromFile(ressources_path + "entities.png"))
-        return false;
+        ok = false;
 
-    return true;
+    return ok;
 }
 
 bool RessourceManager::loadFont()

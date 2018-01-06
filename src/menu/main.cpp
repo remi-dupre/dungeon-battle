@@ -1,5 +1,8 @@
 #include "main.hpp"
+#include "new_game.hpp"
 #include "../ressources.hpp"
+
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 
 
 MainMenu::MainMenu()
@@ -40,13 +43,11 @@ MenuEvent MainMenu::menuEvent()
     if (selected_item == Items::NewGame)
     {
         event.type = MenuEvent::NextMenu;
-        event.new_game = true;
-        //next_menu = std::make_shared<NewGameMenu>();
+        event.next_menu = std::make_shared<NewGameMenu>();
     }
     else if (selected_item == Items::LoadGame)
     {
         event.type = MenuEvent::NextMenu;
-        event.new_game = false;
         //next_menu = std::make_shared<LoadGameMenu>();
     }
     else if (selected_item == Items::Options)
@@ -80,9 +81,9 @@ void MainMenu::render(sf::RenderTarget& target)
             item_texts[i].setColor(sf::Color::White);
         }
 
-        float position = static_cast<float>((9 - Items::Count) / 2 + i);
+        float position = static_cast<float>((14 - Items::Count) / 2 + i);
         position += (Items::Count % 2 == 0) ? 1.f : 0.f;
-        position /= 10.f;
+        position /= 15.f;
 
         item_texts[i].setPosition({
             static_cast<float>(Configuration::default_configuration.width) / 2.f,

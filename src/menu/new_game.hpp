@@ -8,11 +8,11 @@
 #include "menu.hpp"
 
 
-class PauseMenu : public Menu
+class NewGameMenu : public Menu
 {
 public:
 
-    explicit PauseMenu();
+    explicit NewGameMenu();
 
     virtual void update() override final;
     virtual void handleInput(const sf::Event& event, const Configuration& config) override final;
@@ -23,17 +23,26 @@ public:
 
 private:
 
+    enum Characters
+    {
+        Knight    = 0,
+        Rogue     = 1,
+        Wizard    = 2,
+
+        CharactersCount
+    } selected_character = Characters::Knight;
+
+    std::array<sf::Sprite, CharactersCount> character_sprites;
+    std::array<sf::Text, CharactersCount> character_texts;
+
     enum Items
     {
-        Resume   = 0,
-        Save     = 1,
-        SaveMain = 2,
-        Main     = 3,
-        SaveQuit = 4,
-        Quit     = 5,
+        Back       = 0,
+        SelectChar = 1,
+        Play       = 2,
 
         Count
-    } selected_item = Items::Resume;
+    } selected_item = Items::SelectChar;
 
     std::array<sf::Text, Items::Count> item_texts;
 };

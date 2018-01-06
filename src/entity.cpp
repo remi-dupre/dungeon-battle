@@ -183,16 +183,31 @@ int Item::getSightRadius() const
     return sightRadius;
 }
 
+Character::Character(EntityType type_,
+                     Interaction interaction_,
+                     sf::Vector2i position_,
+                     Direction orientation_,
+                     Class character_class,
+                     unsigned int hpMax_,
+                     unsigned int strength_) :
+    Character(type_, interaction_, position_, orientation_, character_class, hpMax_, strength_, 0)
+{
+    if (type_ == EntityType::Monster)
+    {
+        experience = 5;
+    }
+}
 
 Character::Character(EntityType type_,
-                    Interaction interaction_,
-                    sf::Vector2i position_,
-                    Direction orientation_,
-                    unsigned int hpMax_,
-                    unsigned int strength_,
-                    unsigned int controller_id_) :
+                     Interaction interaction_,
+                     sf::Vector2i position_,
+                     Direction orientation_,
+                     Class character_class,
+                     unsigned int hpMax_,
+                     unsigned int strength_,
+                     unsigned int controller_id_) :
     Entity(type_, interaction_, position_, orientation_, controller_id_),
-    classs(Class::Knight),
+    character_class(character_class),
     level(1),
     experienceCurve([](unsigned int lvl) -> unsigned int {return 10*lvl;}),
     experience(0),
@@ -208,28 +223,13 @@ Character::Character(EntityType type_,
     if (type_ == EntityType::Monster)
     {
         experience = 5;
-        classs = Class::Slime;
-    }
-}
-
-Character::Character(EntityType type_,
-                     Interaction interaction_,
-                     sf::Vector2i position_,
-                     Direction orientation_,
-                     unsigned int hpMax_,
-                     unsigned int strength_) :
-    Character(type_, interaction_, position_, orientation_, hpMax_, strength_, 0)
-{
-    if (type_ == EntityType::Monster)
-    {
-        experience = 5;
-        classs = Class::Slime;
+        character_class = Class::Slime;
     }
 }
 
 Class Character::getClass() const
 {
-    return classs;
+    return character_class;
 }
 
 unsigned int Character::getLevel() const
