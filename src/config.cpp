@@ -4,6 +4,12 @@
 #include "config.hpp"
 
 
+#ifdef PACKAGE
+    const std::string Configuration::data_path = "/usr/share/dungeon-battle/";
+#else
+    const std::string Configuration::data_path = "";
+#endif
+
 // Default configuration
 Configuration::Configuration() :
     gen_options()

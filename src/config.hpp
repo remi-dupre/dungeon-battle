@@ -17,6 +17,8 @@
  */
 struct Configuration
 {
+    static const std::string data_path;
+
     unsigned int width = 800;      ///< Width of the window, default value is 800
     unsigned int height = 600;     ///< Height of the window, default value is 600
     unsigned int scalefactor = 1;  ///< Scale factor for the window size, default value is 1
@@ -26,8 +28,7 @@ struct Configuration
     float animation_speed = 3.f;   ///< Animation speed
 
     sf::Keyboard::Key menu_key = sf::Keyboard::Key::Escape;   ///< Key pressed to display the menu
-    sf::Keyboard::Key select_key = sf::Keyboard::Key::Return; ///< Key pressed to select an item / a menu entry
-
+    sf::Keyboard::Key select_key = sf::Keyboard::Key::Return; ///< Key pressed to select an item
     sf::Keyboard::Key interaction_key = sf::Keyboard::Key::E; ///< Key pressed to interact with an entity
 
     sf::Keyboard::Key left_key = sf::Keyboard::Key::Q;  ///< Key pressed to go left

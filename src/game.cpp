@@ -29,17 +29,8 @@ void Game::init(const std::map<Option, std::string>& options)
     if (!config.vsync) // Don't activate vertical synchronization and framerate limit at the same time
         window.setFramerateLimit(config.maxfps);
 
-#ifdef PACKAGE
-    config.readGame("/usr/share/dungeon-battle/game.ini");
-#else
-    config.readGame("data/game.ini");
-#endif
-
-#ifdef PACKAGE
-    RessourceManager::loadRessources("/usr/share/dungeon-battle/data/");
-#else
-    RessourceManager::loadRessources("data/");
-#endif
+    config.readGame(Configuration::data_path + "game.ini");
+    RessourceManager::loadRessources(Configuration::data_path + "data/");
 
     move_time = 1.f / config.animation_speed;
 
@@ -54,48 +45,28 @@ void Game::newGame(const std::string& save_path, Class hero_class)
 {
     dungeon.clear();
 
+    game_name = save_path;
     current_level = 0;
-
-    // Base stats of Heros and Monsters
-    unsigned int baseHeroHp = 20;
-    unsigned int baseHeroForce = 1;
+    entity_turn = EntityType::Hero;
+    next_move = 0.f;
 
     dungeon.push_back(generate(config.gen_options));
 
     map = &dungeon[0].map;
     entities = &dungeon[0].entities;
 
+    sf::Vector2i start_pos;
     auto entry_stairs = std::find_if(entities->begin(), entities->end(),
     [](const std::shared_ptr<Entity> e) -> bool
     {
         return e->getType() == EntityType::Stairs && e->getInteraction() == Interaction::GoUp;
     });
-
-    sf::Vector2i start_pos;
     if (entry_stairs != entities->end())
         start_pos = (*entry_stairs)->getPosition();
 
-    entities->push_back(std::make_shared<Character>(EntityType::Hero,
-                                                    Interaction::None,
-                                                    start_pos,
-                                                    Direction::Left,
-                                                    hero_class,
-                                                    baseHeroHp,
-                                                    baseHeroForce,
-                                                    1));
-
-    entity_turn = EntityType::Hero;
-    next_move = 0.f;
-}
-
-void Game::loadGame(const std::string& save_path)
-{
-
-}
-
-void Game::saveGame(const std::string& save_path)
-{
-
+    entities->push_back(std::make_shared<Character>(
+        EntityType::Hero, Interaction::None, start_pos,
+        Direction::Left, hero_class, 20, 1, 1));
 }
 
 void Game::run()
@@ -163,10 +134,11 @@ void Game::run()
 
         case MenuEvent::LoadGame:
             loadGame(menu_ev.save_path);
+            menu = nullptr;
             break;
 
         case MenuEvent::SaveGame:
-            saveGame(menu_ev.save_path);
+            saveGame();
             break;
 
         default:

@@ -120,25 +120,40 @@ private:
      */
     bool update_entity(std::shared_ptr<Entity> entity, Action action);
 
+    /**
+     * \brief Create a new game
+     * \param save_path The name of the game
+     * \param hero_class The class of the hero
+     */
     void newGame(const std::string& save_path, Class hero_class);
+    /**
+     * \brief Load a game
+     * \param save_path The name of the game to load
+     */
     void loadGame(const std::string& save_path);
-    void saveGame(const std::string& save_path);
+    /**
+     * \brief Save the current game
+     */
+    void saveGame();
+
+    Configuration config; ///< The configuration of the game
+    float move_time; ///< The length of the animations
 
     sf::RenderWindow window; ///< The render window of the game
-    Configuration config; ///< The configuration of the game
     Renderer renderer; ///< The renderer
 
-    std::shared_ptr<Menu> menu;
+    std::shared_ptr<Menu> menu; ///< The current menu
+
+    std::string game_name; ///< The current game name (where to save it)
 
     Map* map; ///< The current map
     std::vector<std::shared_ptr<Entity>>* entities; ///< The current map entities
     std::size_t current_level; ///< The number of the curent level
 
-    MapExploration map_exploration;
+    MapExploration map_exploration; ///< The exploration state of the map
 
     std::vector<Level> dungeon; ///< The maps and entities of differents level of the dungeon
 
-    EntityType entity_turn;
-    float next_move;
-    float move_time;
+    EntityType entity_turn; ///< Tell whether it is the player or the monsters to play
+    float next_move; ///< Time until animation terminates
 };
