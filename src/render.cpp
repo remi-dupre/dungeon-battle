@@ -174,47 +174,6 @@ void Renderer::drawEntity(std::shared_ptr<Entity> entity,
     entity_sprite.setColor(color);
 }
 
-void Renderer::drawMenu(std::shared_ptr<const Menu> menu)
-{
-    menu_texts.clear();
-
-    if (menu == nullptr)
-        return;
-
-    auto p = std::dynamic_pointer_cast<const PauseMenu>(menu);
-    if (p != nullptr)
-    {
-        sf::Text resume;
-        resume.setFont(RessourceManager::getFont());
-        resume.setString("Resume");
-        resume.setCharacterSize(20);
-        resume.setColor(sf::Color::White);
-        if (p->item == 0)
-        {
-            resume.setCharacterSize(25);
-            resume.setColor(sf::Color::Yellow);
-        }
-        resume.setPosition({Configuration::default_configuration.width / 2.f
-                    - resume.getLocalBounds().width / 2.f, 280.f});
-
-        sf::Text quit;
-        quit.setFont(RessourceManager::getFont());
-        quit.setString("(Save) (TODO) & Quit");
-        quit.setCharacterSize(20);
-        quit.setColor(sf::Color::White);
-        if (p->item == 1)
-        {
-            quit.setCharacterSize(25);
-            quit.setColor(sf::Color::Yellow);
-        }
-        quit.setPosition({Configuration::default_configuration.width / 2.f
-                    - quit.getLocalBounds().width / 2.f, 320.f});
-
-        menu_texts.push_back(resume);
-        menu_texts.push_back(quit);
-    }
-}
-
 void Renderer::display(sf::RenderTarget& target, float frame_progress)
 {
     // Keep aspect ratio

@@ -14,7 +14,6 @@
 #include "exploration.hpp"
 #include "map.hpp"
 #include "math.hpp"
-#include "menu.hpp"
 #include "rand.hpp"
 #include "utility.hpp"
 
@@ -51,14 +50,6 @@ public:
                   const std::vector<std::shared_ptr<Entity>>& entities,
                   std::shared_ptr<Entity> center_entity,
                   float frame_progress);
-
-    /**
-     * \brief Draw a menu
-     * \param menu The menu to draw
-     *
-     * This function draws a menu
-     */
-    void drawMenu(std::shared_ptr<const Menu> menu);
 
     /**
      * \brief Display on the window the objects drawn before
@@ -107,6 +98,4 @@ private:
 
     sf::Text hero_life; ///< Display the life of the hero
     sf::Text hero_xp;   ///< Display the XP of the hero
-
-    std::vector<sf::Text> menu_texts;
 };

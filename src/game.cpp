@@ -86,11 +86,6 @@ void Game::run()
 {
     sf::Clock timer;
 
-#ifndef NDEBUG
-    float time = 0.f;
-    int frames = 0;
-#endif
-
     while (window.isOpen())
     {
         sf::Event event;
@@ -98,54 +93,48 @@ void Game::run()
         {
             if (event.type == sf::Event::Closed)
                 window.close();
-
-            if (event.type == sf::Event::KeyPressed)
-            {
-                if (menu)
-                    if (menu->handle_key(event.key.code, config))
-                        window.close();
-            }
+            if (menu)
+                menu->handleInput(event, config);
+            else if (event.type == sf::Event::KeyPressed &&
+                     event.key.code == config.menu_key)
+                menu = std::make_shared<PauseMenu>();
         }
 
         float elapsed_time = timer.restart().asSeconds();
-        next_move -= elapsed_time;
 
-        if (menu)
-        {
-            if (menu->update())
-                menu = menu->next_menu();
+        // Update
+        if (menu) {
+            menu->update();
         }
-        else if (next_move <= 0.f)
-        {
-            update(); // Update Game iff there is no Menu
+        else {
+            next_move -= elapsed_time;
+            if (next_move <= 0.f)
+                update(); // Update Game iff there is no Menu
         }
 
+        // Draw
         window.clear();
-
-        if (!menu)
-        {
-            display();
-        }
-        else
-        {
-            if (menu->display_game())
-                display();
-            renderer.drawMenu(std::const_pointer_cast<const Menu>(menu));
-        }
-
+        if (!menu || menu->displayGame())
+            render();
+        if (menu)
+            menu->render(window);
         window.display();
 
-#ifndef NDEBUG
-        frames++;
-        time += elapsed_time;
-        if (time >= 1.f)
-        {
-            std::cout << frames << "fps" << std::endl;
-            frames = 0;
-            time = 0.f;
-        }
-#endif
+        // Apply menu events
+        MenuEvent menu_ev;
+        if (menu)
+            menu_ev = menu->menuEvent();
 
+        if (menu_ev.type == MenuEvent::Quit)
+            window.close();
+        if (menu_ev.type == MenuEvent::Resume)
+            menu = nullptr;
+        if (menu_ev.type == MenuEvent::LoadGame)
+            ; //loadGame(menu_ev.save_path, menu_ev.new_game);
+        if (menu_ev.type == MenuEvent::SaveGame)
+            ; //saveGame(menu_ev.save_path);
+        if (menu_ev.type == MenuEvent::NextMenu)
+            menu = menu_ev.next_menu;
     }
 }
 
@@ -164,11 +153,6 @@ void Game::update()
         }
 
         Action action = control::get_input(*entity, *entities, *map, config);
-
-        if (action.type == ActionType::Pause)
-        {
-            menu = std::make_shared<PauseMenu>();
-        }
 
         bool action_done = update_entity(entity, action);
 
@@ -354,7 +338,7 @@ bool Game::update_entity(std::shared_ptr<Entity> entity, Action action)
     return false;
 }
 
-void Game::display()
+void Game::render()
 {
     float frame_progress = 1.f - std::max(next_move, 0.f) / move_time;
 

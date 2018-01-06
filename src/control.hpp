@@ -10,9 +10,7 @@
 #include <vector>
 
 #include "config.hpp"
-#include "entity.hpp"
-#include "map.hpp"
-#include "ai.hpp"
+#include "utility.hpp"
 
 
 /**
@@ -20,11 +18,10 @@
  */
 enum class ActionType
 {
-    None, ///< No action
-    Move, ///< Move action
-    Attack, ///< Attack action
-    Interact, ///< Interact action
-    Pause ///< Pause and menu
+    None,    ///< No action
+    Move,    ///< Move action
+    Attack,  ///< Attack action
+    Interact ///< Interact action
 };
 
 /**
@@ -58,8 +55,6 @@ struct Action
 
 namespace control
 {
-    Action get_menu_input(const Configuration& config);
-
     /**
      * \brief Return an action performed by an entity
      */

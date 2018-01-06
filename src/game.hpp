@@ -21,7 +21,7 @@
 #include "control.hpp"
 #include "exploration.hpp"
 #include "map.hpp"
-#include "menu.hpp"
+#include "menu/menus.hpp"
 #include "rand.hpp"
 #include "render.hpp"
 #include "utility.hpp"
@@ -68,7 +68,7 @@ public:
      *
      * This function draws the game on the screen.
      */
-    void display();
+    void render();
 
     /**
      * \brief Get the list of every entities on the map

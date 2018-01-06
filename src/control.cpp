@@ -4,10 +4,10 @@
 
 #include <SFML/Window.hpp>
 
+#include "ai.hpp"
 #include "control.hpp"
 #include "entity.hpp"
 #include "map.hpp"
-#include "utility.hpp"
 
 
 Action::Action() :
@@ -45,8 +45,6 @@ inline Action get_input_hero(const Configuration& config)
         return Action(ActionType::Attack, Direction::Up);
     if (sf::Keyboard::isKeyPressed(config.attack_down_key))
         return Action(ActionType::Attack, Direction::Down);
-    if (sf::Keyboard::isKeyPressed(config.menu_key))
-        return Action(ActionType::Pause);
     return Action();
 }
 
