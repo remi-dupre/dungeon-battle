@@ -4,6 +4,11 @@
 #include "config.hpp"
 
 
+sf::Keyboard::Key string_to_key(const std::string& name);
+
+
+const Configuration Configuration::default_configuration = Configuration();
+
 #ifdef PACKAGE
     const std::string Configuration::data_path = "/usr/share/dungeon-battle/";
 #else
@@ -14,47 +19,6 @@
 Configuration::Configuration() :
     gen_options()
 {}
-
-sf::Keyboard::Key string_to_key(const std::string& name)
-{
-    if (name.length() == 1)
-    {
-        if ('A' <= name[0] && name[0] <= 'Z')
-        {
-            return static_cast<sf::Keyboard::Key>(static_cast<char>(sf::Keyboard::Key::A) + name[0] - 'A');
-        }
-        else if ('a' <= name[0] && name[0] <= 'z')
-        {
-            return static_cast<sf::Keyboard::Key>(static_cast<char>(sf::Keyboard::Key::A) + name[0] - 'a');
-        }
-    }
-    else if (name == "Left" || name == "left")
-    {
-        return sf::Keyboard::Key::Left;
-    }
-    else if (name == "Right" || name == "right")
-    {
-        return sf::Keyboard::Key::Right;
-    }
-    else if (name == "Up" || name == "up")
-    {
-        return sf::Keyboard::Key::Up;
-    }
-    else if (name == "Down" || name == "down")
-    {
-        return sf::Keyboard::Key::Down;
-    }
-    else if (name == "Escape" || name == "escape")
-    {
-        return sf::Keyboard::Key::Escape;
-    }
-    else if (name == "Return" || name == "return" || name == "Enter" || name == "enter")
-    {
-        return sf::Keyboard::Key::Return;
-    }
-
-    return sf::Keyboard::Key::Unknown;
-}
 
 void Configuration::read(const std::string& filename)
 {
@@ -195,4 +159,43 @@ void Configuration::write(const std::string& filename) const
     return;
 }
 
-const Configuration Configuration::default_configuration = Configuration();
+sf::Keyboard::Key string_to_key(const std::string& name)
+{
+    if (name.length() == 1)
+    {
+        if ('A' <= name[0] && name[0] <= 'Z')
+        {
+            return static_cast<sf::Keyboard::Key>(static_cast<char>(sf::Keyboard::Key::A) + name[0] - 'A');
+        }
+        else if ('a' <= name[0] && name[0] <= 'z')
+        {
+            return static_cast<sf::Keyboard::Key>(static_cast<char>(sf::Keyboard::Key::A) + name[0] - 'a');
+        }
+    }
+    else if (name == "Left" || name == "left")
+    {
+        return sf::Keyboard::Key::Left;
+    }
+    else if (name == "Right" || name == "right")
+    {
+        return sf::Keyboard::Key::Right;
+    }
+    else if (name == "Up" || name == "up")
+    {
+        return sf::Keyboard::Key::Up;
+    }
+    else if (name == "Down" || name == "down")
+    {
+        return sf::Keyboard::Key::Down;
+    }
+    else if (name == "Escape" || name == "escape")
+    {
+        return sf::Keyboard::Key::Escape;
+    }
+    else if (name == "Return" || name == "return" || name == "Enter" || name == "enter")
+    {
+        return sf::Keyboard::Key::Return;
+    }
+
+    return sf::Keyboard::Key::Unknown;
+}
