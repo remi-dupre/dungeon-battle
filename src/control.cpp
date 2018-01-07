@@ -57,7 +57,7 @@ Action control::get_input(const Entity& entity,
     {
         case EntityType::Hero:
         case EntityType::Monster:
-            if (entity.getControllerId())
+            if (entity.getController() == Controller::Player1)
                 return get_input_hero(config);
             else
                 return get_input_monster(static_cast<const Character&>(entity), entities, map);

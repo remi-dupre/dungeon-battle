@@ -130,11 +130,11 @@ private:
      * \brief Load a game
      * \param save_path The name of the game to load
      */
-    void loadGame(const std::string& save_path);
+    bool loadGame(const std::string& save_path);
     /**
      * \brief Save the current game
      */
-    void saveGame();
+    bool saveGame();
 
     Configuration config; ///< The configuration of the game
     float move_time; ///< The length of the animations
@@ -148,11 +148,11 @@ private:
 
     Map* map; ///< The current map
     std::vector<std::shared_ptr<Entity>>* entities; ///< The current map entities
+    MapExploration *map_exploration; ///< The exploration state of the map
+
     std::size_t current_level; ///< The number of the curent level
-
-    MapExploration map_exploration; ///< The exploration state of the map
-
     std::vector<Level> dungeon; ///< The maps and entities of differents level of the dungeon
+    std::vector<MapExploration> exploration;
 
     EntityType entity_turn; ///< Tell whether it is the player or the monsters to play
     float next_move; ///< Time until animation terminates

@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include <cstdint>
 #include <functional>
 #include <tuple>
 
@@ -14,7 +15,7 @@
 /**
  * \brief Direction of an entity or an action
  */
-enum class Direction
+enum class Direction : uint8_t
 {
     None  = 0,      ///< No specific direction
     Up    = 1 << 0, ///< Up

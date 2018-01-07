@@ -4,12 +4,12 @@
 
 
 Game::Game() :
+    move_time(1.f),
     map(nullptr),
     entities(nullptr),
     current_level(0),
     entity_turn(EntityType::Hero),
-    next_move(0.f),
-    move_time(1.f)
+    next_move(0.f)
 {}
 
 void Game::init(const std::map<Option, std::string>& options)
@@ -51,9 +51,11 @@ void Game::newGame(const std::string& save_path, Class hero_class)
     next_move = 0.f;
 
     dungeon.push_back(generate(config.gen_options));
+    exploration.emplace_back();
 
     map = &dungeon[0].map;
     entities = &dungeon[0].entities;
+    map_exploration = &exploration[0];
 
     sf::Vector2i start_pos;
     auto entry_stairs = std::find_if(entities->begin(), entities->end(),
@@ -66,7 +68,7 @@ void Game::newGame(const std::string& save_path, Class hero_class)
 
     entities->push_back(std::make_shared<Character>(
         EntityType::Hero, Interaction::None, start_pos,
-        Direction::Left, hero_class, 20, 1, 1));
+        Direction::Left, hero_class, 20, 1, Controller::Player1));
 }
 
 void Game::run()
@@ -133,8 +135,8 @@ void Game::run()
             break;
 
         case MenuEvent::LoadGame:
-            loadGame(menu_ev.save_path);
-            menu = nullptr;
+            if (loadGame(menu_ev.save_path))
+                menu = nullptr;
             break;
 
         case MenuEvent::SaveGame:
@@ -193,12 +195,14 @@ void Game::update()
                                     {
                                         dungeon.push_back(generate(config.gen_options));
                                         dungeon[current_level+1].entities.push_back(*hero);
+                                        exploration.emplace_back();
                                     }
 
                                     current_level++;
 
                                     map = &dungeon[current_level].map;
                                     entities = &dungeon[current_level].entities;
+                                    map_exploration = &exploration.back();
 
                                     auto stairs = std::find_if(dungeon[current_level].entities.begin(), dungeon[current_level].entities.end(),
                                         [](std::shared_ptr<Entity> e) -> bool {
@@ -217,6 +221,7 @@ void Game::update()
 
                                     map = &dungeon[current_level].map;
                                     entities = &dungeon[current_level].entities;
+                                    map_exploration = &exploration[current_level];
 
                                     auto hero = std::find_if(dungeon[current_level].entities.begin(),
                                                              dungeon[current_level].entities.end(),
@@ -370,7 +375,7 @@ void Game::render()
     if (hero == entities->end())
         hero = entities->begin(); // Center on random (first) entity if hero not found
 
-    renderer.drawGame(*map, map_exploration, *entities, *hero, frame_progress);
+    renderer.drawGame(*map, *map_exploration, *entities, *hero, frame_progress);
 
     renderer.display(window, frame_progress);
 }

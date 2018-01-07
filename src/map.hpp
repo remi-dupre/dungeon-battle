@@ -5,10 +5,8 @@
 
 #pragma once
 
-#include <algorithm>
-#include <fstream>
+#include <cstdint>
 #include <iostream>
-#include <iterator>
 #include <string>
 #include <vector>
 
@@ -18,11 +16,11 @@
 /**
  * \brief Static information about the behaviour of the cell
  */
-enum class CellType
+enum class CellType : uint8_t
 {
-    Empty, ///< A cell that can't contain anything
-    Floor, ///< A cell you can walk on
-    Wall ///< A physical separation
+    Empty = 0, ///< A cell that can't contain anything
+    Floor = 1, ///< A cell you can walk on
+    Wall  = 2  ///< A wall
 };
 
 /**
@@ -51,18 +49,6 @@ public:
      * \param height The height of the map
      */
     explicit Map(int width, int height);
-
-    /**
-     * \brief Load the map from a file
-     * \param filename Path of the file
-     */
-    bool loadFromFile(const std::string& filename);
-
-    /**
-     * \brief Save the map to a file
-     * \param filename Path of the file
-     */
-    void saveToFile(const std::string& filename) const;
 
     /**
      * \brief Get the width of the map
@@ -121,6 +107,18 @@ public:
     bool wallNext(sf::Vector2i coords) const;
 
     Map& operator=(Map&& other);
+
+    /**
+     * \brief Load the map from a file
+     * \param filename Path of the file
+     */
+    bool loadFromFile(const std::string& filename);
+
+    /**
+     * \brief Save the map to a file
+     * \param filename Path of the file
+     */
+    void saveToFile(const std::string& filename) const;
 
 private:
 

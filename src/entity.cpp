@@ -10,23 +10,13 @@
 
 unsigned int currentId = 0;
 
-Entity::Entity(EntityType type_, Interaction interaction_, sf::Vector2i position_, Direction orientation_) :
+Entity::Entity(EntityType type_, Interaction interaction_,
+               sf::Vector2i position_, Direction orientation_,
+               Controller controller) :
     id(++currentId),
-    controller_id(0),
     type(type_),
     interaction(interaction_),
-    position(position_),
-    orientation(orientation_),
-    moving(false),
-    attacking(false),
-    attacked(false)
-{}
-
-Entity::Entity(EntityType type_, Interaction interaction_, sf::Vector2i position_, Direction orientation_, unsigned int controller_id_) :
-    id(++currentId),
-    controller_id(controller_id_),
-    type(type_),
-    interaction(interaction_),
+    controller(controller),
     position(position_),
     orientation(orientation_),
     moving(false),
@@ -39,9 +29,9 @@ unsigned int Entity::getId() const
     return id;
 }
 
-unsigned int Entity::getControllerId() const
+Controller Entity::getController() const
 {
-    return controller_id;
+    return controller;
 }
 
 EntityType Entity::getType() const
@@ -187,27 +177,12 @@ Character::Character(EntityType type_,
                      Interaction interaction_,
                      sf::Vector2i position_,
                      Direction orientation_,
-                     Class character_class,
-                     unsigned int hpMax_,
-                     unsigned int strength_) :
-    Character(type_, interaction_, position_, orientation_, character_class, hpMax_, strength_, 0)
-{
-    if (type_ == EntityType::Monster)
-    {
-        experience = 5;
-    }
-}
-
-Character::Character(EntityType type_,
-                     Interaction interaction_,
-                     sf::Vector2i position_,
-                     Direction orientation_,
-                     Class character_class,
+                     Class character_class_,
                      unsigned int hpMax_,
                      unsigned int strength_,
-                     unsigned int controller_id_) :
-    Entity(type_, interaction_, position_, orientation_, controller_id_),
-    character_class(character_class),
+                     Controller controller_) :
+    Entity(type_, interaction_, position_, orientation_, controller_),
+    character_class(character_class_),
     level(1),
     experienceCurve([](unsigned int lvl) -> unsigned int {return 10*lvl;}),
     experience(0),
@@ -216,7 +191,7 @@ Character::Character(EntityType type_,
     strength(strength_),
     defense(0),
     sightRadius(0),
-    inventory(std::vector<Item>()),
+    inventory({}),
     inventorySize(0),
     spells(std::vector<Spell> ({Spell()}))
 {
@@ -297,7 +272,7 @@ void Character::setHp(unsigned int hp_)
 
 void Character::addHp(int hp_)
 {
-    (static_cast<int>(hp) < -hp_) ? hp = 0 : hp = std::min(hp+hp_, hpMax);
+    (static_cast<int>(hp) < -hp_) ? hp = 0 : hp = std::min(hp + hp_, hpMax);
 }
 
 bool Character::isAlive() const
@@ -423,4 +398,72 @@ sf::Vector2i get_hero_position(const std::vector<std::shared_ptr<Entity>>& entit
 
     assert(false);
     return {0, 0};
+}
+
+
+
+std::ostream& operator<<(std::ostream& stream, const Entity& entity)
+{
+    stream.write(reinterpret_cast<const char*>(&entity.type), sizeof(uint32_t));
+    stream.write(reinterpret_cast<const char*>(&entity.interaction), sizeof(uint32_t));
+    stream.write(reinterpret_cast<const char*>(&entity.controller), sizeof(uint32_t));
+
+    stream.write(reinterpret_cast<const char*>(&entity.position.x), sizeof(int32_t));
+    stream.write(reinterpret_cast<const char*>(&entity.position.y), sizeof(int32_t));
+
+    stream.write(reinterpret_cast<const char*>(&entity.old_position.x), sizeof(int32_t));
+    stream.write(reinterpret_cast<const char*>(&entity.old_position.y), sizeof(int32_t));
+
+    stream.write(reinterpret_cast<const char*>(&entity.orientation), sizeof(uint8_t));
+
+    return stream;
+}
+
+std::istream& operator>>(std::istream& stream, Entity& entity)
+{
+    stream.read(reinterpret_cast<char*>(&entity.type), sizeof(uint32_t));
+    stream.read(reinterpret_cast<char*>(&entity.interaction), sizeof(uint32_t));
+    stream.read(reinterpret_cast<char*>(&entity.controller), sizeof(uint32_t));
+
+    stream.read(reinterpret_cast<char*>(&entity.position.x), sizeof(int32_t));
+    stream.read(reinterpret_cast<char*>(&entity.position.y), sizeof(int32_t));
+
+    stream.read(reinterpret_cast<char*>(&entity.old_position.x), sizeof(int32_t));
+    stream.read(reinterpret_cast<char*>(&entity.old_position.y), sizeof(int32_t));
+
+    stream.read(reinterpret_cast<char*>(&entity.orientation), sizeof(uint8_t));
+
+    return stream;
+}
+
+std::ostream& operator<<(std::ostream& stream, const Character& entity)
+{
+    stream << (*static_cast<const Entity*>(&entity));
+
+    stream.write(reinterpret_cast<const char*>(&entity.character_class), sizeof(uint32_t));
+    stream.write(reinterpret_cast<const char*>(&entity.level), sizeof(uint32_t));
+    stream.write(reinterpret_cast<const char*>(&entity.experience), sizeof(uint32_t));
+    stream.write(reinterpret_cast<const char*>(&entity.hpMax), sizeof(uint32_t));
+    stream.write(reinterpret_cast<const char*>(&entity.hp), sizeof(uint32_t));
+    stream.write(reinterpret_cast<const char*>(&entity.strength), sizeof(uint32_t));
+    stream.write(reinterpret_cast<const char*>(&entity.defense), sizeof(uint32_t));
+    stream.write(reinterpret_cast<const char*>(&entity.sightRadius), sizeof(uint32_t));
+
+    return stream;
+}
+
+std::istream& operator>>(std::istream& stream, Character& entity)
+{
+    stream >> (*static_cast<Entity*>(&entity));
+
+    stream.read(reinterpret_cast<char*>(&entity.character_class), sizeof(uint32_t));
+    stream.read(reinterpret_cast<char*>(&entity.level), sizeof(uint32_t));
+    stream.read(reinterpret_cast<char*>(&entity.experience), sizeof(uint32_t));
+    stream.read(reinterpret_cast<char*>(&entity.hpMax), sizeof(uint32_t));
+    stream.read(reinterpret_cast<char*>(&entity.hp), sizeof(uint32_t));
+    stream.read(reinterpret_cast<char*>(&entity.strength), sizeof(uint32_t));
+    stream.read(reinterpret_cast<char*>(&entity.defense), sizeof(uint32_t));
+    stream.read(reinterpret_cast<char*>(&entity.sightRadius), sizeof(uint32_t));
+
+    return stream;
 }

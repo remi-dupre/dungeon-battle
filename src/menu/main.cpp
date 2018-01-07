@@ -47,7 +47,8 @@ MenuEvent MainMenu::menuEvent()
     }
     else if (selected_item == Items::LoadGame)
     {
-        event.type = MenuEvent::NextMenu;
+        event.type = MenuEvent::LoadGame;
+        event.save_path = "save01";
         //next_menu = std::make_shared<LoadGameMenu>();
     }
     else if (selected_item == Items::Options)
