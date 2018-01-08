@@ -167,7 +167,7 @@ void Renderer::drawEntity(std::shared_ptr<Entity> entity,
     if (entity->getType() == EntityType::Monster || entity->getType() == EntityType::Hero)
     {
         auto character = std::static_pointer_cast<Character>(entity);
-        if (character->getClass() == Class::Bat)
+        if (character->getClass() == Class::Bat) // Animate Bats when idle
             entity_frame_progress = frame_progress / 2.f;
     }
 
@@ -186,6 +186,13 @@ void Renderer::drawEntity(std::shared_ptr<Entity> entity,
     entity_sprite.setPosition(pos);
 
     // Color
+    float attack_ratio = 0.5f - 0.5f * frame_progress;
+    if (entity->isAttacked())
+    {
+        color.g *= attack_ratio;
+        color.b *= attack_ratio;
+    }
+
     if (!cell_visible)
         color *= {100, 100, 100};
     entity_sprite.setColor(color);

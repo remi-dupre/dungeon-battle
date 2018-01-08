@@ -156,12 +156,15 @@ void Game::update()
 
     for (auto& entity : *entities)
     {
+        entity->setMoving(false);
+        entity->setAttacking(false);
+        entity->setAttacked(false);
+    }
+
+    for (auto& entity : *entities)
+    {
         if (entity->getType() != entity_turn)
-        {
-            entity->setMoving(false);
-            entity->setAttacking(false);
             continue;
-        }
 
         Action action = control::get_input(*entity, *entities, *map, config);
 
@@ -275,7 +278,7 @@ void Game::update()
             if (e->getType() == EntityType::Monster || e->getType() == EntityType::Hero)
             {
                 auto e2 = std::static_pointer_cast<Character>(e);
-                return !e2->isAlive();
+                return !e2->isAlive() && (e2->getType() != EntityType::Hero);
             }
             return false;
         });
@@ -318,14 +321,15 @@ bool Game::update_entity(std::shared_ptr<Entity> entity, Action action)
             position += to_vector2i(action.direction);
 
             entity->setAttacking(true);
-            entity->setOrientation(action.direction);
 
-            for (auto& target : getEntitiesOnCell(position))
+            auto targets = getEntitiesOnCell(position);
+            for (auto& target : targets)
             {
                 EntityType target_type = target->getType();
-
                 if (target_type == EntityType::Hero || target_type == EntityType::Monster)
                 {
+                    target->setAttacked(true);
+
                     auto s = std::static_pointer_cast<Character>(entity);
                     auto t = std::static_pointer_cast<Character>(target);
 
