@@ -142,11 +142,11 @@ doc:
 # Create all packages
 package:
 	$(MAKE) clean
-	$(MAKE) release
+	$(MAKE) CFLAGS="-std=c++14 -DPACKAGE" release
 	$(MAKE) -C packages package-deb
 
 	$(MAKE) clean
-	$(MAKE) release
+	$(MAKE) CFLAGS="-std=c++14 -DPACKAGE" release
 	$(MAKE) -C packages package-tar
 
 # ==================================================================================================

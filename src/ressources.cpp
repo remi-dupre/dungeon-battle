@@ -8,7 +8,7 @@
 #include "rand.hpp"
 
 
-std::string RessourceManager::ressources_path = Configuration::data_path + "data/"s;
+std::string RessourceManager::ressources_path = Configuration::data_path;
 
 
 void compute_animation(sf::Vector2i sprite_size,

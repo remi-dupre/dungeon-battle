@@ -12,7 +12,7 @@ const Configuration Configuration::default_configuration = Configuration();
 #ifdef PACKAGE
     const std::string Configuration::data_path = "/usr/share/dungeon-battle/";
 #else
-    const std::string Configuration::data_path = "";
+    const std::string Configuration::data_path = "data/";
 #endif
 
 // Default configuration
