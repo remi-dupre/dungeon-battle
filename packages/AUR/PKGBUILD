@@ -8,7 +8,7 @@ arch=('x86_64')
 url="https://github.com/remi-dupre/$pkgname"
 license=()
 groups=()
-depends=('sfml>=1.3')
+depends=('sfml>=2.3')
 makedepends=()
 checkdepends=()
 optdepends=()
