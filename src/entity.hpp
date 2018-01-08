@@ -39,7 +39,8 @@ enum class Class : uint32_t
     Knight = 0, ///< Knight class for hero
     Rogue  = 1, ///< Rogue class for hero
     Wizard = 2, ///< Wizard class for hero
-    Slime  = 3  ///< Slime monster
+    Slime  = 3,  ///< Slime monster
+    Bat  = 4  ///< Bat monster
 };
 
 

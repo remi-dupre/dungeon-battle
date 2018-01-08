@@ -122,6 +122,11 @@ void Renderer::drawEntity(std::shared_ptr<Entity> entity,
             color.b = static_cast<sf::Uint8>(RandRender::uniform_int(0, 255));
             break;
 
+        case Class::Bat:
+            texture_type = Textures::Bat;
+            entity_type = EntitySprite::Bat;
+            break;
+
         case Class::Knight:
             texture_type = Textures::Knight;
             entity_type = EntitySprite::Knight;
