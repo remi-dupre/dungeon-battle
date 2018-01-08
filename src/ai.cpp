@@ -1,6 +1,8 @@
 #include "ai.hpp"
 
 
+Action just_moving();
+
 bool cell_seen(std::vector<std::vector<bool>> &seen, sf::Vector2i position, sf::Vector2i startposition, int sight){
     bool test = seen[position.x + sight - startposition.x][position.y + sight - startposition.y];
     seen[position.x + sight - startposition.x][position.y + sight - startposition.y] = true;
@@ -132,11 +134,14 @@ Action bfs_monster(const Character& monster, const std::vector<std::shared_ptr<E
         }
 
     }
+
     //If we can't go straight to the hero, at least go toward him.
     return save_action;
 }
 
-Action get_input_monster(const Character& monster, const std::vector<std::shared_ptr<Entity>>& entities, const Map& map)
+Action get_input_monster(const Character& monster,
+                         const std::vector<std::shared_ptr<Entity>>& entities,
+                         const Map& map)
 {
     assert(has_hero(entities));
     return bfs_monster(monster, entities, map);

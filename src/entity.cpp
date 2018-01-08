@@ -12,11 +12,11 @@ unsigned int currentId = 0;
 
 Entity::Entity(EntityType type_, Interaction interaction_,
                sf::Vector2i position_, Direction orientation_,
-               Controller controller) :
+               Controller controller_) :
     id(++currentId),
     type(type_),
     interaction(interaction_),
-    controller(controller),
+    controller(controller_),
     position(position_),
     orientation(orientation_),
     moving(false),

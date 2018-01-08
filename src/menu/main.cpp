@@ -8,7 +8,7 @@
 MainMenu::MainMenu()
 {
     item_texts[Items::NewGame].setString("New Game");
-    item_texts[Items::LoadGame].setString("Load Game");
+    item_texts[Items::LoadGame].setString("Continue");
     item_texts[Items::Options].setString("Options");
     item_texts[Items::Quit].setString("Quit");
 

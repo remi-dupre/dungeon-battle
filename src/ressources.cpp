@@ -10,6 +10,11 @@
 
 std::string RessourceManager::ressources_path = Configuration::data_path + "data/"s;
 
+
+void compute_animation(sf::Vector2i sprite_size,
+                       sf::Vector2i frame_start, int nb_frames,
+                       std::vector<sf::IntRect>& frames);
+
 const sf::Vector2f RessourceManager::ground_texture_coords[] = {
     {0.f  , 0.f }, {0.f , 96.f}, {32.f , 96.f}, {0.f , 64.f},
     {64.f , 96.f}, {32.f, 64.f}, {64.f , 64.f}, {0.f , 32.f},
@@ -107,22 +112,6 @@ bool RessourceManager::loadFont()
     return true;
 }
 
-void compute_animation(sf::Vector2i sprite_size, sf::Vector2i frame_start, int nb_frames,
-                       std::vector<sf::IntRect>& frames)
-{
-    for (int i = 0; i < nb_frames; ++i)
-    {
-        sf::IntRect frame;
-        frame.left = frame_start.x;
-        frame.top = frame_start.y;
-        frame.width = sprite_size.x;
-        frame.height = sprite_size.y;
-
-        frame.left += sprite_size.x * i;
-        frames.push_back(frame);
-    }
-}
-
 bool RessourceManager::loadAnimations()
 {
     std::ifstream animations_file(ressources_path + "animations");
@@ -187,6 +176,24 @@ bool RessourceManager::loadAnimations()
 
     return true;
 }
+
+void compute_animation(sf::Vector2i sprite_size,
+                       sf::Vector2i frame_start, int nb_frames,
+                       std::vector<sf::IntRect>& frames)
+{
+    for (int i = 0; i < nb_frames; ++i)
+    {
+        sf::IntRect frame;
+        frame.left = frame_start.x;
+        frame.top = frame_start.y;
+        frame.width = sprite_size.x;
+        frame.height = sprite_size.y;
+
+        frame.left += sprite_size.x * i;
+        frames.push_back(frame);
+    }
+}
+
 
 sf::Vector2f RessourceManager::getTileTextureCoords(CellType cell_type, Direction neighborhood)
 {

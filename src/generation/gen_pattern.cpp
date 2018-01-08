@@ -48,10 +48,10 @@ Pattern generate_maze(int width, int height)
         Point pos = std::make_pair(x, y);
         visited[x][y] = true;
 
-        std::vector<Point> directions = {{0, +1}, {0, -1}, {+1, 0}, {-1, 0}};
-        std::random_shuffle(begin(directions), end(directions));
+        std::vector<Point> rand_directions = {{0, +1}, {0, -1}, {+1, 0}, {-1, 0}};
+        std::random_shuffle(begin(rand_directions), end(rand_directions));
 
-        for (Point direction : directions)
+        for (Point direction : rand_directions)
         {
             Point new_pos = pos + direction;
             if(new_pos.first >= 0 && new_pos.first < maze_width
@@ -168,15 +168,15 @@ Pattern generate_cave(int size)
     return cells;
 }
 
-Pattern generate_banana(int avg_side)
-{
-    int x1 = Rand::uniform_int(-avg_side/2, avg_side/2);
-    int y1 = Rand::uniform_int(-avg_side/2, avg_side/2);
-    int x2 = Rand::uniform_int(-avg_side/2, avg_side/2);
-    int y2 = Rand::uniform_int(-avg_side/2, avg_side/2);
+// Pattern generate_banana(int avg_side)
+// {
+//     int x1 = Rand::uniform_int(-avg_side/2, avg_side/2);
+//     int y1 = Rand::uniform_int(-avg_side/2, avg_side/2);
+//     int x2 = Rand::uniform_int(-avg_side/2, avg_side/2);
+//     int y2 = Rand::uniform_int(-avg_side/2, avg_side/2);
 
-    auto path1 = generate_hallway({0, 0}, {x1, y1});
-    auto path2 = generate_hallway({0, 0}, {x2, y2});
+//     auto path1 = generate_hallway({0, 0}, {x1, y1});
+//     auto path2 = generate_hallway({0, 0}, {x2, y2});
 
-    return merged_patterns({{0, 0}, {0, 0}}, {path1, path2});
-}
+//     return merged_patterns({{0, 0}, {0, 0}}, {path1, path2});
+// }
