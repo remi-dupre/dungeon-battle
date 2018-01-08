@@ -56,10 +56,11 @@ make test     # Build tester and runs it
 tests/test -v # Run the test again with extra informations
 ```
 
-If you want to build packages using `make package` you will need **gzip**, **dpkg** and **fakeroot**:
+If you want to build packages you will need **gzip**, **dpkg** or **fakeroot** depending on which package you want to build:
 ```bash
 apt-get install gzip dpkg fakeroot
 ```
+then you can use `make package-debian` to make a debian package, `make package-arch` to make an ArchLinux package or `make package-tar` to make a gzip compressed archive.
 
 ## Compilation
 
