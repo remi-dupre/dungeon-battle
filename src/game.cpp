@@ -7,6 +7,7 @@ Game::Game() :
     move_time(1.f),
     map(nullptr),
     entities(nullptr),
+    map_exploration(nullptr),
     current_level(0),
     entity_turn(EntityType::Hero),
     next_move(0.f)

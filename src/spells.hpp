@@ -27,7 +27,7 @@ public:
     /**
      * \brief Return the name of the spell
      */
-    std::string getName();
+    const std::string& getName() const;
 
     /**
      * \brief Return the damage done by the spell
@@ -38,7 +38,7 @@ public:
     /**
      * \brief Return the relative position of the targets of the spell
      */
-    std::vector<sf::Vector2i> getTargets();
+    const std::vector<sf::Vector2i>& getTargets() const;
 
 protected:
 

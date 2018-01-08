@@ -101,7 +101,7 @@ bool Entity::isAttacked() const
     return attacked;
 }
 
-int Entity::zIndex()
+int Entity::zIndex() const
 {
     switch(type)
     {
@@ -124,7 +124,7 @@ Item::Item(const std::string& name_,
         int experience_,
         int hpMax_,
         int hp_,
-        int strength_,
+           int strength_,
         int defense_,
         int sightRadius_) :
     Entity(EntityType::Item, Interaction::None, position_, Direction::None),
