@@ -16,7 +16,7 @@ bool Game::loadGame(const std::string& save_name)
     map_exploration = nullptr;
     entities = nullptr;
 
-    std::string load_path {Configuration::data_path + "saves/" + save_name + "/"};
+    std::string load_path {Configuration::user_path + "saves/" + save_name + "/"};
 
     // General informations about the game.
     std::ifstream save_file {load_path + "game.save", std::ios::binary};

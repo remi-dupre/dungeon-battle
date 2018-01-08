@@ -11,8 +11,10 @@ const Configuration Configuration::default_configuration = Configuration();
 
 #ifdef PACKAGE
     const std::string Configuration::data_path = "/usr/share/dungeon-battle/";
+    const std::string Configuration::user_path = "~/.dungeon-battle";
 #else
     const std::string Configuration::data_path = "data/";
+    const std::string Configuration::user_path = "";
 #endif
 
 // Default configuration
@@ -24,6 +26,10 @@ void Configuration::read(const std::string& filename)
 {
     std::ifstream config_file(filename);
     std::string line;
+
+    #ifdef PACKAGE
+        system(("mkdir -p " + Configuration::user_path).c_str());
+    #endif
 
     if (!config_file.is_open())
         return;

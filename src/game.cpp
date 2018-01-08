@@ -30,7 +30,7 @@ void Game::init(const std::map<Option, std::string>& options)
         window.setFramerateLimit(config.maxfps);
 
     config.readGame(Configuration::data_path + "game.ini");
-    RessourceManager::loadRessources(Configuration::data_path + "data/");
+    RessourceManager::loadRessources(Configuration::data_path);
 
     move_time = 1.f / config.animation_speed;
 

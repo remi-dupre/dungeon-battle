@@ -14,7 +14,7 @@ bool save_dungeon(const std::vector<Level>& dungeon,
 
 bool Game::saveGame()
 {
-    const std::string save_path {Configuration::data_path + "saves/" + game_name + "/"};
+    const std::string save_path {Configuration::user_path + "saves/" + game_name + "/"};
 
     if (system(("mkdir -p " + save_path + "levels").c_str()) == -1)
         return false;
@@ -37,7 +37,7 @@ bool Game::saveGame()
 
     save_dungeon(dungeon, exploration, save_path);
 
-    std::fstream saves {Configuration::data_path + "saves/saves.data"};
+    std::fstream saves {Configuration::user_path + "saves/saves.data"};
     if (!saves)
         return false;
     std::vector<std::string> save_names;

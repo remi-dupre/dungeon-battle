@@ -6,6 +6,7 @@
 #pragma once
 
 #include <string>
+#include <cstdlib>
 
 #include <SFML/Window.hpp>
 
@@ -17,7 +18,8 @@
  */
 struct Configuration
 {
-    static const std::string data_path;
+    static const std::string data_path;  ///< Path containing static informations for the game
+    static const std::string user_path;  ///< Path containing configuration and saves
 
     unsigned int width = 800;      ///< Width of the window, default value is 800
     unsigned int height = 600;     ///< Height of the window, default value is 600
