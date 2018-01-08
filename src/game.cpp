@@ -1,5 +1,5 @@
 #include "game.hpp"
-
+#include "menu/menus.hpp"
 #include "ressources.hpp"
 
 
@@ -159,6 +159,13 @@ void Game::update()
         entity->setMoving(false);
         entity->setAttacking(false);
         entity->setAttacked(false);
+
+        if (entity->getType() == EntityType::Hero)
+        {
+            auto hero = std::static_pointer_cast<Character>(entity);
+            if (hero->getHp() <= 0)
+                menu = std::make_shared<GameOverMenu>(hero->getLevel());
+        }
     }
 
     for (auto& entity : *entities)

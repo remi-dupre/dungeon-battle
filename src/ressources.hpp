@@ -93,18 +93,3 @@ private:
     static std::map<EntitySprite, EntityAnimationData> animations;
     static sf::Font font;
 };
-
-namespace vec
-{
-    template <typename T>
-    sf::Vector2<T> position(sf::Rect<T> a)
-    {
-        return {a.left, a.top};
-    }
-
-    template <typename T>
-    sf::Vector2<T> size(sf::Rect<T> a)
-    {
-        return {a.width, a.height};
-    }
-}
