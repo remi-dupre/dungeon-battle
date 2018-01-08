@@ -211,11 +211,13 @@ Character::Character(Class character_class_, sf::Vector2i position_) :
     inventorySize(0),
     spells(std::vector<Spell> ({Spell()}))
 {
-    experience = 0;
-    hpMax = hp = 0;
-    strength = 0;
-    sightRadius = 0;
+    experience = StatManager::xp[character_class_];
+    hpMax = hp = StatManager::hp[character_class_];
+    strength = StatManager::strength[character_class_];
+    sightRadius = StatManager::sightradius[character_class_];
 }
+
+
 
 Class Character::getClass() const
 {
@@ -386,6 +388,12 @@ std::vector<Spell> Character::getSpells()
     return spells;
 }
 
+Class randomClass()
+{
+    int r = rand() % 3;
+    std::vector<int> monsters = {3,5,6};
+    return static_cast<Class>(monsters[r]);
+}
 
 std::map<Class, int> StatManager::xp{};
 std::map<Class, int> StatManager::strength{};

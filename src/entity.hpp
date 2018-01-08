@@ -304,6 +304,8 @@ public:
    */
     Character(Class character_class_, sf::Vector2i position_);
 
+
+
     /**
      * \brief Return the class of the character
      */
@@ -454,7 +456,13 @@ protected:
     friend std::istream& operator>>(std::istream& stream, Character& entity);
 };
 
-class StatManager
+
+/**
+ * \brief Return a random class
+ */
+Class randomClass();
+
+struct StatManager
 {
     static bool loadStats();
     static std::map<Class, int> xp;

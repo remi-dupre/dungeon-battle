@@ -31,6 +31,7 @@ void Game::init(const std::map<Option, std::string>& options)
 
     config.readGame(Configuration::data_path + "game.ini");
     RessourceManager::loadRessources(Configuration::data_path);
+    StatManager::loadStats();
 
     move_time = 1.f / config.animation_speed;
 
