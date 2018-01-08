@@ -7,6 +7,7 @@ language: cpp
 
 before_install:
  - docker run -d --name artful -v $(pwd):/travis ubuntu:xenial tail -f /dev/null
+ - docker run -d --name xenial -v $(pwd):/travis ubuntu:artful tail -f /dev/null
  - docker ps
 
 install:
@@ -19,7 +20,13 @@ install:
 before_deploy:
   - docker exec -t artful bash -c "apt-get install -y --no-install-recommends fakeroot"
   - docker exec -t artful bash -c "cd /travis; make clean"
+  # Build packages for ubuntu 16.04
   - docker exec -t artful bash -c "cd /travis; make package"
+  - cp packages/dungeon-battle.deb packages/dungeon-battle_ubuntu-16_04.deb
+  # Build package for ubuntu 17.10
+  - docker exec -t xenial bash -c "apt-get update && apt-get install -y --no-install-recommends build-essential libsfml-dev"
+  - docker exec -t xenial bash -c "cd /travis; make package"
+  - cp packages/dungeon-battle.deb packages/dungeon-battle_ubuntu-17_10.deb
 
 script:
  - docker exec -t artful bash -c "cd /travis; make doc";
@@ -40,7 +47,8 @@ deploy:
   - provider: releases
     api_key: $GITHUB_TOKEN
     file:
-     - packages/dungeon-battle.deb
+     - packages/dungeon-battle_ubuntu-16_04.deb
+     - packages/dungeon-battle_ubuntu-17_10.deb
      - packages/dungeon-battle.tar.gz
     skip_cleanup: true
     on:
