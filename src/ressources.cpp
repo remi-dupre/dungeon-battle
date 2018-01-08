@@ -4,15 +4,16 @@
 #include <fstream>
 #include <string>
 
+#include "config.hpp"
 #include "rand.hpp"
+
+
+std::string RessourceManager::ressources_path = Configuration::data_path;
 
 
 void compute_animation(sf::Vector2i sprite_size,
                        sf::Vector2i frame_start, int nb_frames,
                        std::vector<sf::IntRect>& frames);
-
-
-std::string RessourceManager::ressources_path = "data/"s;
 
 const sf::Vector2f RessourceManager::ground_texture_coords[] = {
     {0.f  , 0.f }, {0.f , 96.f}, {32.f , 96.f}, {0.f , 64.f},
