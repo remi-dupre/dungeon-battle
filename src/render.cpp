@@ -4,6 +4,7 @@
 #include "ressources.hpp"
 
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#pragma GCC diagnostic ignored "-Wattributes"
 
 
 Renderer::Renderer() :
