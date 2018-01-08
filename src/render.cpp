@@ -163,7 +163,13 @@ void Renderer::drawEntity(std::shared_ptr<Entity> entity,
     // Animation
     float entity_frame_progress = 1.f;
     if (entity->isMoving() || entity->isAttacking())
-        entity_frame_progress = frame_progress;
+        entity_frame_progress = std::max(frame_progress, 0.f);
+    if (entity->getType() == EntityType::Monster || entity->getType() == EntityType::Hero)
+    {
+        auto character = std::static_pointer_cast<Character>(entity);
+        if (character->getClass() == Class::Bat)
+            entity_frame_progress = frame_progress / 2.f;
+    }
 
     EntityAnimationData& animation = RessourceManager::getAnimation(entity_type);
     entity_sprite.setTextureRect(animation.getFrame(entity->getOrientation(), entity_frame_progress));

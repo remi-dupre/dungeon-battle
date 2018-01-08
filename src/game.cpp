@@ -354,7 +354,7 @@ bool Game::update_entity(std::shared_ptr<Entity> entity, Action action)
 
 void Game::render()
 {
-    float frame_progress = 1.f - std::max(next_move, 0.f) / move_time;
+    float frame_progress = 1.f - next_move / move_time;
 
     //Sort entities by zIndex and depth
     std::sort(entities->begin(), entities->end(),

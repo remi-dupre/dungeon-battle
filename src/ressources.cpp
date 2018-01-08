@@ -94,10 +94,6 @@ bool RessourceManager::loadTextures()
     if (!angel.loadFromFile(ressources_path + "angel.png"))
         ok = false;
 
-    // sf::Texture& character05 = textures[Textures::Character05];
-    // if (!character05.loadFromFile(ressources_path + "character01.png"))
-    //     ok = false;
-
     sf::Texture& slime = textures[Textures::Slime];
     if (!slime.loadFromFile(ressources_path + "entities.png"))
         ok = false;
