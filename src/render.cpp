@@ -122,14 +122,14 @@ void Renderer::drawEntity(std::shared_ptr<Entity> entity,
             color.b = static_cast<sf::Uint8>(RandRender::uniform_int(0, 255));
             break;
 
+        case Class::Warrior:
+            texture_type = Textures::Warrior;
+            entity_type = EntitySprite::Warrior;
+            break;
+
         case Class::Bat:
             texture_type = Textures::Bat;
             entity_type = EntitySprite::Bat;
-            break;
-
-        case Class::Knight:
-            texture_type = Textures::Knight;
-            entity_type = EntitySprite::Knight;
             break;
 
         case Class::Rogue:
@@ -141,6 +141,12 @@ void Renderer::drawEntity(std::shared_ptr<Entity> entity,
             texture_type = Textures::Wizard;
             entity_type = EntitySprite::Wizard;
             break;
+
+        case Class::Angel:
+            texture_type = Textures::Angel;
+            entity_type = EntitySprite::Angel;
+            break;
+
         default:
             break;
         }
@@ -157,7 +163,13 @@ void Renderer::drawEntity(std::shared_ptr<Entity> entity,
     // Animation
     float entity_frame_progress = 1.f;
     if (entity->isMoving() || entity->isAttacking())
-        entity_frame_progress = frame_progress;
+        entity_frame_progress = std::max(frame_progress, 0.f);
+    if (entity->getType() == EntityType::Monster || entity->getType() == EntityType::Hero)
+    {
+        auto character = std::static_pointer_cast<Character>(entity);
+        if (character->getClass() == Class::Bat)
+            entity_frame_progress = frame_progress / 2.f;
+    }
 
     EntityAnimationData& animation = RessourceManager::getAnimation(entity_type);
     entity_sprite.setTextureRect(animation.getFrame(entity->getOrientation(), entity_frame_progress));

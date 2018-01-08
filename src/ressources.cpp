@@ -49,6 +49,7 @@ sf::Font RessourceManager::font;
 sf::IntRect EntityAnimationData::getFrame(Direction dir, float frame_ratio)
 {
     const auto& frames = animation[dir];
+    assert(frames.size() != 0);
     return frames[std::fmod(std::floor(frames.size() * frame_ratio), frames.size())];
 }
 
@@ -77,25 +78,21 @@ bool RessourceManager::loadTextures()
     // if (!scenery.loadFromFile(ressources_path + "entities.png"))
     //     ok = false;
 
-    sf::Texture& character01 = textures[Textures::Knight];
-    if (!character01.loadFromFile(ressources_path + "character01.png"))
+    sf::Texture& character01 = textures[Textures::Warrior];
+    if (!character01.loadFromFile(ressources_path + "warrior.png"))
         ok = false;
 
     sf::Texture& character02 = textures[Textures::Rogue];
-    if (!character02.loadFromFile(ressources_path + "character02.png"))
+    if (!character02.loadFromFile(ressources_path + "rogue.png"))
         ok = false;
 
     sf::Texture& character03 = textures[Textures::Wizard];
-    if (!character03.loadFromFile(ressources_path + "character03.png"))
+    if (!character03.loadFromFile(ressources_path + "wizard.png"))
         ok = false;
 
-    // sf::Texture& character04 = textures[Textures::Character04];
-    // if (!character04.loadFromFile(ressources_path + "character01.png"))
-    //     ok = false;
-
-    // sf::Texture& character05 = textures[Textures::Character05];
-    // if (!character05.loadFromFile(ressources_path + "character01.png"))
-    //     ok = false;
+    sf::Texture& angel = textures[Textures::Angel];
+    if (!angel.loadFromFile(ressources_path + "angel.png"))
+        ok = false;
 
     sf::Texture& slime = textures[Textures::Slime];
     if (!slime.loadFromFile(ressources_path + "entities.png"))
@@ -126,26 +123,27 @@ bool RessourceManager::loadAnimations()
 
     animations.clear();
 
-    while (!animations_file.eof())
+    while (animations_file >> entity_type_str)
     {
-        animations_file >> entity_type_str;
         EntitySprite entity_type = EntitySprite::None;
         if (entity_type_str == "Slime")
             entity_type = EntitySprite::Slime;
+        else if (entity_type_str == "Warrior")
+            entity_type = EntitySprite::Warrior;
         else if (entity_type_str == "Bat")
             entity_type = EntitySprite::Bat;
-        else if (entity_type_str == "Knight")
-            entity_type = EntitySprite::Knight;
         else if (entity_type_str == "Rogue")
             entity_type = EntitySprite::Rogue;
         else if (entity_type_str == "Wizard")
             entity_type = EntitySprite::Wizard;
+        else if (entity_type_str == "Angel")
+            entity_type = EntitySprite::Angel;
         else if (entity_type_str == "StairsUp")
             entity_type = EntitySprite::StairsUp;
         else if (entity_type_str == "StairsDown")
             entity_type = EntitySprite::StairsDown;
 
-        EntityAnimationData animation_data;
+        EntityAnimationData& animation_data = animations[entity_type];;
 
         animations_file >> animation_data.sprite_rect.left;
         animations_file >> animation_data.sprite_rect.top;
@@ -171,11 +169,6 @@ bool RessourceManager::loadAnimations()
         animations_file >> start.x >> start.y >> nb_frames;
         compute_animation(vec::size(animation_data.sprite_rect), start, nb_frames,
                           animation_data.animation[Direction::Up]);
-
-        animations[entity_type] = animation_data;
-
-        if (!animations_file)
-            return false;
 
         animations_file >> std::ws;
     }

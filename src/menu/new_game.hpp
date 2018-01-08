@@ -25,12 +25,13 @@ private:
 
     enum Characters
     {
-        Knight    = 0,
-        Rogue     = 1,
-        Wizard    = 2,
+        Warrior    = 0,
+        Rogue      = 1,
+        Wizard     = 2,
+        Angel      = 3,
 
         CharactersCount
-    } selected_character = Characters::Knight;
+    } selected_character = Characters::Warrior;
 
     std::array<sf::Sprite, CharactersCount> character_sprites;
     std::array<sf::Text, CharactersCount> character_texts;

@@ -36,11 +36,12 @@ enum class EntityType : uint32_t
  */
 enum class Class : uint32_t
 {
-    Knight = 0, ///< Knight class for hero
-    Rogue  = 1, ///< Rogue class for hero
-    Wizard = 2, ///< Wizard class for hero
-    Slime  = 3,  ///< Slime monster
-    Bat  = 4  ///< Bat monster
+    Warrior = 0, ///< Warrior class for hero
+    Rogue   = 1, ///< Rogue class for hero
+    Wizard  = 2, ///< Wizard class for hero
+    Slime   = 3,  ///< Slime monster
+    Angel   = 4, ///< Angel class for hero
+    Bat     = 5  ///< Bat monster
 };
 
 
@@ -286,7 +287,7 @@ public:
               Interaction interaction = Interaction::None,
               sf::Vector2i position   = {},
               Direction orientation   = Direction::None,
-              Class character_class   = Class::Knight,
+              Class character_class   = Class::Warrior,
               unsigned int hpMax      = 0,
               unsigned int strength   = 0,
               Controller controller   = Controller::AI);
