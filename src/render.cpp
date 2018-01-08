@@ -127,6 +127,11 @@ void Renderer::drawEntity(std::shared_ptr<Entity> entity,
             entity_type = EntitySprite::Warrior;
             break;
 
+        case Class::Bat:
+            texture_type = Textures::Bat;
+            entity_type = EntitySprite::Bat;
+            break;
+
         case Class::Rogue:
             texture_type = Textures::Rogue;
             entity_type = EntitySprite::Rogue;

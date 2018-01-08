@@ -21,6 +21,7 @@ enum class Textures
     Wizard ,
     Angel  ,
 
+    Bat,
     Slime = Scenery
 };
 
@@ -35,6 +36,7 @@ enum class EntitySprite
     Angel  ,
 
     Slime,
+    Bat,
 
     None
 };

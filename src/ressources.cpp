@@ -102,6 +102,10 @@ bool RessourceManager::loadTextures()
     if (!slime.loadFromFile(ressources_path + "entities.png"))
         ok = false;
 
+    sf::Texture& bat = textures[Textures::Bat];
+    if (!bat.loadFromFile(ressources_path + "bat.png"))
+        ok = false;
+
     return ok;
 }
 
@@ -130,6 +134,8 @@ bool RessourceManager::loadAnimations()
             entity_type = EntitySprite::Slime;
         else if (entity_type_str == "Warrior")
             entity_type = EntitySprite::Warrior;
+        else if (entity_type_str == "Bat")
+            entity_type = EntitySprite::Bat;
         else if (entity_type_str == "Rogue")
             entity_type = EntitySprite::Rogue;
         else if (entity_type_str == "Wizard")
