@@ -33,7 +33,9 @@ package-tar:
 package-aur:
 	rm -rf for-aur && mkdir for-aur
 	sed "s/__VERSION__/${VERSION}/" AUR/PKGBUILD > for-aur/PKGBUILD
-	cd for-aur
 
-	makepkg -g >> PKGBUILD && rm -r *.tar.gz src
-	cd .. && tar -cJf dungeon-battle-aur.tar.xz for-aur/* --transform "s/for-aur/dungeon-battle-${VERSION}/"
+	cd for-aur
+	echo "md5sum=(`md5sum PKGBUILD | cut -d ' ' -f 1`)" >> PKGBUILD
+	cd ..
+
+	tar -cJf dungeon-battle-aur.tar.xz for-aur/* --transform "s/for-aur/dungeon-battle-${VERSION}/"
