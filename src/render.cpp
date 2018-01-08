@@ -82,6 +82,61 @@ void Renderer::drawGame(const Map& map,
     }
 }
 
+void Renderer::display(sf::RenderTarget& target, float frame_progress)
+{
+    // Keep aspect ratio
+    float screen_ratio = static_cast<float>(Configuration::default_configuration.height) /
+        static_cast<float>(Configuration::default_configuration.width);
+
+    float screen_x = static_cast<float>(target.getSize().x);
+    float screen_y = static_cast<float>(target.getSize().y);
+
+    float ratio = screen_y / screen_x;
+
+    float x_offset = 0.f;
+    float y_offset = 0.f;
+
+    if (ratio > screen_ratio)
+    {
+        float y = screen_x * screen_ratio;
+        y_offset = (screen_y - y) / screen_y;
+    }
+    else if (ratio < screen_ratio)
+    {
+        float x =  screen_y / screen_ratio;
+        x_offset = (screen_x - x) / screen_x;
+    }
+
+    view.setViewport({x_offset / 2.f, y_offset / 2.f, 1.f - x_offset, 1.f - y_offset});
+
+    sf::Vector2f view_pos = tile_size * static_cast<sf::Vector2f>(entity_center_view->getPosition());
+    if (entity_center_view->isMoving())
+    {
+        view_pos *= frame_progress;
+        view_pos += tile_size *
+            static_cast<sf::Vector2f>(entity_center_view->getOldPosition()) * (1.f - frame_progress);
+    }
+
+    view.setCenter(view_pos);
+    target.setView(view);
+
+    sf::RenderStates map_rstates(&RessourceManager::getTexture(Textures::Tileset));
+    target.draw(map_vertices_bg.data(), map_vertices_bg.size(),
+                sf::PrimitiveType::Triangles, map_rstates);
+
+    for (const auto& sprite : entities_sprites)
+        target.draw(sprite);
+
+    target.draw(map_vertices_fg.data(), map_vertices_fg.size(),
+                sf::PrimitiveType::Triangles, map_rstates);
+
+    view.setCenter(static_cast<float>(Configuration::default_configuration.width) / 2.f,
+                   static_cast<float>(Configuration::default_configuration.height) / 2.f);
+    target.setView(view);
+    target.draw(hero_life);
+    target.draw(hero_xp);
+}
+
 void Renderer::drawEntity(std::shared_ptr<Entity> entity,
                           bool cell_visible, float frame_progress)
 {
@@ -164,7 +219,7 @@ void Renderer::drawEntity(std::shared_ptr<Entity> entity,
     // Animation
     float entity_frame_progress = 1.f;
     if (entity->isMoving() || entity->isAttacking())
-        entity_frame_progress = std::max(frame_progress, 0.f);
+        entity_frame_progress = std::max(1.f - frame_progress, 0.f);
     if (entity->getType() == EntityType::Monster || entity->getType() == EntityType::Hero)
     {
         auto character = std::static_pointer_cast<Character>(entity);
@@ -197,61 +252,6 @@ void Renderer::drawEntity(std::shared_ptr<Entity> entity,
     if (!cell_visible)
         color *= {100, 100, 100};
     entity_sprite.setColor(color);
-}
-
-void Renderer::display(sf::RenderTarget& target, float frame_progress)
-{
-    // Keep aspect ratio
-    float screen_ratio = static_cast<float>(Configuration::default_configuration.height) /
-        static_cast<float>(Configuration::default_configuration.width);
-
-    float screen_x = static_cast<float>(target.getSize().x);
-    float screen_y = static_cast<float>(target.getSize().y);
-
-    float ratio = screen_y / screen_x;
-
-    float x_offset = 0.f;
-    float y_offset = 0.f;
-
-    if (ratio > screen_ratio)
-    {
-        float y = screen_x * screen_ratio;
-        y_offset = (screen_y - y) / screen_y;
-    }
-    else if (ratio < screen_ratio)
-    {
-        float x =  screen_y / screen_ratio;
-        x_offset = (screen_x - x) / screen_x;
-    }
-
-    view.setViewport({x_offset / 2.f, y_offset / 2.f, 1.f - x_offset, 1.f - y_offset});
-
-    sf::Vector2f view_pos = tile_size * static_cast<sf::Vector2f>(entity_center_view->getPosition());
-    if (entity_center_view->isMoving())
-    {
-        view_pos *= frame_progress;
-        view_pos += tile_size *
-            static_cast<sf::Vector2f>(entity_center_view->getOldPosition()) * (1.f - frame_progress);
-    }
-
-    view.setCenter(view_pos);
-    target.setView(view);
-
-    sf::RenderStates map_rstates(&RessourceManager::getTexture(Textures::Tileset));
-    target.draw(map_vertices_bg.data(), map_vertices_bg.size(),
-                sf::PrimitiveType::Triangles, map_rstates);
-
-    for (const auto& sprite : entities_sprites)
-        target.draw(sprite);
-
-    target.draw(map_vertices_fg.data(), map_vertices_fg.size(),
-                sf::PrimitiveType::Triangles, map_rstates);
-
-    view.setCenter(static_cast<float>(Configuration::default_configuration.width) / 2.f,
-                   static_cast<float>(Configuration::default_configuration.height) / 2.f);
-    target.setView(view);
-    target.draw(hero_life);
-    target.draw(hero_xp);
 }
 
 void Renderer::drawCell(sf::Vector2i coords, CellType cell, const Map& map, MapExploration& map_exploration)
