@@ -11,6 +11,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "config.hpp"
+#include "entity.hpp"
 #include "exploration.hpp"
 #include "map.hpp"
 #include "math.hpp"

@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <cassert>
+#include <fstream>
 #include <functional>
 #include <memory>
 #include <vector>
@@ -194,12 +195,26 @@ Character::Character(EntityType type_,
     inventory({}),
     inventorySize(0),
     spells(std::vector<Spell> ({Spell()}))
+{}
+
+Character::Character(Class character_class_, sf::Vector2i position_) :
+    Entity(
+        EntityType::Monster,
+        Interaction::None,
+        position_,
+        Direction::Left),
+    character_class(character_class_),
+    level(1),
+    experienceCurve([](unsigned int lvl) -> unsigned int {return 10*lvl;}),
+    defense(0),
+    inventory({}),
+    inventorySize(0),
+    spells(std::vector<Spell> ({Spell()}))
 {
-    if (type_ == EntityType::Monster)
-    {
-        experience = 5;
-        character_class = Class::Goat;
-    }
+    experience = 0;
+    hpMax = hp = 0;
+    strength = 0;
+    sightRadius = 0;
 }
 
 Class Character::getClass() const
@@ -370,6 +385,43 @@ std::vector<Spell> Character::getSpells()
 {
     return spells;
 }
+
+
+std::map<Class, int> StatManager::xp{};
+std::map<Class, int> StatManager::strength{};
+std::map<Class, int> StatManager::hp{};
+std::map<Class, int> StatManager::sightradius{};
+
+bool StatManager::loadStats()
+{
+    std::ifstream stats_file(Configuration::data_path + "monsters-stats");
+    std::string monster_class_str;
+
+    if(!stats_file.is_open())
+        return false;
+
+    xp.clear(); strength.clear(); hp.clear(); sightradius.clear();
+
+    while (stats_file >> monster_class_str)
+    {
+        Class character_class = Class::None;
+        if (monster_class_str == "Slime")
+            character_class = Class::Slime;
+        else if (monster_class_str == "Goat")
+            character_class = Class::Goat;
+        else if (monster_class_str == "Bat")
+            character_class = Class::Bat;
+
+        stats_file >> xp[character_class];
+        stats_file >> strength[character_class];
+        stats_file >> hp[character_class];
+        stats_file >> sightradius[character_class];
+
+    }
+    return true;
+}
+
+
 
 
 bool has_hero(const std::vector<std::shared_ptr<Entity>>& entities)

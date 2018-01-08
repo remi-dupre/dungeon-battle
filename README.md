@@ -91,3 +91,7 @@ Some warning from the linter are listed on [github pages](https://remi-dupre.git
 
 
 Made by Jean-Baptiste Daval, Rémi Dupré, Garance Gourdel, Benjamin Graillot and Lucas Gréaux.
+
+We thank gratefully Syia, tokiri and the Stradew valley community for their beautiful sprites :
+https://community.playstarbound.com/threads/syias-sprites-cats-pigs-chickens-bunnies-and-goats-3-14-update.108846/
+https://community.playstarbound.com/threads/tokiris-pet-replacements-fox-wolf-red-panda-update-red-panda-finished.110263/

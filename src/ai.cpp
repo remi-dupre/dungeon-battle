@@ -47,7 +47,7 @@ Action bfs_monster(const Character& monster, const std::vector<std::shared_ptr<E
 {
     // Get information on our monster.
     sf::Vector2i startposition = monster.getPosition();
-    int sight = 5; //monster.getSightRadius();
+    int sight = monster.getSightRadius();
 
 
     // Get the position of the hero
@@ -120,7 +120,7 @@ Action bfs_monster(const Character& monster, const std::vector<std::shared_ptr<E
         for(auto ori : dir)
         {
             sf::Vector2i position = curentposition + ori;
-            if (position == heropostion) // Have we fin the hero ?
+            if (position == heropostion) // Did we find the hero ?
                 // Then do the first move to go toward him.
                 return ret;
             //else if the path is valid.

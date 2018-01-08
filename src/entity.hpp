@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <functional>
 #include <iostream>
+#include <map>
 #include <memory>
 #include <string>
 #include <vector>
@@ -16,6 +17,7 @@
 
 #include "spells.hpp"
 #include "utility.hpp"
+#include "config.hpp"
 
 
 /**
@@ -39,10 +41,11 @@ enum class Class : uint32_t
     Warrior = 0, ///< Warrior class for hero
     Rogue   = 1, ///< Rogue class for hero
     Wizard  = 2, ///< Wizard class for hero
-    Slime   = 3,  ///< Slime monster
+    Slime   = 3, ///< Slime monster
     Angel   = 4, ///< Angel class for hero
-    Bat     = 5,  ///< Bat monster
-    Goat    = 6  ///< Goat not a monster 
+    Bat     = 5, ///< Bat monster
+    Goat    = 6, ///< Goat not a monster
+    None    = 7  ///< None type
 };
 
 
@@ -280,6 +283,7 @@ public:
      * \param interaction The interaction with the entity
      * \param position The position of the character
      * \param orientation The orientation of the character
+     * \param character_class_ The character class of the character
      * \param hpMax The maximum hp of the character
      * \param strength The force of the character
      * \param controller_id The owner of the character
@@ -292,6 +296,13 @@ public:
               unsigned int hpMax      = 0,
               unsigned int strength   = 0,
               Controller controller   = Controller::AI);
+
+  /**
+   * \brief Create a monster character
+   * \param character_class_ The character class of the character
+   * \param position The position of the character
+   */
+    Character(Class character_class_, sf::Vector2i position_);
 
     /**
      * \brief Return the class of the character
@@ -441,6 +452,15 @@ protected:
 
     friend std::ostream& operator<<(std::ostream& stream, const Character& entity);
     friend std::istream& operator>>(std::istream& stream, Character& entity);
+};
+
+class StatManager
+{
+    static bool loadStats();
+    static std::map<Class, int> xp;
+    static std::map<Class, int> strength;
+    static std::map<Class, int> hp;
+    static std::map<Class, int> sightradius;
 };
 
 /**

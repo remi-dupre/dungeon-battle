@@ -10,8 +10,30 @@
 
 #include <SFML/Window.hpp>
 
-#include "generation/level.hpp"
+/**
+ * \brief Describe the general design of the level.
+ */
+enum class LevelType
+{
+    Flat, ///< Rectangular-shaped rooms
+    Cave ///< Cave shaped rooms
+};
 
+/**
+* \brief Parameters on how to generate the level
+*/
+struct GenerationMode
+{
+    int nb_rooms; ///< number of rooms to create on the map
+    int room_min_size; ///< minimum number of cells contained on a room
+    int room_max_size; ///< maximum number of cells contained on a room
+    int room_margin; ///< minimum space added between two rooms
+
+    float monster_load; ///< Number of monsters per 100 unit of space
+
+    float maze_density; ///< Proportion of rooms that are replaced with mazes
+    LevelType type; ///< Kind of design for the rooms
+};
 
 /**
  * \brief Represents the configuration of the game

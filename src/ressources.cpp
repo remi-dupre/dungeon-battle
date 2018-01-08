@@ -1,5 +1,6 @@
 #include "ressources.hpp"
 
+#include <cassert>
 #include <cmath>
 #include <fstream>
 #include <string>

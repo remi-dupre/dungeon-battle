@@ -10,6 +10,8 @@
 #include <vector>
 
 #include "config.hpp"
+#include "entity.hpp"
+#include "map.hpp"
 #include "utility.hpp"
 
 
