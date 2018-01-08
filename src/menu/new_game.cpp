@@ -1,6 +1,6 @@
+#include "../ressources.hpp"
 #include "main.hpp"
 #include "new_game.hpp"
-#include "../ressources.hpp"
 
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 

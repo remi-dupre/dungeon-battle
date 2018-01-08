@@ -21,7 +21,7 @@
 #include "control.hpp"
 #include "exploration.hpp"
 #include "map.hpp"
-#include "menu/menus.hpp"
+#include "menu/menu.hpp"
 #include "rand.hpp"
 #include "render.hpp"
 #include "utility.hpp"

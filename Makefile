@@ -149,19 +149,22 @@ package:
 	$(MAKE) CFLAGS="-std=c++14 -DPACKAGE" release
 	$(MAKE) -C packages package-tar
 
+	$(MAKE) clean
+	$(MAKE) -C packages package-aur
+
 # ==================================================================================================
 # Clean intermediate files (not final results like executables, documentation, packages,...)
 clean:
 	rm -rf $(BUILD_DIR) $(BUILD_DIR)/generation
 	rm -rf $(DEP_DIR)
-	rm -rf packages/for-debian packages/for-tar
+	rm -rf packages/for-debian packages/for-tar packages/for-aur
 	rm -rf tests/test.cpp
 	rm -rf *~
 
 # Clean everything
 clean-all: clean
 	rm -rf dungeon-battle
-	rm -rf packages/dungeon-battle.deb packages/dungeon-battle.tar.gz
+	rm -rf packages/dungeon-battle.deb packages/dungeon-battle.tar.gz packages/dungeon-battle-aur.tar.gz
 	rm -rf $(DOC_DIR)
 	rm -rf $(CHECK_DIR)
 	rm -rf $(TEST_EXEC)

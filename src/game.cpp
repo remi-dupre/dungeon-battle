@@ -1,5 +1,5 @@
 #include "game.hpp"
-
+#include "menu/menus.hpp"
 #include "ressources.hpp"
 
 
@@ -7,6 +7,7 @@ Game::Game() :
     move_time(1.f),
     map(nullptr),
     entities(nullptr),
+    map_exploration(nullptr),
     current_level(0),
     entity_turn(EntityType::Hero),
     next_move(0.f)
@@ -157,12 +158,22 @@ void Game::update()
 
     for (auto& entity : *entities)
     {
-        if (entity->getType() != entity_turn)
+        entity->setMoving(false);
+        entity->setAttacking(false);
+        entity->setAttacked(false);
+
+        if (entity->getType() == EntityType::Hero)
         {
-            entity->setMoving(false);
-            entity->setAttacking(false);
-            continue;
+            auto hero = std::static_pointer_cast<Character>(entity);
+            if (hero->getHp() <= 0)
+                menu = std::make_shared<GameOverMenu>(hero->getLevel());
         }
+    }
+
+    for (auto& entity : *entities)
+    {
+        if (entity->getType() != entity_turn)
+            continue;
 
         Action action = control::get_input(*entity, *entities, *map, config);
 
@@ -276,7 +287,7 @@ void Game::update()
             if (e->getType() == EntityType::Monster || e->getType() == EntityType::Hero)
             {
                 auto e2 = std::static_pointer_cast<Character>(e);
-                return !e2->isAlive();
+                return !e2->isAlive() && (e2->getType() != EntityType::Hero);
             }
             return false;
         });
@@ -319,14 +330,15 @@ bool Game::update_entity(std::shared_ptr<Entity> entity, Action action)
             position += to_vector2i(action.direction);
 
             entity->setAttacking(true);
-            entity->setOrientation(action.direction);
 
-            for (auto& target : getEntitiesOnCell(position))
+            auto targets = getEntitiesOnCell(position);
+            for (auto& target : targets)
             {
                 EntityType target_type = target->getType();
-
                 if (target_type == EntityType::Hero || target_type == EntityType::Monster)
                 {
+                    target->setAttacked(true);
+
                     auto s = std::static_pointer_cast<Character>(entity);
                     auto t = std::static_pointer_cast<Character>(target);
 

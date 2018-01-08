@@ -102,7 +102,7 @@ bool Entity::isAttacked() const
     return attacked;
 }
 
-int Entity::zIndex()
+int Entity::zIndex() const
 {
     switch(type)
     {
@@ -125,7 +125,7 @@ Item::Item(const std::string& name_,
         int experience_,
         int hpMax_,
         int hp_,
-        int strength_,
+           int strength_,
         int defense_,
         int sightRadius_) :
     Entity(EntityType::Item, Interaction::None, position_, Direction::None),
@@ -372,7 +372,7 @@ void Character::awardExperience(const Character& target)
     }
 }
 
-bool Character::roomInInventory()
+bool Character::roomInInventory() const
 {
     return (inventorySize > inventory.size());
 }
@@ -383,7 +383,7 @@ void Character::pickUp(Item item)
 }
 
 
-std::vector<Spell> Character::getSpells()
+const std::vector<Spell>& Character::getSpells() const
 {
     return spells;
 }

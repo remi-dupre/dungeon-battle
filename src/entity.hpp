@@ -173,7 +173,7 @@ public:
     /**
      * \brief Return the zIndex of the entity
      */
-    int zIndex();
+    int zIndex() const;
 
 protected:
 
@@ -420,7 +420,7 @@ public:
     /**
      * \brief Check if there is an empty inventory slot
      */
-    bool roomInInventory();
+    bool roomInInventory() const;
 
     /**
      * \brief Add an item to the inventory, asserting roomInInventory()
@@ -428,11 +428,10 @@ public:
      */
     void pickUp(Item item);
 
-
     /**
      * \brief Return the spells of the character
      */
-    std::vector<Spell> getSpells();
+    const std::vector<Spell>& getSpells() const;
 
 
 protected:

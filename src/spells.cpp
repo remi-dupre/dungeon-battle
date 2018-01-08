@@ -9,7 +9,7 @@ Spell::Spell() :
              sf::Vector2i(0, 1), sf::Vector2i(0, -1)})
 {}
 
-std::string Spell::getName()
+const std::string& Spell::getName() const
 {
     return name;
 }
@@ -19,7 +19,7 @@ unsigned int Spell::getDamage(unsigned int strength)
     return damage(strength);
 }
 
-std::vector<sf::Vector2i> Spell::getTargets()
+const std::vector<sf::Vector2i>& Spell::getTargets() const
 {
     return targets;
 }

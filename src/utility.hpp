@@ -10,6 +10,7 @@
 #include <tuple>
 
 #include <SFML/System/Vector2.hpp>
+#include <SFML/Graphics/Rect.hpp>
 
 
 /**
@@ -33,6 +34,21 @@ bool has_direction(Direction a, Direction b);
 sf::Vector2i to_vector2i(Direction direction);
 
 constexpr Direction directions[] = {Direction::Left, Direction::Up, Direction::Right, Direction::Down};
+
+namespace vec
+{
+    template <typename T>
+    sf::Vector2<T> position(sf::Rect<T> a)
+    {
+        return {a.left, a.top};
+    }
+
+    template <typename T>
+    sf::Vector2<T> size(sf::Rect<T> a)
+    {
+        return {a.width, a.height};
+    }
+}
 
 namespace std
 {
