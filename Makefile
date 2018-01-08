@@ -139,18 +139,22 @@ doc:
 	doxygen .doxygen.conf
 
 # ==================================================================================================
-# Create all packages
-package:
-	$(MAKE) clean
-	$(MAKE) CFLAGS="-std=c++14 -DPACKAGE" release
-	$(MAKE) -C packages package-deb
+# Create packages
+package: package-arch package-debian package-tar
 
+package-arch:
+	$(MAKE) clean
+	$(MAKE) -C packages package-aur
+
+package-tar:
 	$(MAKE) clean
 	$(MAKE) CFLAGS="-std=c++14 -DPACKAGE" release
 	$(MAKE) -C packages package-tar
 
+package-debian:
 	$(MAKE) clean
-	$(MAKE) -C packages package-aur
+	$(MAKE) CFLAGS="-std=c++14 -DPACKAGE" release
+	$(MAKE) -C packages package-deb
 
 # ==================================================================================================
 # Clean intermediate files (not final results like executables, documentation, packages,...)
