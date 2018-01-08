@@ -7,33 +7,37 @@
 
 NewGameMenu::NewGameMenu()
 {
-    character_sprites[Characters::Knight].setTexture(RessourceManager::getTexture(Textures::Knight));
-    character_sprites[Characters::Rogue ].setTexture(RessourceManager::getTexture(Textures::Rogue ));
-    character_sprites[Characters::Wizard].setTexture(RessourceManager::getTexture(Textures::Wizard));
+    character_sprites[Characters::Warrior].setTexture(RessourceManager::getTexture(Textures::Warrior));
+    character_sprites[Characters::Rogue  ].setTexture(RessourceManager::getTexture(Textures::Rogue ));
+    character_sprites[Characters::Wizard ].setTexture(RessourceManager::getTexture(Textures::Wizard));
+    character_sprites[Characters::Angel  ].setTexture(RessourceManager::getTexture(Textures::Angel));
 
-    character_sprites[Characters::Knight].setTextureRect(
-        RessourceManager::getAnimation(EntitySprite::Knight).getFrame(Direction::Down, 0.f));
+    character_sprites[Characters::Warrior].setTextureRect(
+        RessourceManager::getAnimation(EntitySprite::Warrior).getFrame(Direction::Down, 0.f));
     character_sprites[Characters::Rogue ].setTextureRect(
         RessourceManager::getAnimation(EntitySprite::Rogue ).getFrame(Direction::Down, 0.f));
     character_sprites[Characters::Wizard].setTextureRect(
         RessourceManager::getAnimation(EntitySprite::Wizard).getFrame(Direction::Down, 0.f));
+    character_sprites[Characters::Angel].setTextureRect(
+        RessourceManager::getAnimation(EntitySprite::Angel).getFrame(Direction::Down, 0.f));
 
     float scale = 3.f;
 
-    character_sprites[Characters::Knight].setScale({scale, scale});
+    character_sprites[Characters::Warrior].setScale({scale, scale});
     character_sprites[Characters::Rogue ].setScale({scale, scale});
     character_sprites[Characters::Wizard].setScale({scale, scale});
+    character_sprites[Characters::Angel].setScale({scale, scale});
 
     sf::Vector2f position = {
-        2.f * static_cast<float>(Configuration::default_configuration.width) / 7.f,
+        1.f * static_cast<float>(Configuration::default_configuration.width) / 8.f,
         static_cast<float>(Configuration::default_configuration.height ) / 2.f
     };
     sf::Vector2f offset = static_cast<sf::Vector2f>
-        (vec::size(RessourceManager::getSpriteRect(EntitySprite::Knight))) / 2.f;
-    character_sprites[Characters::Knight].setPosition(position - scale * offset);
+        (vec::size(RessourceManager::getSpriteRect(EntitySprite::Warrior))) / 2.f;
+    character_sprites[Characters::Warrior].setPosition(position - scale * offset);
 
     position = {
-        static_cast<float>(Configuration::default_configuration.width) / 2.f,
+        3.f * static_cast<float>(Configuration::default_configuration.width) / 8.f,
         static_cast<float>(Configuration::default_configuration.height) / 2.f
     };
     offset = static_cast<sf::Vector2f>
@@ -41,18 +45,27 @@ NewGameMenu::NewGameMenu()
     character_sprites[Characters::Rogue].setPosition(position - scale * offset);
 
     position = {
-        5.f * static_cast<float>(Configuration::default_configuration.width) / 7.f,
+        5.f * static_cast<float>(Configuration::default_configuration.width) / 8.f,
         static_cast<float>(Configuration::default_configuration.height ) / 2.f
     };
     offset = static_cast<sf::Vector2f>
         (vec::size(RessourceManager::getSpriteRect(EntitySprite::Wizard))) / 2.f;
     character_sprites[Characters::Wizard].setPosition(position - scale * offset);
 
+    position = {
+        7.f * static_cast<float>(Configuration::default_configuration.width) / 8.f,
+        static_cast<float>(Configuration::default_configuration.height ) / 2.f
+    };
+    offset = static_cast<sf::Vector2f>
+        (vec::size(RessourceManager::getSpriteRect(EntitySprite::Angel))) / 2.f;
+    character_sprites[Characters::Angel].setPosition(position - scale * offset);
+
 
     std::string names[CharactersCount];
-    names[Characters::Knight] = "Knight"s;
+    names[Characters::Warrior] = "Warrior"s;
     names[Characters::Rogue ] = "Rogue"s;
     names[Characters::Wizard] = "Wizard"s;
+    names[Characters::Angel] = "Angel"s;
     for (unsigned int i = 0; i < CharactersCount; ++i)
     {
         character_texts[i].setFont(RessourceManager::getFont());
@@ -111,14 +124,17 @@ MenuEvent NewGameMenu::menuEvent()
 
         switch (selected_character)
         {
-        case Characters::Knight:
-            event.hero_class = Class::Knight;
+        case Characters::Warrior:
+            event.hero_class = Class::Warrior;
             break;
         case Characters::Rogue:
             event.hero_class = Class::Rogue;
             break;
         case Characters::Wizard:
             event.hero_class = Class::Wizard;
+            break;
+        case Characters::Angel:
+            event.hero_class = Class::Angel;
             break;
         default:
             break;
@@ -135,9 +151,10 @@ bool NewGameMenu::displayGame()
 
 void NewGameMenu::render(sf::RenderTarget& target)
 {
-    target.draw(character_sprites[Characters::Knight]);
-    target.draw(character_sprites[Characters::Rogue ]);
-    target.draw(character_sprites[Characters::Wizard]);
+    target.draw(character_sprites[Characters::Warrior]);
+    target.draw(character_sprites[Characters::Rogue  ]);
+    target.draw(character_sprites[Characters::Wizard ]);
+    target.draw(character_sprites[Characters::Angel  ]);
 
     character_texts[selected_character].setCharacterSize(30);
     character_texts[selected_character].setColor({255, 0, 255});
@@ -155,7 +172,7 @@ void NewGameMenu::render(sf::RenderTarget& target)
         }
 
         sf::Vector2f position = {
-            (2.f + i * 1.5f) * static_cast<float>(Configuration::default_configuration.width) / 7.f,
+            (1.f + i * 2.f) * static_cast<float>(Configuration::default_configuration.width) / 8.f,
             static_cast<float>(Configuration::default_configuration.height) / 2.f + 100.f
         };
         character_texts[i].setPosition(position - vec::size(character_texts[i].getLocalBounds()) / 2.f);

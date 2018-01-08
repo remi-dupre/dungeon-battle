@@ -16,11 +16,10 @@ enum class Textures
     Tileset,
     Scenery,
 
-    Knight,
-    Rogue,
-    Wizard,
-    Character04,
-    Character05,
+    Warrior,
+    Rogue  ,
+    Wizard ,
+    Angel  ,
 
     Slime = Scenery
 };
@@ -30,9 +29,10 @@ enum class EntitySprite
     StairsUp,
     StairsDown,
 
-    Knight,
-    Rogue,
-    Wizard,
+    Warrior,
+    Rogue  ,
+    Wizard ,
+    Angel  ,
 
     Slime,
 

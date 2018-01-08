@@ -122,9 +122,9 @@ void Renderer::drawEntity(std::shared_ptr<Entity> entity,
             color.b = static_cast<sf::Uint8>(RandRender::uniform_int(0, 255));
             break;
 
-        case Class::Knight:
-            texture_type = Textures::Knight;
-            entity_type = EntitySprite::Knight;
+        case Class::Warrior:
+            texture_type = Textures::Warrior;
+            entity_type = EntitySprite::Warrior;
             break;
 
         case Class::Rogue:
@@ -136,6 +136,12 @@ void Renderer::drawEntity(std::shared_ptr<Entity> entity,
             texture_type = Textures::Wizard;
             entity_type = EntitySprite::Wizard;
             break;
+
+        case Class::Angel:
+            texture_type = Textures::Angel;
+            entity_type = EntitySprite::Angel;
+            break;
+
         default:
             break;
         }

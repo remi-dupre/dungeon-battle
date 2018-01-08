@@ -25,7 +25,7 @@ struct MenuEvent
         NextMenu
     } type = Nothing;
     std::string save_path = "";
-    Class hero_class = Class::Knight;
+    Class hero_class = Class::Warrior;
     std::shared_ptr<Menu> next_menu = nullptr;
 };
 
