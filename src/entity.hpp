@@ -417,7 +417,7 @@ public:
     /**
      * \brief Return the spells of the character
      */
-    std::vector<Spell> getSpells() const;
+    const std::vector<Spell>& getSpells() const;
 
 
 protected:

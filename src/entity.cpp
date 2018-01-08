@@ -355,7 +355,7 @@ void Character::awardExperience(const Character& target)
     }
 }
 
-bool Character::roomInInventory()
+bool Character::roomInInventory() const
 {
     return (inventorySize > inventory.size());
 }
@@ -366,7 +366,7 @@ void Character::pickUp(Item item)
 }
 
 
-std::vector<Spell> Character::getSpells()
+const std::vector<Spell>& Character::getSpells() const
 {
     return spells;
 }
