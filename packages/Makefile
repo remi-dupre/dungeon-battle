@@ -27,7 +27,7 @@ package-tar:
 	cp ../dungeon-battle for-tar
 	cp -r ../data for-tar
 
-	tar -czf dungeon-battle.tar.gz for-tar --transform s/for-tar/dungeon-battle/
+	tar -czf dungeon-battle-portable.tar.gz for-tar --transform s/for-tar/dungeon-battle/
 
 # End the aur package
 package-aur:

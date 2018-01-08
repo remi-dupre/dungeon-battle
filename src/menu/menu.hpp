@@ -8,6 +8,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "../config.hpp"
+#include "../entity.hpp"
 
 
 class Menu;

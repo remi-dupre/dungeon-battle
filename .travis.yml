@@ -53,7 +53,8 @@ deploy:
     file:
      - packages/dungeon-battle_ubuntu-16_04.deb
      - packages/dungeon-battle_ubuntu-17_10.deb
-     - packages/dungeon-battle.tar.gz
+     - packages/dungeon-battle-aur.tar.xz
+     - packages/dungeon-battle-portable.tar.gz
     skip_cleanup: true
     on:
       tags: true
