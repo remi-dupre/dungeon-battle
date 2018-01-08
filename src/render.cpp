@@ -40,7 +40,8 @@ void Renderer::drawGame(const Map& map,
                         MapExploration& map_exploration,
                         const std::vector<std::shared_ptr<Entity>>& entities,
                         std::shared_ptr<Entity> center_entity,
-                        float frame_progress)
+                        float frame_progress,
+                        const Configuration& config)
 {
     map_vertices_bg.clear();
     map_vertices_fg.clear();
@@ -56,7 +57,7 @@ void Renderer::drawGame(const Map& map,
         for (int y = viewport.top; y < viewport.top + viewport.height; y++)
         {
             CellType cell = map.cellAt(x, y);
-            drawCell({x, y}, cell, map, map_exploration);
+            drawCell({x, y}, cell, map, map_exploration, config);
         }
     }
 
@@ -74,6 +75,10 @@ void Renderer::drawGame(const Map& map,
         bool entity_drawn = entity_visible ||
             (entity->getType() != EntityType::Monster &&
                 map_exploration.isExplored(entity->getPosition()));
+                
+        if(!config.lighting)
+            entity_visible = entity_drawn = true;
+
         if (!entity_drawn)
             continue;
 
@@ -130,6 +135,11 @@ void Renderer::drawEntity(std::shared_ptr<Entity> entity,
         case Class::Bat:
             texture_type = Textures::Bat;
             entity_type = EntitySprite::Bat;
+            break;
+
+        case Class::Goat:
+            texture_type = Textures::Goat;
+            entity_type = EntitySprite::Goat;
             break;
 
         case Class::Rogue:
@@ -246,7 +256,7 @@ void Renderer::display(sf::RenderTarget& target, float frame_progress)
     target.draw(hero_xp);
 }
 
-void Renderer::drawCell(sf::Vector2i coords, CellType cell, const Map& map, MapExploration& map_exploration)
+void Renderer::drawCell(sf::Vector2i coords, CellType cell, const Map& map, MapExploration& map_exploration, const Configuration& config)
 {
     if (cell == CellType::Empty)
         return;
@@ -259,6 +269,10 @@ void Renderer::drawCell(sf::Vector2i coords, CellType cell, const Map& map, MapE
                         can_be_seen(hero_pos, coords + to_vector2i(Direction::Right), map);
     bool wall_visible = cell_visible || (next_visible && cell == CellType::Wall);
     bool cell_explored = map_exploration.isExplored(coords);
+
+    if(!config.lighting){
+        cell_visible = next_visible = wall_visible = cell_explored = true;
+    }
 
     if (wall_visible)
         map_exploration.setExplored(coords);

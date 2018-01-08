@@ -49,7 +49,8 @@ public:
                   MapExploration& map_exploration,
                   const std::vector<std::shared_ptr<Entity>>& entities,
                   std::shared_ptr<Entity> center_entity,
-                  float frame_progress);
+                  float frame_progress,
+                  const Configuration& config);
 
     /**
      * \brief Display on the window the objects drawn before
@@ -78,7 +79,7 @@ private:
      * This function adds the vertices of a cell to
      * the vertex array to draw it later
      */
-    void drawCell(sf::Vector2i coords, CellType cell, const Map& map, MapExploration& map_exploration);
+    void drawCell(sf::Vector2i coords, CellType cell, const Map& map, MapExploration& map_exploration, const Configuration& config);
 
     const float tile_size = 32.f; ///< Size of the tiles on screen in pixels
 

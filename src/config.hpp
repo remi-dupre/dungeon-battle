@@ -28,6 +28,7 @@ struct Configuration
     bool vsync = true;             ///< Toggles vertical synchronisation, default value is true
     unsigned int maxfps = 60;      ///< Framerate limit of the window
     float animation_speed = 3.f;   ///< Animation speed
+    bool lighting = true;          ///< Lighting enable or not
 
     sf::Keyboard::Key menu_key = sf::Keyboard::Key::Escape;   ///< Key pressed to display the menu
     sf::Keyboard::Key select_key = sf::Keyboard::Key::Return; ///< Key pressed to select an item

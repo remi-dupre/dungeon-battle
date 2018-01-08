@@ -375,7 +375,7 @@ void Game::render()
     if (hero == entities->end())
         hero = entities->begin(); // Center on random (first) entity if hero not found
 
-    renderer.drawGame(*map, *map_exploration, *entities, *hero, frame_progress);
+    renderer.drawGame(*map, *map_exploration, *entities, *hero, frame_progress, config);
 
     renderer.display(window, frame_progress);
 }

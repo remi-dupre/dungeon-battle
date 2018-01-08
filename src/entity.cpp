@@ -198,7 +198,7 @@ Character::Character(EntityType type_,
     if (type_ == EntityType::Monster)
     {
         experience = 5;
-        character_class = Class::Bat;
+        character_class = Class::Goat;
     }
 }
 

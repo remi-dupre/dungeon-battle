@@ -21,6 +21,8 @@ enum class Textures
     Wizard ,
     Angel  ,
 
+    Goat,
+
     Bat,
     Slime = Scenery
 };
@@ -34,6 +36,8 @@ enum class EntitySprite
     Rogue  ,
     Wizard ,
     Angel  ,
+
+    Goat,
 
     Slime,
     Bat,

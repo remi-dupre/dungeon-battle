@@ -69,6 +69,8 @@ void Configuration::read(const std::string& filename)
                 maxfps = static_cast<unsigned int>(std::stoi(value));
             else if (option_name ==  "animation_speed")
                 animation_speed = std::stof(value);
+            else if (option_name == "lighting")
+                lighting = std::stoi(value);
         }
         catch (const std::invalid_argument& e)
         {
@@ -150,7 +152,8 @@ std::ostream& operator<<(std::ostream& stream, const Configuration& config)
         "fullscreen="      << config.fullscreen      << "\n" <<
         "vsync="           << config.vsync           << "\n" <<
         "maxfps="          << config.maxfps          << "\n" <<
-        "animation_speed=" << config.animation_speed << "\n";
+        "animation_speed=" << config.animation_speed << "\n" <<
+        "lighting="        << config.lighting        << "\n" ;
 }
 
 void Configuration::write(const std::string& filename) const
