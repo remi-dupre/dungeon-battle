@@ -18,14 +18,19 @@ install:
  - docker exec -t artful bash -c "apt-get install -y --no-install-recommends cxxtest cppcheck"
 
 before_deploy:
-  - docker exec -t artful bash -c "cd /travis; make clean"
+  - if [ ${TRAVIS_TAG} != "" ]; then
+    docker exec -t artful bash -c "cd /travis; make clean" ; fi
   # Build packages for ubuntu 16.04
-  - docker exec -t artful bash -c "cd /travis; make package"
-  - cp packages/dungeon-battle.deb packages/dungeon-battle_ubuntu-16_04.deb
+  - if [ ${TRAVIS_TAG} != "" ]; then
+      docker exec -t artful bash -c "cd /travis; make package" &&
+      cp packages/dungeon-battle.deb packages/dungeon-battle_ubuntu-16_04.deb
+    ; fi
   # Build package for ubuntu 17.10
-  - docker exec -t xenial bash -c "apt-get update && apt-get install -y --no-install-recommends build-essential fakeroot libsfml-dev"
-  - docker exec -t xenial bash -c "cd /travis; make package"
-  - cp packages/dungeon-battle.deb packages/dungeon-battle_ubuntu-17_10.deb
+  - if [ ${TRAVIS_TAG} != "" ]; then
+      docker exec -t xenial bash -c "apt-get update && apt-get install -y --no-install-recommends build-essential fakeroot libsfml-dev" &&
+      docker exec -t xenial bash -c "cd /travis; make package" &&
+      cp packages/dungeon-battle.deb packages/dungeon-battle_ubuntu-17_10.deb
+    ; fi
 
 script:
  - docker exec -t artful bash -c "cd /travis; make doc";

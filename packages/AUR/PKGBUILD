@@ -1,0 +1,43 @@
+# Maintainer: Rémi Dupré <remi.dupre@crans.org>
+pkgname=dungeon-battle
+pkgver=__VERSION__
+pkgrel=1
+epoch=
+pkgdesc="This rogue-like was build as a school project at the ENS of Cachan."
+arch=('x86_64')
+url="https://github.com/remi-dupre/$pkgname"
+license=()
+groups=()
+depends=('sfml>=1.3')
+makedepends=()
+checkdepends=()
+optdepends=()
+provides=()
+conflicts=()
+replaces=()
+backup=()
+options=()
+install=
+changelog=
+source=("https://github.com/remi-dupre/$pkgname/archive/${pkgver}.tar.gz")
+noextract=()
+validpgpkeys=()
+
+build() {
+    cd "${srcdir}/${_archive_name}/${pkgname}-${pkgver}"
+    make CFLAGS="-std=c++14 -DPACKAGE" release
+}
+
+package() {
+    cd "${srcdir}/${_archive_name}/${pkgname}-${pkgver}"
+
+    ls > /tmp/log
+
+    mkdir -p "$pkgdir"/usr/share/dungeon-battle
+    mkdir -p "$pkgdir"/usr/bin
+
+    install -Dm644 data/*           "$pkgdir"/usr/share/dungeon-battle
+    install -Dm755 dungeon-battle   "$pkgdir"/usr/bin/dungeon-battle
+}
+
+# Automatically added md5sum:
