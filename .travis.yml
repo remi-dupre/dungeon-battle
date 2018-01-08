@@ -28,7 +28,7 @@ before_deploy:
   # Build package for ubuntu 17.10
   - if [ ${TRAVIS_TAG} != "" ]; then
       docker exec -t xenial bash -c "apt-get update && apt-get install -y --no-install-recommends build-essential fakeroot libsfml-dev" &&
-      docker exec -t xenial bash -c "cd /travis; make VERSION=$TRAVIS_TAG package" &&
+      docker exec -t xenial bash -c "cd /travis; make \"VERSION=${TRAVIS_TAG}\" package" &&
       cp packages/dungeon-battle.deb packages/dungeon-battle_ubuntu-17_10.deb
     ; fi
 
