@@ -30,7 +30,7 @@ package-aur:
 	sed "s/__VERSION__/${VERSION}/" AUR/PKGBUILD > for-aur/PKGBUILD
 
 	cd for-aur
-	curl -O https://github.com/remi-dupre/dungeon-battle/archive/$(VERSION).tar.gz
+	curl -OLk http://github.com/remi-dupre/dungeon-battle/archive/$(VERSION).tar.gz
 	echo "md5sum=(`md5sum $(VERSION).tar.gz | cut -d ' ' -f 1`)" >> PKGBUILD
 	cd ..
 
