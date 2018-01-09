@@ -105,7 +105,7 @@ void Game::loadArround()
 
                 map->setChunk(x, y, generator->getChunkCells(x, y));
                 auto new_entities = generator->getChunkEntities(x, y);
-                dungeon[0].entities.insert(end(dungeon[0].entities), begin(new_entities), end(new_entities));
+                entities->insert(end(*entities), begin(new_entities), end(new_entities));
             }
         }
     }
