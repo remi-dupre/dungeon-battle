@@ -116,6 +116,7 @@ private:
      * \param  x x-coordinate of the center chunk.
      * \param  y y-coordinate of the center chunk.
      * \param  n number of rooms to generate.
+     * \warn   This can generate less than n rooms.
      */
     void addRooms(int x, int y, int n);
 

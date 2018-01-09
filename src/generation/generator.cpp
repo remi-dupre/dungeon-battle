@@ -147,20 +147,36 @@ void Generator::addRooms(int x, int y, int n)
 
         // Place the room at the center of given chunk
         room.setPosition({(2*x + 1) * Chunk::SIZE / 2, (2*y + 1) * Chunk::SIZE / 2});
-
-        // Add monsters on the room
-        add_monsters(room, parameters.monster_load);
-
         rooms.push_back(room);
     }
 
     // Places rooms in a non-linear way
     separate_rooms(rooms, parameters.room_margin, rooms.size() - n, rooms.size());
 
+    // Remove rooms that colapse
+    size_t i_room = rooms.size() - n;
+    while (i_room < rooms.size())
+    {
+        // Check if a room colapse with i
+        for (size_t j_room = 0 ; j_room < i_room ; j_room++)
+        {
+            if (!spaced(rooms[i_room], rooms[j_room], 0))
+            {
+                rooms.erase(begin(rooms) + i_room);
+                n--;
+                continue;
+            }
+        }
+
+        // This room can be kept
+        i_room++;
+    }
+
     // Copy rooms to the cached map
     for (size_t i_room = rooms.size() - n ; i_room < rooms.size() ; i_room++)
         registerRoom(i_room);
 
+    // Add stairs
     if (built.empty())
     {
         // Add entrance in first map
@@ -182,6 +198,10 @@ void Generator::addRooms(int x, int y, int n)
             Direction::Left
         ));
     }
+
+    // Place monsters after other entities
+    for (size_t i_room = rooms.size() - n ; i_room < rooms.size() ; i_room++)
+        add_monsters(rooms[i_room], parameters.monster_load);
 
     // Add ways between rooms
     updateLinks();

@@ -87,10 +87,12 @@ public:
 
                 // Check that 2 entities are not stacked (for now, none can)
                 for (auto& entity2 : entities)
+                {
                     TS_ASSERT(
                            entity == entity2
                         || entity->getPosition() != entity2->getPosition()
                     );
+                }
             }
         }
     }
