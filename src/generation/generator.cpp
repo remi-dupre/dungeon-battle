@@ -150,11 +150,13 @@ void Generator::addRooms(int x, int y, int n)
         rooms.push_back(room);
     }
 
-    // Places rooms in a non-linear way
-    separate_rooms(rooms, parameters.room_margin, rooms.size() - n, rooms.size());
+    // Places rooms in a non-linear way, room of index 0 must not move
+    separate_rooms(rooms, parameters.room_margin, std::max(1, (int) rooms.size() - n), rooms.size());
 
-    // Remove rooms that colapse
-    size_t i_room = rooms.size() - n;
+    printf("%d, %d\n", rooms[0].getPosition().first, rooms[0].getPosition().second);
+
+    // Remove rooms that colapse, not the one of index 0
+    size_t i_room = std::max(1, (int) rooms.size() - n);
     while (i_room < rooms.size())
     {
         // Check if a room colapse with i

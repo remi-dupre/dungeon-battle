@@ -146,25 +146,25 @@ void separate_rooms(std::vector<Room>& rooms, int spacing, size_t left, size_t r
 
                     if (i1_can_move && room1.getPosition().first > room2.getPosition().first)
                     {
-                        int shift = std::max(1.f, (room1.getPosition().first - room2.getPosition().first + spacing) / 3.f);
+                        int shift = std::max(1, room1.getPosition().first - room2.getPosition().first + spacing);
                         direction[i1] += {shift, 0};
                     }
 
                     if (i1_can_move && room1.getPosition().second > room2.getPosition().second)
                     {
-                        int shift = std::max(1.f, (room1.getPosition().second - room2.getPosition().second + spacing) / 3.f);
+                        int shift = std::max(1, room1.getPosition().second - room2.getPosition().second + spacing);
                         direction[i1] += {0, shift};
                     }
 
                     if (i2_can_move && room1.getPosition().first < room2.getPosition().first)
                     {
-                        int shift = std::max(1.f, (room2.getPosition().first - room1.getPosition().first + spacing) / 3.f);
+                        int shift = std::max(1, room2.getPosition().first - room1.getPosition().first + spacing);
                         direction[i2] += {shift, 0};
                     }
 
                     if (i2_can_move && room1.getPosition().second < room2.getPosition().second)
                     {
-                        int shift = std::max(1.f, (room2.getPosition().second - room1.getPosition().second + spacing) / 3.f);
+                        int shift = std::max(1, room2.getPosition().second - room1.getPosition().second + spacing);
                         direction[i2] += {0, shift};
                     }
 
