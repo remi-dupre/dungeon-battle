@@ -3,7 +3,7 @@
 
 Renderer::Renderer() :
     seed(0),
-    tile_size(4.f)
+    tile_size(32.f)
 {
     tileset.loadFromFile("data/tileset.png");
     charlie_tex.loadFromFile("data/character01.png");

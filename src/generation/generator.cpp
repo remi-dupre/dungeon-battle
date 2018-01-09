@@ -68,16 +68,29 @@ void Generator::generateRadius(int x, int y, int radius)
     // Radius of generated chunks
     int gen_radius = radius + GEN_BORDER;
 
-    for (int nx = x - gen_radius ; nx <= x + gen_radius ; nx++)
+    for (int radius_layer = 0 ; radius_layer <= gen_radius ; radius_layer++)
     {
-        for (int ny = y - gen_radius ; ny <= y + gen_radius ; ny++)
+        for (int nx = x - radius_layer ; nx <= x + radius_layer ; nx++)
         {
-            if (built.find({nx, ny}) == end(built))
-            {
-                std::cout << rooms.size() << std::endl;
-                addRooms(nx, ny, 1);
-                built.insert({nx, ny});
-                build_order.push_back({nx, ny});
+            for (int ny : std::set<int>({y - radius_layer, y + radius_layer})) {
+                if (built.find({nx, ny}) == end(built))
+                {
+                    addRooms(nx, ny, 1);
+                    built.insert({nx, ny});
+                    build_order.push_back({nx, ny});
+                }
+            }
+        }
+
+        for (int ny = y - gen_radius + 1 ; ny < y + gen_radius ; ny++)
+        {
+            for (int nx : std::set<int>({x - radius_layer, x + radius_layer})) {
+                if (built.find({nx, ny}) == end(built))
+                {
+                    addRooms(nx, ny, 1);
+                    built.insert({nx, ny});
+                    build_order.push_back({nx, ny});
+                }
             }
         }
     }
