@@ -155,11 +155,16 @@ void Game::update()
     bool monster_acting = false;
     EntityType next_turn = EntityType::Hero;
 
+    if (!config.monsters_no_delay && next_move > 0.f)
+        return;
+    else if (entity_turn == EntityType::Hero && next_move > 0.f)
+        return;
 
     for (auto& entity : *entities)
     {
-        if (entity_turn == EntityType::Monster && entity->getType() == EntityType::Hero)
-            continue;
+        if (config.monsters_no_delay)
+            if (entity_turn == EntityType::Monster && entity->getType() == EntityType::Hero)
+                continue;
 
         entity->setMoving(false);
         entity->setAttacking(false);
@@ -175,9 +180,6 @@ void Game::update()
 
     for (auto& entity : *entities)
     {
-        if (entity_turn == EntityType::Monster && entity->getType() == EntityType::Hero)
-            continue;
-
         if (entity->getType() != entity_turn)
             continue;
 
