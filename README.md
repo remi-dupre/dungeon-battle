@@ -4,11 +4,13 @@ Dungeon Battle
 
 Software engineering project.
 
+It is a small rogue-like game.
+
 # Compiling
 
 The project is written in **C++14**, in order to compile it you need:
 
-- A C++ STL that supports at least C++11.
+- A C++ STL that supports at least C++14.
 - The **SFML** library version `2.3.2` or more recent.
 
 The project can be built on most *Linux* distributions and *macOS*. Building on *Windows* is not supported, though building in *cygwin* or *bash on Windows* should work fine.
@@ -39,23 +41,26 @@ apt-get install make
 
 ### Optional dependencies
 Documentation is generated with **doxygen** and is required to `make doc`:
-
 ```bash
 apt-get install doxygen
 ```
 
 Some extra tests can be done by running `make test` and it requires **cppcheck** and **cxxgen**:
-
 ```bash
 apt-get install cppcheck cxxgen
 ```
 
 To execute the tests use `make test`:
-
 ```bash
 make test     # Build tester and runs it
 tests/test -v # Run the test again with extra informations
 ```
+
+If you want to build packages you will need **gzip**, **dpkg** or **fakeroot** depending on which package you want to build:
+```bash
+apt-get install gzip dpkg fakeroot
+```
+then you can use `make package-debian` to make a debian package, `make package-arch` to make an ArchLinux package or `make package-tar` to make a gzip compressed archive.
 
 ## Compilation
 
@@ -63,6 +68,16 @@ In order to compile the project, assuming you have all the dependencies mentione
 
 ```bash
 make release
+```
+
+If the flag DPACKAGE is set, the program will be compiled to find its ressources in /usr/var/dungeon-battle
+
+## Publication
+
+To publish the release, you need to add a tag on current commit:
+```bash
+git tag -a v1.4 -m "short title for version 1.4"
+git push --tag
 ```
 
 # Documentation
@@ -73,9 +88,13 @@ You can also generate the documentation by running `make doc`, which requires do
 
 # Other informations
 
-We defined a preferred coding style in the file [CONTRIBUTING.md](https://github.com/remi-dupre/dungeon-battle/blob/master/CONTRIBUTING.md).
+We explain how to start contributing to the project in [CONTRIBUTING.md](https://github.com/remi-dupre/dungeon-battle/blob/master/CONTRIBUTING.md).
 
 Some warning from the linter are listed on [github pages](https://remi-dupre.github.io/dungeon-battle/check/index.html).
 
 
 Made by Jean-Baptiste Daval, Rémi Dupré, Garance Gourdel, Benjamin Graillot and Lucas Gréaux.
+
+We thank gratefully Syia, tokiri and the Stradew valley community for their beautiful sprites :
+https://community.playstarbound.com/threads/syias-sprites-cats-pigs-chickens-bunnies-and-goats-3-14-update.108846/
+https://community.playstarbound.com/threads/tokiris-pet-replacements-fox-wolf-red-panda-update-red-panda-finished.110263/

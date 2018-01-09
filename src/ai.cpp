@@ -1,13 +1,13 @@
 #include "ai.hpp"
 
 
+Action just_moving();
 
 bool cell_seen(std::vector<std::vector<bool>> &seen, sf::Vector2i position, sf::Vector2i startposition, int sight){
     bool test = seen[position.x + sight - startposition.x][position.y + sight - startposition.y];
     seen[position.x + sight - startposition.x][position.y + sight - startposition.y] = true;
     return test;
 }
-
 
 void thereisaobstacle(
     const std::vector<std::shared_ptr<Entity>>& entities,
@@ -18,20 +18,19 @@ void thereisaobstacle(
     for(std::shared_ptr<Entity> entity : entities)
     {
         sf::Vector2i position = entity->getPosition();
-        if ((entity->getType() != EntityType::Stairs) 
-            && (entity->getType() != EntityType::None)) 
+        if ((entity->getType() != EntityType::Stairs)
+            && (entity->getType() != EntityType::None))
         {
             auto chara = std::static_pointer_cast<Character>(entity);
-            if(( chara->isAlive()) 
+            if(( chara->isAlive())
                 && (std::abs(position.x - startposition.x) <= sight)
-                && (std::abs(position.y-startposition.y)<= sight)) 
+                && (std::abs(position.y-startposition.y)<= sight))
             {
                 cell_seen(seen, position, startposition,sight);
             }
         }
     }
 }
-
 
 Action just_moving()
 {
@@ -42,14 +41,13 @@ Action just_moving()
    allaction.push_back(Action(ActionType::Move, Direction::Down));
    allaction.push_back(Action());
    return allaction[Rand::uniform_int(0,4)];
-} 
-
+}
 
 Action bfs_monster(const Character& monster, const std::vector<std::shared_ptr<Entity>>& entities, const Map& map)
 {
     // Get information on our monster.
     sf::Vector2i startposition = monster.getPosition();
-    int sight = 5; //monster.getSightRadius();
+    int sight = monster.getSightRadius();
 
 
     // Get the position of the hero
@@ -82,7 +80,6 @@ Action bfs_monster(const Character& monster, const std::vector<std::shared_ptr<E
         {{1,0}, Direction::Right},
         {{0,-1} , Direction::Up},
         {{0,1}, Direction::Down}};
-
 
 
     //Adding the first cells in the queue.
@@ -118,32 +115,34 @@ Action bfs_monster(const Character& monster, const std::vector<std::shared_ptr<E
             save_min_dist = math::distance_1(curentposition,heropostion);
             save_action = ret;  // Then save it.
         }
-        
+
         // See it's closer cells
         for(auto ori : dir)
         {
             sf::Vector2i position = curentposition + ori;
-            if (position == heropostion) // Have we fin the hero ?
+            if (position == heropostion) // Did we find the hero ?
                 // Then do the first move to go toward him.
-                return ret; 
+                return ret;
             //else if the path is valid.
-            if ((map.cellAt(position.x,position.y) == CellType::Floor) 
+            if ((map.cellAt(position.x,position.y) == CellType::Floor)
                 && (depth < sight)
                 && (!cell_seen(seen,position, startposition, sight)))
             {
                 //put it in the queue.
-                next_cells.push(std::make_tuple(position,depth+1,ret)); 
+                next_cells.push(std::make_tuple(position,depth+1,ret));
             }
         }
 
     }
+
     //If we can't go straight to the hero, at least go toward him.
     return save_action;
 }
 
-Action get_input_monster(const Character& entity, const std::vector<std::shared_ptr<Entity>>& entities, const Map& map)
+Action get_input_monster(const Character& monster,
+                         const std::vector<std::shared_ptr<Entity>>& entities,
+                         const Map& map)
 {
     assert(has_hero(entities));
-    return bfs_monster(entity,entities,map);
+    return bfs_monster(monster, entities, map);
 }
-

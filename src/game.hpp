@@ -19,7 +19,9 @@
 #include "args.hpp"
 #include "config.hpp"
 #include "control.hpp"
+#include "exploration.hpp"
 #include "map.hpp"
+#include "menu/menu.hpp"
 #include "rand.hpp"
 #include "render.hpp"
 #include "utility.hpp"
@@ -66,7 +68,7 @@ public:
      *
      * This function draws the game on the screen.
      */
-    void display();
+    void render();
 
     /**
      * \brief Get the list of every entities on the map
@@ -118,18 +120,40 @@ private:
      */
     bool update_entity(std::shared_ptr<Entity> entity, Action action);
 
-    sf::RenderWindow window; ///< The render window of the game
+    /**
+     * \brief Create a new game
+     * \param save_path The name of the game
+     * \param hero_class The class of the hero
+     */
+    void newGame(const std::string& save_path, Class hero_class);
+    /**
+     * \brief Load a game
+     * \param save_path The name of the game to load
+     */
+    bool loadGame(const std::string& save_path);
+    /**
+     * \brief Save the current game
+     */
+    bool saveGame();
+
     Configuration config; ///< The configuration of the game
+    float move_time; ///< The length of the animations
+
+    sf::RenderWindow window; ///< The render window of the game
     Renderer renderer; ///< The renderer
 
-    Map* map; ///< The map
+    std::shared_ptr<Menu> menu; ///< The current menu
 
-    std::vector<std::shared_ptr<Entity>>* entities; ///< The entities
+    std::string game_name; ///< The current game name (where to save it)
 
-    std::vector<Level> dungeon; ///< Save the different level of a dungeon
+    Map* map; ///< The current map
+    std::vector<std::shared_ptr<Entity>>* entities; ///< The current map entities
+    MapExploration *map_exploration; ///< The exploration state of the map
 
     std::size_t current_level; ///< The number of the curent level
+    std::vector<Level> dungeon; ///< The maps and entities of differents level of the dungeon
+    std::vector<MapExploration> exploration;
 
-    EntityType entity_turn;
-    float next_move;
+    EntityType entity_turn; ///< Tell whether it is the player or the monsters to play
+    float next_move; ///< Time until animation terminates
 };

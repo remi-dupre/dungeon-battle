@@ -7,12 +7,15 @@
 
 #include <algorithm>
 #include <array>
+#include <cstdint>
 #include <fstream>
 #include <iostream>
 #include <iterator>
 #include <tuple>
 #include <map>
 #include <string>
+
+#include <SFML/System/Vector2.hpp>
 
 #include "entity.hpp"
 #include "utility.hpp"
@@ -21,11 +24,11 @@
 /**
  * \brief Static information about the behaviour of the cell
  */
-enum class CellType
+enum class CellType : uint8_t
 {
-    Empty, ///< A cell that can't contain anything
-    Floor, ///< A cell you can walk on
-    Wall ///< A physical separation
+    Empty = 0, ///< A cell that can't contain anything
+    Floor = 1, ///< A cell you can walk on
+    Wall  = 2  ///< A wall
 };
 
 /**
@@ -104,18 +107,6 @@ public:
     void setChunk(int x, int y, const Chunk& chunk);
 
     /**
-     * \brief Load the map from a file
-     * \param filename Path of the file
-     */
-    bool loadFromFile(const std::string& filename);
-
-    /**
-     * \brief Save the map to a file
-     * \param filename Path of the file
-     */
-    void saveToFile(const std::string& filename) const;
-
-    /**
      * \brief Check wether a chunk is in the generated part of the map.
      * \param x The x-coordinate of the chunk we are interested in.
      * \param y The y-coordinate of the chunk we are interested in.
@@ -182,6 +173,20 @@ public:
      * \brief Check if there is a wall next to a cell
      */
     bool wallNext(sf::Vector2i coords) const;
+
+    Map& operator=(Map&& other);
+
+    /**
+     * \brief Load the map from a file
+     * \param filename Path of the file
+     */
+    bool loadFromFile(const std::string& filename);
+
+    /**
+     * \brief Save the map to a file
+     * \param filename Path of the file
+     */
+    void saveToFile(const std::string& filename) const;
 
 private:
     /**

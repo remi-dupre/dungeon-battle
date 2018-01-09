@@ -1,186 +1,93 @@
 #include "render.hpp"
 
+#include "lighting.hpp"
+#include "ressources.hpp"
+
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#pragma GCC diagnostic ignored "-Wattributes"
+
 
 Renderer::Renderer() :
     seed(0),
-    tile_size(32.f)
+    entity_center_view(nullptr)
 {
-    tileset.loadFromFile("data/tileset.png");
-    charlie_tex.loadFromFile("data/character01.png");
-    entities_tileset.loadFromFile("data/entities.png");
+    // Initialize the seed of the renderer
+    seed = static_cast<unsigned int>
+        (Rand::uniform_int(std::numeric_limits<int>::min(), std::numeric_limits<int>::max()));
 
-    std::random_device r;
-    RandRender::seed(r());
-    seed = RandRender::uniform_int(std::numeric_limits<int>::min(), std::numeric_limits<int>::max());
+    world_view_size = {
+        static_cast<int>(std::ceil(Configuration::default_configuration.width / tile_size)) + 2,
+        static_cast<int>(std::ceil(Configuration::default_configuration.height / tile_size)) + 2
+    };
 
-    font.loadFromFile("data/FSEX300.ttf");
-    hero_life.setFont(font);
+    view.setSize({static_cast<float>(Configuration::default_configuration.width),
+                  static_cast<float>(Configuration::default_configuration.height)});
+
+    // Max number of vertices at the same time
+    unsigned int n_tiles = world_view_size.x * world_view_size.y;
+    map_vertices_bg.reserve(2 * 6 * n_tiles);
+    map_vertices_fg.reserve(4 * 6 * n_tiles);
+    entities_sprites.reserve(2 * n_tiles);
+
+    hero_life.setFont(RessourceManager::getFont());
     hero_life.setCharacterSize(20.f);
     hero_life.setPosition(10.f, 10.f);
-    hero_xp.setFont(font);
+    hero_xp.setFont(RessourceManager::getFont());
     hero_xp.setCharacterSize(20.f);
     hero_xp.setPosition(10.f, 30.f);
-
 }
 
-void Renderer::setViewCenter(sf::Vector2f center)
+void Renderer::drawGame(const Map& map,
+                        MapExploration& map_exploration,
+                        const std::vector<std::shared_ptr<Entity>>& entities,
+                        std::shared_ptr<Entity> center_entity,
+                        float frame_progress,
+                        const Configuration& config)
 {
-    view.setCenter(tile_size * center);
-}
+    map_vertices_bg.clear();
+    map_vertices_fg.clear();
+    entities_sprites.clear();
 
-void Renderer::drawMap(const Map& map)
-{
-    sf::Vector2i min_corner =
-        static_cast<sf::Vector2i>(math::floor((view.getCenter() - 0.5f * view.getSize()) / tile_size));
-    sf::Vector2i max_corner =
-        static_cast<sf::Vector2i>(math::ceil((view.getCenter() + 0.5f * view.getSize()) / tile_size));
+    entity_center_view = center_entity;
 
-    map_vertices.clear();
-    map_vertices.reserve((max_corner.x - min_corner.x) * (max_corner.y - min_corner.y) * 4);
+    // Draw the map
+    sf::IntRect viewport = {entity_center_view->getPosition() - world_view_size / 2, world_view_size};
 
-    for (int x = min_corner.x ; x < max_corner.x ; x++)
+    for (int x = viewport.left; x < viewport.left + viewport.width; x++)
     {
-        for (int y = min_corner.y ; y < max_corner.y ; y++)
+        for (int y = viewport.top; y < viewport.top + viewport.height; y++)
         {
             CellType cell = map.cellAt(x, y);
-            drawCell({x, y}, cell, map);
+            drawCell({x, y}, cell, map, map_exploration, config);
         }
     }
-}
 
-void Renderer::drawEntities(const std::vector<std::shared_ptr<Entity>>& entities, float frame_time)
-{
-    entities_vertices.clear();
-    entities_vertices.reserve(entities.size() * 4);
-
-    charlie.clear();
-
+    // Draw the entities
     for (const auto& entity : entities)
     {
-        RandRender::seed(entity->getId() + seed);
-
-        sf::Vector2f p = tile_size * static_cast<sf::Vector2f>(entity->getPosition());
-        sf::Vector2f old_p = tile_size * static_cast<sf::Vector2f>(entity->getOldPosition());
-
-        float frame = 0.f;
-
-        // Interpolate the current position with the old one if the entity is moving
-        if (entity->isMoving())
-            p += frame_time * (old_p - p);
-        // Set the correct frame is the entity is doing something
-        if (entity->isMoving() || entity->isAttacking())
-            frame = std::floor(frame_time * 3.999f);
-
-        sf::Vertex v1, v2, v3, v4;
-
-        if (entity->getType() == EntityType::Hero)
-        {
-            auto hero = std::static_pointer_cast<Character>(entity);
-
-            hero_life.setString(std::to_string(hero->getHp()) + "/" + std::to_string(hero->getHpMax()));
-            hero_xp.setString("XP: " + std::to_string(hero->getExperience()) +
-                              "\nLVL: " + std::to_string(hero->getLevel()));
-            v1.position = {p.x - 1.f, p.y - 25.f};
-            v2.position = {p.x - 1.f, p.y + tile_size - 8.f};
-            v3.position = {p.x + tile_size - 1.f, p.y - 25.f};
-            v4.position = {p.x + tile_size - 1.f, p.y + tile_size - 8.f};
-
-            switch (entity->getOrientation())
-            {
-            case Direction::Down:
-                v1.texCoords = {frame * 32.f, 0.f};
-                v2.texCoords = {frame * 32.f, 48.f};
-                v3.texCoords = {frame * 32.f + 31.f, 0.f};
-                v4.texCoords = {frame * 32.f + 31.f, 48.f};
-                break;
-
-            case Direction::Left:
-                v1.texCoords = {frame * 32.f, 49.f};
-                v2.texCoords = {frame * 32.f, 96.f};
-                v3.texCoords = {frame * 32.f + 31.f, 49.f};
-                v4.texCoords = {frame * 32.f + 31.f, 96.f};
-                break;
-
-            case Direction::Right:
-                v1.texCoords = {frame * 32.f, 97.f};
-                v2.texCoords = {frame * 32.f, 144.f};
-                v3.texCoords = {frame * 32.f + 31.f, 97.f};
-                v4.texCoords = {frame * 32.f + 31.f, 144.f};
-                break;
-
-            case Direction::Up:
-                v1.texCoords = {frame * 32.f, 145.f};
-                v2.texCoords = {frame * 32.f, 192.f};
-                v3.texCoords = {frame * 32.f + 31.f, 145.f};
-                v4.texCoords = {frame * 32.f + 31.f, 192.f};
-                break;
-
-            case Direction::None:
-            default:
-                break;
-            }
-
-            charlie.push_back(v1);
-            charlie.push_back(v2);
-            charlie.push_back(v4);
-
-            charlie.push_back(v1);
-            charlie.push_back(v3);
-            charlie.push_back(v4);
-
+        // Entity not on screen
+        if (!viewport.contains(entity->getPosition()))
             continue;
-        }
 
-        v1.position = {p.x, p.y};
-        v2.position = {p.x, p.y + tile_size};
-        v3.position = {p.x + tile_size, p.y};
-        v4.position = {p.x + tile_size, p.y + tile_size};
+        bool entity_visible =
+            can_be_seen(entity->getPosition(), entity_center_view->getPosition(), map) ||
+            (entity->isMoving() &&
+                can_be_seen(entity->getOldPosition(), entity_center_view->getPosition(), map));
+        bool entity_drawn = entity_visible ||
+            (entity->getType() != EntityType::Monster &&
+                map_exploration.isExplored(entity->getPosition()));
 
-        sf::Color slime_color = {static_cast<sf::Uint8>(RandRender::uniform_int(0, 255)),
-                                 static_cast<sf::Uint8>(RandRender::uniform_int(0, 255)),
-                                 static_cast<sf::Uint8>(RandRender::uniform_int(0, 255))};
+        if(!config.lighting)
+            entity_visible = entity_drawn = true;
 
-        switch (entity->getType())
-        {
-            case EntityType::Hero:
-                break;
+        if (!entity_drawn)
+            continue;
 
-            case EntityType::Stairs:
-                v1.texCoords = {32.f, 0.f};
-                v2.texCoords = {32.f, 31.f};
-                v3.texCoords = {63.f, 0.f};
-                v4.texCoords = {63.f, 31.f};
-               break;
-
-            case EntityType::Monster:
-                v1.texCoords = {0.f, frame * 32.f};
-                v2.texCoords = {0.f, frame * 32.f + 31.f};
-                v3.texCoords = {31.f, frame * 32.f};
-                v4.texCoords = {31.f, frame * 32.f + 31.f};
-
-                v1.color = slime_color;
-                v2.color = slime_color;
-                v3.color = slime_color;
-                v4.color = slime_color;
-                break;
-
-            case EntityType::None:
-                [[fallthrough]];
-            default:
-                break;
-        }
-
-        entities_vertices.push_back(v1);
-        entities_vertices.push_back(v2);
-        entities_vertices.push_back(v4);
-
-        entities_vertices.push_back(v1);
-        entities_vertices.push_back(v3);
-        entities_vertices.push_back(v4);
+        drawEntity(entity, entity_visible, frame_progress);
     }
 }
 
-void Renderer::display(sf::RenderTarget& target)
+void Renderer::setView(sf::RenderTarget& target)
 {
     // Keep aspect ratio
     float screen_ratio = static_cast<float>(Configuration::default_configuration.height) /
@@ -205,106 +112,337 @@ void Renderer::display(sf::RenderTarget& target)
         x_offset = (screen_x - x) / screen_x;
     }
 
-    view.setSize({static_cast<float>(Configuration::default_configuration.width),
-                static_cast<float>(Configuration::default_configuration.height)});
     view.setViewport({x_offset / 2.f, y_offset / 2.f, 1.f - x_offset, 1.f - y_offset});
 
+    view.setCenter(static_cast<float>(Configuration::default_configuration.width) / 2.f,
+                   static_cast<float>(Configuration::default_configuration.height) / 2.f);
+
+    target.setView(view);
+}
+
+void Renderer::display(sf::RenderTarget& target, float frame_progress)
+{
+    setView(target);
+
+    sf::Vector2f view_pos = tile_size * static_cast<sf::Vector2f>(entity_center_view->getPosition());
+    if (entity_center_view->isMoving())
+    {
+        view_pos *= frame_progress;
+        view_pos += tile_size *
+            static_cast<sf::Vector2f>(entity_center_view->getOldPosition()) * (1.f - frame_progress);
+    }
+
+    view.setCenter(view_pos);
     target.setView(view);
 
-    sf::RenderStates map_rstates(&tileset);
-    target.draw(map_vertices.data(),
-                map_vertices.size(),
-                sf::PrimitiveType::Triangles,
-                map_rstates);
+    sf::RenderStates map_rstates(&RessourceManager::getTexture(Textures::Tileset));
+    target.draw(map_vertices_bg.data(), map_vertices_bg.size(),
+                sf::PrimitiveType::Triangles, map_rstates);
 
-    sf::RenderStates entities_rstates(&entities_tileset);
-    target.draw(entities_vertices.data(),
-                entities_vertices.size(),
-                sf::PrimitiveType::Triangles,
-                entities_rstates);
+    for (const auto& sprite : entities_sprites)
+        target.draw(sprite);
 
-    sf::RenderStates charlie_rstates(&charlie_tex);
-    target.draw(charlie.data(),
-                charlie.size(),
-                sf::PrimitiveType::Triangles,
-                charlie_rstates);
+    target.draw(map_vertices_fg.data(), map_vertices_fg.size(),
+                sf::PrimitiveType::Triangles, map_rstates);
 
-    target.setView(target.getDefaultView());
+    view.setCenter(static_cast<float>(Configuration::default_configuration.width) / 2.f,
+                   static_cast<float>(Configuration::default_configuration.height) / 2.f);
+    target.setView(view);
     target.draw(hero_life);
     target.draw(hero_xp);
 }
 
-void Renderer::drawCell(sf::Vector2i coords, CellType cell, const Map& map)
+void Renderer::drawEntity(std::shared_ptr<Entity> entity,
+                          bool cell_visible, float frame_progress)
+{
+    RandRender::seed(entity->getId() + seed);
+
+    entities_sprites.emplace_back();
+    sf::Sprite& entity_sprite = entities_sprites.back();
+
+    Textures texture_type = Textures::Tileset;
+    EntitySprite entity_type = EntitySprite::None;
+    sf::Color color = sf::Color::White;
+
+    switch (entity->getType())
+    {
+    case EntityType::Stairs:
+        texture_type = Textures::Scenery;
+        if (entity->getInteraction() == Interaction::GoDown)
+            entity_type = EntitySprite::StairsDown;
+        if (entity->getInteraction() == Interaction::GoUp)
+            entity_type = EntitySprite::StairsUp;
+        break;
+
+    case EntityType::Hero: {
+        auto hero = std::static_pointer_cast<Character>(entity);
+        hero_life.setString(std::to_string(hero->getHp()) + "/" +
+                            std::to_string(hero->getHpMax()));
+        hero_xp.setString("XP: " + std::to_string(hero->getExperience()) +
+                          "\nLVL: " + std::to_string(hero->getLevel()));
+    } [[fallthrough]];
+    case EntityType::Monster: {
+        auto character = std::static_pointer_cast<Character>(entity);
+        switch (character->getClass())
+        {
+        case Class::Slime:
+            texture_type = Textures::Slime;
+            entity_type = EntitySprite::Slime;
+            color.r = static_cast<sf::Uint8>(RandRender::uniform_int(0, 255));
+            color.g = static_cast<sf::Uint8>(RandRender::uniform_int(0, 255));
+            color.b = static_cast<sf::Uint8>(RandRender::uniform_int(0, 255));
+            break;
+
+        case Class::Warrior:
+            texture_type = Textures::Warrior;
+            entity_type = EntitySprite::Warrior;
+            break;
+
+        case Class::Bat:
+            texture_type = Textures::Bat;
+            entity_type = EntitySprite::Bat;
+            break;
+
+        case Class::Goat:
+            texture_type = Textures::Goat;
+            entity_type = EntitySprite::Goat;
+            break;
+
+        case Class::Rogue:
+            texture_type = Textures::Rogue;
+            entity_type = EntitySprite::Rogue;
+            break;
+
+        case Class::Wizard:
+            texture_type = Textures::Wizard;
+            entity_type = EntitySprite::Wizard;
+            break;
+
+        case Class::Angel:
+            texture_type = Textures::Angel;
+            entity_type = EntitySprite::Angel;
+            break;
+
+        default:
+            break;
+        }
+        break;
+    }
+    case EntityType::None:
+        [[fallthrough]];
+    default:
+        break;
+    }
+
+    entity_sprite.setTexture(RessourceManager::getTexture(texture_type)); // Texture
+
+    // Animation
+    float entity_frame_progress = 1.f;
+    if (entity->isMoving() || entity->isAttacking())
+        entity_frame_progress = std::max(1.f - frame_progress, 0.f);
+    if (entity->getType() == EntityType::Monster || entity->getType() == EntityType::Hero)
+    {
+        auto character = std::static_pointer_cast<Character>(entity);
+        if (character->getClass() == Class::Bat) // Animate Bats when idle
+            entity_frame_progress = frame_progress / 2.f;
+    }
+
+    EntityAnimationData& animation = RessourceManager::getAnimation(entity_type);
+    entity_sprite.setTextureRect(animation.getFrame(entity->getOrientation(), entity_frame_progress));
+
+    // Origin
+    entity_sprite.setOrigin(-static_cast<sf::Vector2f>(vec::position(animation.sprite_rect)));
+
+    //Position
+    sf::Vector2f pos = tile_size * static_cast<sf::Vector2f>(entity->getPosition());
+    sf::Vector2f old_pos = tile_size * static_cast<sf::Vector2f>(entity->getOldPosition());
+
+    if (entity->isMoving())
+        pos = (pos - old_pos) * 0.5f * (1.f - std::cos(math::pi<float> * frame_progress)) + old_pos;
+    entity_sprite.setPosition(pos);
+
+    // Color
+    float attack_ratio = 0.5f - 0.5f * frame_progress;
+    if (entity->isAttacked())
+    {
+        color.g *= attack_ratio;
+        color.b *= attack_ratio;
+    }
+
+    if (!cell_visible)
+        color *= {100, 100, 100};
+    entity_sprite.setColor(color);
+}
+
+void Renderer::drawCell(sf::Vector2i coords, CellType cell, const Map& map, MapExploration& map_exploration, const Configuration& config)
 {
     if (cell == CellType::Empty)
         return;
 
+    sf::Vector2i hero_pos = entity_center_view->getPosition();
+    bool cell_visible = can_be_seen(hero_pos, coords, map);
+    bool next_visible = can_be_seen(hero_pos, coords + to_vector2i(Direction::Up), map) ||
+                        can_be_seen(hero_pos, coords + to_vector2i(Direction::Down), map) ||
+                        can_be_seen(hero_pos, coords + to_vector2i(Direction::Left), map) ||
+                        can_be_seen(hero_pos, coords + to_vector2i(Direction::Right), map);
+    bool wall_visible = cell_visible || (next_visible && cell == CellType::Wall);
+    bool cell_explored = map_exploration.isExplored(coords);
+
+    if(!config.lighting){
+        cell_visible = next_visible = wall_visible = cell_explored = true;
+    }
+
+    if (wall_visible)
+        map_exploration.setExplored(coords);
+    if (!wall_visible && !cell_explored)
+        return;
+
     RandRender::seed(std::hash<sf::Vector2i>{}(coords));
 
-    sf::Vector2f p = tile_size * static_cast<sf::Vector2f>(coords);
+    sf::Vector2f pos = tile_size * static_cast<sf::Vector2f>(coords);
+
+    Direction floor_neighborhood = Direction::None;
+    if (map.wallNext(coords))
+    {
+        floor_neighborhood = Direction::Down | Direction::Up | Direction::Left | Direction::Right;
+    }
+    else
+    {
+        for (Direction dir : directions)
+        {
+            if (map.wallNext(coords + to_vector2i(dir)))
+                floor_neighborhood |= dir;
+        }
+    }
+
+    sf::Vector2f tex_coords = RessourceManager::getTileTextureCoords(CellType::Floor, floor_neighborhood);
+
+    sf::Color cell_color = sf::Color::White;
+    if (!(cell_visible || (cell == CellType::Wall && next_visible)) && cell_explored)
+        cell_color = {100, 100, 100};
 
     sf::Vertex v1, v2, v3, v4;
+    v1 = v2 = v3 = v4 = {pos, cell_color, tex_coords};
 
-    v1.position = p;
-    v2.position = {p.x, p.y + tile_size};
-    v3.position = {p.x + tile_size, p.y};
-    v4.position = {p.x + tile_size, p.y + tile_size};
+    v2.position.y += tile_size;
+    v3.position.x += tile_size;
+    v4.position += {tile_size, tile_size};
 
-    // Texture rectangles for floor are hardcoded for now
-    const sf::Vector2f tiles_coord[] = {
-        {RandRender::uniform_int(0, 5) * 32.f, 128.f},
-        {0.f, 96.f}, {32.f, 96.f}, {0.f, 64.f}, {64.f, 96.f},
-        {32.f, 64.f}, {64.f, 64.f}, {0.f, 32.f}, {96.f, 96.f},
-        {96.f, 64.f}, {128.f, 64.f}, {32.f, 32.f}, {160.f, 64.f},
-        {64.f, 32.f}, {96.f, 32.f},
-        {RandRender::uniform_int(0, 5) * 32.f, 0.f}
-    };
+    v2.texCoords.y += tile_size;
+    v3.texCoords.x += tile_size;
+    v4.texCoords += {tile_size, tile_size};
 
-    sf::Vector2i next_tiles[] = {{0, -1}, {1, 0}, {0, 1}, {-1, 0}};
-    int tile_index = 0;
-
-    for (int i = 0; i < 4; i++)
+    if (cell_visible || cell_explored)
     {
-        if (map.wallNext(coords + next_tiles[i]))
-            tile_index |= 1 << i;
-    }
-    if (map.wallNext(coords))
-        tile_index = 15;
+        map_vertices_bg.push_back(v1);
+        map_vertices_bg.push_back(v2);
+        map_vertices_bg.push_back(v4);
 
-    assert(0 <= tile_index && tile_index < 16);
-
-    int tile_nb;
-
-    sf::Vector2f t = tiles_coord[tile_index];
-
-    switch (cell)
-    {
-        case CellType::Floor:
-            v1.texCoords = t;
-            v2.texCoords = {t.x, t.y + 31.f};
-            v3.texCoords = {t.x + 31.f, t.y};
-            v4.texCoords = {t.x + 31.f, t.y + 31.f};
-            break;
-
-        case CellType::Wall:
-            tile_nb = RandRender::uniform_int(0, 3);
-            v1.texCoords = {32.f * tile_nb, 160.f};
-            v2.texCoords = {32.f * tile_nb, 191.f};
-            v3.texCoords = {32.f * tile_nb + 31.f, 160.f};
-            v4.texCoords = {32.f * tile_nb + 31.f, 191.f};
-            break;
-
-        case CellType::Empty:
-            [[fallthrough]];
-        default:
-            return; // Don't draw empty/unkonwn cells
+        map_vertices_bg.push_back(v1);
+        map_vertices_bg.push_back(v3);
+        map_vertices_bg.push_back(v4);
     }
 
-    map_vertices.push_back(v1);
-    map_vertices.push_back(v2);
-    map_vertices.push_back(v4);
+    if (cell != CellType::Wall)
+        return;
 
-    map_vertices.push_back(v1);
-    map_vertices.push_back(v3);
-    map_vertices.push_back(v4);
+    Direction wall_neighborhood = Direction::None;
+    for (Direction dir : directions)
+    {
+        if (map.cellAt(coords + to_vector2i(dir)) == CellType::Floor)
+            wall_neighborhood |= dir;
+    }
+
+    // Lower part of walls
+    sf::Vector2f wall_tex_coords =
+        RessourceManager::getTileTextureCoords(CellType::Empty, Direction::None);
+    if (map.cellAt(coords + sf::Vector2i(0, 1)) == CellType::Empty ||
+        !map_exploration.isExplored(coords + sf::Vector2i(0, 1)))
+        wall_tex_coords = RessourceManager::getTileTextureCoords(CellType::Wall, Direction::None)
+            + sf::Vector2f(0.f, tile_size);
+    if (has_direction(wall_neighborhood, Direction::Down))
+        wall_tex_coords = RessourceManager::getTileTextureCoords(CellType::Wall, wall_neighborhood)
+            + sf::Vector2f(0.f, tile_size);
+
+    v1.texCoords = v2.texCoords = v3.texCoords = v4.texCoords = wall_tex_coords;
+    v2.texCoords.y += tile_size;
+    v3.texCoords.x += tile_size;
+    v4.texCoords += {tile_size, tile_size};
+
+    map_vertices_bg.push_back(v1);
+    map_vertices_bg.push_back(v2);
+    map_vertices_bg.push_back(v4);
+
+    map_vertices_bg.push_back(v1);
+    map_vertices_bg.push_back(v3);
+    map_vertices_bg.push_back(v4);
+
+    // Upper part of walls
+    wall_tex_coords = RessourceManager::getTileTextureCoords(CellType::Wall, wall_neighborhood);
+
+    v1.position.y -= tile_size;
+    v2.position.y -= tile_size;
+    v3.position.y -= tile_size;
+    v4.position.y -= tile_size;
+
+    v1.texCoords = v2.texCoords = v3.texCoords = v4.texCoords = wall_tex_coords;
+    v2.texCoords.y += tile_size;
+    v3.texCoords.x += tile_size;
+    v4.texCoords += {tile_size, tile_size};
+
+    map_vertices_fg.push_back(v1);
+    map_vertices_fg.push_back(v2);
+    map_vertices_fg.push_back(v4);
+
+    map_vertices_fg.push_back(v1);
+    map_vertices_fg.push_back(v3);
+    map_vertices_fg.push_back(v4);
+
+
+    // Corners of walls
+    for (int i = 0; i < 4; ++i)
+    {
+        Direction dir1 = directions[i], dir2 = directions[(i+1) & 3],
+            dir_corner = dir1 | dir2;
+        if (map.cellAt(coords + to_vector2i(dir1)) != CellType::Floor &&
+            map.cellAt(coords + to_vector2i(dir2)) != CellType::Floor)
+        {
+            CellType corner_cell = map.cellAt(coords + to_vector2i(dir_corner));
+
+            sf::Vector2f offset = {0.f, 0.f};
+            float height = 0.f;
+
+            if (has_direction(dir_corner, Direction::Right))
+                offset.x += tile_size / 2.f;
+            if (has_direction(dir_corner, Direction::Down))
+            {
+                offset.y += tile_size / 2.f;
+                if (corner_cell == CellType::Floor)
+                    height = tile_size;
+            }
+
+            v1.position = v2.position = v3.position = v4.position =
+                pos + offset - sf::Vector2f(0.f, tile_size);
+            v2.position.y += tile_size / 2.f + height;
+            v3.position.x += tile_size / 2.f;
+            v4.position += {tile_size / 2.f, tile_size / 2.f + height};
+
+            sf::Vector2f corner_tex_coords = {256.f, 32.f};
+            if (corner_cell != CellType::Floor)
+                corner_tex_coords = {320.f, 128.f};
+
+            v1.texCoords = v2.texCoords = v3.texCoords = v4.texCoords = corner_tex_coords + offset;
+            v2.texCoords.y += tile_size / 2.f + height;
+            v3.texCoords.x += tile_size / 2.f;
+            v4.texCoords += {tile_size / 2.f, tile_size / 2.f + height};
+
+            map_vertices_fg.push_back(v1);
+            map_vertices_fg.push_back(v2);
+            map_vertices_fg.push_back(v4);
+
+            map_vertices_fg.push_back(v1);
+            map_vertices_fg.push_back(v3);
+            map_vertices_fg.push_back(v4);
+        }
+    }
 }

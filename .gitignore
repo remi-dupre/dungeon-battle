@@ -15,5 +15,10 @@ doc/
 tests/*
 !tests/*.hpp
 !tests/*.ini
+!tests/data/
+
+data_tmp/*
 
 map.map
+
+.dir-locals.el

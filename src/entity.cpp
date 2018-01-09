@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <cassert>
+#include <fstream>
 #include <functional>
 #include <memory>
 #include <vector>
@@ -7,25 +8,16 @@
 #include "entity.hpp"
 #include "utility.hpp"
 
+
 unsigned int currentId = 0;
 
-Entity::Entity(EntityType type_, Interaction interaction_, sf::Vector2i position_, Direction orientation_) :
+Entity::Entity(EntityType type_, Interaction interaction_,
+               sf::Vector2i position_, Direction orientation_,
+               Controller controller_) :
     id(++currentId),
-    controller_id(0),
     type(type_),
     interaction(interaction_),
-    position(position_),
-    orientation(orientation_),
-    moving(false),
-    attacking(false),
-    attacked(false)
-{}
-
-Entity::Entity(EntityType type_, Interaction interaction_, sf::Vector2i position_, Direction orientation_, unsigned int controller_id_) :
-    id(++currentId),
-    controller_id(controller_id_),
-    type(type_),
-    interaction(interaction_),
+    controller(controller_),
     position(position_),
     orientation(orientation_),
     moving(false),
@@ -38,9 +30,9 @@ unsigned int Entity::getId() const
     return id;
 }
 
-unsigned int Entity::getControllerId() const
+Controller Entity::getController() const
 {
-    return controller_id;
+    return controller;
 }
 
 EntityType Entity::getType() const
@@ -146,7 +138,7 @@ bool Entity::isAttacked() const
     return attacked;
 }
 
-int Entity::zIndex()
+int Entity::zIndex() const
 {
     switch(type)
     {
@@ -169,7 +161,7 @@ Item::Item(const std::string& name_,
         int experience_,
         int hpMax_,
         int hp_,
-        int strength_,
+           int strength_,
         int defense_,
         int sightRadius_) :
     Entity(EntityType::Item, Interaction::None, position_, Direction::None),
@@ -218,42 +210,50 @@ int Item::getSightRadius() const
     return sightRadius;
 }
 
-
 Character::Character(EntityType type_,
-                    Interaction interaction_,
-                    sf::Vector2i position_,
-                    Direction orientation_,
-                    unsigned int hpMax_,
-                    unsigned int strength_,
-                    unsigned int controller_id_) :
-    Entity(type_, interaction_, position_, orientation_, controller_id_),
+                     Interaction interaction_,
+                     sf::Vector2i position_,
+                     Direction orientation_,
+                     Class character_class_,
+                     unsigned int hpMax_,
+                     unsigned int strength_,
+                     Controller controller_) :
+    Entity(type_, interaction_, position_, orientation_, controller_),
+    character_class(character_class_),
     level(1),
-    experienceCurve([](unsigned int level) -> unsigned int {return 10*level;}),
+    experienceCurve([](unsigned int lvl) -> unsigned int {return 10*lvl;}),
     experience(0),
     hpMax(hpMax_),
     hp(hpMax_),
     strength(strength_),
     defense(0),
     sightRadius(0),
-    inventory(std::vector<Item>()),
-    inventorySize(-1)
+    inventory({}),
+    inventorySize(0),
+    spells(std::vector<Spell> ({Spell()}))
+{}
+
+Character::Character(Class character_class_, sf::Vector2i position_) :
+    Character::Character(
+        EntityType::Monster,
+        Interaction::None,
+        position_,
+        Direction::Left,
+        character_class_,
+        StatManager::hp[character_class_],
+        StatManager::strength[character_class_]
+    )
 {
-    if (type_ == EntityType::Monster)
-        experience = 5;
+    experience = StatManager::xp[character_class_];
+    sightRadius = StatManager::sightradius[character_class_];
 }
 
-Character::Character(EntityType type_,
-                     Interaction interaction_,
-                     sf::Vector2i position_,
-                     Direction orientation_,
-                     unsigned int hpMax_,
-                     unsigned int strength_) :
-    Character(type_, interaction_, position_, orientation_, hpMax_, strength_, 0)
-{
-    if (type_ == EntityType::Monster)
-        experience = 5;
-}
 
+
+Class Character::getClass() const
+{
+    return character_class;
+}
 
 unsigned int Character::getLevel() const
 {
@@ -320,7 +320,7 @@ void Character::setHp(unsigned int hp_)
 
 void Character::addHp(int hp_)
 {
-    (static_cast<int>(hp) < -hp_) ? hp = 0 : hp = std::min(hp+hp_, hpMax);
+    (static_cast<int>(hp) < -hp_) ? hp = 0 : hp = std::min(hp + hp_, hpMax);
 }
 
 bool Character::isAlive() const
@@ -403,7 +403,7 @@ void Character::awardExperience(const Character& target)
     }
 }
 
-bool Character::roomInInventory()
+bool Character::roomInInventory() const
 {
     return (inventorySize > inventory.size());
 }
@@ -412,6 +412,54 @@ void Character::pickUp(Item item)
 {
     inventory.push_back(item);
 }
+
+
+const std::vector<Spell>& Character::getSpells() const
+{
+    return spells;
+}
+
+Class randomClass()
+{
+    int r = rand() % 3;
+    std::vector<int> monsters = {3,5,6};
+    return static_cast<Class>(monsters[r]);
+}
+
+std::map<Class, int> StatManager::xp{};
+std::map<Class, int> StatManager::strength{};
+std::map<Class, int> StatManager::hp{};
+std::map<Class, int> StatManager::sightradius{};
+
+bool StatManager::loadStats()
+{
+    std::ifstream stats_file(Configuration::data_path + "monsters-stats");
+    std::string monster_class_str;
+
+    if(!stats_file.is_open())
+        return false;
+
+    xp.clear(); strength.clear(); hp.clear(); sightradius.clear();
+
+    while (stats_file >> monster_class_str)
+    {
+        Class character_class = Class::None;
+        if (monster_class_str == "Slime")
+            character_class = Class::Slime;
+        else if (monster_class_str == "Goat")
+            character_class = Class::Goat;
+        else if (monster_class_str == "Bat")
+            character_class = Class::Bat;
+
+        stats_file >> xp[character_class];
+        stats_file >> strength[character_class];
+        stats_file >> hp[character_class];
+        stats_file >> sightradius[character_class];
+
+    }
+    return true;
+}
+
 
 
 
@@ -441,4 +489,72 @@ sf::Vector2i get_hero_position(const std::vector<std::shared_ptr<Entity>>& entit
 
     assert(false);
     return {0, 0};
+}
+
+
+
+std::ostream& operator<<(std::ostream& stream, const Entity& entity)
+{
+    stream.write(reinterpret_cast<const char*>(&entity.type), sizeof(uint32_t));
+    stream.write(reinterpret_cast<const char*>(&entity.interaction), sizeof(uint32_t));
+    stream.write(reinterpret_cast<const char*>(&entity.controller), sizeof(uint32_t));
+
+    stream.write(reinterpret_cast<const char*>(&entity.position.x), sizeof(int32_t));
+    stream.write(reinterpret_cast<const char*>(&entity.position.y), sizeof(int32_t));
+
+    stream.write(reinterpret_cast<const char*>(&entity.old_position.x), sizeof(int32_t));
+    stream.write(reinterpret_cast<const char*>(&entity.old_position.y), sizeof(int32_t));
+
+    stream.write(reinterpret_cast<const char*>(&entity.orientation), sizeof(uint8_t));
+
+    return stream;
+}
+
+std::istream& operator>>(std::istream& stream, Entity& entity)
+{
+    stream.read(reinterpret_cast<char*>(&entity.type), sizeof(uint32_t));
+    stream.read(reinterpret_cast<char*>(&entity.interaction), sizeof(uint32_t));
+    stream.read(reinterpret_cast<char*>(&entity.controller), sizeof(uint32_t));
+
+    stream.read(reinterpret_cast<char*>(&entity.position.x), sizeof(int32_t));
+    stream.read(reinterpret_cast<char*>(&entity.position.y), sizeof(int32_t));
+
+    stream.read(reinterpret_cast<char*>(&entity.old_position.x), sizeof(int32_t));
+    stream.read(reinterpret_cast<char*>(&entity.old_position.y), sizeof(int32_t));
+
+    stream.read(reinterpret_cast<char*>(&entity.orientation), sizeof(uint8_t));
+
+    return stream;
+}
+
+std::ostream& operator<<(std::ostream& stream, const Character& entity)
+{
+    stream << (*static_cast<const Entity*>(&entity));
+
+    stream.write(reinterpret_cast<const char*>(&entity.character_class), sizeof(uint32_t));
+    stream.write(reinterpret_cast<const char*>(&entity.level), sizeof(uint32_t));
+    stream.write(reinterpret_cast<const char*>(&entity.experience), sizeof(uint32_t));
+    stream.write(reinterpret_cast<const char*>(&entity.hpMax), sizeof(uint32_t));
+    stream.write(reinterpret_cast<const char*>(&entity.hp), sizeof(uint32_t));
+    stream.write(reinterpret_cast<const char*>(&entity.strength), sizeof(uint32_t));
+    stream.write(reinterpret_cast<const char*>(&entity.defense), sizeof(uint32_t));
+    stream.write(reinterpret_cast<const char*>(&entity.sightRadius), sizeof(uint32_t));
+
+    return stream;
+}
+
+std::istream& operator>>(std::istream& stream, Character& entity)
+{
+    stream >> (*static_cast<Entity*>(&entity));
+
+    stream.read(reinterpret_cast<char*>(&entity.character_class), sizeof(uint32_t));
+    stream.read(reinterpret_cast<char*>(&entity.level), sizeof(uint32_t));
+    stream.read(reinterpret_cast<char*>(&entity.experience), sizeof(uint32_t));
+    stream.read(reinterpret_cast<char*>(&entity.hpMax), sizeof(uint32_t));
+    stream.read(reinterpret_cast<char*>(&entity.hp), sizeof(uint32_t));
+    stream.read(reinterpret_cast<char*>(&entity.strength), sizeof(uint32_t));
+    stream.read(reinterpret_cast<char*>(&entity.defense), sizeof(uint32_t));
+    stream.read(reinterpret_cast<char*>(&entity.sightRadius), sizeof(uint32_t));
+
+    return stream;
 }

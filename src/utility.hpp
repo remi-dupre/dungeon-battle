@@ -6,25 +6,50 @@
 #pragma once
 
 #include <cassert>
+#include <cstdint>
 #include <functional>
 #include <tuple>
 
 #include <SFML/System/Vector2.hpp>
+#include <SFML/Graphics/Rect.hpp>
 
 
 /**
  * \brief Direction of an entity or an action
  */
-enum class Direction
+enum class Direction : uint8_t
 {
-    None, ///< No specific direction
-    Left, ///< Left
-    Right, ///< Right
-    Up, ///< Up
-    Down ///< Down
+    None  = 0,      ///< No specific direction
+    Up    = 1 << 0, ///< Up
+    Right = 1 << 1, ///< Right
+    Down  = 1 << 2, ///< Down
+    Left  = 1 << 3  ///< Left
 };
 
+Direction operator|(Direction a, Direction b);
+Direction operator&(Direction a, Direction b);
+Direction operator|=(Direction& a, Direction b);
+Direction operator&=(Direction& a, Direction b);
+bool has_direction(Direction a, Direction b);
+
 sf::Vector2i to_vector2i(Direction direction);
+
+constexpr Direction directions[] = {Direction::Left, Direction::Up, Direction::Right, Direction::Down};
+
+namespace vec
+{
+    template <typename T>
+    sf::Vector2<T> position(sf::Rect<T> a)
+    {
+        return {a.left, a.top};
+    }
+
+    template <typename T>
+    sf::Vector2<T> size(sf::Rect<T> a)
+    {
+        return {a.width, a.height};
+    }
+}
 
 namespace std
 {

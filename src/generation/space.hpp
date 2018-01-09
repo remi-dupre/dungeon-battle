@@ -39,7 +39,7 @@ public:
      * \brief Construct a kd-tree representing an array of points.
      * \param points The set containing all points we will add
      */
-    KDTree(const std::set<Point>& points);
+    explicit KDTree(const std::set<Point>& points);
 
     /**
      * \brief Check if a point is closer than a given range.

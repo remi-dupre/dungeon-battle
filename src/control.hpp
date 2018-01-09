@@ -12,7 +12,7 @@
 #include "config.hpp"
 #include "entity.hpp"
 #include "map.hpp"
-#include "ai.hpp"
+#include "utility.hpp"
 
 
 /**
@@ -20,11 +20,10 @@
  */
 enum class ActionType
 {
-    None, ///< No action
-    Move, ///< Move action
-    Attack, ///< Attack action
-    Interact, ///< Interact action
-    Pause ///< Pause and menu 
+    None,    ///< No action
+    Move,    ///< Move action
+    Attack,  ///< Attack action
+    Interact ///< Interact action
 };
 
 /**
@@ -65,4 +64,4 @@ namespace control
                      const std::vector<std::shared_ptr<Entity>>& entities,
                      const Map& map,
                      const Configuration& config);
-};
+}

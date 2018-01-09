@@ -7,64 +7,88 @@
 
 #include <algorithm>
 #include <functional>
+#include <iostream>
+#include <map>
 #include <memory>
 #include <string>
 #include <vector>
 
 #include <SFML/System/Vector2.hpp>
 
+#include "spells.hpp"
 #include "utility.hpp"
+#include "config.hpp"
 
 
 /**
  * \brief Static information about the type of the entity
  */
-enum class EntityType
+enum class EntityType : uint32_t
 {
-    None, ///< Missing type
-    Hero, ///< A hero
-    Monster, ///< A monster
-    Stairs, ///< A staircase
-    Item ///< An item
+    None    = 0, ///< Missing type
+    Hero    = 1, ///< A hero
+    Monster = 2, ///< A monster
+    Stairs  = 3, ///< A staircase
+    Item    = 4  ///< An item
+};
+
+
+/**
+ * \brief Static information about character type
+ */
+enum class Class : uint32_t
+{
+    Warrior = 0, ///< Warrior class for hero
+    Rogue   = 1, ///< Rogue class for hero
+    Wizard  = 2, ///< Wizard class for hero
+    Slime   = 3, ///< Slime monster
+    Angel   = 4, ///< Angel class for hero
+    Bat     = 5, ///< Bat monster
+    Goat    = 6, ///< Goat not a monster
+    None    = 7  ///< None type
 };
 
 
 /**
  * \brief Static information about the interaction with the entity
  */
-enum class Interaction
+enum class Interaction : uint32_t
 {
-    None, ///< None
-    GoUp, ///< Go up
-    GoDown, ///< Go down
-    PickUp, ///< Pick up
-    Use ///< Use
+    None   = 0, ///< None
+    GoUp   = 1, ///< Go up
+    GoDown = 2, ///< Go down
+    PickUp = 3, ///< Pick up
+    Use    = 4  ///< Use
+};
+
+enum class Controller : uint32_t
+{
+    None    = 0,
+    AI      = 1, ///< The AI
+    Player1 = 2, ///< The first (and only) player
 };
 
 
 /**
  * \brief Represents anything that is interactive
  */
-class Entity : public std::enable_shared_from_this<Entity>
+class Entity
 {
 public:
 
     /**
      * \brief Create an entity
      * \param type The type of the entity
+     * \param interaction The interaction
      * \param position The position of the entity
      * \param orientation The orientation of the entity
+     * \param controller The type of the controller (AI or Player)
      */
-    Entity(EntityType type, Interaction interaction, sf::Vector2i position, Direction orientation);
-
-    /**
-     * \brief Create an entity
-     * \param type The type of the entity
-     * \param position The position of the entity
-     * \param orientation The orientation of the entity
-     * \param controller_id The id of the controller
-     */
-    Entity(EntityType type, Interaction interaction, sf::Vector2i position, Direction orientation, unsigned int controller_id);
+    Entity(EntityType type         = EntityType::None,
+           Interaction interaction = Interaction::None,
+           sf::Vector2i position   = {},
+           Direction orientation   = Direction::None,
+           Controller controller   = Controller::AI);
 
     virtual ~Entity() = default;
 
@@ -76,7 +100,7 @@ public:
     /**
      * \brief Return the id of the controller of the entity
      */
-    unsigned int getControllerId() const;
+    Controller getController() const;
 
     /**
      * \brief Return the type of the entity
@@ -155,21 +179,27 @@ public:
     /**
      * \brief Return the zIndex of the entity
      */
-    int zIndex();
+    int zIndex() const;
 
 protected:
 
     const unsigned int id; ///< The id of the entity
-    const unsigned int controller_id; ///< The id of the controller of the entity
-    const EntityType type; ///< The type of the entity
-    const Interaction interaction; ///< The result of the interaction with the entity
-    sf::Vector2i position; ///< The position of the entity
-    Direction orientation; ///< The orientation of the entity
 
+    EntityType type;         ///< The type of the entity
+    Interaction interaction; ///< The result of the interaction with the entity
+    Controller controller;   ///< The id of the controller of the entity
+
+    sf::Vector2i position;     ///< The position of the entity
     sf::Vector2i old_position; ///< The position of the entity at the previous turn
-    bool moving; ///< Tells whether the entity is currently moving or not
+    Direction orientation;     ///< The orientation of the entity
+
+    bool moving;    ///< Tells whether the entity is currently moving or not
     bool attacking; ///< Tells whether the entity is currently attacking or not
-    bool attacked; ///< Tells whether the entity is currently attacked or not
+    bool attacked;  ///< Tells whether the entity is currently attacked or not
+
+
+    friend std::ostream& operator<<(std::ostream& stream, const Entity& entity);
+    friend std::istream& operator>>(std::istream& stream, Entity& entity);
 };
 
 
@@ -254,38 +284,38 @@ class Character : public Entity
 public:
 
     /**
-     * \brief Create a character owned by the AI
-     * \param type The type of the character
-     * \param interaction The interaction with the entity
-     * \param position The position of the character
-     * \param orientation The orientation of the character
-     * \param hpMax The maximum hp of the character
-     * \param strength The force of the character
-     */
-    Character(EntityType type,
-              Interaction interaction,
-              sf::Vector2i position,
-              Direction orientation,
-              unsigned int hpMax,
-              unsigned int strength);
-
-    /**
      * \brief Create a character
      * \param type The type of the character
      * \param interaction The interaction with the entity
      * \param position The position of the character
      * \param orientation The orientation of the character
+     * \param character_class_ The character class of the character
      * \param hpMax The maximum hp of the character
      * \param strength The force of the character
      * \param controller_id The owner of the character
      */
-    Character(EntityType type,
-              Interaction interaction,
-              sf::Vector2i position,
-              Direction orientation,
-              unsigned int hpMax,
-              unsigned int strength,
-              unsigned int controller_id);
+    Character(EntityType type         = EntityType::Monster,
+              Interaction interaction = Interaction::None,
+              sf::Vector2i position   = {},
+              Direction orientation   = Direction::None,
+              Class character_class   = Class::Warrior,
+              unsigned int hpMax      = 0,
+              unsigned int strength   = 0,
+              Controller controller   = Controller::AI);
+
+  /**
+   * \brief Create a monster character
+   * \param character_class_ The character class of the character
+   * \param position The position of the character
+   */
+    Character(Class character_class_, sf::Vector2i position_);
+
+
+
+    /**
+     * \brief Return the class of the character
+     */
+    Class getClass() const;
 
     /**
      * \brief Return the max hp of the character
@@ -396,7 +426,7 @@ public:
     /**
      * \brief Check if there is an empty inventory slot
      */
-    bool roomInInventory();
+    bool roomInInventory() const;
 
     /**
      * \brief Add an item to the inventory, asserting roomInInventory()
@@ -404,8 +434,15 @@ public:
      */
     void pickUp(Item item);
 
+    /**
+     * \brief Return the spells of the character
+     */
+    const std::vector<Spell>& getSpells() const;
+
+
 protected:
 
+    Class character_class; ///< The class of the character
     unsigned int level; ///< The level of the character
     std::function<unsigned int(unsigned int)> experienceCurve; ///< The experience curve of the character
     unsigned int experience; ///< The experience of the character
@@ -417,6 +454,26 @@ protected:
 
     std::vector<Item> inventory; ///< The inventory of the character
     unsigned int inventorySize; ///< The size of the inventory of the character
+
+    std::vector<Spell> spells; ///< The spells of the character
+
+    friend std::ostream& operator<<(std::ostream& stream, const Character& entity);
+    friend std::istream& operator>>(std::istream& stream, Character& entity);
+};
+
+
+/**
+ * \brief Return a random class
+ */
+Class randomClass();
+
+struct StatManager
+{
+    static bool loadStats();
+    static std::map<Class, int> xp;
+    static std::map<Class, int> strength;
+    static std::map<Class, int> hp;
+    static std::map<Class, int> sightradius;
 };
 
 /**
@@ -430,3 +487,8 @@ bool has_hero(const std::vector<std::shared_ptr<Entity>>& entities);
  * \param entities A vector of entities containing a hero
  */
 sf::Vector2i get_hero_position(const std::vector<std::shared_ptr<Entity>>& entities);
+
+std::ostream& operator<<(std::ostream& stream, const Entity& entity);
+std::istream& operator>>(std::istream& stream, Entity& entity);
+std::ostream& operator<<(std::ostream& stream, const Character& entity);
+std::istream& operator>>(std::istream& stream, Character& entity);

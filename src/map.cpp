@@ -1,4 +1,5 @@
 #include <cassert>
+#include <fstream>
 
 #include "map.hpp"
 
@@ -47,31 +48,6 @@ Map::Map() {}
 void Map::setChunk(int x, int y, const Chunk& chunk)
 {
     chunks[{x, y}] = chunk;
-}
-
-bool Map::loadFromFile(const std::string& filename)
-{
-    std::ifstream file;
-    file.open(filename);
-
-    if (file.fail())
-        return false;
-
-    // file >> *this;
-
-    return true;
-}
-
-void Map::saveToFile(const std::string& filename) const
-{
-    std::ofstream file(filename);
-
-    if (!file.is_open())
-        return;
-
-    // file << *this;
-
-    return;
 }
 
 bool Map::hasCell(int x, int y) const
@@ -148,4 +124,76 @@ bool Map::wallNext(int x, int y) const
 bool Map::wallNext(sf::Vector2i coords) const
 {
     return wallNext(coords.x, coords.y);
+}
+
+Map& Map::operator=(Map&& other)
+{
+    width = other.width;
+    height = other.height;
+    cells = std::move(other.cells);
+    return *this;
+}
+
+
+bool Map::loadFromFile(const std::string& filename)
+{
+    std::ifstream file;
+    file.open(filename);
+
+    if (file.fail())
+        return false;
+
+    // file >> *this;
+
+    return true;
+}
+
+void Map::saveToFile(const std::string& filename) const
+{
+    std::ofstream file(filename);
+
+    if (!file.is_open())
+        return;
+
+    // file << *this;
+
+    return;
+}
+
+std::ostream& operator<<(std::ostream& stream, const Map& map)
+{
+    stream.write(reinterpret_cast<const char*>(&map.width), sizeof(int32_t));
+    stream.write(reinterpret_cast<const char*>(&map.height), sizeof(int32_t));
+
+    stream.write(reinterpret_cast<const char*>(map.cells.data()), map.width * map.height);
+
+    return stream;
+}
+
+std::istream& operator>>(std::istream& stream, Map& map)
+{
+    int32_t width_, height_;
+    stream.read(reinterpret_cast<char*>(&width_), sizeof(int32_t));
+    stream.read(reinterpret_cast<char*>(&height_), sizeof(int32_t));
+
+    if (stream.fail() || height_ <= 0 || width_ <= 0)
+    {
+        std::cerr << "Bad map dimensions\n";
+        return stream;
+    }
+
+    std::vector<CellType> cells(width_ * height_, CellType::Empty);
+    stream.read(reinterpret_cast<char*>(cells.data()), width_ * height_);
+
+    if (stream.fail())
+    {
+        std::cerr << "Bad map data\n";
+        return stream;
+    }
+
+    map.width = width_;
+    map.height = height_;
+    std::swap(cells, map.cells);
+
+    return stream;
 }

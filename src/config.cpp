@@ -4,69 +4,32 @@
 #include "config.hpp"
 
 
+sf::Keyboard::Key string_to_key(const std::string& name);
+
+
+const Configuration Configuration::default_configuration = Configuration();
+
+#ifdef PACKAGE
+    const std::string Configuration::data_path = "/usr/share/dungeon-battle/";
+    const std::string Configuration::user_path = "~/.dungeon-battle/";
+#else
+    const std::string Configuration::data_path = "data/";
+    const std::string Configuration::user_path = "./";
+#endif
+
 // Default configuration
 Configuration::Configuration() :
-    width(800),
-    height(600),
-    scalefactor(1),
-    fullscreen(false),
-    vsync(true),
-    maxfps(60),
-    animation_speed(3.f),
-    left_key(sf::Keyboard::Key::Q),
-    right_key(sf::Keyboard::Key::D),
-    up_key(sf::Keyboard::Key::Z),
-    down_key(sf::Keyboard::Key::S),
-    menu_key(sf::Keyboard::Key::Escape),
-    interaction_key(sf::Keyboard::Key::E),
-    attack_left_key(sf::Keyboard::Key::Left),
-    attack_right_key(sf::Keyboard::Key::Right),
-    attack_up_key(sf::Keyboard::Key::Up),
-    attack_down_key(sf::Keyboard::Key::Down),
     gen_options()
 {}
-
-sf::Keyboard::Key string_to_key(const std::string& name)
-{
-    if (name.length() == 1)
-    {
-        if ('A' <= name[0] && name[0] <= 'Z')
-        {
-            return static_cast<sf::Keyboard::Key>(static_cast<char>(sf::Keyboard::Key::A) + name[0] - 'A');
-        }
-        else if ('a' <= name[0] && name[0] <= 'z')
-        {
-            return static_cast<sf::Keyboard::Key>(static_cast<char>(sf::Keyboard::Key::A) + name[0] - 'a');
-        }
-    }
-    else if (name == "Left" || name == "left")
-    {
-        return sf::Keyboard::Key::Left;
-    }
-    else if (name == "Right" || name == "right")
-    {
-        return sf::Keyboard::Key::Right;
-    }
-    else if (name == "Up" || name == "up")
-    {
-        return sf::Keyboard::Key::Up;
-    }
-    else if (name == "Down" || name == "down")
-    {
-        return sf::Keyboard::Key::Down;
-    }
-    else if (name == "Escape" || name == "escape")
-    {
-        return sf::Keyboard::Key::Escape;
-    }
-
-    return {};
-}
 
 void Configuration::read(const std::string& filename)
 {
     std::ifstream config_file(filename);
     std::string line;
+
+    #ifdef PACKAGE
+        system(("mkdir -p " + Configuration::user_path).c_str());
+    #endif
 
     if (!config_file.is_open())
         return;
@@ -93,19 +56,23 @@ void Configuration::read(const std::string& filename)
         try
         {
             if (option_name == "height")
-                height = std::stoi(value);
+                height = static_cast<unsigned int>(std::stoi(value));
             else if (option_name == "width")
-                width = std::stoi(value);
+                width = static_cast<unsigned int>(std::stoi(value));
             else if (option_name == "scalefactor")
-                scalefactor = std::stoi(value);
+                scalefactor = static_cast<unsigned int>(std::stoi(value));
             else if (option_name ==  "fullscreen")
                 fullscreen = std::stoi(value);
             else if (option_name ==  "vsync")
                 vsync = std::stoi(value);
             else if (option_name ==  "maxfps")
-                maxfps = std::stoi(value);
+                maxfps = static_cast<unsigned int>(std::stoi(value));
             else if (option_name ==  "animation_speed")
                 animation_speed = std::stof(value);
+            else if (option_name == "lighting")
+                lighting = std::stoi(value);
+            else if (option_name == "monsters_no_delay")
+                monsters_no_delay = std::stoi(value);
         }
         catch (const std::invalid_argument& e)
         {
@@ -182,14 +149,15 @@ void Configuration::readGame(const std::string& filename)
 std::ostream& operator<<(std::ostream& stream, const Configuration& config)
 {
     return stream <<
-        "[Video]" << std::endl <<
-        "width=" << config.width << std::endl <<
-        "height=" << config.height << std::endl <<
-        "scalefactor=" << config.scalefactor << std::endl <<
-        "fullscreen=" << config.fullscreen << std::endl <<
-        "vsync=" << config.vsync << std::endl <<
-        "maxfps=" << config.maxfps << std::endl <<
-        "animation_speed=" << config.animation_speed << std::endl;
+        "[Video]"                                    << "\n" <<
+        "width="           << config.width           << "\n" <<
+        "height="          << config.height          << "\n" <<
+        "scalefactor="     << config.scalefactor     << "\n" <<
+        "fullscreen="      << config.fullscreen      << "\n" <<
+        "vsync="           << config.vsync           << "\n" <<
+        "maxfps="          << config.maxfps          << "\n" <<
+        "animation_speed=" << config.animation_speed << "\n" <<
+        "lighting="        << config.lighting        << "\n" ;
 }
 
 void Configuration::write(const std::string& filename) const
@@ -204,4 +172,43 @@ void Configuration::write(const std::string& filename) const
     return;
 }
 
-const Configuration Configuration::default_configuration = Configuration();
+sf::Keyboard::Key string_to_key(const std::string& name)
+{
+    if (name.length() == 1)
+    {
+        if ('A' <= name[0] && name[0] <= 'Z')
+        {
+            return static_cast<sf::Keyboard::Key>(static_cast<char>(sf::Keyboard::Key::A) + name[0] - 'A');
+        }
+        else if ('a' <= name[0] && name[0] <= 'z')
+        {
+            return static_cast<sf::Keyboard::Key>(static_cast<char>(sf::Keyboard::Key::A) + name[0] - 'a');
+        }
+    }
+    else if (name == "Left" || name == "left")
+    {
+        return sf::Keyboard::Key::Left;
+    }
+    else if (name == "Right" || name == "right")
+    {
+        return sf::Keyboard::Key::Right;
+    }
+    else if (name == "Up" || name == "up")
+    {
+        return sf::Keyboard::Key::Up;
+    }
+    else if (name == "Down" || name == "down")
+    {
+        return sf::Keyboard::Key::Down;
+    }
+    else if (name == "Escape" || name == "escape")
+    {
+        return sf::Keyboard::Key::Escape;
+    }
+    else if (name == "Return" || name == "return" || name == "Enter" || name == "enter")
+    {
+        return sf::Keyboard::Key::Return;
+    }
+
+    return sf::Keyboard::Key::Unknown;
+}

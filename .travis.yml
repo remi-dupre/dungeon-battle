@@ -7,32 +7,54 @@ language: cpp
 
 before_install:
  - docker run -d --name artful -v $(pwd):/travis ubuntu:xenial tail -f /dev/null
+ - docker run -d --name xenial -v $(pwd):/travis ubuntu:artful tail -f /dev/null
  - docker ps
 
 install:
  - docker exec -t artful bash -c "apt-get update"
- - docker exec -t artful bash -c "apt-get install -y --no-install-recommends build-essential"
+ - docker exec -t artful bash -c "apt-get install -y --no-install-recommends build-essential fakeroot curl"
  - docker exec -t artful bash -c "apt-get install -y --no-install-recommends libsfml-dev"
  - docker exec -t artful bash -c "apt-get install -y --no-install-recommends doxygen"
  - docker exec -t artful bash -c "apt-get install -y --no-install-recommends cxxtest cppcheck"
 
+before_deploy:
+  - if [ ! -z $TRAVIS_TAG ]; then
+    docker exec -t artful bash -c "cd /travis; make clean" ; fi
+  # Build packages for ubuntu 16.04
+  - if [ ! -z $TRAVIS_TAG ]; then
+      docker exec -t artful bash -c "cd /travis; make VERSION=$TRAVIS_TAG package" &&
+      cp packages/dungeon-battle.deb packages/dungeon-battle_ubuntu-16_04.deb
+    ; fi
+  # Build package for ubuntu 17.10
+  - if [ ! -z $TRAVIS_TAG ]; then
+      docker exec -t xenial bash -c "apt-get update && apt-get install -y --no-install-recommends build-essential fakeroot curl libsfml-dev" &&
+      docker exec -t xenial bash -c "cd /travis; make \"VERSION=${TRAVIS_TAG}\" package" &&
+      cp packages/dungeon-battle.deb packages/dungeon-battle_ubuntu-17_10.deb
+    ; fi
+
 script:
- - docker exec -t artful bash -c "cd /travis;
-   make doc";
- - docker exec -t artful bash -c "cd /travis;
-   make lint"
- - docker exec -t artful bash -c "cd /travis;
-   make cppcheck-html CHECK_DIR=doc/html/check";
- - docker exec -t artful bash -c "cd /travis;
-   make debug"
- - docker exec -t artful bash -c "cd /travis;
-   make test"
+ - docker exec -t artful bash -c "cd /travis; make doc";
+ - docker exec -t artful bash -c "cd /travis; make lint"
+ - docker exec -t artful bash -c "cd /travis; make cppcheck-html CHECK_DIR=doc/html/check";
+ - docker exec -t artful bash -c "cd /travis; make debug"
+ - docker exec -t artful bash -c "cd /travis; make tests"
 
 deploy:
-  name: Travis Documentation Generation
-  provider: pages
-  local_dir: doc/html
-  skip_cleanup: true
-  github_token: $GITHUB_TOKEN
-  on:
-    branch: master
+  - name: Travis Documentation Generation
+    provider: pages
+    local_dir: doc/html
+    skip_cleanup: true
+    github_token: $GITHUB_TOKEN
+    on:
+      branch: master
+
+  - provider: releases
+    api_key: $GITHUB_TOKEN
+    file:
+     - packages/dungeon-battle_ubuntu-16_04.deb
+     - packages/dungeon-battle_ubuntu-17_10.deb
+     - packages/dungeon-battle-aur.tar.xz
+     - packages/dungeon-battle-portable.tar.gz
+    skip_cleanup: true
+    on:
+      tags: true
