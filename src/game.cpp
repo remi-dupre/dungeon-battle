@@ -107,8 +107,12 @@ void Game::run()
         window.clear();
         if (!menu || menu->displayGame())
             render();
+
         if (menu)
+        {
+            renderer.setView(window);
             menu->render(window);
+        }
         window.display();
 
         // Apply menu events

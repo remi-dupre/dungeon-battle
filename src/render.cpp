@@ -76,7 +76,7 @@ void Renderer::drawGame(const Map& map,
         bool entity_drawn = entity_visible ||
             (entity->getType() != EntityType::Monster &&
                 map_exploration.isExplored(entity->getPosition()));
-                
+
         if(!config.lighting)
             entity_visible = entity_drawn = true;
 
@@ -87,7 +87,7 @@ void Renderer::drawGame(const Map& map,
     }
 }
 
-void Renderer::display(sf::RenderTarget& target, float frame_progress)
+void Renderer::setView(sf::RenderTarget& target)
 {
     // Keep aspect ratio
     float screen_ratio = static_cast<float>(Configuration::default_configuration.height) /
@@ -113,6 +113,16 @@ void Renderer::display(sf::RenderTarget& target, float frame_progress)
     }
 
     view.setViewport({x_offset / 2.f, y_offset / 2.f, 1.f - x_offset, 1.f - y_offset});
+
+    view.setCenter(static_cast<float>(Configuration::default_configuration.width) / 2.f,
+                   static_cast<float>(Configuration::default_configuration.height) / 2.f);
+
+    target.setView(view);
+}
+
+void Renderer::display(sf::RenderTarget& target, float frame_progress)
+{
+    setView(target);
 
     sf::Vector2f view_pos = tile_size * static_cast<sf::Vector2f>(entity_center_view->getPosition());
     if (entity_center_view->isMoving())
