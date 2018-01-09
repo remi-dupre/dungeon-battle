@@ -100,8 +100,7 @@ void Game::run()
         }
         else {
             next_move -= elapsed_time;
-            if (next_move <= 0.f)
-                update(); // Update Game iff there is no Menu
+            update(); // Update Game iff there is no Menu
         }
 
         // Draw
@@ -156,8 +155,12 @@ void Game::update()
     bool monster_acting = false;
     EntityType next_turn = EntityType::Hero;
 
+
     for (auto& entity : *entities)
     {
+        if (entity_turn == EntityType::Monster && entity->getType() == EntityType::Hero)
+            continue;
+
         entity->setMoving(false);
         entity->setAttacking(false);
         entity->setAttacked(false);
@@ -172,6 +175,9 @@ void Game::update()
 
     for (auto& entity : *entities)
     {
+        if (entity_turn == EntityType::Monster && entity->getType() == EntityType::Hero)
+            continue;
+
         if (entity->getType() != entity_turn)
             continue;
 
