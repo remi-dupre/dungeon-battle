@@ -62,6 +62,12 @@ public:
      */
     void display(sf::RenderTarget& target, float frame_progress);
 
+    /**
+     * \brief Compute and set the correct view for the target
+     * \param target The target to set the view on
+     */
+    void setView(sf::RenderTarget& target);
+
 private:
 
     /**
