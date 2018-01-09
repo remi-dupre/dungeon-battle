@@ -198,22 +198,17 @@ Character::Character(EntityType type_,
 {}
 
 Character::Character(Class character_class_, sf::Vector2i position_) :
-    Entity(
+    Character::Character(
         EntityType::Monster,
         Interaction::None,
         position_,
-        Direction::Left),
-    character_class(character_class_),
-    level(1),
-    experienceCurve([](unsigned int lvl) -> unsigned int {return 10*lvl;}),
-    defense(0),
-    inventory({}),
-    inventorySize(0),
-    spells(std::vector<Spell> ({Spell()}))
+        Direction::Left,
+        character_class_,
+        StatManager::hp[character_class_],
+        StatManager::strength[character_class_]
+    )
 {
     experience = StatManager::xp[character_class_];
-    hpMax = hp = StatManager::hp[character_class_];
-    strength = StatManager::strength[character_class_];
     sightRadius = StatManager::sightradius[character_class_];
 }
 
