@@ -71,6 +71,8 @@ void Configuration::read(const std::string& filename)
                 animation_speed = std::stof(value);
             else if (option_name == "lighting")
                 lighting = std::stoi(value);
+            else if (option_name == "monsters_no_delay")
+                monsters_no_delay = std::stoi(value);
         }
         catch (const std::invalid_argument& e)
         {
