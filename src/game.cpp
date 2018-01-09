@@ -54,6 +54,8 @@ void Game::newGame(const std::string& save_path, Class hero_class)
     Rand::seed(r());
     Generator generator(config.gen_options, r());
 
+    exploration.emplace_back();
+
     Level level;
     dungeon.push_back(level);
 
