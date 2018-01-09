@@ -29,9 +29,7 @@ package-aur:
 	rm -rf for-aur && mkdir for-aur
 	sed "s/__VERSION__/${VERSION}/" AUR/PKGBUILD > for-aur/PKGBUILD
 
-	cd for-aur
 	curl -OLk http://github.com/remi-dupre/dungeon-battle/archive/$(VERSION).tar.gz
-	echo "md5sum=(`md5sum $(VERSION).tar.gz | cut -d ' ' -f 1`)" >> PKGBUILD
-	cd ..
+	echo "md5sum=(`md5sum $(VERSION).tar.gz | cut -d ' ' -f 1`)" >> for-aur/PKGBUILD
 
 	tar -cJf dungeon-battle-aur.tar.xz for-aur/* --transform "s/for-aur/dungeon-battle-${VERSION}/"
