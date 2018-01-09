@@ -48,37 +48,23 @@ void Game::newGame(const std::string& save_path, Class hero_class)
     entity_turn = EntityType::Hero;
     next_move = 0.f;
 
-
     // Seed the rng
     std::random_device r;
     Rand::seed(r());
-    Generator generator(config.gen_options, r());
+    generator = new Generator(config.gen_options, r());
 
     exploration.emplace_back();
 
     Level level;
     dungeon.push_back(level);
 
-    int RADIUS = 10;
-
-    if (config.gen_options.infinite)
-        generator.generateRadius(0, 0, RADIUS);
-
-    for (int x = -RADIUS ; x < RADIUS ; x++)
-    {
-        for (int y = -RADIUS ; y < RADIUS ; y++)
-        {
-            dungeon[0].map.setChunk(x, y, generator.getChunkCells(x, y));
-
-            auto entities = generator.getChunkEntities(x, y);
-            dungeon[0].entities.insert(end(dungeon[0].entities), begin(entities), end(entities));
-        }
-    }
-
-
     map = &dungeon[0].map;
     entities = &dungeon[0].entities;
     map_exploration = &exploration[0];
+
+    map->setChunk(0, 0, generator->getChunkCells(0, 0));
+    auto first_entities = generator->getChunkEntities(0, 0);
+    dungeon[0].entities.insert(end(dungeon[0].entities), begin(first_entities), end(first_entities));
 
     sf::Vector2i start_pos;
     auto entry_stairs = std::find_if(entities->begin(), entities->end(),
@@ -92,6 +78,37 @@ void Game::newGame(const std::string& save_path, Class hero_class)
     entities->push_back(std::make_shared<Character>(
         EntityType::Hero, Interaction::None, start_pos,
         Direction::Left, hero_class, 20, 1, Controller::Player1));
+}
+
+void Game::loadArround()
+{
+    // Find hero and center view
+    auto hero = std::find_if(entities->begin(), entities->end(),
+    [](const std::shared_ptr<Entity>& e)
+    {
+        return e->getType() == EntityType::Hero;
+    });
+
+    // Get adjacent chunks
+    auto position = (*hero)->getPosition();
+    auto chunk_position = Chunk::sector(position.x, position.y);
+    sf::Vector2i chunk_id;
+
+    for (chunk_id.x = chunk_position.first-1 ; chunk_id.x <= chunk_position.first+1 ; chunk_id.x++)
+    {
+        for (chunk_id.y = chunk_position.second-1 ; chunk_id.y <= chunk_position.second+1 ; chunk_id.y++)
+        {
+            if (!map->hasChunk(chunk_id.x, chunk_id.y))
+            {
+                int x = chunk_id.x;
+                int y = chunk_id.y;
+
+                map->setChunk(x, y, generator->getChunkCells(x, y));
+                auto new_entities = generator->getChunkEntities(x, y);
+                dungeon[0].entities.insert(end(dungeon[0].entities), begin(new_entities), end(new_entities));
+            }
+        }
+    }
 }
 
 void Game::run()
@@ -122,6 +139,7 @@ void Game::run()
         else {
             next_move -= elapsed_time;
             update(); // Update Game iff there is no Menu
+            loadArround();
         }
 
         // Draw
@@ -413,10 +431,10 @@ void Game::render()
 
     // Find hero and center view
     auto hero = std::find_if(entities->begin(), entities->end(),
-        [](const std::shared_ptr<Entity>& e)
-        {
-            return e->getType() == EntityType::Hero;
-        });
+    [](const std::shared_ptr<Entity>& e)
+    {
+        return e->getType() == EntityType::Hero;
+    });
 
     if (hero == entities->end())
         hero = entities->begin(); // Center on random (first) entity if hero not found

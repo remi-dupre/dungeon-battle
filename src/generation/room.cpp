@@ -116,9 +116,12 @@ void separate_rooms(std::vector<Room>& rooms, int spacing, size_t left, size_t r
 
     size_t nb_rooms = rooms.size();
 
+    int remaining_iterations = 10; // Maximum number of iterations
     bool go_on = true; // Set to true while we changed something
-    while(go_on)
+
+    while(go_on && remaining_iterations > 0)
     {
+        remaining_iterations--;
         go_on = false;
         std::vector<std::pair<int, int>> direction(nb_rooms, {0, 0});
 

@@ -8,6 +8,11 @@ Generator::Generator(const GenerationMode& parameters, int seed) :
     RandGen::seed(seed);
 }
 
+bool Generator::isLockedChunk(int x, int y) const
+{
+    return locked.find({x, y}) != end(locked);
+}
+
 Chunk Generator::getChunkCells(int x, int y)
 {
     // Generate potential new rooms
@@ -16,10 +21,12 @@ Chunk Generator::getChunkCells(int x, int y)
         addRooms(0, 0, parameters.nb_rooms);
         built.insert({0, 0});
     }
-    else if (parameters.infinite) {
+    else if (parameters.infinite && !isLockedChunk(x, y)) {
         // Only generate this chunk
-        generateRadius(x, y, 0);
+        generateRadius(x, y, 1);
     }
+
+    locked.insert({x, y});
 
     // Filter interesting cells and entities
     if (cachedMap.hasChunk(x, y))
@@ -36,10 +43,12 @@ std::vector<std::shared_ptr<Entity>> Generator::getChunkEntities(int x, int y)
         addRooms(0, 0, parameters.nb_rooms);
         built.insert({0, 0});
     }
-    else if (parameters.infinite) {
+    else if (parameters.infinite && !isLockedChunk(x, y)) {
         // Only generate this chunk
-        generateRadius(x, y, 0);
+        generateRadius(x, y, 1);
     }
+
+    locked.insert({x, y});
 
     // Query on entities
     std::vector<std::shared_ptr<Entity>> ret;
@@ -73,7 +82,7 @@ void Generator::generateRadius(int x, int y, int radius)
         for (int nx = x - radius_layer ; nx <= x + radius_layer ; nx++)
         {
             for (int ny : std::set<int>({y - radius_layer, y + radius_layer})) {
-                if (built.find({nx, ny}) == end(built))
+                if (!isLockedChunk(x, y) && built.find({nx, ny}) == end(built))
                 {
                     addRooms(nx, ny, 1);
                     built.insert({nx, ny});
@@ -82,10 +91,10 @@ void Generator::generateRadius(int x, int y, int radius)
             }
         }
 
-        for (int ny = y - gen_radius + 1 ; ny < y + gen_radius ; ny++)
+        for (int ny = y - radius_layer + 1 ; ny < y + radius_layer ; ny++)
         {
             for (int nx : std::set<int>({x - radius_layer, x + radius_layer})) {
-                if (built.find({nx, ny}) == end(built))
+                if (!isLockedChunk(x, y) && built.find({nx, ny}) == end(built))
                 {
                     addRooms(nx, ny, 1);
                     built.insert({nx, ny});

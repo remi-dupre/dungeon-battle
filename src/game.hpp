@@ -136,6 +136,11 @@ private:
      */
     bool saveGame();
 
+    /**
+     * \brief Generate enough map arround the player.
+     */
+    void loadArround();
+
     Configuration config; ///< The configuration of the game
     float move_time; ///< The length of the animations
 
@@ -145,6 +150,8 @@ private:
     std::shared_ptr<Menu> menu; ///< The current menu
 
     std::string game_name; ///< The current game name (where to save it)
+
+    Generator *generator; ///< Engine generating the map
 
     Map* map; ///< The current map
     std::vector<std::shared_ptr<Entity>>* entities; ///< The current map entities

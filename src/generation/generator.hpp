@@ -50,6 +50,14 @@ public:
     Generator(const GenerationMode& parameters, int seed);
 
     /**
+     * \brief  Check if the cells of a chunk are locked
+     * \param   x x-coordinate of the chunk.
+     * \param   y y-coordinate of the chunk.
+     * \return  Wether the chunk could or couldn't change.
+     */
+    bool isLockedChunk(int x, int y) const;
+
+    /**
      * \brief   Get the chunk of coordinates (x, y).
      * \param   x x-coordinate of the chunk.
      * \param   y y-coordinate of the chunk.
