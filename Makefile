@@ -168,7 +168,7 @@ clean:
 # Clean everything
 clean-all: clean
 	rm -rf dungeon-battle
-	rm -rf packages/dungeon-battle.deb packages/dungeon-battle.tar.gz packages/dungeon-battle-aur.tar.gz
+	rm -rf packages/dungeon-battle.deb packages/dungeon-battle-portable.tar.gz packages/dungeon-battle-aur.tar.xz
 	rm -rf $(DOC_DIR)
 	rm -rf $(CHECK_DIR)
 	rm -rf $(TEST_EXEC)
