@@ -24,6 +24,7 @@ enum class LevelType
 */
 struct GenerationMode
 {
+    bool infinite; ///< Wether the generation should or shouldn't give finite map
     int nb_rooms; ///< number of rooms to create on the map
     int room_min_size; ///< minimum number of cells contained on a room
     int room_max_size; ///< maximum number of cells contained on a room

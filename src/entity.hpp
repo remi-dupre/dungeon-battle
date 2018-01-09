@@ -72,7 +72,7 @@ enum class Controller : uint32_t
 /**
  * \brief Represents anything that is interactive
  */
-class Entity
+class Entity : public std::enable_shared_from_this<Entity>
 {
 public:
 

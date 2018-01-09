@@ -174,8 +174,6 @@ public:
      */
     bool wallNext(sf::Vector2i coords) const;
 
-    Map& operator=(Map&& other);
-
     /**
      * \brief Load the map from a file
      * \param filename Path of the file

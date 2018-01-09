@@ -126,14 +126,6 @@ bool Map::wallNext(sf::Vector2i coords) const
     return wallNext(coords.x, coords.y);
 }
 
-Map& Map::operator=(Map&& other)
-{
-    width = other.width;
-    height = other.height;
-    cells = std::move(other.cells);
-    return *this;
-}
-
 
 bool Map::loadFromFile(const std::string& filename)
 {
@@ -162,38 +154,38 @@ void Map::saveToFile(const std::string& filename) const
 
 std::ostream& operator<<(std::ostream& stream, const Map& map)
 {
-    stream.write(reinterpret_cast<const char*>(&map.width), sizeof(int32_t));
-    stream.write(reinterpret_cast<const char*>(&map.height), sizeof(int32_t));
-
-    stream.write(reinterpret_cast<const char*>(map.cells.data()), map.width * map.height);
-
-    return stream;
+    // stream.write(reinterpret_cast<const char*>(&map.width), sizeof(int32_t));
+    // stream.write(reinterpret_cast<const char*>(&map.height), sizeof(int32_t));
+    //
+    // stream.write(reinterpret_cast<const char*>(map.cells.data()), map.width * map.height);
+    //
+    // return stream;
 }
 
 std::istream& operator>>(std::istream& stream, Map& map)
 {
-    int32_t width_, height_;
-    stream.read(reinterpret_cast<char*>(&width_), sizeof(int32_t));
-    stream.read(reinterpret_cast<char*>(&height_), sizeof(int32_t));
-
-    if (stream.fail() || height_ <= 0 || width_ <= 0)
-    {
-        std::cerr << "Bad map dimensions\n";
-        return stream;
-    }
-
-    std::vector<CellType> cells(width_ * height_, CellType::Empty);
-    stream.read(reinterpret_cast<char*>(cells.data()), width_ * height_);
-
-    if (stream.fail())
-    {
-        std::cerr << "Bad map data\n";
-        return stream;
-    }
-
-    map.width = width_;
-    map.height = height_;
-    std::swap(cells, map.cells);
-
-    return stream;
+    // int32_t width_, height_;
+    // stream.read(reinterpret_cast<char*>(&width_), sizeof(int32_t));
+    // stream.read(reinterpret_cast<char*>(&height_), sizeof(int32_t));
+    //
+    // if (stream.fail() || height_ <= 0 || width_ <= 0)
+    // {
+    //     std::cerr << "Bad map dimensions\n";
+    //     return stream;
+    // }
+    //
+    // std::vector<CellType> cells(width_ * height_, CellType::Empty);
+    // stream.read(reinterpret_cast<char*>(cells.data()), width_ * height_);
+    //
+    // if (stream.fail())
+    // {
+    //     std::cerr << "Bad map data\n";
+    //     return stream;
+    // }
+    //
+    // map.width = width_;
+    // map.height = height_;
+    // std::swap(cells, map.cells);
+    //
+    // return stream;
 }

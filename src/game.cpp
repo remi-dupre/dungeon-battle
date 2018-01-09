@@ -36,10 +36,6 @@ void Game::init(const std::map<Option, std::string>& options)
 
     move_time = 1.f / config.animation_speed;
 
-    // Seed the rng
-    std::random_device r;
-    Rand::seed(r());
-
     menu = std::make_shared<MainMenu>();
 }
 
@@ -52,8 +48,11 @@ void Game::newGame(const std::string& save_path, Class hero_class)
     entity_turn = EntityType::Hero;
     next_move = 0.f;
 
-    Generator generator(config.gen_options, r());
 
+    // Seed the rng
+    std::random_device r;
+    Rand::seed(r());
+    Generator generator(config.gen_options, r());
 
     Level level;
     dungeon.push_back(level);

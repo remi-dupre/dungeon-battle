@@ -215,7 +215,7 @@ void add_monsters(Room& room, float load)
     {
         // Selected cell of index indexes[i_chosen]
         Point& cell = candidates[i_chosen];
-        room.entities.push_back(std::make_shared<Character>(
+        room.addEntity(std::make_shared<Character>(
             randomClass(),
             sf::Vector2i(cell.first, cell.second)
         ));

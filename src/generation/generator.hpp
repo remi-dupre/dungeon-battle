@@ -21,7 +21,6 @@
 // Number of chunks that will be generated on border of requested chunks
 constexpr int GEN_BORDER = 2;
 
-
 /**
  * \brief A level, with the map and the entities
  */
@@ -30,34 +29,6 @@ struct Level
     Map map;
     std::vector<std::shared_ptr<Entity>> entities;
 };
-
-/**
- * \brief Describe the general design of the level.
- */
-enum class LevelType
-{
-    Flat, ///< Rectangular-shaped rooms
-    Cave ///< Cave shaped rooms
-};
-
-/**
- * \brief Parameters on how to generate the level
- */
-struct GenerationMode
-{
-    bool infinite;      ///< Wether the map should be generated dynamically
-    int nb_rooms;       ///< number of rooms to create on the map (ignored if the map is infinite)
-
-    int room_min_size;  ///< minimum number of cells contained on a room
-    int room_max_size;  ///< maximum number of cells contained on a room
-    int room_margin;    ///< minimum space added between two rooms
-
-    float monster_load; ///< Number of monsters per 100 unit of space
-
-    float maze_density; ///< Proportion of rooms that are replaced with mazes
-    LevelType type;     ///< Kind of design for the rooms
-};
-
 
 /**
  * \brief  An object that can generate chunks of the map.
