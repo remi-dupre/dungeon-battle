@@ -1,12 +1,9 @@
 #include "generator.hpp"
 
 
-Generator::Generator(const GenerationMode& parameters, int seed) :
-    parameters(parameters),
-    seed(seed)
-{
-    RandGen::seed(seed);
-}
+Generator::Generator(const GenerationMode& parameters) :
+    parameters(parameters)
+{}
 
 bool Generator::isLockedChunk(int x, int y) const
 {
@@ -153,8 +150,6 @@ void Generator::addRooms(int x, int y, int n)
     // Places rooms in a non-linear way, room of index 0 must not move
     separate_rooms(rooms, parameters.room_margin, std::max(1, (int) rooms.size() - n), rooms.size());
 
-    printf("%d, %d\n", rooms[0].getPosition().first, rooms[0].getPosition().second);
-
     // Remove rooms that colapse, not the one of index 0
     size_t i_room = std::max(1, (int) rooms.size() - n);
     while (i_room < rooms.size())
@@ -162,7 +157,7 @@ void Generator::addRooms(int x, int y, int n)
         // Check if a room colapse with i
         for (size_t j_room = 0 ; j_room < i_room ; j_room++)
         {
-            if (!spaced(rooms[i_room], rooms[j_room], 0))
+            if (!spaced(rooms[i_room], rooms[j_room], 1))
             {
                 rooms.erase(begin(rooms) + i_room);
                 n--;

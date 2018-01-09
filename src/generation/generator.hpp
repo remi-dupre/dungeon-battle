@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include <algorithm>
 #include <queue>
 #include <set>
 #include <tuple>
@@ -44,10 +45,9 @@ public:
      * \brief    Main constructor. Initialisation of parameters.
      *
      * \param    parameters The configuration of the map generation.
-     * \param    seed The seed used for the generation.
      * \warning  Note that we may need to use the generator exacly with the same queries to get the same map.
      */
-    Generator(const GenerationMode& parameters, int seed);
+    Generator(const GenerationMode& parameters);
 
     /**
      * \brief  Check if the cells of a chunk are locked

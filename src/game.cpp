@@ -51,20 +51,20 @@ void Game::newGame(const std::string& save_path, Class hero_class)
     // Seed the rng
     std::random_device r;
     Rand::seed(r());
-    generator = new Generator(config.gen_options, r());
+    RandGen::seed(r());
 
+    dungeon.push_back(Level());
+    generators.push_back(Generator(config.gen_options));
     exploration.emplace_back();
-
-    Level level;
-    dungeon.push_back(level);
 
     map = &dungeon[0].map;
     entities = &dungeon[0].entities;
+    generator = &generators[0];
     map_exploration = &exploration[0];
 
     map->setChunk(0, 0, generator->getChunkCells(0, 0));
     auto first_entities = generator->getChunkEntities(0, 0);
-    dungeon[0].entities.insert(end(dungeon[0].entities), begin(first_entities), end(first_entities));
+    entities->insert(end(dungeon[0].entities), begin(first_entities), end(first_entities));
 
     sf::Vector2i start_pos;
     auto entry_stairs = std::find_if(entities->begin(), entities->end(),
@@ -192,7 +192,7 @@ void Game::run()
         }
     }
 }
-
+#include <iostream>
 void Game::update()
 {
     bool monster_acting = false;
@@ -256,15 +256,22 @@ void Game::update()
 
                                     if (current_level == dungeon.size()-1)
                                     {
-                                        // dungeon.push_back(generate(config.gen_options));
+                                        dungeon.push_back(Level());
                                         dungeon[current_level+1].entities.push_back(*hero);
+                                        generators.push_back(Generator(config.gen_options));
                                         exploration.emplace_back();
+
+                                        dungeon[current_level+1].map.setChunk(0, 0, generators[current_level+1].getChunkCells(0, 0));
+
+                                        auto first_entities = generators[current_level+1].getChunkEntities(0, 0);
+                                        dungeon[current_level+1].entities.insert(end(dungeon[current_level+1].entities), begin(first_entities), end(first_entities));
                                     }
 
                                     current_level++;
 
                                     map = &dungeon[current_level].map;
                                     entities = &dungeon[current_level].entities;
+                                    generator = &generators[current_level];
                                     map_exploration = &exploration.back();
 
                                     auto stairs = std::find_if(dungeon[current_level].entities.begin(), dungeon[current_level].entities.end(),

@@ -59,10 +59,10 @@ public:
 
             std::random_device r;
             int seed = r();
-            Rand::seed(seed);
+            RandGen::seed(seed);
             TS_TRACE("Seed : " + std::to_string(seed));
 
-            Generator generator(gen_options, seed);
+            Generator generator(gen_options);
             Map map;
             std::vector<std::shared_ptr<Entity>> entities;
 

@@ -151,14 +151,15 @@ private:
 
     std::string game_name; ///< The current game name (where to save it)
 
-    Generator *generator; ///< Engine generating the map
 
     Map* map; ///< The current map
     std::vector<std::shared_ptr<Entity>>* entities; ///< The current map entities
+    Generator *generator; ///< The current generator
     MapExploration *map_exploration; ///< The exploration state of the map
 
     std::size_t current_level; ///< The number of the curent level
     std::vector<Level> dungeon; ///< The maps and entities of differents level of the dungeon
+    std::vector<Generator> generators; ///< Engines generating the maps
     std::vector<MapExploration> exploration;
 
     EntityType entity_turn; ///< Tell whether it is the player or the monsters to play

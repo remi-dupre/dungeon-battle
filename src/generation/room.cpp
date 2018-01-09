@@ -32,7 +32,7 @@ int Room::size() const
 
 bool Room::hasCell(const Point& cell) const
 {
-    return cells.find(cell - position) == end(cells);
+    return cells.find(cell - position) != end(cells);
 }
 
 Pattern Room::getNodes() const
@@ -57,11 +57,16 @@ void Room::addEntity(std::shared_ptr<Entity> entity)
 
 bool spaced(const Room& room1, const Room& room2, int spacing)
 {
+    assert(spacing >= 1);
+
     if (room1.size() > room2.size())
         return spaced(room2, room1, spacing);
 
+    if (room2.hasCell(room1.getPosition()))
+        return false;
+
     for (const Point& cell : room1.cells)
-        if (room2.treeCells.closeTo(cell + room1.position - room2.position, spacing - 1))
+        if (room2.treeCells.closeTo(cell + room1.position - room2.position, spacing-1))
             return false;
 
     return true;
@@ -116,7 +121,7 @@ void separate_rooms(std::vector<Room>& rooms, int spacing, size_t left, size_t r
 
     size_t nb_rooms = rooms.size();
 
-    int remaining_iterations = 10; // Maximum number of iterations
+    int remaining_iterations = 10 * (right - left); // Maximum number of iterations
     bool go_on = true; // Set to true while we changed something
 
     while(go_on && remaining_iterations > 0)
@@ -146,26 +151,30 @@ void separate_rooms(std::vector<Room>& rooms, int spacing, size_t left, size_t r
 
                     if (i1_can_move && room1.getPosition().first > room2.getPosition().first)
                     {
-                        int shift = std::max(1, room1.getPosition().first - room2.getPosition().first + spacing);
-                        direction[i1] += {shift, 0};
+                        int shift = spacing;//std::max(1.f, (room1.getPosition().first - room2.getPosition().first + spacing) / 6.f);
+                        // direction[i1] += {shift, 0};
+                        room1.setPosition(room1.getPosition() + std::make_pair(shift, 0));
                     }
 
                     if (i1_can_move && room1.getPosition().second > room2.getPosition().second)
                     {
-                        int shift = std::max(1, room1.getPosition().second - room2.getPosition().second + spacing);
-                        direction[i1] += {0, shift};
+                        int shift = spacing;//std::max(1.f, (room1.getPosition().second - room2.getPosition().second + spacing) / 6.f);
+                        // direction[i1] += {0, shift};
+                        room1.setPosition(room1.getPosition() + std::make_pair(0, shift));
                     }
 
                     if (i2_can_move && room1.getPosition().first < room2.getPosition().first)
                     {
-                        int shift = std::max(1, room2.getPosition().first - room1.getPosition().first + spacing);
-                        direction[i2] += {shift, 0};
+                        int shift = spacing;//std::max(1.f, (room2.getPosition().first - room1.getPosition().first + spacing) / 6.f);
+                        // direction[i2] += {shift, 0};
+                        room2.setPosition(room2.getPosition() + std::make_pair(shift, 0));
                     }
 
                     if (i2_can_move && room1.getPosition().second < room2.getPosition().second)
                     {
-                        int shift = std::max(1, room2.getPosition().second - room1.getPosition().second + spacing);
-                        direction[i2] += {0, shift};
+                        int shift = spacing;//std::max(1.f, (room2.getPosition().second - room1.getPosition().second + spacing) / 6.f);
+                        // direction[i2] += {0, shift};
+                        room2.setPosition(room2.getPosition() + std::make_pair(0, shift));
                     }
 
                     if (room1.getPosition() == room2.getPosition())
@@ -175,9 +184,9 @@ void separate_rooms(std::vector<Room>& rooms, int spacing, size_t left, size_t r
                         int delta_y = RandGen::uniform_int(-2, 2);
 
                         if (i1_can_move)
-                        {
                             direction[i1] += {delta_x, delta_y};
-                        }
+                        else if (i2_can_move)
+                            direction[i2] -= {delta_x, delta_y};
                     }
                 }
             }
