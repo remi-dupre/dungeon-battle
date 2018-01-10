@@ -29,6 +29,7 @@ The map is handled by the `Map` class, and the generation module is located in t
 The map is splited into separate chunks that must be initialised with the function `setChunk(int, int, Chunk)`, the data either comes from a generator or recovering a saved map.
 A generator can give datas for every chunks separately with `Chunk getChunkCells(int, int)` and `std::vector<std::shared_ptr<Entity>> getChunkEntities(int, int)`. Theses chunks are all pre-generated when the generation has to make finite maps.
 As the backup of a generator into a file isn't implemented, it is not yet possible to save a game based on infinite map.
+More informations about the generation are available in the documentation of the class `Generator` and `Room`.
 
 Entity system
 =============

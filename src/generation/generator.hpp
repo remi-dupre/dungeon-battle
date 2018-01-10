@@ -34,9 +34,20 @@ struct Level
 /**
  * \brief  An object that can generate chunks of the map.
  *
- * The generator can answer to chunk requests :
- *  - given a coordinate (not necessary positive), get the map
- *  - given a coordinate (not necessary positive), get the entities
+ * \section Features
+ *   The generator can answer to chunk requests :
+ *    - given a coordinate (not necessary positive), get the map
+ *    - given a coordinate (not necessary positive), get the entities
+ *   It is also possible to ask to pregenerate a radius and to ask what are the already generated but not requested chunks.
+ *
+ * \section Behaviour
+ *   The generator keeps up to date a list of rooms. Creating new rooms always follow the same pattern:
+ *    - generate rooms shapes and place them at an arbitrary position
+ *    - separate rooms to avoid them from collapsing
+ *    - add hallways between rooms (it generates new rooms)
+ *    - add entities on rooms
+ *    - draw rooms on a cached map
+ *   If the map has to be finite, theses steps will only be executed once, thus the generator will only have to answer using his cached map.
  */
 class Generator
 {

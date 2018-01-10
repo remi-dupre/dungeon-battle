@@ -19,6 +19,15 @@
 
 /**
  * \brief  Represent a single generated room.
+ *
+ * \section Role
+ *   The goal of a room is to encapsulate all the informations a room can contain, but to still easily be moved on the map during the generation.
+ *   A room contains informations about its cells and the entities it initially contains
+ *
+ * \section Behaviour
+ *   Actually a room represents only the floor cells it contains, walls will be added later. Theses cells are represented by a <b>set of their coordinates relative to the room position</b>. Thus, a room can be moved by only changing their position attribute.
+ *   In the same way, entities are placed relatively to the room position.
+ *   A few optimisations have also been done to efficiently check the distance between two rooms (cf. KDTree::).
  */
 class Room
 {
