@@ -73,7 +73,7 @@ std::shared_ptr<Entity> Entity::copy() const
             break;
     }
 
-    // return std::make_shared<Entity>(*shared);
+    return std::make_shared<Entity>(*shared);
 }
 
 Interaction Entity::getInteraction() const
