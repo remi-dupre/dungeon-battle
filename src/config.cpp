@@ -1,4 +1,6 @@
+#include <unistd.h>
 #include <fstream>
+#include <pwd.h>
 #include <stdexcept>
 
 #include "config.hpp"
@@ -11,7 +13,7 @@ const Configuration Configuration::default_configuration = Configuration();
 
 #ifdef PACKAGE
     const std::string Configuration::data_path = "/usr/share/dungeon-battle/";
-    const std::string Configuration::user_path = "~/.dungeon-battle/";
+    const std::string Configuration::user_path = std::string(getpwuid(geteuid())->pw_dir) + std::string("/.dungeon-battle/");
 #else
     const std::string Configuration::data_path = "data/";
     const std::string Configuration::user_path = "./";

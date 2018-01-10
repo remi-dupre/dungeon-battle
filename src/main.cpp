@@ -6,11 +6,10 @@
 #include "args.hpp"
 #include "game.hpp"
 
-
 int main(int argc, char** argv)
 {
     std::map<Option, std::string> options;
-    options[Option::Config] = "config.ini";
+    options[Option::Config] = Configuration::user_path + "config.ini";
 
     if (argc > 1)
     {
