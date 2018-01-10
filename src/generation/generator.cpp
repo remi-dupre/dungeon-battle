@@ -1,6 +1,12 @@
 #include "generator.hpp"
 
 
+Generator::Generator()
+{
+    parameters.infinite = false;
+    built.insert({0, 0});
+}
+
 Generator::Generator(const GenerationMode& parameters) :
     parameters(parameters)
 {}
@@ -30,6 +36,19 @@ Chunk Generator::getChunkCells(int x, int y)
         return cachedMap.chunkAt(x, y);
     else
         return Chunk();
+}
+
+std::vector<std::pair<int, int>> Generator::getCachedChunks() const
+{
+    std::vector<std::pair<int, int>> ret;
+
+    for (const auto& item: cachedMap.getChunks())
+    {
+        if (locked.find(item) == end(locked))
+            ret.push_back(item);
+    }
+
+    return ret;
 }
 
 std::vector<std::shared_ptr<Entity>> Generator::getChunkEntities(int x, int y)

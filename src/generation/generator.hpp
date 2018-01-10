@@ -42,6 +42,11 @@ class Generator
 {
 public:
     /**
+     * \brief    Construct a generator doing nothing.
+     */
+    Generator();
+
+    /**
      * \brief    Main constructor. Initialisation of parameters.
      *
      * \param    parameters The configuration of the map generation.
@@ -64,6 +69,12 @@ public:
      * \return  The content of the queried chunk.
      */
     Chunk getChunkCells(int x, int y);
+
+    /**
+     * \brief   Get the list of all cached chunks not requested so far.
+     * \return  A vector of the id of each not-requested chunk.
+     */
+    std::vector<std::pair<int, int>> getCachedChunks() const;
 
     /**
      * \brief Get the enties initially placed on the chunk of coordinates (x, y).

@@ -62,9 +62,12 @@ void Game::newGame(const std::string& save_path, Class hero_class)
     generator = &generators[0];
     map_exploration = &exploration[0];
 
-    map->setChunk(0, 0, generator->getChunkCells(0, 0));
-    auto first_entities = generator->getChunkEntities(0, 0);
-    entities->insert(end(dungeon[0].entities), begin(first_entities), end(first_entities));
+    if (!map->hasChunk(0, 0))
+    {
+        map->setChunk(0, 0, generator->getChunkCells(0, 0));
+        auto first_entities = generator->getChunkEntities(0, 0);
+        entities->insert(end(dungeon[0].entities), begin(first_entities), end(first_entities));
+    }
 
     sf::Vector2i start_pos;
     auto entry_stairs = std::find_if(entities->begin(), entities->end(),
@@ -184,7 +187,25 @@ void Game::run()
             break;
 
         case MenuEvent::SaveGame:
-            saveGame();
+            if (!config.gen_options.infinite) {
+                // Load cached chunks
+                for (size_t i_map = 0 ; i_map < dungeon.size() ; i_map++)
+                {
+                    for (const auto& id_chunk : generators[i_map].getCachedChunks())
+                    {
+                        int x = id_chunk.first;
+                        int y = id_chunk.second;
+
+                        dungeon[i_map].map.setChunk(x, y, generators[i_map].getChunkCells(x, y));
+                    }
+                }
+
+                saveGame();
+            }
+            else
+            {
+                std::cout << "Not available yet for infinite maps" << std::endl;
+            }
             break;
 
         default:
@@ -192,7 +213,7 @@ void Game::run()
         }
     }
 }
-#include <iostream>
+
 void Game::update()
 {
     bool monster_acting = false;

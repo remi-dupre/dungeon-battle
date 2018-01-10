@@ -62,6 +62,16 @@ bool Map::hasChunk(int x, int y) const
     return chunks.find(chunk_id) != end(chunks);
 }
 
+std::vector<std::pair<int, int>> Map::getChunks() const
+{
+    std::vector<std::pair<int, int>> ret;
+
+    for (const auto& item: chunks)
+        ret.push_back(item.first);
+
+    return ret;
+}
+
 CellType& Map::cellAt(int x, int y)
 {
     std::pair<int, int> chunk_id = Chunk::sector(x, y);
@@ -135,7 +145,7 @@ bool Map::loadFromFile(const std::string& filename)
     if (file.fail())
         return false;
 
-    // file >> *this;
+    file >> *this;
 
     return true;
 }
@@ -147,45 +157,39 @@ void Map::saveToFile(const std::string& filename) const
     if (!file.is_open())
         return;
 
-    // file << *this;
+    file << *this;
 
     return;
 }
 
 std::ostream& operator<<(std::ostream& stream, const Map& map)
 {
-    // stream.write(reinterpret_cast<const char*>(&map.width), sizeof(int32_t));
-    // stream.write(reinterpret_cast<const char*>(&map.height), sizeof(int32_t));
-    //
-    // stream.write(reinterpret_cast<const char*>(map.cells.data()), map.width * map.height);
-    //
-    // return stream;
+    int size = map.chunks.size();
+    stream.write(reinterpret_cast<const char*>(&size), sizeof(int));
+
+    for (const auto& item : map.chunks) {
+        stream.write(reinterpret_cast<const char*>(&item.first), sizeof(std::pair<int, int>));
+        stream.write(reinterpret_cast<const char*>(&item.second), sizeof(Chunk));
+    }
+
+    return stream;
 }
 
 std::istream& operator>>(std::istream& stream, Map& map)
 {
-    // int32_t width_, height_;
-    // stream.read(reinterpret_cast<char*>(&width_), sizeof(int32_t));
-    // stream.read(reinterpret_cast<char*>(&height_), sizeof(int32_t));
-    //
-    // if (stream.fail() || height_ <= 0 || width_ <= 0)
-    // {
-    //     std::cerr << "Bad map dimensions\n";
-    //     return stream;
-    // }
-    //
-    // std::vector<CellType> cells(width_ * height_, CellType::Empty);
-    // stream.read(reinterpret_cast<char*>(cells.data()), width_ * height_);
-    //
-    // if (stream.fail())
-    // {
-    //     std::cerr << "Bad map data\n";
-    //     return stream;
-    // }
-    //
-    // map.width = width_;
-    // map.height = height_;
-    // std::swap(cells, map.cells);
-    //
-    // return stream;
+    int size;
+    stream.read(reinterpret_cast<char*>(&size), sizeof(int));
+
+    for (int i = 0 ; i < size ; i++)
+    {
+        std::pair<int, int> chunk_id;
+        Chunk chunk_ct;
+
+        stream.read(reinterpret_cast<char*>(&chunk_id), sizeof(std::pair<int, int>));
+        stream.read(reinterpret_cast<char*>(&chunk_ct), sizeof(Chunk));
+
+        map.chunks[chunk_id] = chunk_ct;
+    }
+
+    return stream;
 }

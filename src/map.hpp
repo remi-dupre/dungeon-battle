@@ -14,6 +14,7 @@
 #include <tuple>
 #include <map>
 #include <string>
+#include <vector>
 
 #include <SFML/System/Vector2.hpp>
 
@@ -115,6 +116,11 @@ public:
     bool hasChunk(int x, int y) const;
 
     /**
+     * \brief List existing chunks of the map.
+     */
+    std::vector<std::pair<int, int>> getChunks() const;
+
+    /**
      * \brief Check wether a point is in the generated part of the map.
      * \param x The x-coordinate of the cell we are interested in.
      * \param y The y-coordinate of the cell we are interested in.
@@ -191,4 +197,8 @@ private:
      * \brief The content of each chunks
      */
     std::map<std::pair<int, int>, Chunk> chunks;
+
+
+    friend std::ostream& operator<<(std::ostream& stream, const Map& map);
+    friend std::istream& operator>>(std::istream& stream, Map& map);
 };

@@ -2,6 +2,7 @@
 
 #include "game.hpp"
 
+
 bool load_dungeon(uint32_t dungeon_size,
                   std::vector<Level>& dungeon,
                   std::vector<MapExploration>& exploration,
@@ -11,6 +12,8 @@ bool Game::loadGame(const std::string& save_name)
 {
     dungeon.clear();
     exploration.clear();
+    generators.clear();
+
     current_level = 0;
     map = nullptr;
     map_exploration = nullptr;
@@ -37,9 +40,13 @@ bool Game::loadGame(const std::string& save_name)
     uint32_t max_level {};
     save_file.read(reinterpret_cast<char*>(&max_level), sizeof(uint32_t)); // max level
 
+    // Fake all generators
+    generators.resize(max_level);
+
     load_dungeon(max_level, dungeon, exploration, load_path);
 
     map = &dungeon[current_level].map;
+    generator = &generators[current_level];
     entities = &dungeon[current_level].entities;
     map_exploration = &exploration[current_level];
 
