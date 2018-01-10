@@ -6,6 +6,13 @@ Software engineering project.
 
 It is a small rogue-like game.
 
+# Configuration
+
+If you need to change generation options or some in-game options, you can create or modify the files `./config.ini` and `data/game.ini`.
+Their most accurate doc can be find on doxygen: [config.ini](https://remi-dupre.github.io/dungeon-battle/structGenerationMode.html), [game.ini](https://remi-dupre.github.io/dungeon-battle/structConfiguration.html).
+
+If you installed the game from the releases, theses files will be located at `/usr/share/dungeon-battle/game.ini` and `~/.dungeon-battle/config.ini`.
+
 # Compiling
 
 The project is written in **C++14**, in order to compile it you need:
