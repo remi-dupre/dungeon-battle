@@ -197,6 +197,9 @@ void Game::run()
                         int y = id_chunk.second;
 
                         dungeon[i_map].map.setChunk(x, y, generators[i_map].getChunkCells(x, y));
+
+                        auto nentities = generators[i_map].getChunkEntities(x, y);
+                        dungeon[i_map].entities.insert(end(dungeon[i_map].entities), begin(nentities), end(nentities));
                     }
                 }
 
@@ -385,7 +388,7 @@ bool Game::update_entity(std::shared_ptr<Entity> entity, Action action)
         {
             position += to_vector2i(action.direction);
 
-            if (map->cellAt(position) != CellType::Floor)
+            if (map->hasCell(position.x, position.y) && map->cellAt(position) != CellType::Floor)
                 return false; // Wall -> don't move
 
             auto entities_on_target = getEntitiesOnCell(position);
