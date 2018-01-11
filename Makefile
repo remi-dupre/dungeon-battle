@@ -17,7 +17,7 @@ WFLAGS_EXTRA = -pedantic -Wcast-align -Wcast-qual -Wctor-dtor-privacy -Wdisabled
                -Wnoexcept -Wold-style-cast -Woverloaded-virtual -Wredundant-decls -Wshadow \
                -Wsign-promo -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch-default -Wundef
 # Linker flags
-LFLAGS = -lsfml-graphics -lsfml-window -lsfml-system
+LFLAGS = -lsfml-graphics -lsfml-window -lsfml-system -lpthread
 
 # Source files
 SRC_DIR = src

@@ -9,10 +9,20 @@
 #include <cstdint>
 #include <functional>
 #include <tuple>
+#include <vector>
 
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/Rect.hpp>
 
+
+/**
+ * \brief   Give a sequence of coordinates covering a square, starting from the center and describing a spiral.
+ * \param   x  Center of the square.
+ * \param   y  Center of the square.
+ * \param   radius  Radius of the square.
+ * \return  The cells ordered from center to extremity.
+ */
+std::vector<std::pair<int, int>> spiral(int x, int y, int radius);
 
 /**
  * \brief Direction of an entity or an action

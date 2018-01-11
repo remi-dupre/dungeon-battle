@@ -1,31 +1,33 @@
 #include "generator.hpp"
 
+using namespace std::chrono_literals;
 
-Generator::Generator() :
-    lockedLock(std::make_unique<std::mutex>()),
-    filledLock(std::make_unique<std::mutex>())
+
+Generator::Generator()
 {
     parameters.infinite = false;
     setFilledChunk(0, 0);
 }
 
 Generator::Generator(const GenerationMode& parameters) :
-    parameters(parameters),
-    lockedLock(std::make_unique<std::mutex>()),
-    filledLock(std::make_unique<std::mutex>())
-{}
-
-Chunk Generator::getChunkCells(int x, int y)
+    parameters(parameters)
 {
-    // Generate potential new rooms
-    if (!parameters.infinite && filled.empty()) {
-        // Need to generate the whole map
+    if (parameters.infinite)
+    {
+        generating_thread = std::thread(&Generator::generationLoop, this);
+    }
+    else
+    {
         addRooms(0, 0, parameters.nb_rooms);
         setFilledChunk(0, 0);
     }
-    else if (parameters.infinite && !isLockedChunk(x, y)) {
+}
+
+Chunk Generator::getChunkCells(int x, int y)
+{
+    if (parameters.infinite && !isLockedChunk(x, y)) {
         // Only generate this chunk
-        generateRadius(x, y, 1);
+        generateRadius(x, y, 0);
     }
 
     setLockedChunk(x, y);
@@ -37,7 +39,7 @@ Chunk Generator::getChunkCells(int x, int y)
         return Chunk();
 }
 
-std::vector<std::pair<int, int>> Generator::getCachedChunks() const
+std::vector<std::pair<int, int>> Generator::getCachedChunks()
 {
     std::vector<std::pair<int, int>> ret;
 
@@ -52,15 +54,9 @@ std::vector<std::pair<int, int>> Generator::getCachedChunks() const
 
 std::vector<std::shared_ptr<Entity>> Generator::getChunkEntities(int x, int y)
 {
-    // Generate potential new rooms
-    if (!parameters.infinite && filled.empty()) {
-        // Need to generate the whole map
-        addRooms(0, 0, parameters.nb_rooms);
-        setFilledChunk(0, 0);
-    }
-    else if (parameters.infinite && !isLockedChunk(x, y)) {
+    if (parameters.infinite && !isLockedChunk(x, y)) {
         // Only generate this chunk
-        generateRadius(x, y, 1);
+        generateRadius(x, y, 0);
     }
 
     setLockedChunk(x, y);
@@ -84,68 +80,71 @@ std::vector<std::shared_ptr<Entity>> Generator::getChunkEntities(int x, int y)
     return ret;
 }
 
+void Generator::preGenerateRadius(int x, int y, int radius, bool priority)
+{
+    assert(radius >= 0);
+
+    if (!parameters.infinite)
+        return;
+
+    std::lock_guard<std::mutex> lock(to_generate_lock);
+
+    // Radius of generated chunks
+    int gen_radius = radius + GEN_BORDER;
+    auto task = spiral(x, y, gen_radius);
+
+    // We really want to generate the center first
+    if (priority)
+        std::reverse(begin(task), end(task));
+
+    for (auto& chunk_id: task)
+    {
+        if (priority)
+            to_generate.push_front(chunk_id);
+        else
+            to_generate.push_back(chunk_id);
+    }
+}
+
 void Generator::generateRadius(int x, int y, int radius)
 {
     assert(radius >= 0);
-    assert(parameters.infinite);
+
+    if (!parameters.infinite)
+        return;
+
+    preGenerateRadius(x, y, radius, true);
 
     // Radius of generated chunks
     int gen_radius = radius + GEN_BORDER;
 
-    for (int radius_layer = 0 ; radius_layer <= gen_radius ; radius_layer++)
-    {
-        for (int nx = x - radius_layer ; nx <= x + radius_layer ; nx++)
-        {
-            for (int ny : std::set<int>({y - radius_layer, y + radius_layer})) {
-                if (!isFilledChunk(nx, ny))
-                {
-                    addRooms(nx, ny, 1);
-                    setFilledChunk(nx, ny);
-                    build_order.push_back({nx, ny});
-                }
-            }
-        }
-
-        for (int ny = y - radius_layer + 1 ; ny < y + radius_layer ; ny++)
-        {
-            for (int nx : std::set<int>({x - radius_layer, x + radius_layer})) {
-                if (!isFilledChunk(nx, ny))
-                {
-                    addRooms(nx, ny, 1);
-                    setFilledChunk(nx, ny);
-                    build_order.push_back({nx, ny});
-                }
-            }
-        }
-    }
-
-    // Register some chunk being requested
-    for (int nx = x - radius ; nx <= x + radius ; nx++)
-        for (int ny = y - radius ; ny <= y + radius ; ny++)
-            setLockedChunk(nx, ny);
+    for (int nx = x - gen_radius ; nx <= x + gen_radius ; nx++)
+        for (int ny = y - gen_radius ; ny <= y + gen_radius ; ny++)
+            while (!isFilledChunk(nx, ny))
+                std::this_thread::sleep_for(10ms);
 }
 
-bool Generator::isLockedChunk(int x, int y) const
+bool Generator::isLockedChunk(int x, int y)
 {
-    std::lock_guard<std::mutex> lock(*lockedLock);
+    std::lock_guard<std::mutex> lock(locked_lock);
     return locked.find({x, y}) != end(locked);
 }
 
 void Generator::setLockedChunk(int x, int y)
 {
-    std::lock_guard<std::mutex> lock(*lockedLock);
+    std::lock_guard<std::mutex> lock(locked_lock);
     locked.insert({x, y});
 }
 
-bool Generator::isFilledChunk(int x, int y) const
+bool Generator::isFilledChunk(int x, int y)
 {
-    std::lock_guard<std::mutex> lock(*filledLock);
+    std::lock_guard<std::mutex> lock(filled_lock);
     return filled.find({x, y}) != end(filled);
 }
 
 void Generator::setFilledChunk(int x, int y)
 {
-    std::lock_guard<std::mutex> lock(*filledLock);
+    std::lock_guard<std::mutex> lock(filled_lock);
     filled.insert({x, y});
 }
 
@@ -406,5 +405,32 @@ void Generator::registerRoom(size_t room)
 
         if (cachedMap.cellAt(x, y) == CellType::Empty)
             cachedMap.cellAt(x, y) = CellType::Wall;
+    }
+}
+
+void Generator::generationLoop()
+{
+    while (true)
+    {
+        to_generate_lock.lock();
+        std::pair<int, int> chunk_id;
+
+        // Select a chunk to generate
+        while (!to_generate.empty())
+        {
+            chunk_id = to_generate.front();
+            to_generate.pop_front();
+
+            if (isFilledChunk(chunk_id.first, chunk_id.second))
+                continue;
+
+            to_generate_lock.unlock();
+            addRooms(chunk_id.first, chunk_id.second, 1);
+            setFilledChunk(chunk_id.first, chunk_id.second);
+            to_generate_lock.lock();
+        }
+
+        to_generate_lock.unlock();
+        std::this_thread::sleep_for(10ms);
     }
 }

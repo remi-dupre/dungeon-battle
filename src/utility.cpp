@@ -1,6 +1,30 @@
 #include "utility.hpp"
 
 
+std::vector<std::pair<int, int>> spiral(int x, int y, int radius)
+{
+    assert(radius >= 0);
+
+    std::vector<std::pair<int, int>> ret;
+
+    for (int radius_layer = 0 ; radius_layer <= radius ; radius_layer++)
+    {
+        for (int nx = x - radius_layer ; nx <= x + radius_layer ; nx++)
+        {
+            for (int ny : std::vector<int>({y - radius_layer, y + radius_layer}))
+                ret.push_back({nx, ny});
+        }
+
+        for (int ny = y - radius_layer + 1 ; ny < y + radius_layer ; ny++)
+        {
+            for (int nx : std::vector<int>({x - radius_layer, x + radius_layer}))
+                ret.push_back({nx, ny});
+        }
+    }
+
+    return ret;
+}
+
 Direction operator|(Direction a, Direction b)
 {
     return static_cast<Direction>(static_cast<int>(a) | static_cast<int>(b));

@@ -46,7 +46,7 @@ bool Game::loadGame(const std::string& save_name)
     load_dungeon(max_level, dungeon, exploration, load_path);
 
     map = &dungeon[current_level].map;
-    generator = &generators[current_level];
+    generator = generators[current_level];
     entities = &dungeon[current_level].entities;
     map_exploration = &exploration[current_level];
 

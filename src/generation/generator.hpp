@@ -6,6 +6,8 @@
 #pragma once
 
 #include <algorithm>
+#include <chrono>
+#include <list>
 #include <memory>
 #include <mutex>
 #include <queue>
@@ -68,6 +70,10 @@ public:
      */
     Generator(const GenerationMode& parameters);
 
+    // a copy would need to restart a thread, and is very heavy
+    Generator(Generator&&) = delete;
+    Generator(const Generator&) = delete;
+
     /**
      * \brief   Get the chunk of coordinates (x, y).
      * \param   x x-coordinate of the chunk.
@@ -80,7 +86,7 @@ public:
      * \brief   Get the list of all cached chunks not requested so far.
      * \return  A vector of the id of each not-requested chunk.
      */
-    std::vector<std::pair<int, int>> getCachedChunks() const;
+    std::vector<std::pair<int, int>> getCachedChunks();
 
     /**
      * \brief Get the enties initially placed on the chunk of coordinates (x, y).
@@ -92,13 +98,19 @@ public:
 
     /**
      * \brief  Indicate to generate around a chunk.
-     * \param  y       y-coordinate of the chunk.
-     * \param  x       x-coordinate of the chunk.
-     * \param  radius  The radius of a square of center {x, y}.
+     * \param  y         y-coordinate of the chunk.
+     * \param  x         x-coordinate of the chunk.
+     * \param  radius    The radius of a square of center {x, y}.
+     * \param  priority  If set to true this chunk is generated before other chunks without priority.
      * \note   This function might only be used for infinite generation since the whole map is generated at creation for finite generation.
      *
      * It means that the generated square has a diagonal from {x-radius, y-radius} to {x+radius, y+radius}.
      * It won't generate a chunk if it has already been generated.
+     */
+    void preGenerateRadius(int x, int y, int radius, bool priority = false);
+
+    /**
+     * \brief  Same as preGenerateRadius, but the call will only end when the generation is over. Thus the priority used.
      */
     void generateRadius(int x, int y, int radius);
 
@@ -110,17 +122,27 @@ private:
     ///< Seed used for the generation of the map
     int seed;
 
+    ///< Thread that actualy generates
+    std::thread generating_thread;
+
+    ///< A list of chunks we need to generate
+    // This list is read from its front, thus, most important tasks are put in the front
+    std::list<std::pair<int, int>> to_generate;
+
+    ///< Lock for to_generate
+    std::mutex to_generate_lock;
+
     ///< Set of chunk we don't wan't to modify anymore
     std::set<std::pair<int, int>> locked;
 
     ///< Lock for locked
-    std::unique_ptr<std::mutex> lockedLock;
+    std::mutex locked_lock;
 
     ///< Set of chunks that have already been built so far
     std::set<std::pair<int, int>> filled;
 
     ///< Lock for built
-    std::unique_ptr<std::mutex> filledLock;
+    std::mutex filled_lock;
 
     ///< Order in which chunks have been generated
     std::vector<std::pair<int, int>> build_order;
@@ -140,7 +162,7 @@ private:
      * \param   y y-coordinate of the chunk.
      * \return  Wether the chunk could or couldn't change.
      */
-    bool isLockedChunk(int x, int y) const;
+    bool isLockedChunk(int x, int y);
 
     /**
      * \brief  Assert that a chunk must now be locked.
@@ -155,7 +177,7 @@ private:
      * \param   y y-coordinate of the chunk.
      * \return  True if the chunk is already filled with rooms.
      */
-    bool isFilledChunk(int x, int y) const;
+    bool isFilledChunk(int x, int y);
 
     /**
      * \brief  Assert that a chunk has been filled.
@@ -185,4 +207,9 @@ private:
      * This method must be called each time a room is added to the map.
      */
     void registerRoom(size_t room);
+
+    /**
+     * \brief  Loop that generates any chunk given in the list.
+     */
+    void generationLoop();
 };
