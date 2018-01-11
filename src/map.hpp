@@ -38,7 +38,7 @@ enum class CellType : uint8_t
 class Chunk
 {
 public:
-    constexpr static int SIZE = 32; ///< width and height of the chunks.
+    constexpr static int SIZE = 4; ///< width and height of the chunks.
 
     /**
      * \brief Create a chunk full of empty cells.

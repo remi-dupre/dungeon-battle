@@ -1,35 +1,34 @@
 #include "generator.hpp"
 
 
-Generator::Generator()
+Generator::Generator() :
+    lockedLock(std::make_unique<std::mutex>()),
+    filledLock(std::make_unique<std::mutex>())
 {
     parameters.infinite = false;
-    built.insert({0, 0});
+    setFilledChunk(0, 0);
 }
 
 Generator::Generator(const GenerationMode& parameters) :
-    parameters(parameters)
+    parameters(parameters),
+    lockedLock(std::make_unique<std::mutex>()),
+    filledLock(std::make_unique<std::mutex>())
 {}
-
-bool Generator::isLockedChunk(int x, int y) const
-{
-    return locked.find({x, y}) != end(locked);
-}
 
 Chunk Generator::getChunkCells(int x, int y)
 {
     // Generate potential new rooms
-    if (!parameters.infinite && built.empty()) {
+    if (!parameters.infinite && filled.empty()) {
         // Need to generate the whole map
         addRooms(0, 0, parameters.nb_rooms);
-        built.insert({0, 0});
+        setFilledChunk(0, 0);
     }
     else if (parameters.infinite && !isLockedChunk(x, y)) {
         // Only generate this chunk
         generateRadius(x, y, 1);
     }
 
-    locked.insert({x, y});
+    setLockedChunk(x, y);
 
     // Filter interesting cells and entities
     if (cachedMap.hasChunk(x, y))
@@ -44,7 +43,7 @@ std::vector<std::pair<int, int>> Generator::getCachedChunks() const
 
     for (const auto& item: cachedMap.getChunks())
     {
-        if (locked.find(item) == end(locked))
+        if (!isLockedChunk(item.first, item.second))
             ret.push_back(item);
     }
 
@@ -54,17 +53,17 @@ std::vector<std::pair<int, int>> Generator::getCachedChunks() const
 std::vector<std::shared_ptr<Entity>> Generator::getChunkEntities(int x, int y)
 {
     // Generate potential new rooms
-    if (!parameters.infinite && built.empty()) {
+    if (!parameters.infinite && filled.empty()) {
         // Need to generate the whole map
         addRooms(0, 0, parameters.nb_rooms);
-        built.insert({0, 0});
+        setFilledChunk(0, 0);
     }
     else if (parameters.infinite && !isLockedChunk(x, y)) {
         // Only generate this chunk
         generateRadius(x, y, 1);
     }
 
-    locked.insert({x, y});
+    setLockedChunk(x, y);
 
     // Query on entities
     std::vector<std::shared_ptr<Entity>> ret;
@@ -98,10 +97,10 @@ void Generator::generateRadius(int x, int y, int radius)
         for (int nx = x - radius_layer ; nx <= x + radius_layer ; nx++)
         {
             for (int ny : std::set<int>({y - radius_layer, y + radius_layer})) {
-                if (!isLockedChunk(x, y) && built.find({nx, ny}) == end(built))
+                if (!isFilledChunk(nx, ny))
                 {
                     addRooms(nx, ny, 1);
-                    built.insert({nx, ny});
+                    setFilledChunk(nx, ny);
                     build_order.push_back({nx, ny});
                 }
             }
@@ -110,10 +109,10 @@ void Generator::generateRadius(int x, int y, int radius)
         for (int ny = y - radius_layer + 1 ; ny < y + radius_layer ; ny++)
         {
             for (int nx : std::set<int>({x - radius_layer, x + radius_layer})) {
-                if (!isLockedChunk(x, y) && built.find({nx, ny}) == end(built))
+                if (!isFilledChunk(nx, ny))
                 {
                     addRooms(nx, ny, 1);
-                    built.insert({nx, ny});
+                    setFilledChunk(nx, ny);
                     build_order.push_back({nx, ny});
                 }
             }
@@ -123,7 +122,31 @@ void Generator::generateRadius(int x, int y, int radius)
     // Register some chunk being requested
     for (int nx = x - radius ; nx <= x + radius ; nx++)
         for (int ny = y - radius ; ny <= y + radius ; ny++)
-            locked.insert({nx, ny});
+            setLockedChunk(nx, ny);
+}
+
+bool Generator::isLockedChunk(int x, int y) const
+{
+    std::lock_guard<std::mutex> lock(*lockedLock);
+    return locked.find({x, y}) != end(locked);
+}
+
+void Generator::setLockedChunk(int x, int y)
+{
+    std::lock_guard<std::mutex> lock(*lockedLock);
+    locked.insert({x, y});
+}
+
+bool Generator::isFilledChunk(int x, int y) const
+{
+    std::lock_guard<std::mutex> lock(*filledLock);
+    return filled.find({x, y}) != end(filled);
+}
+
+void Generator::setFilledChunk(int x, int y)
+{
+    std::lock_guard<std::mutex> lock(*filledLock);
+    filled.insert({x, y});
 }
 
 void Generator::addRooms(int x, int y, int n)
@@ -175,19 +198,30 @@ void Generator::addRooms(int x, int y, int n)
         size_t i_room = std::max(1, (int) rooms.size() - n);
         while (i_room < rooms.size())
         {
+            bool superposed = false;
+
             // Check if a room colapse with i
             for (size_t j_room = 0 ; j_room < i_room ; j_room++)
             {
                 if (!spaced(rooms[i_room], rooms[j_room], 1))
                 {
-                    rooms.erase(begin(rooms) + i_room);
-                    n--;
-                    continue;
+                    superposed = true;
+                    break;
                 }
             }
 
-            // This room can be kept
-            i_room++;
+            if (superposed)
+            {
+                // Delete the room
+                rooms.erase(begin(rooms) + i_room);
+                n--;
+            }
+            else
+            {
+                // This room can be kept
+                i_room++;
+
+            }
         }
     }
 
@@ -196,7 +230,7 @@ void Generator::addRooms(int x, int y, int n)
         registerRoom(i_room);
 
     // Add stairs
-    if (built.empty())
+    if (filled.empty())
     {
         // Add entrance in first map
         rooms[0].addEntity(std::make_shared<Entity>(
@@ -326,6 +360,9 @@ void Generator::updateLinks()
 
             link_uf.push_back(nb_rooms-1);
             size_uf.push_back(1);
+
+            assert(l < link_uf.size());
+            assert(r < link_uf.size());
 
             comp_merge(l, nb_rooms-1);
             comp_merge(nb_rooms-1, r);

@@ -6,8 +6,11 @@
 #pragma once
 
 #include <algorithm>
+#include <memory>
+#include <mutex>
 #include <queue>
 #include <set>
+#include <thread>
 #include <tuple>
 #include <vector>
 
@@ -66,14 +69,6 @@ public:
     Generator(const GenerationMode& parameters);
 
     /**
-     * \brief  Check if the cells of a chunk are locked
-     * \param   x x-coordinate of the chunk.
-     * \param   y y-coordinate of the chunk.
-     * \return  Wether the chunk could or couldn't change.
-     */
-    bool isLockedChunk(int x, int y) const;
-
-    /**
      * \brief   Get the chunk of coordinates (x, y).
      * \param   x x-coordinate of the chunk.
      * \param   y y-coordinate of the chunk.
@@ -118,8 +113,14 @@ private:
     ///< Set of chunk we don't wan't to modify anymore
     std::set<std::pair<int, int>> locked;
 
+    ///< Lock for locked
+    std::unique_ptr<std::mutex> lockedLock;
+
     ///< Set of chunks that have already been built so far
-    std::set<std::pair<int, int>> built;
+    std::set<std::pair<int, int>> filled;
+
+    ///< Lock for built
+    std::unique_ptr<std::mutex> filledLock;
 
     ///< Order in which chunks have been generated
     std::vector<std::pair<int, int>> build_order;
@@ -132,6 +133,36 @@ private:
 
     ///< Keep track of connections between rooms
     std::set<std::pair<size_t, size_t>> room_links;
+
+    /**
+     * \brief   Check if the cells of a chunk are locked.
+     * \param   x x-coordinate of the chunk.
+     * \param   y y-coordinate of the chunk.
+     * \return  Wether the chunk could or couldn't change.
+     */
+    bool isLockedChunk(int x, int y) const;
+
+    /**
+     * \brief  Assert that a chunk must now be locked.
+     * \param  x x-coordinate of the chunk.
+     * \param  y y-coordinate of the chunk.
+     */
+    void setLockedChunk(int x, int y);
+
+    /**
+     * \brief   Check if rooms have already been added to the chunk.
+     * \param   x x-coordinate of the chunk.
+     * \param   y y-coordinate of the chunk.
+     * \return  True if the chunk is already filled with rooms.
+     */
+    bool isFilledChunk(int x, int y) const;
+
+    /**
+     * \brief  Assert that a chunk has been filled.
+     * \param  x x-coordinate of the chunk.
+     * \param  y y-coordinate of the chunk.
+     */
+    void setFilledChunk(int x, int y);
 
     /**
      * \brief  Generate some rooms centered on given chunck.
