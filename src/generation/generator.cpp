@@ -413,24 +413,27 @@ void Generator::generationLoop()
     while (true)
     {
         to_generate_lock.lock();
-        std::pair<int, int> chunk_id;
 
-        // Select a chunk to generate
-        while (!to_generate.empty())
+        // Wait for at least one task
+        while (to_generate.empty())
         {
-            chunk_id = to_generate.front();
-            to_generate.pop_front();
-
-            if (isFilledChunk(chunk_id.first, chunk_id.second))
-                continue;
-
             to_generate_lock.unlock();
-            addRooms(chunk_id.first, chunk_id.second, 1);
-            setFilledChunk(chunk_id.first, chunk_id.second);
+            std::this_thread::sleep_for(10ms);
             to_generate_lock.lock();
         }
 
+        std::pair<int, int> chunk_id;
+
+        // Select a chunk to generate
+        chunk_id = to_generate.front();
+        to_generate.pop_front();
+
         to_generate_lock.unlock();
-        std::this_thread::sleep_for(10ms);
+
+        if (isFilledChunk(chunk_id.first, chunk_id.second))
+            continue;
+
+        addRooms(chunk_id.first, chunk_id.second, 1);
+        setFilledChunk(chunk_id.first, chunk_id.second);
     }
 }
