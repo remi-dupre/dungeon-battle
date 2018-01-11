@@ -246,7 +246,7 @@ void Generator::addRooms(int x, int y, int n)
             rooms[n-1].addEntity(std::make_shared<Entity>(
             EntityType::Stairs,
             Interaction::GoDown,
-            sf::Vector2i(0, 0),
+            sf::Vector2i(1, 0),
             Direction::Left
         ));
     }
