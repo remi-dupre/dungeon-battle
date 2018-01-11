@@ -116,46 +116,6 @@ public:
 
 
 private:
-    ///< Parameters for the generation
-    GenerationMode parameters;
-
-    ///< Seed used for the generation of the map
-    int seed;
-
-    ///< Thread that actualy generates
-    std::thread generating_thread;
-
-    ///< A list of chunks we need to generate
-    // This list is read from its front, thus, most important tasks are put in the front
-    std::list<std::pair<int, int>> to_generate;
-
-    ///< Lock for to_generate
-    std::mutex to_generate_lock;
-
-    ///< Set of chunk we don't wan't to modify anymore
-    std::set<std::pair<int, int>> locked;
-
-    ///< Lock for locked
-    std::mutex locked_lock;
-
-    ///< Set of chunks that have already been built so far
-    std::set<std::pair<int, int>> filled;
-
-    ///< Lock for built
-    std::mutex filled_lock;
-
-    ///< Order in which chunks have been generated
-    std::vector<std::pair<int, int>> build_order;
-
-    ///< List of rooms generated so far
-    std::vector<Room> rooms;
-
-    ///< A cached version of the map we generated so far.
-    Map cachedMap;
-
-    ///< Keep track of connections between rooms
-    std::set<std::pair<size_t, size_t>> room_links;
-
     /**
      * \brief   Check if the cells of a chunk are locked.
      * \param   x x-coordinate of the chunk.
@@ -212,4 +172,46 @@ private:
      * \brief  Loop that generates any chunk given in the list.
      */
     void generationLoop();
+
+
+    ///< Parameters for the generation
+    GenerationMode parameters;
+
+    ///< Thread that actualy generates
+    std::thread generating_thread;
+
+    ///< A list of chunks we need to generate
+    // This list is read from its front, thus, most important tasks are put in the front
+    std::list<std::pair<int, int>> to_generate;
+
+    ///< Lock for to_generate
+    std::mutex to_generate_lock;
+
+    ///< Set of chunk we don't wan't to modify anymore
+    std::set<std::pair<int, int>> locked;
+
+    ///< Lock for locked
+    std::mutex locked_lock;
+
+    ///< Set of chunks that have already been built so far
+    std::set<std::pair<int, int>> filled;
+
+    ///< Lock for filled
+    std::mutex filled_lock;
+
+    ///< List of rooms generated so far
+    std::vector<Room> rooms;
+
+    ///< A cached version of the map we generated so far
+    Map cached_map;
+
+    ///< A cached version of entities for each chunk
+    std::map<std::pair<int, int>, std::vector<std::shared_ptr<Entity>>> cached_entities;
+
+    ///< Lock for the cache
+    std::mutex cache_lock;
+
+    ///< Keep track of connections between rooms
+    std::set<std::pair<size_t, size_t>> room_links;
+
 };

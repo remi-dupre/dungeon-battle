@@ -31,10 +31,11 @@ Chunk Generator::getChunkCells(int x, int y)
     }
 
     setLockedChunk(x, y);
+    std::lock_guard<std::mutex> lock(cache_lock);
 
     // Filter interesting cells and entities
-    if (cachedMap.hasChunk(x, y))
-        return cachedMap.chunkAt(x, y);
+    if (cached_map.hasChunk(x, y))
+        return cached_map.chunkAt(x, y);
     else
         return Chunk();
 }
@@ -43,7 +44,7 @@ std::vector<std::pair<int, int>> Generator::getCachedChunks()
 {
     std::vector<std::pair<int, int>> ret;
 
-    for (const auto& item: cachedMap.getChunks())
+    for (const auto& item: cached_map.getChunks())
     {
         if (!isLockedChunk(item.first, item.second))
             ret.push_back(item);
@@ -60,24 +61,14 @@ std::vector<std::shared_ptr<Entity>> Generator::getChunkEntities(int x, int y)
     }
 
     setLockedChunk(x, y);
+    std::vector<std::shared_ptr<Entity>> copy;
+    std::lock_guard<std::mutex> lock(cache_lock);
 
-    // Query on entities
-    std::vector<std::shared_ptr<Entity>> ret;
-    for (const Room& room : rooms)
-    {
-        for (std::shared_ptr<Entity> entity : room.getEntities())
-        {
-            Point cell = room.getPosition() + std::make_pair(entity->getPosition().x, entity->getPosition().y);
-            Point chunk_id = Chunk::sector(cell.first, cell.second);
+    if (cached_entities.count({x, y}))
+        for (auto& entity : cached_entities[{x, y}])
+            copy.push_back(entity->copy());
 
-            if (chunk_id == std::make_pair(x, y)) {
-                ret.push_back(entity->copy());
-                ret.back()->setPosition({cell.first, cell.second});
-            }
-        }
-    }
-
-    return ret;
+    return copy;
 }
 
 void Generator::preGenerateRadius(int x, int y, int radius, bool priority)
@@ -224,10 +215,6 @@ void Generator::addRooms(int x, int y, int n)
         }
     }
 
-    // Copy rooms to the cached map
-    for (size_t i_room = rooms.size() - n ; i_room < rooms.size() ; i_room++)
-        registerRoom(i_room);
-
     // Add stairs
     if (filled.empty())
     {
@@ -254,6 +241,10 @@ void Generator::addRooms(int x, int y, int n)
     // Place monsters after other entities
     for (size_t i_room = rooms.size() - n ; i_room < rooms.size() ; i_room++)
         add_monsters(rooms[i_room], parameters.monster_load);
+
+    // Copy rooms to the cached map and entities
+    for (size_t i_room = rooms.size() - n ; i_room < rooms.size() ; i_room++)
+    registerRoom(i_room);
 
     // Add ways between rooms
     updateLinks();
@@ -378,18 +369,20 @@ void Generator::updateLinks()
 
 void Generator::registerRoom(size_t room)
 {
+    std::lock_guard<std::mutex> lock(cache_lock);
+
     // Add floor everywhere we can
     for (Point cell : rooms[room].getCells())
     {
         int x = (cell + rooms[room].getPosition()).first;
         int y = (cell + rooms[room].getPosition()).second;
 
-        if (!cachedMap.hasCell(x, y)) {
+        if (!cached_map.hasCell(x, y)) {
             auto cpos = Chunk::sector(x, y);
-            cachedMap.setChunk(cpos.first, cpos.second, Chunk());
+            cached_map.setChunk(cpos.first, cpos.second, Chunk());
         }
 
-        cachedMap.cellAt(x, y) = CellType::Floor;
+        cached_map.cellAt(x, y) = CellType::Floor;
     }
 
     // Add walls on the surrounding : only where there is no floor yet
@@ -398,13 +391,25 @@ void Generator::registerRoom(size_t room)
         int x = (cell + rooms[room].getPosition()).first;
         int y = (cell + rooms[room].getPosition()).second;
 
-        if (!cachedMap.hasCell(x, y)) {
+        if (!cached_map.hasCell(x, y)) {
             auto cpos = Chunk::sector(x, y);
-            cachedMap.setChunk(cpos.first, cpos.second, Chunk());
+            cached_map.setChunk(cpos.first, cpos.second, Chunk());
         }
 
-        if (cachedMap.cellAt(x, y) == CellType::Empty)
-            cachedMap.cellAt(x, y) = CellType::Wall;
+        if (cached_map.cellAt(x, y) == CellType::Empty)
+            cached_map.cellAt(x, y) = CellType::Wall;
+    }
+
+    // Add entities in the cache
+    for (auto entity : rooms[room].getEntities())
+    {
+        auto position = std::make_pair(entity->getPosition().x, entity->getPosition().y);
+        int x = (position + rooms[room].getPosition()).first;
+        int y = (position + rooms[room].getPosition()).second;
+
+        auto chunk_id = Chunk::sector(x, y);
+        cached_entities[chunk_id].push_back(entity->copy());
+        cached_entities[chunk_id].back()->setPosition({x, y});
     }
 }
 
