@@ -193,28 +193,8 @@ void Game::run()
             break;
 
         case MenuEvent::SaveGame:
-            if (!config.gen_options.infinite) {
-                // Load cached chunks
-                for (size_t i_map = 0 ; i_map < dungeon.size() ; i_map++)
-                {
-                    for (const auto& id_chunk : generators[i_map]->getCachedChunks())
-                    {
-                        int x = id_chunk.first;
-                        int y = id_chunk.second;
-
-                        dungeon[i_map].map.setChunk(x, y, generators[i_map]->getChunkCells(x, y));
-
-                        auto nentities = generators[i_map]->getChunkEntities(x, y);
-                        dungeon[i_map].entities.insert(end(dungeon[i_map].entities), begin(nentities), end(nentities));
-                    }
-                }
-
-                saveGame();
-            }
-            else
-            {
-                std::cout << "Not available yet for infinite maps" << std::endl;
-            }
+            // Load cached chunks
+            saveGame();
             break;
 
         default:

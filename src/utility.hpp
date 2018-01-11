@@ -8,6 +8,7 @@
 #include <cassert>
 #include <cstdint>
 #include <functional>
+#include <iostream>
 #include <tuple>
 #include <vector>
 
@@ -86,6 +87,16 @@ namespace std
             return 73856093 * v.x ^ 83492791 * v.y;
         }
     };
+
+    /**
+     * \brief Serialisation of a pair.
+     */
+    std::ostream& operator<<(std::ostream& stream, const std::pair<int, int>& pair);
+
+    /**
+     * \brief Unserialisation of a pair.
+     */
+    std::istream& operator>>(std::istream& stream, std::pair<int, int>& pair);
 
     /**
      * \brief Get the sum of two pairs.

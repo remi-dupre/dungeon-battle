@@ -439,7 +439,10 @@ void Generator::generationLoop()
         }
 
         if (!do_generate)
+        {
+            to_generate_lock.unlock();
             break;
+        }
 
         std::pair<int, int> chunk_id;
 
@@ -455,4 +458,109 @@ void Generator::generationLoop()
         addRooms(chunk_id.first, chunk_id.second, 1);
         setFilledChunk(chunk_id.first, chunk_id.second);
     }
+}
+
+std::ostream& operator<<(std::ostream& stream, Generator& generator)
+{
+    // Pause generation
+    bool paused_generation = false;
+    if (generator.do_generate)
+    {
+        paused_generation = true;
+        generator.do_generate = false;
+        generator.generating_thread.join();
+    }
+
+    uint32_t nb_locked = generator.locked.size();
+    uint32_t nb_filled = generator.filled.size();
+    uint32_t nb_rooms = generator.rooms.size();
+    uint32_t nb_links = generator.room_links.size();
+
+    stream.write(reinterpret_cast<char*>(&nb_locked), sizeof(uint32_t));
+    stream.write(reinterpret_cast<char*>(&nb_filled), sizeof(uint32_t));
+    stream.write(reinterpret_cast<char*>(&nb_rooms), sizeof(uint32_t));
+    stream.write(reinterpret_cast<char*>(&nb_links), sizeof(uint32_t));
+
+    for (const auto& chunk: generator.locked)
+        stream << chunk;
+
+    for (const auto& chunk: generator.filled)
+        stream << chunk;
+
+    for (const Room& room: generator.rooms)
+        stream << room;
+
+    for (const auto& link: generator.room_links)
+        stream << link;
+
+    // Restart generation
+    if (paused_generation)
+    {
+        generator.do_generate = true;
+        generator.generating_thread = std::thread(&Generator::generationLoop, &generator);
+    }
+
+    return stream;
+}
+
+std::istream& operator>>(std::istream& stream, Generator& generator)
+{
+    // Pause generation
+    bool paused_generation = false;
+    if (generator.do_generate)
+    {
+        paused_generation = true;
+        generator.do_generate = false;
+        generator.generating_thread.join();
+    }
+
+    generator.to_generate.clear();
+    generator.locked.clear();
+    generator.filled.clear();
+    generator.rooms.clear();
+    generator.cached_map = Map();
+    generator.cached_entities.clear();
+
+    uint32_t nb_locked, nb_filled, nb_rooms, nb_links;
+
+    stream.read(reinterpret_cast<char*>(&nb_locked), sizeof(uint32_t));
+    stream.read(reinterpret_cast<char*>(&nb_filled), sizeof(uint32_t));
+    stream.read(reinterpret_cast<char*>(&nb_rooms), sizeof(uint32_t));
+    stream.read(reinterpret_cast<char*>(&nb_links), sizeof(uint32_t));
+
+    std::pair<int, int> chunk_id;
+
+    for (size_t i = 0 ; i < nb_locked ; i++)
+    {
+        stream >> chunk_id;
+        generator.locked.insert(chunk_id);
+    }
+
+    for (size_t i = 0 ; i < nb_filled ; i++)
+    {
+        stream >> chunk_id;
+        generator.filled.insert(chunk_id);
+    }
+
+    for (size_t i = 0 ; i < nb_rooms ; i++)
+    {
+        generator.rooms.emplace_back();
+        stream >> generator.rooms.back();
+        generator.registerRoom(i);
+    }
+
+    for (size_t i = 0 ; i < nb_links ; i++)
+    {
+        stream >> chunk_id;
+        generator.room_links.insert(chunk_id);
+    }
+
+    // Restart generation
+    if (paused_generation)
+    {
+        generator.do_generate = true;
+        generator.generating_thread = std::thread(&Generator::generationLoop, &generator);
+    }
+
+    return stream;
 }

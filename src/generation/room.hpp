@@ -6,6 +6,8 @@
 #pragma once
 
 #include <cassert>
+#include <cstdint>
+#include <iostream>
 #include <limits>
 #include <tuple>
 
@@ -32,6 +34,11 @@
 class Room
 {
 public:
+    /**
+     * \brief  Create an empty room.
+     */
+    Room();
+
     /**
      * \brief  Copy a room.
      */
@@ -114,6 +121,17 @@ private:
     KDTree treeCells; ///< Alternative representation of cells
 
     std::vector<std::shared_ptr<Entity>> entities; ///< Entities placed on the room.
+
+
+    /**
+     * \brief  Serialisation of a room.
+     */
+    friend std::ostream& operator<<(std::ostream& stream, const Room& room);
+
+    /**
+     * \brief  Construct a room reading from a stream.
+     */
+    friend std::istream& operator>>(std::istream& stream, Room& room);
 };
 
 /**
@@ -149,7 +167,6 @@ int ntn_dist(const Room& room1, const Room& room2);
  * \return  A vector containing monsters we want to add.
  */
 void add_monsters(Room& room, float load);
-
 
 /**
  * \brief   Generate a labyrinth room.

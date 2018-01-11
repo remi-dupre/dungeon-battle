@@ -7,6 +7,7 @@
 
 #include <algorithm>
 #include <chrono>
+#include <cstdint>
 #include <list>
 #include <memory>
 #include <mutex>
@@ -222,4 +223,16 @@ private:
     ///< Keep track of connections between rooms
     std::set<std::pair<size_t, size_t>> room_links;
 
+
+    /**
+     * \brief  Serialisation of current state of the generation.
+     * The parameters of the generations won't be saved.
+     */
+    friend std::ostream& operator<<(std::ostream& stream, Generator& generator);
+
+    /**
+     * \brief  Serialisation of current state of the generation.
+     * The parameters of the generations won't be saved.
+     */
+    friend std::istream& operator>>(std::istream& stream, Generator& generator);
 };

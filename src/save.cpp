@@ -10,10 +10,13 @@
 
 bool save_dungeon(const std::vector<Level>& dungeon,
                   const std::vector<MapExploration>& exploration,
+                  const std::vector<std::shared_ptr<Generator>>& generators,
                   const std::string& save_path);
 
 bool Game::saveGame()
 {
+    std::cout << "Saving game" << std::endl;
+
     const std::string save_path {Configuration::user_path + "saves/" + game_name + "/"};
 
     if (system(("mkdir -p " + save_path + "levels").c_str()) == -1)
@@ -35,7 +38,7 @@ bool Game::saveGame()
 
     save_file.close();
 
-    save_dungeon(dungeon, exploration, save_path);
+    save_dungeon(dungeon, exploration, generators, save_path);
 
     std::fstream saves {Configuration::user_path + "saves/saves.data"};
     if (!saves)
@@ -57,6 +60,7 @@ bool Game::saveGame()
 
 bool save_dungeon(const std::vector<Level>& dungeon,
                   const std::vector<MapExploration>& exploration,
+                  const std::vector<std::shared_ptr<Generator>>& generators,
                   const std::string& save_path)
 {
     for (uint32_t i_level = 0; i_level < dungeon.size(); ++i_level)
@@ -81,6 +85,12 @@ bool save_dungeon(const std::vector<Level>& dungeon,
             else
                 entities_file << (*entity);
         }
+
+        std::ofstream generator_file {
+            save_path + "levels/generator" + std::to_string(i_level) + ".dat",
+            std::ios::trunc | std::ios::binary
+        };
+        generator_file << *generators[i_level];
     }
 
     return true;

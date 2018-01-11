@@ -3,6 +3,11 @@
 
 /* *************** Definition of room *************** */
 
+Room::Room() :
+    position({0, 0}),
+    treeCells(cells)
+{}
+
 Room::Room(const Pattern& cells) :
     position({0, 0}),
     cells(cells),
@@ -70,6 +75,87 @@ bool spaced(const Room& room1, const Room& room2, int spacing)
             return false;
 
     return true;
+}
+
+std::ostream& operator<<(std::ostream& stream, const Room& room)
+{
+    stream << room.position;
+
+    uint32_t nb_rooms = room.cells.size();
+    uint32_t nb_nodes = room.nodes.size();
+    uint32_t nb_entie = room.entities.size();
+
+    stream.write(reinterpret_cast<char*>(&nb_rooms), sizeof(uint32_t));
+    stream.write(reinterpret_cast<char*>(&nb_nodes), sizeof(uint32_t));
+    stream.write(reinterpret_cast<char*>(&nb_entie), sizeof(uint32_t));
+
+    for (const Point& cell: room.cells)
+        stream << cell;
+
+    for (const Point& cell: room.nodes)
+        stream << cell;
+
+    for (const auto& entity: room.entities)
+    {
+        if (entity->getType() == EntityType::Hero || entity->getType() == EntityType::Monster)
+            stream << *std::static_pointer_cast<Character>(entity);
+        else
+            stream << *entity;
+    }
+
+    return stream;
+}
+
+std::istream& operator>>(std::istream& stream, Room& room)
+{
+    stream >> room.position;
+
+    room.cells.clear();
+    room.nodes.clear();
+    room.entities.clear();
+
+    uint32_t nb_cells, nb_nodes, nb_entie;
+    stream.read(reinterpret_cast<char*>(&nb_cells), sizeof(uint32_t));
+    stream.read(reinterpret_cast<char*>(&nb_nodes), sizeof(uint32_t));
+    stream.read(reinterpret_cast<char*>(&nb_entie), sizeof(uint32_t));
+
+    for (size_t i = 0 ; i < nb_cells ; i++)
+    {
+        Point cell;
+        stream >> cell;
+        room.cells.insert(cell);
+    }
+
+    for (size_t i = 0 ; i < nb_nodes ; i++)
+    {
+        Point node;
+        stream >> node;
+        room.nodes.insert(node);
+    }
+
+    for (size_t i = 0 ; i < nb_entie ; i++)
+    {
+        EntityType type;
+        stream.read(reinterpret_cast<char*>(&type), sizeof(uint32_t));
+        stream.seekg(-static_cast<int>(sizeof(uint32_t)), std::ios::cur);
+
+        std::shared_ptr<Entity> entity;
+        if (type == EntityType::Hero || type == EntityType::Monster)
+        {
+            entity = std::make_shared<Character>();
+            stream >> *std::static_pointer_cast<Character>(entity);
+        }
+        else
+        {
+            entity = std::make_shared<Entity>();
+            stream >> *entity;
+        }
+
+        room.entities.push_back(entity);
+    }
+
+    room.treeCells = KDTree(room.cells);
+    return stream;
 }
 
 /* *************** General functions *************** */

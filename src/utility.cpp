@@ -66,6 +66,28 @@ sf::Vector2i to_vector2i(Direction direction)
     return result;
 }
 
+std::ostream& std::operator<<(std::ostream& stream, const std::pair<int, int>& pair)
+{
+    int32_t x = pair.first;
+    int32_t y = pair.first;
+
+    stream.write(reinterpret_cast<char*>(&x), sizeof(int32_t));
+    stream.write(reinterpret_cast<char*>(&y), sizeof(int32_t));
+
+    return stream;
+}
+
+std::istream& std::operator>>(std::istream& stream, std::pair<int, int>& pair)
+{
+    int32_t x, y;
+
+    stream.read(reinterpret_cast<char*>(&x), sizeof(int32_t));
+    stream.read(reinterpret_cast<char*>(&y), sizeof(int32_t));
+    pair = {x, y};
+
+    return stream;
+}
+
 std::pair<int, int> std::operator +(const std::pair<int, int>& x, const std::pair<int, int>& y) {
     return std::make_pair(x.first + y.first, x.second + y.second);
 }
