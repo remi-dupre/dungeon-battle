@@ -41,7 +41,7 @@ bool Game::loadGame(const std::string& save_name)
     save_file.read(reinterpret_cast<char*>(&max_level), sizeof(uint32_t)); // max level
 
     // Fake all generators
-    generators.resize(max_level);
+    generators.resize(max_level, new Generator());
 
     load_dungeon(max_level, dungeon, exploration, load_path);
 
