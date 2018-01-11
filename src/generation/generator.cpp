@@ -14,12 +14,23 @@ Generator::Generator(const GenerationMode& parameters) :
 {
     if (parameters.infinite)
     {
+        do_generate = true;
         generating_thread = std::thread(&Generator::generationLoop, this);
     }
     else
     {
+        do_generate = false;
         addRooms(0, 0, parameters.nb_rooms);
         setFilledChunk(0, 0);
+    }
+}
+
+Generator::~Generator()
+{
+    if (do_generate)
+    {
+        do_generate = false;
+        generating_thread.join();
     }
 }
 
@@ -420,12 +431,15 @@ void Generator::generationLoop()
         to_generate_lock.lock();
 
         // Wait for at least one task
-        while (to_generate.empty())
+        while (do_generate && to_generate.empty())
         {
             to_generate_lock.unlock();
             std::this_thread::sleep_for(10ms);
             to_generate_lock.lock();
         }
+
+        if (!do_generate)
+            break;
 
         std::pair<int, int> chunk_id;
 

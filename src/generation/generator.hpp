@@ -75,6 +75,11 @@ public:
     Generator(const Generator&) = delete;
 
     /**
+     * \brief    Stop generation and destruct the generator.
+     */
+    ~Generator();
+
+    /**
      * \brief   Get the chunk of coordinates (x, y).
      * \param   x x-coordinate of the chunk.
      * \param   y y-coordinate of the chunk.
@@ -179,6 +184,9 @@ private:
 
     ///< Thread that actualy generates
     std::thread generating_thread;
+
+    ///< Wether the process has to continue
+    bool do_generate;
 
     ///< A list of chunks we need to generate
     // This list is read from its front, thus, most important tasks are put in the front

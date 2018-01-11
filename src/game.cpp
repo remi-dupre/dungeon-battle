@@ -42,6 +42,8 @@ void Game::init(const std::map<Option, std::string>& options)
 void Game::newGame(const std::string& save_path, Class hero_class)
 {
     dungeon.clear();
+    generators.clear();
+    exploration.clear();
 
     game_name = save_path;
     current_level = 0;
@@ -54,7 +56,7 @@ void Game::newGame(const std::string& save_path, Class hero_class)
     RandGen::seed(r());
 
     dungeon.push_back(Level());
-    generators.push_back(new Generator(config.gen_options));
+    generators.push_back(std::make_shared<Generator>(config.gen_options));
     exploration.emplace_back();
 
     map = &dungeon[0].map;
@@ -286,7 +288,7 @@ void Game::update()
                                     {
                                         dungeon.push_back(Level());
                                         dungeon[current_level+1].entities.push_back(*hero);
-                                        generators.push_back(new Generator(config.gen_options));
+                                        generators.push_back(std::make_shared<Generator>(config.gen_options));
                                         exploration.emplace_back();
 
                                         dungeon[current_level+1].map.setChunk(0, 0, generators[current_level+1]->getChunkCells(0, 0));

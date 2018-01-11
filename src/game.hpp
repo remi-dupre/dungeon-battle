@@ -157,12 +157,12 @@ private:
 
     Map* map; ///< The current map
     std::vector<std::shared_ptr<Entity>>* entities; ///< The current map entities
-    Generator *generator; ///< The current generator
+    std::shared_ptr<Generator> generator; ///< The current generator
     MapExploration *map_exploration; ///< The exploration state of the map
 
     std::size_t current_level; ///< The number of the curent level
     std::vector<Level> dungeon; ///< The maps and entities of differents level of the dungeon
-    std::vector<Generator*> generators; ///< Engines generating the maps
+    std::vector<std::shared_ptr<Generator>> generators; ///< Engines generating the maps
     std::vector<MapExploration> exploration;
 
     EntityType entity_turn; ///< Tell whether it is the player or the monsters to play
