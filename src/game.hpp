@@ -28,7 +28,7 @@
 
 
 constexpr int DIST_CHUNK_LOAD = 3; ///< Number of chunks to load
-constexpr int DIST_CHUNK_PRELOAD = 4; ///< Number of chunks to preload
+constexpr int DIST_CHUNK_PRELOAD = 5; ///< Number of chunks to preload
 
 /**
  * \brief Represent the game

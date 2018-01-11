@@ -269,8 +269,7 @@ void Renderer::drawEntity(std::shared_ptr<Entity> entity,
         color.b *= attack_ratio;
     }
 
-    if (!cell_visible)
-        color *= {100, 100, 100};
+    color *= {cell_shade[entity->getPosition()], cell_shade[entity->getPosition()], cell_shade[entity->getPosition()]};
     entity_sprite.setColor(color);
 }
 
@@ -317,11 +316,16 @@ void Renderer::drawCell(sf::Vector2i coords, CellType cell, const Map& map, MapE
 
     sf::Vector2f tex_coords = RessourceManager::getTileTextureCoords(CellType::Floor, floor_neighborhood);
 
-    sf::Color cell_color = sf::Color::White;
-    if (!(cell_visible || (cell == CellType::Wall && next_visible)) && cell_explored)
-        cell_color = {100, 100, 100};
+    if (cell_visible || (cell == CellType::Wall && next_visible))
+        cell_shade[coords] = std::min(255, cell_shade[coords] + 5);
+    else if (cell_explored && cell_shade[coords] < 100)
+        cell_shade[coords] = std::min(100, cell_shade[coords] + 2);
+    else if (cell_explored && cell_shade[coords] > 100)
+        cell_shade[coords] = std::max(100, cell_shade[coords] - 2);
+
 
     sf::Vertex v1, v2, v3, v4;
+    sf::Color cell_color = {cell_shade[coords], cell_shade[coords], cell_shade[coords]};
     v1 = v2 = v3 = v4 = {pos, cell_color, tex_coords};
 
     v2.position.y += tile_size;

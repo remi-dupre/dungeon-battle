@@ -5,7 +5,9 @@
 
 #pragma once
 
+#include <algorithm>
 #include <cassert>
+#include <map>
 #include <memory>
 
 #include <SFML/Graphics.hpp>
@@ -103,6 +105,8 @@ private:
     std::vector<sf::Vertex> map_vertices_fg; ///< Vertex array used to render the foreground
 
     std::vector<sf::Sprite> entities_sprites;
+
+    std::map<sf::Vector2i, sf::Uint8> cell_shade; ///< The color of each cells
 
     sf::Text hero_life; ///< Display the life of the hero
     sf::Text hero_xp;   ///< Display the XP of the hero
