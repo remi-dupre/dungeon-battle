@@ -208,6 +208,11 @@ void Renderer::drawEntity(std::shared_ptr<Entity> entity,
             entity_type = EntitySprite::Goat;
             break;
 
+        case Class::Rabbit:
+            texture_type = Textures::Rabbit;
+            entity_type = EntitySprite::Rabbit;
+            break;
+
         case Class::Rogue:
             texture_type = Textures::Rogue;
             entity_type = EntitySprite::Rogue;

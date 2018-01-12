@@ -161,7 +161,7 @@ Item::Item(const std::string& name_,
         int experience_,
         int hpMax_,
         int hp_,
-           int strength_,
+        int strength_,
         int defense_,
         int sightRadius_) :
     Entity(EntityType::Item, Interaction::None, position_, Direction::None),
@@ -231,7 +231,9 @@ Character::Character(EntityType type_,
     inventory({}),
     inventorySize(0),
     spells(std::vector<Spell> ({Spell()}))
-{}
+{
+    friendly = false;
+}
 
 Character::Character(Class character_class_, sf::Vector2i position_) :
     Character::Character(
@@ -246,6 +248,7 @@ Character::Character(Class character_class_, sf::Vector2i position_) :
 {
     experience = StatManager::xp[character_class_];
     sightRadius = StatManager::sightradius[character_class_];
+    friendly = StatManager::friendly[character_class_];
 }
 
 
@@ -265,6 +268,11 @@ unsigned int Character::getLevel() const
     }
 
     return static_cast<unsigned int>(std::max(c, 0));
+}
+
+bool Character::is_friendly() const
+{
+    return friendly;
 }
 
 void Character::setLevel(unsigned int level_)
@@ -421,8 +429,8 @@ const std::vector<Spell>& Character::getSpells() const
 
 Class randomClass()
 {
-    int r = rand() % 3;
-    std::vector<int> monsters = {3,5,6};
+    int r = rand() % 4;
+    std::vector<int> monsters = {3,5,6,8};
     return static_cast<Class>(monsters[r]);
 }
 
@@ -430,6 +438,7 @@ std::map<Class, int> StatManager::xp{};
 std::map<Class, int> StatManager::strength{};
 std::map<Class, int> StatManager::hp{};
 std::map<Class, int> StatManager::sightradius{};
+std::map<Class, bool> StatManager::friendly{};
 
 bool StatManager::loadStats()
 {
@@ -450,11 +459,14 @@ bool StatManager::loadStats()
             character_class = Class::Goat;
         else if (monster_class_str == "Bat")
             character_class = Class::Bat;
+        else if (monster_class_str == "Rabbit")
+            character_class = Class::Rabbit;
 
         stats_file >> xp[character_class];
         stats_file >> strength[character_class];
         stats_file >> hp[character_class];
         stats_file >> sightradius[character_class];
+        stats_file >> friendly[character_class];
 
     }
     return true;

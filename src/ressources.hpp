@@ -22,6 +22,7 @@ enum class Textures
     Angel  ,
 
     Goat,
+    Rabbit,
 
     Bat,
     Slime = Scenery
@@ -38,6 +39,7 @@ enum class EntitySprite
     Angel  ,
 
     Goat,
+    Rabbit,
 
     Slime,
     Bat,

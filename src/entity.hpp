@@ -45,7 +45,8 @@ enum class Class : uint32_t
     Angel   = 4, ///< Angel class for hero
     Bat     = 5, ///< Bat monster
     Goat    = 6, ///< Goat not a monster
-    None    = 7  ///< None type
+    None    = 7, ///< None type
+    Rabbit  = 8  ///< Rabbit not a monster
 };
 
 
@@ -323,6 +324,11 @@ public:
     unsigned int getLevel() const;
 
     /**
+     * \brief Return wether a character is friendly
+     */
+    bool is_friendly() const;
+
+    /**
      * \brief Set the max hp of the character
      * \param hpMax The hp to set as max
      */
@@ -451,6 +457,7 @@ protected:
     unsigned int strength; ///< The force of the character
     unsigned int defense; ///< The defense of the character
     unsigned int sightRadius; ///< The sight radius of the character (0 for infinity)
+    bool friendly;
 
     std::vector<Item> inventory; ///< The inventory of the character
     unsigned int inventorySize; ///< The size of the inventory of the character
@@ -474,6 +481,7 @@ struct StatManager
     static std::map<Class, int> strength;
     static std::map<Class, int> hp;
     static std::map<Class, int> sightradius;
+    static std::map<Class, bool> friendly;
 };
 
 /**

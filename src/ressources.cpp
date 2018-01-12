@@ -99,6 +99,10 @@ bool RessourceManager::loadTextures()
     if (!goat.loadFromFile(ressources_path + "goat.png"))
         ok = false;
 
+    sf::Texture& rabbit = textures[Textures::Rabbit];
+    if (!rabbit.loadFromFile(ressources_path + "rabbit.png"))
+        ok = false;
+
     sf::Texture& slime = textures[Textures::Slime];
     if (!slime.loadFromFile(ressources_path + "entities.png"))
         ok = false;
@@ -137,6 +141,8 @@ bool RessourceManager::loadAnimations()
             entity_type = EntitySprite::Warrior;
         else if (entity_type_str == "Goat")
             entity_type = EntitySprite::Goat;
+        else if (entity_type_str == "Rabbit")
+            entity_type = EntitySprite::Rabbit;
         else if (entity_type_str == "Bat")
             entity_type = EntitySprite::Bat;
         else if (entity_type_str == "Rogue")
