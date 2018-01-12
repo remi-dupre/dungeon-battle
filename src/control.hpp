@@ -20,10 +20,11 @@
  */
 enum class ActionType
 {
-    None,    ///< No action
-    Move,    ///< Move action
-    Attack,  ///< Attack action
-    Interact ///< Interact action
+    None,      ///< No action
+    Move,      ///< Move action
+    Attack,    ///< Attack action
+    Interact,  ///< Interact action
+    BodySnatch ///< Body snatch action
 };
 
 /**

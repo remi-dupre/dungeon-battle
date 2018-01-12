@@ -77,29 +77,9 @@ bool load_dungeon(uint32_t dungeon_size,
         };
         uint32_t n_entities {0};
         entities_file.read(reinterpret_cast<char*>(&n_entities), sizeof(uint32_t));
+        level.entities.resize(n_entities);
         for (unsigned int i {0}; i < n_entities; ++i)
-        {
-            EntityType type {EntityType::None};
-            entities_file.read(reinterpret_cast<char*>(&type), sizeof(uint32_t));
-            entities_file.seekg(-static_cast<int>(sizeof(uint32_t)), std::ios::cur);
-            std::shared_ptr<Entity> entity {nullptr};
-            if (type == EntityType::Hero || type == EntityType::Monster)
-            {
-                entity = std::make_shared<Character>();
-                entities_file >> (*std::static_pointer_cast<Character>(entity));
-            }
-            // else if (type == EntityType::Item)
-            // {
-            //     entity = std::make_shared<Item>();
-            //     entities_file >> (*std::static_pointer_cast<Item>(entity));
-            // }
-            else
-            {
-                entity = std::make_shared<Entity>();
-                entities_file >> (*entity);
-            }
-            level.entities.push_back(entity);
-        }
+            entities_file >> level.entities[i];
 
         std::ifstream generator_file {
             save_path + "levels/generator" + std::to_string(i_level) + ".dat",

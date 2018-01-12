@@ -40,6 +40,20 @@ EntityType Entity::getType() const
     return type;
 }
 
+Controller Entity::setController(Controller controller_)
+{
+    Controller tmp = controller;
+    controller = controller_;
+    return tmp;
+}
+
+EntityType Entity::setType(EntityType type_)
+{
+    EntityType tmp = type;
+    type = type_;
+    return tmp;
+}
+
 std::shared_ptr<Entity> Entity::copy() const
 {
     std::shared_ptr<const Entity> shared = shared_from_this();
@@ -567,6 +581,39 @@ std::istream& operator>>(std::istream& stream, Character& entity)
     stream.read(reinterpret_cast<char*>(&entity.strength), sizeof(uint32_t));
     stream.read(reinterpret_cast<char*>(&entity.defense), sizeof(uint32_t));
     stream.read(reinterpret_cast<char*>(&entity.sightRadius), sizeof(uint32_t));
+
+    return stream;
+}
+
+std::istream& operator>>(std::istream& stream, std::shared_ptr<Entity>& entity)
+{
+    EntityType type;
+    stream.read(reinterpret_cast<char*>(&type), sizeof(uint32_t));
+
+    std::shared_ptr<Entity> new_entity;
+    if (type == EntityType::Hero || type == EntityType::Monster)
+    {
+        new_entity = std::make_shared<Character>();
+        stream >> *std::static_pointer_cast<Character>(new_entity);
+    }
+    else
+    {
+        new_entity = std::make_shared<Entity>();
+        stream >> *new_entity;
+    }
+
+    entity = new_entity;
+    return stream;
+}
+
+std::ostream& operator<<(std::ostream& stream, const std::shared_ptr<Entity>& entity)
+{
+    stream.write(reinterpret_cast<const char*>(&entity->type), sizeof(uint32_t));
+
+    if (entity->getType() == EntityType::Hero || entity->getType() == EntityType::Monster)
+        stream << *std::static_pointer_cast<Character>(entity);
+    else
+        stream << *entity;
 
     return stream;
 }

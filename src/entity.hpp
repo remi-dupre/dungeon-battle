@@ -104,9 +104,19 @@ public:
     Controller getController() const;
 
     /**
+     * \brief Return the id of the controller of the entity
+     */
+    Controller setController(Controller controller);
+
+    /**
      * \brief Return the type of the entity
      */
     EntityType getType() const;
+
+    /**
+     * \brief Return the type of the entity
+     */
+    EntityType setType(EntityType type);
 
     /**
      * \brief Return a pointer to a copy of this entity.
@@ -201,6 +211,8 @@ protected:
 
     friend std::ostream& operator<<(std::ostream& stream, const Entity& entity);
     friend std::istream& operator>>(std::istream& stream, Entity& entity);
+    friend std::ostream& operator<<(std::ostream& stream, const std::shared_ptr<Entity>& entity);
+    friend std::istream& operator>>(std::istream& stream, std::shared_ptr<Entity>& entity);
 };
 
 
@@ -464,6 +476,7 @@ protected:
 
     std::vector<Spell> spells; ///< The spells of the character
 
+
     friend std::ostream& operator<<(std::ostream& stream, const Character& entity);
     friend std::istream& operator>>(std::istream& stream, Character& entity);
 };
@@ -500,3 +513,15 @@ std::ostream& operator<<(std::ostream& stream, const Entity& entity);
 std::istream& operator>>(std::istream& stream, Entity& entity);
 std::ostream& operator<<(std::ostream& stream, const Character& entity);
 std::istream& operator>>(std::istream& stream, Character& entity);
+
+/**
+ * \brief  Load an entity from stream and index it in a shared_ptr.
+ * \note   In this function the entity can be a child class.
+ */
+std::istream& operator>>(std::istream& stream, std::shared_ptr<Entity>& entity);
+
+/**
+ * \brief  Save an entity from its shared_ptr.
+ * \note   In this function the entity can be a child class.
+ */
+std::ostream& operator<<(std::ostream& stream, const std::shared_ptr<Entity>& entity);

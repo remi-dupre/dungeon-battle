@@ -45,6 +45,9 @@ inline Action get_input_hero(const Configuration& config)
         return Action(ActionType::Attack, Direction::Up);
     if (sf::Keyboard::isKeyPressed(config.attack_down_key))
         return Action(ActionType::Attack, Direction::Down);
+    if (sf::Keyboard::isKeyPressed(config.body_snatch_key))
+        return Action(ActionType::BodySnatch, Direction::None);
+
     return Action();
 }
 
