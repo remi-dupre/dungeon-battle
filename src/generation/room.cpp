@@ -96,12 +96,7 @@ std::ostream& operator<<(std::ostream& stream, const Room& room)
         stream << cell;
 
     for (const auto& entity: room.entities)
-    {
-        if (entity->getType() == EntityType::Hero || entity->getType() == EntityType::Monster)
-            stream << *std::static_pointer_cast<Character>(entity);
-        else
-            stream << *entity;
-    }
+        stream << entity;
 
     return stream;
 }
@@ -133,26 +128,9 @@ std::istream& operator>>(std::istream& stream, Room& room)
         room.nodes.insert(node);
     }
 
+    room.entities.resize(nb_entie);
     for (size_t i = 0 ; i < nb_entie ; i++)
-    {
-        EntityType type;
-        stream.read(reinterpret_cast<char*>(&type), sizeof(uint32_t));
-        stream.seekg(-static_cast<int>(sizeof(uint32_t)), std::ios::cur);
-
-        std::shared_ptr<Entity> entity;
-        if (type == EntityType::Hero || type == EntityType::Monster)
-        {
-            entity = std::make_shared<Character>();
-            stream >> *std::static_pointer_cast<Character>(entity);
-        }
-        else
-        {
-            entity = std::make_shared<Entity>();
-            stream >> *entity;
-        }
-
-        room.entities.push_back(entity);
-    }
+        stream >> room.entities[i];
 
     room.treeCells = KDTree(room.cells);
     return stream;
