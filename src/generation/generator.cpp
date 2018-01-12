@@ -20,8 +20,6 @@ Generator::Generator(const GenerationMode& parameters) :
     else
     {
         do_generate = false;
-        addRooms(0, 0, parameters.nb_rooms);
-        setFilledChunk(0, 0);
     }
 }
 
@@ -36,7 +34,11 @@ Generator::~Generator()
 
 Chunk Generator::getChunkCells(int x, int y)
 {
-    if (parameters.infinite && !isLockedChunk(x, y)) {
+    if (!parameters.infinite && !isFilledChunk(0, 0)) {
+        addRooms(0, 0, parameters.nb_rooms);
+        setFilledChunk(0, 0);
+    }
+    else if (parameters.infinite && !isLockedChunk(x, y)) {
         // Only generate this chunk
         generateRadius(x, y, 0);
     }

@@ -69,7 +69,7 @@ sf::Vector2i to_vector2i(Direction direction)
 std::ostream& std::operator<<(std::ostream& stream, const std::pair<int, int>& pair)
 {
     int32_t x = pair.first;
-    int32_t y = pair.first;
+    int32_t y = pair.second;
 
     stream.write(reinterpret_cast<char*>(&x), sizeof(int32_t));
     stream.write(reinterpret_cast<char*>(&y), sizeof(int32_t));

@@ -7,7 +7,8 @@ bool load_dungeon(uint32_t dungeon_size,
                   std::vector<Level>& dungeon,
                   std::vector<MapExploration>& exploration,
                   std::vector<std::shared_ptr<Generator>>& generators,
-                  std::string& load_path);
+                  std::string& load_path,
+                  const GenerationMode& parameters);
 
 bool Game::loadGame(const std::string& save_name)
 {
@@ -41,7 +42,7 @@ bool Game::loadGame(const std::string& save_name)
     uint32_t max_level {};
     save_file.read(reinterpret_cast<char*>(&max_level), sizeof(uint32_t)); // max level
 
-    load_dungeon(max_level, dungeon, exploration, generators, load_path);
+    load_dungeon(max_level, dungeon, exploration, generators, load_path, config.gen_options);
 
     map = &dungeon[current_level].map;
     generator = generators[current_level];
@@ -56,12 +57,13 @@ bool load_dungeon(uint32_t dungeon_size,
                   std::vector<Level>& dungeon,
                   std::vector<MapExploration>& exploration,
                   std::vector<std::shared_ptr<Generator>>& generators,
-                  std::string& save_path)
+                  std::string& save_path,
+                  const GenerationMode& parameters)
 {
     for (uint32_t i_level = 0; i_level < dungeon_size; ++i_level)
     {
         dungeon.emplace_back();
-        generators.push_back(std::make_shared<Generator>());
+        generators.push_back(std::make_shared<Generator>(parameters));
         exploration.emplace_back();
         Level& level = dungeon.back();
         MapExploration& map_exploration = exploration.back();
