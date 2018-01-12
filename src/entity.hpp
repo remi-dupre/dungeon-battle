@@ -103,9 +103,19 @@ public:
     Controller getController() const;
 
     /**
+     * \brief Return the id of the controller of the entity
+     */
+    Controller setController(Controller controller);
+
+    /**
      * \brief Return the type of the entity
      */
     EntityType getType() const;
+
+    /**
+     * \brief Return the type of the entity
+     */
+    EntityType setType(EntityType type);
 
     /**
      * \brief Return a pointer to a copy of this entity.

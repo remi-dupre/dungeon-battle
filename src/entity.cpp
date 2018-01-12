@@ -40,6 +40,20 @@ EntityType Entity::getType() const
     return type;
 }
 
+Controller Entity::setController(Controller controller_)
+{
+    Controller tmp = controller;
+    controller = controller_;
+    return tmp;
+}
+
+EntityType Entity::setType(EntityType type_)
+{
+    EntityType tmp = type;
+    type = type_;
+    return tmp;
+}
+
 std::shared_ptr<Entity> Entity::copy() const
 {
     std::shared_ptr<const Entity> shared = shared_from_this();

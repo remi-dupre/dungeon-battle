@@ -366,7 +366,8 @@ bool Game::update_entity(std::shared_ptr<Entity> entity, Action action)
 {
     sf::Vector2i position = entity->getPosition();
 
-    entity->setOrientation(action.direction);
+    if (action.direction != Direction::None)
+        entity->setOrientation(action.direction);
 
     switch (action.type)
     {
@@ -420,6 +421,24 @@ bool Game::update_entity(std::shared_ptr<Entity> entity, Action action)
             }
 
             return true;
+        } break;
+
+    case ActionType::BodySnatch:
+        {
+            position += to_vector2i(entity->getOrientation());
+
+            auto targets = getEntitiesOnCell(position);
+            for (auto target : targets)
+            {
+                if (target->getType() == EntityType::Monster)
+                {
+                    entity->setController(target->setController(entity->getController()));
+                    entity->setType(target->setType(entity->getType()));
+
+                    return true;
+                }
+            }
+            return false;
         } break;
 
         case ActionType::Interact:
