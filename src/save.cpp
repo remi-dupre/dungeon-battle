@@ -77,14 +77,7 @@ bool save_dungeon(const std::vector<Level>& dungeon,
         uint32_t n_entities = level.entities.size();
         entities_file.write(reinterpret_cast<char*>(&n_entities), sizeof(uint32_t));
         for (const auto& entity : level.entities)
-        {
-            if (entity->getType() == EntityType::Hero || entity->getType() == EntityType::Monster)
-                entities_file << (*std::static_pointer_cast<Character>(entity));
-            //else if (entity->getType() == EntityType::Item)
-                //entities_file << (*std::static_pointer_cast<Item>(entity));
-            else
-                entities_file << (*entity);
-        }
+            entities_file << entity;
 
         std::ofstream generator_file {
             save_path + "levels/generator" + std::to_string(i_level) + ".dat",
