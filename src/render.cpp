@@ -233,10 +233,12 @@ void Renderer::drawEntity(std::shared_ptr<Entity> entity,
         }
         break;
     }
+
+    // Unknown entity, do nothing
     case EntityType::None:
         [[fallthrough]];
     default:
-        break;
+        return;
     }
 
     entity_sprite.setTexture(RessourceManager::getTexture(texture_type)); // Texture

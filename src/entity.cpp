@@ -565,6 +565,7 @@ std::ostream& operator<<(std::ostream& stream, const Character& entity)
     stream.write(reinterpret_cast<const char*>(&entity.strength), sizeof(uint32_t));
     stream.write(reinterpret_cast<const char*>(&entity.defense), sizeof(uint32_t));
     stream.write(reinterpret_cast<const char*>(&entity.sightRadius), sizeof(uint32_t));
+    stream.write(reinterpret_cast<const char*>(&entity.friendly), sizeof(uint8_t));
 
     return stream;
 }
@@ -581,6 +582,7 @@ std::istream& operator>>(std::istream& stream, Character& entity)
     stream.read(reinterpret_cast<char*>(&entity.strength), sizeof(uint32_t));
     stream.read(reinterpret_cast<char*>(&entity.defense), sizeof(uint32_t));
     stream.read(reinterpret_cast<char*>(&entity.sightRadius), sizeof(uint32_t));
+    stream.read(reinterpret_cast<char*>(&entity.friendly), sizeof(uint8_t));
 
     return stream;
 }
