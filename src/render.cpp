@@ -16,8 +16,8 @@ Renderer::Renderer() :
         (Rand::uniform_int(std::numeric_limits<int>::min(), std::numeric_limits<int>::max()));
 
     world_view_size = {
-        static_cast<int>(std::ceil(Configuration::default_configuration.width / tile_size)) + 2,
-        static_cast<int>(std::ceil(Configuration::default_configuration.height / tile_size)) + 2
+        static_cast<int>(std::ceil(Configuration::default_configuration.width / tile_size)) + 3,
+        static_cast<int>(std::ceil(Configuration::default_configuration.height / tile_size)) + 3
     };
 
     view.setSize({static_cast<float>(Configuration::default_configuration.width),
@@ -55,7 +55,7 @@ void Renderer::drawGame(const Map& map,
 
     for (int x = viewport.left; x < viewport.left + viewport.width; x++)
     {
-        for (int y = viewport.top; y < viewport.top + viewport.height; y++)
+        for (int y = viewport.top; y < viewport.top + viewport.height + 1; y++)
         {
             CellType cell = map.cellAt(x, y);
             drawCell({x, y}, cell, map, map_exploration, config);

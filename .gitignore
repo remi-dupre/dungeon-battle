@@ -3,8 +3,8 @@
 *#
 .#*
 
-# Fichiers objet générés
-*.o
+build/
+deps/
 
 # Binaire
 dungeon-battle
@@ -17,8 +17,8 @@ tests/*
 !tests/*.ini
 !tests/data/
 
-data_tmp/*
+saves/
 
-map.map
+data_tmp/
 
 .dir-locals.el
