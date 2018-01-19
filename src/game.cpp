@@ -141,6 +141,12 @@ void Game::run()
 
         float elapsed_time = timer.restart().asSeconds();
 
+        if (!window.hasFocus())
+        {
+            sf::sleep(sf::seconds(0.1f));
+            continue;
+        }
+
         // Update
         if (menu) {
             menu->update();
