@@ -1,0 +1,78 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Cppcheck - HTML report - [project name]</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+
+    </style>
+    <script language="javascript">
+      function getStyle(el,styleProp) {
+        if (el.currentStyle)
+          var y = el.currentStyle[styleProp];
+        else if (window.getComputedStyle)
+          var y = document.defaultView.getComputedStyle(el,null).getPropertyValue(styleProp);
+        return y;
+      }
+      function toggle() {
+        var el = this.expandable_content;
+        var mark = this.expandable_marker;
+        if (el.style.display == "block") {
+          el.style.display = "none";
+          mark.innerHTML = "[+]";
+        } else {
+          el.style.display = "block";
+          mark.innerHTML = "[-]";
+        }
+      }
+      function init_expandables() {
+        var elts = document.getElementsByClassName("expandable");
+        for (var i = 0; i < elts.length; i++) {
+          var el = elts[i];
+          var clickable = el.getElementsByTagName("span")[0];
+          var marker = clickable.getElementsByClassName("marker")[0];
+          var content = el.getElementsByClassName("content")[0];
+          var width = clickable.clientWidth - parseInt(getStyle(content, "padding-left")) - parseInt(getStyle(content, "padding-right"));
+          content.style.width = width + "px";
+          clickable.expandable_content = content;
+          clickable.expandable_marker = marker;
+          clickable.onclick = toggle;
+        }
+      }
+    </script>
+  </head>
+  <body onload="init_expandables()">
+      <div id="header">
+        <h1>Cppcheck report - [project name]:  </h1>
+      </div>
+      <div id="menu_index">
+       <p id="filename"><a href="index.html">Defect summary;</a> </p>
+       <p>
+        3 total<br/><br/>
+        2 noExplicitConstructor<br/>
+        1 functionConst<br/>
+<br/><br/><a href="stats.html">Statistics</a></p>
+      </div>
+      <div id="content_index">
+       <table>
+       <tr><th>Line</th><th>Id</th><th>Severity</th><th>Message</th></tr>
+       <tr><td colspan='4'><a href='1.html'>src/generation/generator.hpp</a></td></tr>
+       <tr><td><a href='1.html#line-72'>72</a></td><td>noExplicitConstructor</td><td>style</td><td >Class 'Generator' has a constructor with 1 argument that is not explicit.</td></tr>
+       <tr><td colspan='4'><a href='0.html'>src/generation/room.hpp</a></td></tr>
+       <tr><td><a href='0.html#line-50'>50</a></td><td>noExplicitConstructor</td><td>style</td><td >Class 'Room' has a constructor with 1 argument that is not explicit.</td></tr>
+       <tr><td colspan='4'><a href='2.html'>src/map.cpp</a></td></tr>
+       <tr><td><a href='2.html#line-138'>138</a></td><td>functionConst</td><td>style, inconcl.</td><td class="inconclusive">Technically the member function 'Map::loadFromFile' can be const.</td></tr>
+       </table>
+      </div>
+      <div id="footer">
+        <p>
+         Cppcheck 1.72 - a tool for static C/C++ code analysis</br>
+         </br>
+         Internet: <a href="http://cppcheck.sourceforge.net">http://cppcheck.sourceforge.net</a></br>
+         IRC: <a href="irc://irc.freenode.net/cppcheck">irc://irc.freenode.net/cppcheck</a></br>
+        <p>
+      </div>
+  </body>
+</html>
